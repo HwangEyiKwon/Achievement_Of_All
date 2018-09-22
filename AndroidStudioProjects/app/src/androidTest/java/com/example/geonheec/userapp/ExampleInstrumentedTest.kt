@@ -1,4 +1,4 @@
-package com.example.geonheec.user_application
+package com.example.geonheec.userapp
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.example.geonheec.user_application", appContext.packageName)
+        assertEquals("com.example.geonheec.userapp", appContext.packageName)
     }
 }

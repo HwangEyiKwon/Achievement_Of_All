@@ -1,4 +1,4 @@
-package com.example.geonheec.user_application
+package com.example.geonheec.userapp
 
 import org.junit.Test
 

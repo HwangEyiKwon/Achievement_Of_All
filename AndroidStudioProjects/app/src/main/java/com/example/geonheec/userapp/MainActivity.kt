@@ -1,4 +1,4 @@
-package com.example.geonheec.user_application
+package com.example.geonheec.userapp
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
