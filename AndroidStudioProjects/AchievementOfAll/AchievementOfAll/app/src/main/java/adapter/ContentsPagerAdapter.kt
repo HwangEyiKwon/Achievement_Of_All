@@ -8,7 +8,7 @@ import com.example.parkseunghyun.achievementofall.Desc_pager
 import com.example.parkseunghyun.achievementofall.Info_pager
 import com.example.parkseunghyun.achievementofall.Notice_pager
 
-class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+class ContentsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     internal var mNumOfTabs: Int = 0
 
     init {

@@ -85,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
             if(success){
                 saveData(email,password,isChecked)
                 Toast.makeText(this, "로그인 성공", Toast.LENGTH_LONG).show()
-                startActivity<Home>()
+                startActivity<ContentsHomeActivity>()
             }else{
                 saveData("0","0",isChecked)
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_LONG).show()
