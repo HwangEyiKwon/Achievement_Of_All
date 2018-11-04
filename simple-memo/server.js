@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 const test = require('./server/routes/test');
 const video = require('./server/routes/video')
 const upload = require('./server/routes/upload')
-
+var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 
 //var bodyParser = require("pdkdf2-password"); // 암호화
 //var hasher = bkfd2Password();
@@ -126,6 +126,18 @@ app.post('/login', function(req,res,next){
     else res.send({success: false});
   })(req,res,next);
 });
+
+app.post('/signup', function (req, res, next) {
+
+  passport.authenticate('signup', function (err, user, info) {
+    // console.log(user+"s");
+    console.log("signUPPPPPPPP");
+    if(err) console.log(err);
+    if(user) res.send({success: true});
+    else res.send({success: false});
+  })(req,res,next);
+});
+
 
 app.post('/getUserInfo', function (req,res) {
 
