@@ -41,4 +41,31 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(signupRequest)
     }
+    fun sendToken(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
+
+        var sendTokenRequest = object : JsonObjectRequest(Request.Method.POST,"${address}/sendToken", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response.getString("success").toBoolean())
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+            success(false)
+        }){
+        }
+        Volley.newRequestQueue(context).add(sendTokenRequest)
+    }
+
+    fun logout(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
+
+        var logoutRequest = object : JsonObjectRequest(Request.Method.POST,"${address}/logout", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response.getString("success").toBoolean())
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+            success(false)
+        }){
+        }
+        Volley.newRequestQueue(context).add(logoutRequest)
+    }
 }

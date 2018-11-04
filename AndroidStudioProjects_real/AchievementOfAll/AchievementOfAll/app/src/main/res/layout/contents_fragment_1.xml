@@ -12,4 +12,13 @@
         android:text="컨텐츠 첫번째 페이지"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="163dp"
+        android:text="Button" />
+
 </RelativeLayout>

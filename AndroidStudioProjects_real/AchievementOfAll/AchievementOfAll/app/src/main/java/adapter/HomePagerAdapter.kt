@@ -3,13 +3,14 @@ package adapter
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-
+import android.support.v4.view.ViewPager
+import android.view.View
 import com.example.parkseunghyun.achievementofall.Desc_pager
 import com.example.parkseunghyun.achievementofall.Info_pager
 import com.example.parkseunghyun.achievementofall.Notice_pager
-import com.example.parkseunghyun.achievementofall.SearchActivity
-import com.example.parkseunghyun.achievementofall.UserActivity
-import com.example.parkseunghyun.achievementofall.InfoActivity
+
+
+
 
 class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     internal var mNumOfTabs: Int = 0
@@ -36,5 +37,9 @@ class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     override fun getCount(): Int {
         return mNumOfTabs
+    }
+
+    override fun destroyItem(collection: View, position: Int, view: Any) {
+        (collection as ViewPager).removeView(view as View)
     }
 }
