@@ -14,7 +14,7 @@ class ContentsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
     init {
         this.mNumOfTabs = 3
     }
-
+    //ssfda
     override fun getItem(position: Int): Fragment? {
 
         when (position) {
