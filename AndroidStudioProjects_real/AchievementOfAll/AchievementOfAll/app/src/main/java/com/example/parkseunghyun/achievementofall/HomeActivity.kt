@@ -2,6 +2,7 @@ package com.example.parkseunghyun.achievementofall
 
 import adapter.ContentsPagerAdapter
 import adapter.HomePagerAdapter
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
@@ -10,7 +11,17 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.contents_pager_container.*
+import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
 class HomeActivity : AppCompatActivity() {
@@ -30,12 +41,18 @@ class HomeActivity : AppCompatActivity() {
 
         val afterLogin = intent.getStringExtra("email")
 
-        val tbh = findViewById(R.id.id_toolbar_home) as View
+        val tbh = findViewById<View>(R.id.home_layout).findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.logoutButton)
+          println("tbh")
+        println(tbh)
+//        tbh = tbh.findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.toolbar_frag).findViewById<ImageView>(R.id.logoutButton)
+//        println("tbh2")
+//        println(tbh)
+        tbh.isClickable = true
 
-        tbh.findViewById<ImageView>(R.id.logoutButton)
-        
         tbh.setOnClickListener {
-            println("zzzzzzzzzzzzzzzzzzzz")
+            logout(afterLogin)
+            Toast.makeText(this, "로그아웃", Toast.LENGTH_SHORT).show()
+            startActivity<LoginActivity>()
         }
 
         val toolbar = findViewById(R.id.id_toolbar_home) as Toolbar
@@ -117,6 +134,39 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "토큰  실패", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+//    override fun onStart() {
+//        super.onStart()
+//        initializePlayer()
+//    }
+    fun initializePlayer(){
+        // Create a default TrackSelector
+        val bandwidthMeter =  DefaultBandwidthMeter();
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwidthMeter);
+        val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory);
+
+        //Initialize the player
+        val player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+
+        //Initialize simpleExoPlayerView
+        val simpleExoPlayerView = findViewById(R.id.simpleExoPlayerView) as SimpleExoPlayerView
+
+           simpleExoPlayerView.setPlayer(player)
+
+                // Produces DataSource instances through which media data is loaded.
+        val dataSourceFactory = DefaultDataSourceFactory(this, Util.getUserAgent(this, "CloudinaryExoplayer"));
+
+        // Produces Extractor instances for parsing the media data.
+        val extractorsFactory = DefaultExtractorsFactory();
+
+        // This is the MediaSource representing the media to be played.
+        val videoUri = Uri.parse("http://192.168.3.211:3000/video");
+        val videoSource =  ExtractorMediaSource(videoUri, dataSourceFactory, extractorsFactory, null, null);
+
+        // Prepare the player with the source.
+        player.prepare(videoSource);
+
     }
 
 

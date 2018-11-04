@@ -12,4 +12,13 @@
         android:text="세번째 페이지"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
+    <Button
+        android:id="@+id/button_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginTop="107dp"
+        android:text="Button" />
+
 </RelativeLayout>
