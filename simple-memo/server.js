@@ -1,9 +1,7 @@
 ﻿var mongoose = require('mongoose');
-mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
 //mongoose.connect('mongodb://localhost/test');
-
-
 
 const express = require('express');
 const path = require('path');
@@ -13,9 +11,12 @@ var passport = require('passport');
 const passportConfig = require('./config/passport');
 const bodyParser = require('body-parser');
 const test = require('./server/routes/test');
+const video = require('./server/routes/video')
+const upload = require('./server/routes/upload')
 
-var bodyParser = require("pdkdf2-password"); // 암호화
-var hasher = bkfd2Password();
+
+//var bodyParser = require("pdkdf2-password"); // 암호화
+//var hasher = bkfd2Password();
 
 const app = express();
 
@@ -37,7 +38,21 @@ var content = require('./server/models/content');
 
 require('./config/passport')(passport);
 
+/*
+// 디비 초기화
+var user1 = new user();
+user1.name = "psh";
+user1.email = "psh";
+user1.password = "123";
 
+user1.save(function(err, savedDocument) {
+  if (err)
+    return console.error(err);
+  console.log(savedDocument);
+  console.log("DB initialization");
+
+});
+// 디비 초기화 완료*/
 
 //app.use(session({ secret: 'jang', store : new redisStore({client : client, ttl : 260}), saveUninitialized: true,resave: false }));
 
@@ -63,6 +78,10 @@ app.use(express.static(path.join(__dirname, 'dist/simple-memo')));
 
 // test
 app.use('/test', test);
+// video router
+app.use('/video', video);
+// upload router
+app.use('/upload', upload);
 
 
 app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/index.html')); });
