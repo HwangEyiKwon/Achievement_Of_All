@@ -2,14 +2,26 @@ const express = require('express');
 const router = express.Router();
 var passport = require('passport');
 const passportConfig = require('../../config/passport');
+var User = require('../models/user');
 
 router.post('/login', function(req,res,next){
   passport.authenticate('login', function (err, user, info) {
-//    console.log(user+"asdfasdf");
+    console.log(user+"asdfasdf");
     if(err) console.log(err);
     if(user) res.send({success: true});
     else res.send({success: false});
   })(req,res,next);
+});
+
+router.post('/logout', function(req, res){
+  User.findone({ email : req.body.email }, function(err, user) {
+    if(err){
+      console.log(err);
+      res.send({success: false});
+    }
+    user.pushToken = null;
+  });
+  res.send({success: true});
 });
 
 router.post('/signup', function (req, res, next) {

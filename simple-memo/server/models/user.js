@@ -30,6 +30,9 @@ const userSchema = new Schema({
     contentList: {
         type: Array,
     },
+    pushToken: {
+        type: String,
+    },
 });
 //
 // userSchema.methods.comparePassword = function(password) {

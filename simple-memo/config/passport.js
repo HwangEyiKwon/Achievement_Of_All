@@ -47,7 +47,6 @@ module.exports = function(passport) {
         if (err) return done(err);
 
         if (user) {
-          //console.log(req.flash());
           console.log('이메일 존재');
 
           return done(null, false);
