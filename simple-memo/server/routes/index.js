@@ -14,12 +14,13 @@ router.post('/login', function(req,res,next){
 });
 
 router.post('/logout', function(req, res){
-  User.findone({ email : req.body.email }, function(err, user) {
+  User.findOne({ email : req.body.email }, function(err, user) {
     if(err){
       console.log(err);
       res.send({success: false});
     }
     user.pushToken = null;
+    console.log('user token is ='+ user.pushToken + '!!');
   });
   res.send({success: true});
 });
@@ -42,7 +43,7 @@ router.post('/getUserInfo', function (req,res) {
 
   var email = req.body.email ;
 
-  user.fineOne({email: email}, function(err, info){
+  User.findOne({email: email}, function(err, info){
     if(err) console.log(err);
     if(info == null) {
       console.log("사용자 아님");

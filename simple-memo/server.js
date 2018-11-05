@@ -87,8 +87,9 @@ app.use('/upload', upload);
 
 app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/index.html')); });
 //여기 아래
+const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 
-app.post('/sendToken', function(req, res){
+app.post('/sendToken', function(req, res) {
   console.log(req.body.fcmToken);
   console.log(req.body.email);
 
@@ -96,22 +97,103 @@ app.post('/sendToken', function(req, res){
 
   var userEmail = req.body.email;
   var userToken = req.body.fcmToken;
-  user.findOne({email: userEmail}, function (err,user) {
+  user.findOne({email: userEmail}, function (err, user) {
     user.pushToken = userToken;
     user.save(function (err) {
+      if (err) console.log(err);
+    });
+    var todayDate = new Date();
+    var todayMonth = todayDate.getMonth() + 1;
+    var todayDay = todayDate.getDate();
+    var todayYear = todayDate.getFullYear();
+
+    // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+    if ((todayDay+"").length < 2) {
+      todayDay = "0" + todayDay;
+    }
+
+    var today = todayYear+ "-" + todayMonth + "-" + todayDay;
+
+    console.log('1: today = ' + today + 'user Authenticated' + user.isAuthenticated + 'Date : ' + user.authenticationDate);
+    //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
+    if(user.authenticationDate === today && user.isAuthenticated != 1) {
+      console.log('2: if moon');
+
+      var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 30, 0);
+      var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 31, 0);
+      var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 32, 0);
+      sendPushMessage(user, sendTime1);
+      console.log('3');
+      sendPushMessage(user, sendTime2);
+      console.log('4');
+      sendPushMessage(user, sendTime3);
+      console.log('5');
+    }
+    //console.log(user);
+  });
+});
+
+//날짜가 바뀔 때마다 푸쉬알림 해당자에게 전송
+var scheduler = schedule.scheduleJob('00 * * *', function(){
+  var todayDate = new Date();
+  var todayYear = todayDate.getFullYear();
+  var todayMonth = todayDate.getMonth() + 1;
+  var todayDay = todayDate.getDate();
+
+  // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+  if ((todayDay+"").length < 2) {
+    todayDay = "0" + todayDay;
+  }
+
+  var today = todayYear+ "-" + todayMonth + "-" + todayDay;
+  var yesterday = todayYear+ "-" + todayMonth + "-" + todayDay-1;
+
+  /* 모든 유저에 대해 authentication Date체크 */
+  user.find({authenticationDate: today}, function(err, userList){
+    for(var i = 0; i < Object.keys(userList).length; i++){
+      if(userList[i].pushToken != null  && userList[i].isAuthenticated != 1) {
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 51, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 52, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 55, 0);
+        sendPushMessage(userList[i], sendTime1);
+        sendPushMessage(userList[i], sendTime2);
+        sendPushMessage(userList[i], sendTime3);
+      }
+    }
+  });
+
+  //실패하거나 인증 수행 안한 사람 데이터 뽑아 처리하기 위한 코드
+  user.find({authenticationDate: yesterday}, function(err, userList){
+
+
+
+
+    userList.save(function (err) {
       if(err) console.log(err);
     });
   });
 
-  var serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
-  var client_token = userToken;
+  user.find({isAuthenticated: 1}, function(err, userList){
+    for(var i = 0; i < Object.keys(userList).length; i++){
+      userlist[i].isAuthenticated = 0;
+      user.save(function (err) {
+        if (err) console.log(err);
+      });
+    }
+  });
+});
+
+function sendPushMessage(user, sendTime) {
+  console.log('6');
+  var fcm = new FCM(serverKey);
+  var client_token = user.pushToken;
   var push_data = {
     // 수신대상
     to: client_token,
     // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
     notification: {
       title: "모두의 달성",
-      body: "목표 달성을 인증할 시간입니다.",
+      body: "목표 달성을 인증하셔야 합니다.",
       sound: "default",
       click_action: "FCM_PLUGIN_ACTIVITY",
       icon: "fcm_push_icon"
@@ -120,41 +202,37 @@ app.post('/sendToken', function(req, res){
     priority: "high",
     // App 패키지 이름
     restricted_package_name: "com.example.parkseunghyun.achievementofall",
-    /*
-    // App에게 전달할 데이터
-    data: {
-      num1: 2000,
-      num2: 3000
-    }*/
   };
-  var fcm = new FCM(serverKey);
 
-  var scheduler = schedule.scheduleJob('*/10 * * * * *', function(){
-    fcm.send(push_data, function(err, response) {
-      if (err) {
-        console.error('Push메시지 발송에 실패했습니다.');
-        console.error(err);
-        return;
-      }
-      console.log('Push메시지가 발송되었습니다.');
-      console.log(response);
-    });
+  var scheduler = schedule.scheduleJob(sendTime, function(){
+    console.log('7');
+    if(user.isAuthenticated == 1 ) {
+      console.log('before user authen : ' + user.isAuthenticated);
+      user.isAuthenticated = 0;
+      console.log('after user authen : ' + user.isAuthenticated);
+    } //추후 ) 변수 수정 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    else{
+      console.log('8');
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    };
   });
-})
+}
 
+/*
+user.isAuthenticated = 1; //한번 보내고 1로 바꿔보기
+        user.save(function (err) {
+          if (err) console.log(err);
+        });
+ */
 
-
-var scheduler = schedule.scheduleJob('6', function(){
-  fcm.send(push_data, function(err, response) {
-    if (err) {
-      console.error('Push메시지 발송에 실패했습니다.');
-      console.error(err);
-      return;
-    }
-    console.log('Push메시지가 발송되었습니다.');
-    console.log(response);
-  });
-});
 // Port 설정
 const port = process.env.PORT || '3000';
 app.set('port', port);

@@ -33,31 +33,13 @@ const userSchema = new Schema({
     pushToken: {
         type: String,
     },
+    authenticationDate: {
+        type: String,
+    },
+    isAuthenticated: {
+        type: Number,
+    },
 });
-//
-// userSchema.methods.comparePassword = function(password) {
-//   //if (inputPassword === this.password) {
-//    // cb(null, true);
-//   //} else {
-//   //  cb('error');
-//   //}
-//   return bcrypt.compareSync(password, this.password)
-// };
-//
-// //password를 암호화
-// userSchema.methods.generateHash = function(password) {
-//   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-// };
-//
-//
-// userSchema.methods.validPassword = function(password, cb) {
-//   if (password == this.password) {
-//     cb(null, true);
-//   } else {
-//     cb('error');
-//   }
-// };
-//
 
 //password를 암호화
 userSchema.methods.generateHash = function(password) {
