@@ -20,9 +20,14 @@ class Notice_pager : Fragment() {
         val bt = view.findViewById(R.id.button2) as Button
 
         bt.setOnClickListener {
-            println("123123123123123123123123")
-            (activity as HomeActivity).destroyHomePager()
+            println("Notice")
+            (activity as HomeActivity).destroyAllFragment()
+
+            println("Notice1")
+
+
             (activity as HomeActivity).createContentsPager()
+            println("Notice2")
         }
         return view
     }

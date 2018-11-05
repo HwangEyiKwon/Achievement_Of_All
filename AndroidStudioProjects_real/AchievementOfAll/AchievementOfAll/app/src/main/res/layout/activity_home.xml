@@ -34,11 +34,13 @@
         <!--android:layout_below="@id/id_toolbar_home"-->
         <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
 <FrameLayout
+    android:id = "@+id/containers"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <include layout="@layout/home_pager_container"/>
     <include layout="@layout/contents_pager_container"/>
 </FrameLayout>
+
 </LinearLayout>
     <include layout="@layout/bottom_toolbar"/>
 

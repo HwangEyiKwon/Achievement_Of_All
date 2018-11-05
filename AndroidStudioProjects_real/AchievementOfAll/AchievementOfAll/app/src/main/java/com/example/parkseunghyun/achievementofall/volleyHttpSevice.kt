@@ -54,6 +54,18 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(sendTokenRequest)
     }
+    fun getUserInfo(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var userInfoRequest = object : JsonObjectRequest(Request.Method.POST,"${address}/getUserInfo", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(userInfoRequest)
+    }
 
     fun logout(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 

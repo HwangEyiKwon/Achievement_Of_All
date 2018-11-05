@@ -2,6 +2,7 @@ package com.example.parkseunghyun.achievementofall
 
 import adapter.ContentsPagerAdapter
 import adapter.HomePagerAdapter
+import android.app.FragmentManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -24,15 +25,25 @@ import kotlinx.android.synthetic.main.contents_pager_container.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
+
+
 class HomeActivity : AppCompatActivity() {
 
     private var viewPager: ViewPager? = null
-//    private var viewPagerContents: ViewPager? = null
+    private var viewPagerContents: ViewPager? = null
 
     private var adapter: HomePagerAdapter? =null
     private var adapter2: ContentsPagerAdapter? =null
+
     private var tabLayout: TabLayout? = null
 
+
+    public var userEmail: String ?= null
+
+    override fun onStart() {
+        super.onStart()
+        createHomePager()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -42,18 +53,17 @@ class HomeActivity : AppCompatActivity() {
         val afterLogin = intent.getStringExtra("email")
 
         val tbh = findViewById<View>(R.id.home_layout).findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.logoutButton)
-          println("tbh")
-        println(tbh)
-//        tbh = tbh.findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.toolbar_frag).findViewById<ImageView>(R.id.logoutButton)
-//        println("tbh2")
-//        println(tbh)
-        tbh.isClickable = true
 
+        tbh.isClickable = true
         tbh.setOnClickListener {
             logout(afterLogin)
             Toast.makeText(this, "로그아웃", Toast.LENGTH_SHORT).show()
             startActivity<LoginActivity>()
         }
+
+        getUserInfo(afterLogin);
+
+
 
         val toolbar = findViewById(R.id.id_toolbar_home) as Toolbar
         setSupportActionBar(toolbar)
@@ -66,8 +76,11 @@ class HomeActivity : AppCompatActivity() {
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
         println("ffffffffffffffffff")
-        createHomePager()
 
+
+//        createContentsPager()
+
+        viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager?.currentItem = tab.position
@@ -82,7 +95,7 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
-        viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+        viewPagerContents?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(p0: Int) {
 
             }
@@ -93,35 +106,87 @@ class HomeActivity : AppCompatActivity() {
                 contents_circle_indicator.selectDot(p0)
             }
         })
+        createHomePager()
+        val userEmailText = supportFragmentManager.findFragmentById(R.id.tab_fragment2)
 
-    }
-
-    fun createContentsPager(){
-        viewPager = findViewById<ViewPager>(R.id.contents_pager_container)
-        adapter2 = ContentsPagerAdapter(supportFragmentManager)
-        viewPager?.adapter = adapter2
-        contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+        println("ㅁㄹㅇㄴ "+userEmailText )
     }
     fun createHomePager(){
+        println("123")
         viewPager = findViewById(R.id.home_pager_container)
         adapter = HomePagerAdapter(supportFragmentManager)
         viewPager?.adapter = adapter
-        viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        println(viewPager?.adapter)
+        println("Home "+ supportFragmentManager.fragments)
     }
-    fun destroyContentsPager(){
-//        viewPagerContents?.isSaveFromParentEnabled()
+
+    fun createContentsPager(){
+        println("123")
+        viewPagerContents = findViewById(R.id.contents_pager_container)
+        adapter2 = ContentsPagerAdapter(supportFragmentManager)
+        viewPagerContents?.adapter = adapter2
+        println("Contents "+supportFragmentManager.fragments)
+
+//        contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
     }
-    fun destroyHomePager(){
-        viewPager!!.isSaveFromParentEnabled =false
-//        viewPager?.isSaveFromParentEnabled()
-//        viewPager?.adapter?.destroyItem(home_pager_container,0,0)
-//        viewPager?.isSaveFromParentEnabled = false;
-//        viewPager.ondetac
-//        viewPager = null
-//        adapter?.notifyDataSetChanged()
-        adapter?.notifyDataSetChanged();
-        viewPager?.setAdapter(adapter);
+
+    fun destroyAllFragment(){
+//        val layout = findViewById(R.id.containers) as FrameLayout
+//        layout.removeAllViews()
+//        println("destroy")
+//        viewPager?.adapter.destroyItem()
+
+//
+//        println(supportFragmentManager.fragments)
+//        println(supportFragmentManager.getBackStackEntryCount())
+//        while(fragmentManager.getBackStackEntryCount() > 0) { fragmentManager.popBackStackImmediate(); }
+        val fm = supportFragmentManager
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+//
+//        println("asdfasfasdfasdfasdfasdf"+fm.backStackEntryCount)
+//        fm.beginTransaction().remove(supportFragmentManager.fragments[0]).commit()
+//        fm.executePendingTransactions()
+//        println("ㅅㅂ: "+fm.fragments)
+//        fm.beginTransaction().remove(supportFragmentManager.fragments[0]).commit()
+//        fm.executePendingTransactions()
+//        println("ㅅㅂ2: "+fm.fragments)
+//        fm.beginTransaction().remove(supportFragmentManager.fragments[0]).commit()
+//        fm.executePendingTransactions()
+//        println("ㅅㅂ3: "+fm.fragments)
+//        fm.beginTransaction().remove(supportFragmentManager.fragments[0]).commit()
+//        fm.executePendingTransactions()
+        println("ㅅㅂ3: "+fm.fragments)
+
+//        fm.beginTransaction().remove(supportFragmentManager.fragments[2]).commit()
+//        fm.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.home_pager_container)).commit()
+//        for (fragment in fm.fragments) {
+//
+//
+//            fm.beginTransaction().remove(fragment).commit()
+//
+//            fm.popBackStack()
+////            supportFragmentManager.executePendingTransactions()
+//
+////            if(supportFragmentManager.fragments!=null )
+////                supportFragmentManager.popBackStack()
+//
+//            println("f: "+fragment)
+//            println("fs: "+fm.fragments)
+//
+//
+//        }
+//        fm.beginTransaction().commit()
+
+
+//        supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.contents_pager_container)).commit()
+//        supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.home_pager_container)).commit()
+
+
+//        viewPager?.getAdapter()?.notifyDataSetChanged();
+//        viewPager?.setAdapter(adapter2)
     }
+
     private fun logout(email: String){
 
         val jsonObject = JSONObject()
@@ -134,6 +199,19 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "토큰  실패", Toast.LENGTH_LONG).show()
             }
         }
+    }
+    private fun getUserInfo(email: String){
+
+        val jsonObject = JSONObject()
+        jsonObject.put("email", email)
+
+        VolleyHttpService.getUserInfo(this, jsonObject){ success ->
+            println("받은것은?: "+success)
+            userEmail = success.getString("email")
+        }
+    }
+    private fun setUserInfo(){
+
     }
 
 //    override fun onStart() {

@@ -18,8 +18,12 @@ class Info_pager : Fragment() {
         bt_video.setOnClickListener {
             (activity as HomeActivity).initializePlayer()
         }
+
+
+
+
+
         return view
 
-//        return inflater!!.inflate(R.layout.tab_fragment_3, container, false)
     }
 }

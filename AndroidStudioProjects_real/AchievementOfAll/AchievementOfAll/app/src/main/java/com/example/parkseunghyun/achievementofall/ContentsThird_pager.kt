@@ -9,6 +9,10 @@ import android.view.ViewGroup
 class ContentsThird_pager : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.contents_fragment_3, container, false)
+
+        var view =  inflater!!.inflate(R.layout.contents_fragment_3, container, false)
+
+
+        return view
     }
 }
