@@ -73,6 +73,7 @@ class LoginActivity : AppCompatActivity() {
         return jsonObject
     }
 
+
     private fun login(email: String, password: String, isChecked: Boolean){
 
         val jsonObject = JSONObject()
@@ -83,12 +84,33 @@ class LoginActivity : AppCompatActivity() {
 
         VolleyHttpService.login(this, jsonObject){ success ->
             if(success){
+                val fcmService = MyFirebaseInstanceIDService()
+                fcmService.onTokenRefresh()
+                val jsonObject = fcmService.jsonObject as JSONObject
+                jsonObject.put("email", email)
+                sendToken(jsonObject)
                 saveData(email,password,isChecked)
+
                 Toast.makeText(this, "로그인 성공", Toast.LENGTH_LONG).show()
-                startActivity<HomeActivity>()
+                startActivity<HomeActivity>(
+                        "email" to email
+                )
             }else{
                 saveData("0","0",isChecked)
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    private fun sendToken(jsonObject: JSONObject){
+        println("TOKEN:    "+ jsonObject)
+        VolleyHttpService.sendToken(this, jsonObject){ success ->
+            if(success){
+
+                Toast.makeText(this, "토큰  성공", Toast.LENGTH_LONG).show()
+
+            }else{
+
+                Toast.makeText(this, "토큰  실패", Toast.LENGTH_LONG).show()
             }
         }
     }
