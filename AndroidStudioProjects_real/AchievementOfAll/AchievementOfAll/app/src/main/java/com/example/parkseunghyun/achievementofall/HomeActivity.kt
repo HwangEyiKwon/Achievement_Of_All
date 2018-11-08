@@ -61,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
             startActivity<LoginActivity>()
         }
 
-        getUserInfo(afterLogin);
+        //getUserInfo(afterLogin);
 
 
 
