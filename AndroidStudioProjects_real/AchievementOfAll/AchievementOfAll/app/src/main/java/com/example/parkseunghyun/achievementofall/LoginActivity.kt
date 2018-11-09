@@ -132,6 +132,7 @@ class LoginActivity : AppCompatActivity() {
                 val jsonObject = fcmService.jsonObject as JSONObject
 
                 jsonObject.put("email", email)
+
                 sendToken(jsonObject)
 
                 // 자동 로그인을 위한 정보 저장

@@ -1,5 +1,7 @@
 package com.example.parkseunghyun.achievementofall
 
+import adapter.JoinedContentsAdapter
+import adapter.ThumbnailAdapter
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,15 +12,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
-
-import java.util.ArrayList
-
-import adapter.JoinedContentsAdapter
-import adapter.ThumbnailAdapter
-import com.example.parkseunghyun.achievementofall.RecyclerViewClickListener
-import model.ThumbnailModel
 import model.JoinedContentsModel
+import model.ThumbnailModel
+import java.util.*
 
 class HomeAccountPager : Fragment(), RecyclerViewClickListener {
     private val PROFILE = arrayOf(R.drawable.ns, R.drawable.diet, R.drawable.book)
@@ -50,6 +48,11 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         homeAccountPagerContext = activity
         view_ = inflater!!.inflate(R.layout.fragment_home_account, container, false)
+
+        var name = view?.findViewById<TextView>(R.id.name)
+        var email = view?.findViewById<TextView>(R.id.email)
+        var phoneNumber = view?.findViewById<TextView>(R.id.phoneNumber)
+
         // Code for Joined Contents View
         generateJoinedContentsView()
 
@@ -61,8 +64,9 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         return view_
     }
+    fun abc(){
 
-
+    }
     private fun generateJoinedContentsView() {
         val layoutManager = LinearLayoutManager(homeAccountPagerContext, LinearLayoutManager.HORIZONTAL, false)
         joinedContentsView = view_!!.findViewById(R.id.id_my_contents)

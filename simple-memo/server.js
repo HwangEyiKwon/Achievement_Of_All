@@ -1,6 +1,6 @@
 ﻿var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost:27017');
- mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://localhost:27017');
+//  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 
 const express = require('express');
 const path = require('path');
@@ -40,19 +40,20 @@ require('./config/passport')(passport);
 
 
 // 디비 초기화
-// var user1 = new user({
-//   name: "psh",
-//   email: "psh",
-//   password : "123",
-//   phoneNumber : "01027258935",
-//   nickName : "enjjiPRRrrrr",
-//   contentList:[{
-//     contentId : 1,
-//     joinState : 1,
-//     authenticationDate : "2018-11-08",
-//     isAuthenticated : 1,
-//   }]
-// });
+var user1 = new user({
+  name: "psh",
+  email: "psh",
+  // password : user.generateHash("123"),
+  phoneNumber : "01027258935",
+  nickName : "enjjiPRRrrrr",
+  contentList:[{
+    contentId : 1,
+    joinState : 1,
+    authenticationDate : "2018-11-08",
+    isAuthenticated : 1,
+  }]
+});
+user1.password = user1.generateHash("123");
 // var user1 = new user();
 //
 // user1.name = "psh1";
@@ -62,13 +63,13 @@ require('./config/passport')(passport);
 // user1.nickName = "enji";
 // //이런 식으로 저장하면 됨 .
 //
-// user1.save(function(err, savedDocument) {
-//   if (err)
-//     return console.error(err);
-//   console.log(savedDocument);
-//   console.log("DB initialization");
-//
-// });
+user1.save(function(err, savedDocument) {
+  if (err)
+    return console.error(err);
+  console.log(savedDocument);
+  console.log("DB initialization");
+
+});
 
 
 // 디비 초기화 완료
@@ -154,12 +155,14 @@ const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG
 //
 //   console.log(doc);
 // });
-user.findOneAndUpdate({email: "psh"}, {$push:{contentList : [{isAuthenticated: "0"}]}},function(err, doc){
-  if(err){
-    console.log(err);
-  }
-  console.log(doc);
-});
+
+
+// user.findOneAndUpdate({email: "psh"}, {$push:{contentList : [{isAuthenticated: "0"}]}},function(err, doc){
+//   if(err){
+//     console.log(err);
+//   }
+//   console.log(doc);
+// });
 
 
 // //

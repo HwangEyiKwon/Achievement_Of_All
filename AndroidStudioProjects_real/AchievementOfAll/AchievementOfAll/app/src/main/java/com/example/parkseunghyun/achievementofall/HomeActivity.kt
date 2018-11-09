@@ -3,6 +3,7 @@ package com.example.parkseunghyun.achievementofall
 
 import adapter.HomePagerAdapter
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.media.MediaRecorder
 import android.net.Uri
@@ -13,10 +14,12 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -27,6 +30,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import kotlinx.android.synthetic.main.fragment_home_account.view.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
@@ -37,6 +41,12 @@ class HomeActivity : AppCompatActivity() {
 
     // 유저 정보 (화면에 보여질)
     var userEmail: String ?= null
+    var userName: String ?= null
+    var userPhoneNumber: String ?= null
+
+    var accountEmail: TextView ?= null
+    var accountName: TextView ?= null
+    var accountPhoneNumber: TextView?=null
 
     // jwt-token
     var jwtToken: String?= null
@@ -48,19 +58,28 @@ class HomeActivity : AppCompatActivity() {
     private var sh: SurfaceHolder?= null;
 
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_layout)
-// jwt-token 받기
+    override fun onRestart() {
+        super.onRestart()
+        println("restart")
         println("홈페이지에서 토큰 받기(preference에서): "+ loadToken())
         jwtToken = loadToken()
 
         // 사용자 정보 받기
         getUserInfo(jwtToken.toString());
-        println("사용자 정보: "+ userEmail)
-//
+
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.home_layout)
+
+        // jwt-token 받기
+        println("홈페이지에서 토큰 받기(preference에서): "+ loadToken())
+        jwtToken = loadToken()
+
+        // 사용자 정보 받기
+        getUserInfo(jwtToken.toString());
+
         // 로그아웃 버튼
         val logoutBt = findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.logoutButton)
         logoutBt.setOnClickListener {
@@ -70,10 +89,15 @@ class HomeActivity : AppCompatActivity() {
         // Code for TabLayout
         generateTabLayout()
 
-        val viewPager = findViewById<ViewPager>(R.id.home_pager_container)
-        val homePagerAdapter = HomePagerAdapter(supportFragmentManager)
+        var viewPager = findViewById<ViewPager>(R.id.home_pager_container)
+        var homePagerAdapter = HomePagerAdapter(supportFragmentManager)
         viewPager.adapter = homePagerAdapter
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
+
+        var sb = supportFragmentManager.findFragmentById(R.id.fragment_home_account)
+        println("namename "+ sb)
+
+
         homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
@@ -98,6 +122,10 @@ class HomeActivity : AppCompatActivity() {
 
             }
         })
+
+
+
+
 
     }
 
@@ -151,6 +179,33 @@ class HomeActivity : AppCompatActivity() {
         VolleyHttpService.getUserInfo(this, jsonObject){ success ->
             println(" 겟 유저 인포받은것은?: "+success)
             userEmail = success.getString("email")
+            userName = success.getString("name")
+            userPhoneNumber = success.getString("phoneNumber")
+
+            println("사용자 email: "+ userEmail)
+            println("사용자 name: "+ userName)
+            println("사용자 phone: "+ userPhoneNumber)
+
+            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view = inflater.inflate(R.layout.fragment_home_account, null);
+
+            println(view.name)
+            println(view.email)
+            println(view.phoneNumber)
+
+            accountName = view.name
+            accountEmail = view.email
+            accountPhoneNumber = view.phoneNumber
+
+//            println(findViewById<View>(R.id.home_pager_container))
+
+            println(accountName)
+            println(accountEmail)
+            println(accountPhoneNumber)
+
+            accountName?.setText(userName)
+            accountEmail?.setText(userEmail)
+            accountPhoneNumber?.setText(userPhoneNumber)
         }
     }
     private fun setUserInfo(){
@@ -183,7 +238,7 @@ class HomeActivity : AppCompatActivity() {
         val extractorsFactory = DefaultExtractorsFactory();
 
         // This is the MediaSource representing the media to be played.
-        val videoUri = Uri.parse("http://192.168.8.97:3000/video");
+        val videoUri = Uri.parse("http:// 172.20.10.4:3000/video");
         val videoSource =  ExtractorMediaSource(videoUri, dataSourceFactory, extractorsFactory, null, null);
 
         // Prepare the player with the source.
