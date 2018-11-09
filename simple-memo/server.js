@@ -1,5 +1,5 @@
 ﻿var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 //  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 
 const express = require('express');
@@ -40,12 +40,13 @@ require('./config/passport')(passport);
 
 
 // 디비 초기화
+/*
 var user1 = new user({
   name: "psh",
   email: "psh",
   // password : user.generateHash("123"),
   phoneNumber : "01027258935",
-  nickName : "enjjiPRRrrrr",
+  nickName : "4.5man",
   contentList:[{
     contentId : 1,
     joinState : 1,
@@ -69,7 +70,7 @@ user1.save(function(err, savedDocument) {
   console.log(savedDocument);
   console.log("DB initialization");
 
-});
+});*/
 
 
 // 디비 초기화 완료
@@ -126,54 +127,14 @@ app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/ind
 //여기 아래
 const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 
-//
-// user.findOneAndUpdate({email : "psh1"}, function (err, user) {
-//
-//
-//   user.contentList.$[0] = {contentId : 2};
-//   // user.contentList.$[0] = {isAuthencated: 1};
-//
-//   user.save(function (err) {
-//     if (err) console.log(err);
-//   });
-//
-// })
-//
-// user.findOneAndUpdate({email : "psh1"}, {$set:   },function(err, doc){
-//   if(err){
-//     console.log("Something wrong when updating data!");
-//   }
-//
-//   console.log(doc);
-//
-// });
-//
-// findOneAndUpdate({age: 17}, {$push:{name:"Naomi"}},function(err, doc){
-//   if(err){
-//     console.log("Something wrong when updating data!");
-//   }
-//
-//   console.log(doc);
-// });
-
-
-// user.findOneAndUpdate({email: "psh"}, {$push:{contentList : [{isAuthenticated: "0"}]}},function(err, doc){
-//   if(err){
-//     console.log(err);
-//   }
-//   console.log(doc);
-// });
-
-
-// //
-// user.findOneAndUpdate({email : "psh1"}, function (err,user) {
-//
-//
-//   console.log("qwrqwfwfa");
-// //  $set : {user.contentList[0].authenticationDate = 6 };
-//
-//   });
-// //
+//수정하는 db 코드, 참고용, 이걸 실제 코드에 넣어야 됨
+user.findOneAndUpdate(
+  {"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isAuthenticated" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
+    if(err){
+      console.log(err);
+    }
+    console.log(doc);
+  });
 
 
 app.post('/sendToken', function(req, res) {

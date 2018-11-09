@@ -3,14 +3,6 @@ var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 
 const { Schema } = mongoose;
 
-const contentInfoSchema = new Schema({
-  contentId: Number,
-  joinState: Number,
-  calendar: Array,
-  authenticationDate: String, //server change code need!!
-  isAuthenticated: Number,
-});
-
 const userSchema = new Schema({
   name: {
     type: String,
@@ -36,17 +28,16 @@ const userSchema = new Schema({
   reportCount: {
     type: Number,
   },
-  contentList: [contentInfoSchema],
+  contentList: [{
+    contentId: Number,
+    joinState: Number,
+    calendar: Array,
+    authenticationDate: String, //server change code need!!
+    isAuthenticated: Number,
+  }],
   pushToken: {
     type: String,
   },
-
-  /*    authenticationDate: {
-          type: String,
-      },
-      isAuthenticated: {
-          type: Number,
-      },*/
 });
 
 //password를 암호화
