@@ -127,14 +127,30 @@ app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/ind
 //여기 아래
 const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 
+
 //수정하는 db 코드, 참고용, 이걸 실제 코드에 넣어야 됨
 user.findOneAndUpdate(
-  {"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isAuthenticated" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
-    if(err){
-      console.log(err);
-    }
-    console.log(doc);
-  });
+{"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isAuthenticated" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
+  if(err){
+    console.log(err);
+  }
+
+  console.log(doc);
+});
+/*
+//어레이 추가하는 db 코드
+user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isAuthenticated: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
+  if(err){
+    console.log(err);
+  }
+  console.log(doc);
+});
+*/
+
+user.findOne({ email: "psh" }, function(err, user) {
+  var joinContentCount = user.contentList.length;
+  console.log(joinContentCount);
+});
 
 
 app.post('/sendToken', function(req, res) {
@@ -150,31 +166,42 @@ app.post('/sendToken', function(req, res) {
     user.save(function (err) {
       if (err) console.log(err);
     });
-    var todayDate = new Date();
-    var todayMonth = todayDate.getMonth() + 1;
-    var todayDay = todayDate.getDate();
-    var todayYear = todayDate.getFullYear();
+  });
+  //날짜 구하기
+  var todayDate = new Date();
+  var todayMonth = todayDate.getMonth() + 1;
+  var todayDay = todayDate.getDate();
+  var todayYear = todayDate.getFullYear();
 
-    // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
-    if ((todayDay+"").length < 2) {
-      todayDay = "0" + todayDay;
+  // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+  if ((todayDay+"").length < 2) {
+    todayDay = "0" + todayDay;
+  }
+  var today = todayYear+ "-" + todayMonth + "-" + todayDay;
+  //
+  user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
+    var joinContentCount = user.contentList.length;
+    var authenContentIndex;
+    for(var i = 0; i < joinContentCount; i++){
+      if(user.contentList[i].authenticationDate === today){
+        authenContentIndex = i;
+        break;
+      }
     }
-
-    var today = todayYear+ "-" + todayMonth + "-" + todayDay;
-
-    console.log('1: today = ' + today + 'user Authenticated' + user.contentList[0].isAuthenticated + 'Date : ' + user.contentList[0].authenticationDate);
+    console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
     //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
-    if(user.contentList[0].authenticationDate === today && user.contentList[0].isAuthenticated != 1) {
+
+    if(user.contentList[authenContentIndex].isAuthenticated != 1) {
       console.log('2: if moon');
 
       var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 30, 0);
       var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 31, 0);
       var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 32, 0);
-      sendPushMessage(user, sendTime1);
+      sendPushMessage(user, authenContentIndex, sendTime1);
       console.log('3');
-      sendPushMessage(user, sendTime2);
+      sendPushMessage(user, authenContentIndex, sendTime2);
       console.log('4');
-      sendPushMessage(user, sendTime3);
+      sendPushMessage(user, authenContentIndex, sendTime3);
       console.log('5');
     }
     //console.log(user);
@@ -197,26 +224,33 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var yesterday = todayYear+ "-" + todayMonth + "-" + todayDay-1;
 
   /* 모든 유저에 대해 authentication Date체크 */
-  user.find({authenticationDate: today}, function(err, userList){
+  user.find({"contentList.authenticationDate" : today}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
-      if(userList[i].pushToken != null  && userList[i].contentList[0].isAuthenticated != 1) {
-        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 51, 0);
-        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 52, 0);
-        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 55, 0);
-        sendPushMessage(userList[i], sendTime1);
-        sendPushMessage(userList[i], sendTime2);
-        sendPushMessage(userList[i], sendTime3);
+      var joinContentCount = userList[i].contentList.length;
+      var authenContentIndex;
+      for(var j = 0; j < joinContentCount; j++){
+        if(userList[i].contentList[j].authenticationDate === today){
+          authenContentIndex = j;
+          break;
+        }
+      }
+      if(userList[i].pushToken != null  && userList[i].contentList[authenContentIndex].isAuthenticated != 1) {
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 09, 00, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 00, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 00, 0);
+        sendPushMessage(userList[i], authenContentIndex, sendTime1);
+        sendPushMessage(userList[i], authenContentIndex, sendTime2);
+        sendPushMessage(userList[i], authenContentIndex, sendTime3);
       }
     }
   });
 
   //실패하거나 인증 수행 안한 사람 데이터 뽑아 처리하기 위한 코드
-  user.find({authenticationDate: yesterday}, function(err, userList){
+  user.find({"contentList.authenticationDate": yesterday}, function(err, userList){
 
 
 
-
-    userList.save(function (err) {
+    userList[0].save(function (err) {
       if(err) console.log(err);
     });
   });
@@ -252,11 +286,11 @@ function sendPushMessage(user, sendTime) {
     restricted_package_name: "com.example.parkseunghyun.achievementofall",
   };
 
-  var scheduler = schedule.scheduleJob(sendTime, function(){
+  var scheduler = schedule.scheduleJob(sendTime, arrayIndex, function(){
     console.log('7');
-    if(user.contentList[0].isAuthenticated == 1 ) {
+    if(user.contentList[arrayIndex].isAuthenticated == 1 ) {
       console.log('before user authen : ' + user.contentList[0].isAuthenticated);
-      user.contentList[0].isAuthenticated = 0;
+      user.contentList[arrayIndex].isAuthenticated = 0;
       console.log('after user authen : ' + user.contentList[0].isAuthenticated);
     } //추후 ) 변수 수정 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     else{
