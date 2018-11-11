@@ -5,6 +5,8 @@ const passportConfig = require('../../config/passport');
 var User = require('../models/user');
 var jwt = require('jwt-simple'); // jwt token 사용
 
+var Content = require('../models/content');
+
 router.post('/jwtCheck', function(req, res){
 
   console.log("jwtCheck jwt토큰 "+ req.body.token);
@@ -96,5 +98,11 @@ router.post('/getUserInfo', function (req,res) {
     }
   })
 })
+router.post('/getSearchData', function (req,res) {
 
+    Content.find(function (err, info) {
+      res.send(info);
+    })
+  }
+)
 module.exports = router ;

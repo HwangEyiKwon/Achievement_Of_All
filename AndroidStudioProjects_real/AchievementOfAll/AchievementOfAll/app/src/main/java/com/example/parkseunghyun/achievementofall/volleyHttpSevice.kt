@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException
 
 object VolleyHttpService{
 
-    val address : String? = "http://192.168.8.97:3000" // 테스트용 주소
+    val address : String? = "http://192.168.0.13:3000" // 테스트용 주소
 
     fun jwtCheck(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
@@ -119,6 +119,18 @@ object VolleyHttpService{
         }){
         }
         Volley.newRequestQueue(context).add(userInfoRequest)
+    }
+    fun getSearchData(context: Context, success: (JSONObject)->Unit){
+
+        var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"${address}/getSearchData",null, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(searchDataRequest)
     }
 
 

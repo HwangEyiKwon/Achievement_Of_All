@@ -1,6 +1,7 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
- mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+//  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -39,40 +40,64 @@ var content = require('./server/models/content');
 require('./config/passport')(passport);
 
 
-
-// 디비 초기화
-/*
-var user1 = new user({
-  name: "psh",
-  email: "psh",
-  // password : user.generateHash("123"),
-  phoneNumber : "01012341124",
-  nickName : "4.5man",
-  contentList:[{
-    contentId : 1,
-    joinState : 1,
-    authenticationDate : "2018-11-08",
-    isAuthenticated : 1,
-  }]
-});
-user1.password = user1.generateHash("123");
-// var user1 = new user();
+// //--------------------------------
+// // 유저 디비 초기화
 //
-// user1.name = "psh1";
-// user1.email = "psh1";
+// var user1 = new user({
+//   name: "psh",
+//   email: "psh",
+//   // password : user.generateHash("123"),
+//   phoneNumber : "01012341124",
+//   nickName : "4.5man",
+//   contentList:[{
+//     contentId : 1,
+//     joinState : 1,
+//     authenticationDate : "2018-11-08",
+//     isAuthenticated : 1,
+//   }]
+// });
 // user1.password = user1.generateHash("123");
-// user1.phoneNumber = "01012341124";
-// user1.nickName = "enji";
-// //이런 식으로 저장하면 됨 .
+// // var user1 = new user();
+// //
+// // user1.name = "psh1";
+// // user1.email = "psh1";
+// // user1.password = user1.generateHash("123");
+// // user1.phoneNumber = "01012341124";
+// // user1.nickName = "enji";
+// // //이런 식으로 저장하면 됨 .
+// //
+// user1.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
 //
-user1.save(function(err, savedDocument) {
-  if (err)
-    return console.error(err);
-  console.log(savedDocument);
-  console.log("DB initialization");
-
-});*/
-
+// });
+// //--------------------------------
+//
+// //--------------------------------
+// // 컨텐츠 디비 초기화
+// var content1 = new content({
+//   id: 1
+// })
+// var content2 = new content({
+//   id: 1
+// })
+// content1.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+// content2.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+// //--------------------------------
 
 // 디비 초기화 완료
 
@@ -80,7 +105,6 @@ user1.save(function(err, savedDocument) {
 //저장할땐 user1.contentList = {isAuthenticated : 1};
 
 //app.use(session({ secret: 'jang', store : new redisStore({client : client, ttl : 260}), saveUninitialized: true,resave: false }));
-
 
 
 // POST 데이터
@@ -140,15 +164,15 @@ user.findOneAndUpdate(
 
   console.log(doc);
 });
-/*
+
 //어레이 추가하는 db 코드
-user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isAuthenticated: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
-  if(err){
-    console.log(err);
-  }
-  console.log(doc);
-});
-*/
+// user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isAuthenticated: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
+//   if(err){
+//     console.log(err);
+//   }
+//   console.log(doc);
+// });
+
 
 user.findOne({ email: "psh" }, function(err, user) {
   var joinContentCount = user.contentList.length;
@@ -181,34 +205,36 @@ app.post('/sendToken', function(req, res) {
     todayDay = "0" + todayDay;
   }
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
+
+  // user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
+  //   console.log(user);
+  //   console.log(user.contentList);
+  //   var joinContentCount = user.contentList.length;
+  //   var authenContentIndex;
+  //   for(var i = 0; i < joinContentCount; i++){
+  //     if(user.contentList[i].authenticationDate === today){
+  //       authenContentIndex = i;
+  //       break;
+  //     }
+  //   }
+  //   console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
+  //   //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
   //
-  user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
-    var joinContentCount = user.contentList.length;
-    var authenContentIndex;
-    for(var i = 0; i < joinContentCount; i++){
-      if(user.contentList[i].authenticationDate === today){
-        authenContentIndex = i;
-        break;
-      }
-    }
-    console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
-    //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
-
-    if(user.contentList[authenContentIndex].isAuthenticated != 1) {
-      console.log('2: if moon');
-
-      var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 30, 0);
-      var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 31, 0);
-      var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 32, 0);
-      sendPushMessage(user, authenContentIndex, sendTime1);
-      console.log('3');
-      sendPushMessage(user, authenContentIndex, sendTime2);
-      console.log('4');
-      sendPushMessage(user, authenContentIndex, sendTime3);
-      console.log('5');
-    }
-    //console.log(user);
-  });
+  //   if(user.contentList[authenContentIndex].isAuthenticated != 1) {
+  //     console.log('2: if moon');
+  //
+  //     var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 30, 0);
+  //     var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 31, 0);
+  //     var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 32, 0);
+  //     sendPushMessage(user, authenContentIndex, sendTime1);
+  //     console.log('3');
+  //     sendPushMessage(user, authenContentIndex, sendTime2);
+  //     console.log('4');
+  //     sendPushMessage(user, authenContentIndex, sendTime3);
+  //     console.log('5');
+  //   }
+  //   //console.log(user);
+  // });
 });
 
 //날짜가 바뀔 때마다 푸쉬알림 해당자에게 전송

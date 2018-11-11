@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import model.JoinedContentsModel
 import model.ThumbnailModel
+import org.json.JSONObject
 import java.util.*
 
 class HomeAccountPager : Fragment(), RecyclerViewClickListener {
@@ -38,6 +39,10 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     //    static final Class<?>[] ACTIVITIES = { X_Home_no.class }; // 각각의 LIST_MENU의 원소에 대응되는 액티비티의 각 클래스 이름을 써줍니다.
 
+    private var name: TextView ?=null
+    private var email: TextView ?=null
+    private var phoneNumber: TextView ?=null
+
 
     override fun recyclerViewListClicked(v: View, position: Int) {
         Toast.makeText(homeAccountPagerContext, "position is $position", Toast.LENGTH_LONG)
@@ -49,9 +54,12 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         homeAccountPagerContext = activity
         view_ = inflater!!.inflate(R.layout.fragment_home_account, container, false)
 
-        var name = view?.findViewById<TextView>(R.id.name)
-        var email = view?.findViewById<TextView>(R.id.email)
-        var phoneNumber = view?.findViewById<TextView>(R.id.phoneNumber)
+        name = view_!!.findViewById<TextView>(R.id.name)
+        email = view_!!.findViewById<TextView>(R.id.email)
+        phoneNumber = view_!!.findViewById<TextView>(R.id.phoneNumber)
+
+        val activity = activity as HomeActivity
+        setUserInfo(activity.jwtToken.toString())
 
         // Code for Joined Contents View
         generateJoinedContentsView()
@@ -59,12 +67,17 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         // Code for Video Thumbnail collection
         generateVideoCollection()
 
-
-
-
         return view_
     }
-    fun abc(){
+
+    private fun setUserInfo(token: String){
+        val jsonObject = JSONObject()
+        jsonObject.put("token", token)
+        VolleyHttpService.getUserInfo(homeAccountPagerContext!!, jsonObject){ success ->
+            email!!.setText(success.getString("email"))
+            name!!.setText(success.getString("name"))
+            phoneNumber!!.setText(success.getString("phoneNumber"))
+        }
 
     }
     private fun generateJoinedContentsView() {
