@@ -95,11 +95,6 @@ class HomeSearchPager : Fragment() {
                 // Your code here
             }
 
-            list?.add("Smoking")
-            list?.add("Diet")
-            list?.add("study")
-            list?.add("Work Out")
-            list?.add("Travel")
 
             arraylist = ArrayList()
             arraylist!!.addAll(list!!)

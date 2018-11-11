@@ -109,7 +109,7 @@ router.get('/getSearchData', function (req,res) {
       }
 
       for(var i in info){
-        searchData.contents.push(info[i].id);
+        searchData.contents.push(info[i].name);
       }
       res.send(searchData);
     })

@@ -57,7 +57,7 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
         override fun onClick(v: View) {
             val pos = adapterPosition
 
-            Toast.makeText(v.context, "You clicked $pos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(v.context, "You clicked "+ name.text, Toast.LENGTH_SHORT).show()
 
             val intent = Intent(v.context, HomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

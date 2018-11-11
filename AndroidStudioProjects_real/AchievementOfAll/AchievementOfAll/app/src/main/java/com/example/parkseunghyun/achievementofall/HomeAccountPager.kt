@@ -20,8 +20,9 @@ import org.json.JSONObject
 import java.util.*
 
 class HomeAccountPager : Fragment(), RecyclerViewClickListener {
-    private val PROFILE = arrayOf(R.drawable.ns, R.drawable.diet, R.drawable.book)
-    private val NAME = arrayOf("Smoking", "Diet", "Study")
+
+    private var PROFILE = arrayOf(R.drawable.ns, R.drawable.diet) // 바꿀것
+    private var joinedContents = mutableListOf<String>()
 
     private val ACCOUNTPIC = arrayOf(R.drawable.selena12, R.drawable.nature1, R.drawable.nature2, R.drawable.nature3, R.drawable.selena1, R.drawable.selena2, R.drawable.selena3, R.drawable.nature4, R.drawable.nature5, R.drawable.nature6, R.drawable.selena4, R.drawable.selena5, R.drawable.selena6, R.drawable.selena7, R.drawable.selena8, R.drawable.selena9, R.drawable.selena10, R.drawable.selena11)
 
@@ -54,18 +55,13 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         homeAccountPagerContext = activity
         view_ = inflater!!.inflate(R.layout.fragment_home_account, container, false)
 
-        name = view_!!.findViewById<TextView>(R.id.name)
-        email = view_!!.findViewById<TextView>(R.id.email)
-        phoneNumber = view_!!.findViewById<TextView>(R.id.phoneNumber)
+        name = view_!!.findViewById(R.id.name)
+        email = view_!!.findViewById(R.id.email)
+        phoneNumber = view_!!.findViewById(R.id.phoneNumber)
 
         val activity = activity as HomeActivity
         setUserInfo(activity.jwtToken.toString())
 
-        // Code for Joined Contents View
-        generateJoinedContentsView()
-
-        // Code for Video Thumbnail collection
-        generateVideoCollection()
 
         return view_
     }
@@ -73,10 +69,28 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
     private fun setUserInfo(token: String){
         val jsonObject = JSONObject()
         jsonObject.put("token", token)
+
         VolleyHttpService.getUserInfo(homeAccountPagerContext!!, jsonObject){ success ->
+
+            // 내 정보 갱신
             email!!.setText(success.getString("email"))
             name!!.setText(success.getString("name"))
             phoneNumber!!.setText(success.getString("phoneNumber"))
+
+            var contentList: JSONObject ?= null
+
+            // 내 컨텐츠 정보 갱신
+            for(i in 0.. (success.getJSONArray("contentList").length()-1)){
+                contentList = success.getJSONArray("contentList")[i] as JSONObject
+                var contentName =  contentList.getString("contentName")
+                joinedContents?.add(contentName.toString())
+            }
+
+            // Code for Joined Contents View
+            generateJoinedContentsView()
+
+            // Code for Video Thumbnail collection
+            generateVideoCollection()
         }
 
     }
@@ -91,8 +105,8 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         for (i in PROFILE.indices) {
             val joinedContentsModel = JoinedContentsModel()
-            joinedContentsModel.profile = PROFILE[i]
-            joinedContentsModel.name = NAME[i]
+            joinedContentsModel.profile = PROFILE[i] // 바꿀것
+            joinedContentsModel.name = joinedContents?.get(i)
             joinedContentsModelArrayList!!.add(joinedContentsModel)
         }
 

@@ -40,32 +40,30 @@ var content = require('./server/models/content');
 require('./config/passport')(passport);
 
 
-// //--------------------------------
-// // 유저 디비 초기화
-//
+//--------------------------------
+// 유저 디비 초기화
+
 // var user1 = new user({
-//   name: "psh",
-//   email: "psh",
+//   name: "ParkSeungHyun3",
+//   email: "shp3@gmail.com",
 //   // password : user.generateHash("123"),
-//   phoneNumber : "01012341124",
+//   phoneNumber : "01093969408",
 //   nickName : "4.5man",
 //   contentList:[{
+//     contentId : 0,
+//     contentName: "NoSmoking",
+//     joinState : 1,
+//     authenticationDate : "2018-11-08",
+//     isAuthenticated : 1,
+//   },{
 //     contentId : 1,
+//     contentName: "Diet",
 //     joinState : 1,
 //     authenticationDate : "2018-11-08",
 //     isAuthenticated : 1,
 //   }]
 // });
 // user1.password = user1.generateHash("123");
-// // var user1 = new user();
-// //
-// // user1.name = "psh1";
-// // user1.email = "psh1";
-// // user1.password = user1.generateHash("123");
-// // user1.phoneNumber = "01012341124";
-// // user1.nickName = "enji";
-// // //이런 식으로 저장하면 됨 .
-// //
 // user1.save(function(err, savedDocument) {
 //   if (err)
 //     return console.error(err);
@@ -73,15 +71,21 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-// //--------------------------------
+//--------------------------------
 //
-// //--------------------------------
-// // 컨텐츠 디비 초기화
+//--------------------------------
+// 컨텐츠 디비 초기화
 // var content1 = new content({
-//   id: "NOSmoking"
+//   id: 0,
+//   name: "NoSmoking"
 // })
 // var content2 = new content({
-//   id: "DIET"
+//   id: 1,
+//   name: "Diet"
+// })
+// var content3 = new content({
+//   id: 1,
+//   name: "Study"
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
@@ -97,7 +101,14 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-// //--------------------------------
+// content3.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+//--------------------------------
 
 // 디비 초기화 완료
 
@@ -105,6 +116,16 @@ require('./config/passport')(passport);
 //저장할땐 user1.contentList = {isAuthenticated : 1};
 
 //app.use(session({ secret: 'jang', store : new redisStore({client : client, ttl : 260}), saveUninitialized: true,resave: false }));
+
+// var user1 = new user();
+//
+// user1.name = "psh1";
+// user1.email = "psh1";
+// user1.password = user1.generateHash("123");
+// user1.phoneNumber = "01012341124";
+// user1.nickName = "enji";
+// //이런 식으로 저장하면 됨 .
+//
 
 
 // POST 데이터

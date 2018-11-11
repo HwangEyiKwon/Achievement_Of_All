@@ -30,6 +30,7 @@ const userSchema = new Schema({
   },
   contentList: [{
     contentId: Number,
+    contentName: String,
     joinState: Number,
     calendar: Array,
     authenticationDate: String, //server change code need!!

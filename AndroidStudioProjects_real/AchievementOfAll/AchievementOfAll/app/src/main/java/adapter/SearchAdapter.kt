@@ -6,11 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.R
-
-/**
- * Created by Administrator on 2017-08-07.
- */
 
 class SearchAdapter(private val list: List<String>, private val context: Context) : BaseAdapter() {
     private val inflate: LayoutInflater
@@ -29,6 +26,8 @@ class SearchAdapter(private val list: List<String>, private val context: Context
     }
 
     override fun getItemId(i: Int): Long {
+        Toast.makeText(context, " 서치 어댑터"+ list[i], Toast.LENGTH_LONG).show()
+
         return 0
     }
 
