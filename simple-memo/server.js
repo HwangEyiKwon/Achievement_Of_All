@@ -1,6 +1,6 @@
 ﻿var mongoose = require('mongoose');
-mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
-//  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+ mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 
 const express = require('express');
 const path = require('path');
@@ -13,6 +13,7 @@ const test = require('./server/routes/test');
 const video = require('./server/routes/video');
 const upload = require('./server/routes/upload');
 const index = require('./server/routes/index');
+const search = require('./server/routes/search')
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 
 var schedule = require('node-schedule');
@@ -45,7 +46,7 @@ var user1 = new user({
   name: "psh",
   email: "psh",
   // password : user.generateHash("123"),
-  phoneNumber : "01027258935",
+  phoneNumber : "01012341124",
   nickName : "4.5man",
   contentList:[{
     contentId : 1,
@@ -60,7 +61,7 @@ user1.password = user1.generateHash("123");
 // user1.name = "psh1";
 // user1.email = "psh1";
 // user1.password = user1.generateHash("123");
-// user1.phoneNumber = "01027258935";
+// user1.phoneNumber = "01012341124";
 // user1.nickName = "enji";
 // //이런 식으로 저장하면 됨 .
 //
@@ -120,6 +121,8 @@ app.use('/video', video);
 app.use('/upload', upload);
 // fcm router
 //app.use('/fcm', fcm);
+//search router
+app.use('/', search);
 
 app.set('jwtTokenSecret', "afafaffffff");
 
