@@ -55,7 +55,7 @@ router.post('/getAllUserList', function (req, res) {
 })
 
 router.get('./enterContent/:contentID', function(req, res){
-  User.findOne({email : req.body.email, "contentList.contentId" : req.body.contentId}, function (err, user {
+  User.findOne({email : req.body.email, "contentList.contentId" : req.body.contentId}, function (err, user) {
     
     //contentList 몇번째를 가져올지 결정해야 함
     console.log("content : " +user.contentList);
