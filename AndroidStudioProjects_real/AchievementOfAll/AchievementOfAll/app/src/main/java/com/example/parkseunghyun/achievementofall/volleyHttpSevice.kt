@@ -122,8 +122,10 @@ object VolleyHttpService{
     }
     fun getSearchData(context: Context, success: (JSONObject)->Unit){
 
+        println("getSearchData!!!!!!!!")
+
         var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"${address}/getSearchData",null, Response.Listener{ response ->
-            println("서버 수신: $response")
+            println("서버 수신 getSearchData: $response")
             success(response)
 
         }, Response.ErrorListener { error ->

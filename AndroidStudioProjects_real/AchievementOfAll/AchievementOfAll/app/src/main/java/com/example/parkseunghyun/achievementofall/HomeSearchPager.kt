@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ListView
 import com.studio572.searchlistview.SearchAdapter
+import org.json.JSONArray
 
 
 class HomeSearchPager : Fragment() {
@@ -36,16 +37,6 @@ class HomeSearchPager : Fragment() {
 
         // 검색에 사용할 데이터을 미리 저장한다.
         settingList()
-
-        // 리스트의 모든 데이터를 arraylist에 복사한다.// list 복사본을 만든다.
-        arraylist = ArrayList()
-        arraylist!!.addAll(list!!)
-
-        // 리스트에 연동될 아답터를 생성한다.
-        adapter = SearchAdapter(list!!, this.context)
-
-        // 리스트뷰에 아답터를 연결한다.
-        listView?.adapter = adapter
 
         // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
         editSearch!!.addTextChangedListener(object : TextWatcher {
@@ -89,13 +80,35 @@ class HomeSearchPager : Fragment() {
     }
 
     private fun settingList() {
-        list?.add("Smoking")
-        list?.add("Diet")
-        list?.add("study")
-        list?.add("Work Out")
-        list?.add("Travel")
+
+
         VolleyHttpService.getSearchData(homeSearchPagerContext!!){ success ->
-            println("serachdata"+success)
+            println(success)
+            println(success.get("contents"))
+            var contentsData = success.get("contents")as JSONArray
+
+            for (i in 0..(contentsData.length() - 1)) {
+                val item = contentsData[i]
+                println("item"+ item)
+
+                list?.add(item.toString())
+                // Your code here
+            }
+
+            list?.add("Smoking")
+            list?.add("Diet")
+            list?.add("study")
+            list?.add("Work Out")
+            list?.add("Travel")
+
+            arraylist = ArrayList()
+            arraylist!!.addAll(list!!)
+
+            // 리스트에 연동될 아답터를 생성한다.
+            adapter = SearchAdapter(list!!, this.context)
+
+            // 리스트뷰에 아답터를 연결한다.
+            listView?.adapter = adapter
         }
 
     }

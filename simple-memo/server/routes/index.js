@@ -98,10 +98,20 @@ router.post('/getUserInfo', function (req,res) {
     }
   })
 })
-router.post('/getSearchData', function (req,res) {
+router.get('/getSearchData', function (req,res) {
 
     Content.find(function (err, info) {
-      res.send(info);
+      console.log("seachdata" + info);
+
+      var searchData = {
+        contents: [],
+        users: []
+      }
+
+      for(var i in info){
+        searchData.contents.push(info[i].id);
+      }
+      res.send(searchData);
     })
   }
 )
