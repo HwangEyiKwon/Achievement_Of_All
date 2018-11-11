@@ -3,9 +3,11 @@ const router = express.Router();
 var passport = require('passport');
 const passportConfig = require('../../config/passport');
 var User = require('../models/user');
+var Content = require('../models/content');
+var App = require('../models/app');
 var jwt = require('jwt-simple'); // jwt token 사용
 
-var Content = require('../models/content');
+
 
 router.post('/jwtCheck', function(req, res){
 
@@ -98,6 +100,8 @@ router.post('/getUserInfo', function (req,res) {
     }
   })
 })
+
+// 옮길것
 router.get('/getSearchData', function (req,res) {
 
     Content.find(function (err, info) {
@@ -115,4 +119,13 @@ router.get('/getSearchData', function (req,res) {
     })
   }
 )
+router.get('/getAppInfo', function (req,res) {
+
+    App.findOne(function (err, info) {
+      console.log("AppInfo: " + info);
+      res.send(info);
+    })
+  }
+)
+
 module.exports = router ;

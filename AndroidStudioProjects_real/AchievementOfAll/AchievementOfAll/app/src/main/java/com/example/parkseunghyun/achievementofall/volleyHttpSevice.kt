@@ -122,8 +122,6 @@ object VolleyHttpService{
     }
     fun getSearchData(context: Context, success: (JSONObject)->Unit){
 
-        println("getSearchData!!!!!!!!")
-
         var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"${address}/getSearchData",null, Response.Listener{ response ->
             println("서버 수신 getSearchData: $response")
             success(response)
@@ -133,6 +131,18 @@ object VolleyHttpService{
         }){
         }
         Volley.newRequestQueue(context).add(searchDataRequest)
+    }
+    fun getAppInfo(context: Context, success: (JSONObject)->Unit){
+
+        var appInfoRequest = object : JsonObjectRequest(Request.Method.GET,"${address}/getAppInfo",null, Response.Listener{ response ->
+            println("서버 수신 getInfoInfo: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(appInfoRequest)
     }
 
 

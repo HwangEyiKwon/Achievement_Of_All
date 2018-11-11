@@ -36,6 +36,7 @@ db.on('connected', function() {
 
 var user = require('./server/models/user');
 var content = require('./server/models/content');
+var appInfo = require('./server/models/app');
 
 require('./config/passport')(passport);
 
@@ -109,7 +110,39 @@ require('./config/passport')(passport);
 //
 // });
 //--------------------------------
+//--------------------------------
+// 앱정보 디비 초기화
+// var appInfo_ = new appInfo({
+//   appInfo: "앱 정보입니다 \n 개발자는 캡스톤 디자인 냥냥펀치 \n 박승현 외 3명입니다. 현재 버전은 \n 1.0으로 앞으로 계속 업데이트될 \n 예정입니다",
+//   noticeInfo: "공지사항 입니다. \n 이 부분에는 앱에 관련된 공지사항 또는 최신 정보가 업로드 됩니다."
+// })
+// appInfo_.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+//--------------------------------
 
+//--------------------------------
+//--------------------------------
+// 디비 모두 제거
+// appInfo.remove(function (err, info) {
+//   console.log("DELETED");
+// });
+
+// user.remove(function (err, info) {
+//   console.log("DELETED");
+// });
+//
+// content.remove(function (err, info) {
+//   console.log("DELETED");
+// });
+//--------------------------------
+
+
+// ???
 // 디비 초기화 완료
 
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);

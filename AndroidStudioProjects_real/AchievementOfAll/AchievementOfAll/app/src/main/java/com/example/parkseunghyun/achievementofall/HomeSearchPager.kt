@@ -81,7 +81,6 @@ class HomeSearchPager : Fragment() {
 
     private fun settingList() {
 
-
         VolleyHttpService.getSearchData(homeSearchPagerContext!!){ success ->
             println(success)
             println(success.get("contents"))
