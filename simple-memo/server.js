@@ -1,7 +1,7 @@
 ﻿var mongoose = require('mongoose');
-//mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 //  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -141,25 +141,11 @@ require('./config/passport')(passport);
 // });
 //--------------------------------
 
-
-// ???
-// 디비 초기화 완료
-
+//???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
 //저장할땐 user1.contentList = {isAuthenticated : 1};
 
 //app.use(session({ secret: 'jang', store : new redisStore({client : client, ttl : 260}), saveUninitialized: true,resave: false }));
-
-// var user1 = new user();
-//
-// user1.name = "psh1";
-// user1.email = "psh1";
-// user1.password = user1.generateHash("123");
-// user1.phoneNumber = "01012341124";
-// user1.nickName = "enji";
-// //이런 식으로 저장하면 됨 .
-//
-
 
 // POST 데이터
 app.use(bodyParser.json());
@@ -194,7 +180,7 @@ app.use('/test', test);
 // index page router
 app.use('/', index);
 // video router
-app.use('/video', video);
+app.use('/', video);
 // upload router
 app.use('/upload', upload);
 // fcm router
@@ -208,8 +194,8 @@ app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/ind
 //여기 아래
 const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 
-
-//수정하는 db 코드, 참고용, 이걸 실제 코드에 넣어야 됨
+/*
+//수정하는 db 코드, 참고용, 이걸 실제 코드에 넣어야 됨. 작동 됨
 user.findOneAndUpdate(
 {"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isAuthenticated" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
   if(err){
@@ -218,8 +204,8 @@ user.findOneAndUpdate(
 
   console.log(doc);
 });
-
-//어레이 추가하는 db 코드
+*/
+//어레이 추가하는 db 코드, 작동 됨.
 // user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isAuthenticated: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
 //   if(err){
 //     console.log(err);
@@ -277,15 +263,12 @@ app.post('/sendToken', function(req, res) {
   //   if(user.contentList[authenContentIndex].isAuthenticated != 1) {
   //     console.log('2: if moon');
   //
-  //     var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 30, 0);
-  //     var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 31, 0);
-  //     var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 32, 0);
+  //     var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
+  //     var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
+  //     var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
   //     sendPushMessage(user, authenContentIndex, sendTime1);
-  //     console.log('3');
   //     sendPushMessage(user, authenContentIndex, sendTime2);
-  //     console.log('4');
   //     sendPushMessage(user, authenContentIndex, sendTime3);
-  //     console.log('5');
   //   }
   //   //console.log(user);
   // });
@@ -318,9 +301,9 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         }
       }
       if(userList[i].pushToken != null  && userList[i].contentList[authenContentIndex].isAuthenticated != 1) {
-        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 09, 00, 0);
-        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 00, 0);
-        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 00, 0);
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
         sendPushMessage(userList[i], authenContentIndex, sendTime1);
         sendPushMessage(userList[i], authenContentIndex, sendTime2);
         sendPushMessage(userList[i], authenContentIndex, sendTime3);
@@ -328,26 +311,31 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
     }
   });
 
-  //실패하거나 인증 수행 안한 사람 데이터 뽑아 처리하기 위한 코드
-  user.find({"contentList.authenticationDate": yesterday}, function(err, userList){
-
-
+  //컨텐츠 진행중인데, 인증 실패하거나 인증 수행 안한 사람 데이터 뽑아 처리하기 위한 코드
+  user.find({"contentList.authenticationDate": yesterday, "contentList.isAuthenticated" : "0", "contentList.joinState" : "1"}, function(err, userList){
+    for(var i = 0; i < Object.keys(userList).length; i++) {
+      //fail에 대한 정보를 전달해줘야 할 것임
+    }
 
     userList[0].save(function (err) {
       if(err) console.log(err);
     });
   });
 
+  //매일마다 인증 현황을 0으로 수정해줌
   user.find({isAuthenticated: 1}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
-      userlist[i].contentList[0].isAuthenticated = 0;
-      user.save(function (err) {
-        if (err) console.log(err);
-      });
+      for(var j = 0; j < Object.keys(userList[i].contentList).length; j++){
+        userlist[i].contentList[j].isAuthenticated = 0;
+        user.save(function (err) {
+          if (err) console.log(err);
+        });
+      }
     }
   });
 });
 
+//푸쉬메시지 펑션
 function sendPushMessage(user, sendTime) {
   console.log('6');
   var fcm = new FCM(serverKey);
@@ -390,13 +378,6 @@ function sendPushMessage(user, sendTime) {
     };
   });
 }
-
-/*
-user.isAuthenticated = 1; //한번 보내고 1로 바꿔보기
-        user.save(function (err) {
-          if (err) console.log(err);
-        });
- */
 
 // Port 설정
 const port = process.env.PORT || '3000';

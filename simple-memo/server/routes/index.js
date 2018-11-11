@@ -80,6 +80,14 @@ router.post('/signup', function (req, res, next) {
   })(req,res,next);
 });
 
+router.post('/userInfoEdit', function(req,res){
+  User.findOne({email: userEmail}, function(err, user){
+    user.password = user.generateHash(req.body.password);
+    user.nickname = req.body.nickname;
+    user.phoneNumber = req.body.phoneNumber;
+    user.imagePath = req.body.imagePath;
+  })
+})
 
 router.post('/getUserInfo', function (req,res) {
 
@@ -127,5 +135,18 @@ router.get('/getAppInfo', function (req,res) {
     })
   }
 )
+
+router.get('/:contentID/contentJoin',  function (req,res) {
+  User.findOne({email: req.body.email}, function(err, user){
+    //이건 어떻게 해야 할까??
+  });
+})
+
+router.post('/:contentID/contentJoinComplete',  function (req,res) {
+  User.findOne({email: req.body.email}, function(err, user){
+    //이렇게 하는 게 맞는지 토론
+    user.contentList[0].calendar[0] = req.body.periodInfo;
+  });
+})
 
 module.exports = router ;

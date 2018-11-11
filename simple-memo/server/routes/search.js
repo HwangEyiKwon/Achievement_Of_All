@@ -21,6 +21,17 @@ var Content = require('../models/content');
 // });// 모든 content data 에대해서 id 만 출력.
 
 
+
+
+router.get('/getContentList', function(err, res){
+  var userEmail = req.body.email;
+  User.findOne({email: userEmail}, function(err, user){
+    console.log("user's Content List: " +user.contentList);
+
+    res.send(user.contentList);
+  });
+});
+
 router.post('/getAllContentList', function (err, res, ) {
   Content.collection.distinct("id", function(err, results){
     if(err)  console.log(err);
@@ -35,16 +46,31 @@ router.post('/getAllUserList', function (req, res) {
 
   var name = req.body.name;
 
-  User.findOne({name : name}), function (err, user) {
+  User.findOne({name : name}, function (err, user) {
 
     console.log("send search name : " +user.name);
     res.send(user.name);
 
-  };
+  });
 })
 
+router.get('./enterContent/:contentID', function(req, res){
+  User.findOne({email : req.body.email, "contentList.contentId" : req.body.contentId}, function (err, user {
+    
+    //contentList 몇번째를 가져올지 결정해야 함
+    console.log("content : " +user.contentList);
+    res.send(user.contentList);
 
+  });
+})
 
+router.get('./enterUser/:userID', function(req, res){
+  User.findOne({email : req.body.email}, function(err, user){
+
+    //return 값이 이게 맞나?
+    res.send(user);
+  })
+})
 
 module.exports = router ;
 
