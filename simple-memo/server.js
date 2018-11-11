@@ -78,10 +78,10 @@ require('./config/passport')(passport);
 // //--------------------------------
 // // 컨텐츠 디비 초기화
 // var content1 = new content({
-//   id: 1
+//   id: "NOSmoking"
 // })
 // var content2 = new content({
-//   id: 1
+//   id: "DIET"
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
