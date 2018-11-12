@@ -81,6 +81,7 @@ router.post('/signup', function (req, res, next) {
 });
 
 router.post('/userInfoEdit', function(req,res){
+
   User.findOne({email: userEmail}, function(err, user){
     user.password = user.generateHash(req.body.password);
     user.nickname = req.body.nickname;

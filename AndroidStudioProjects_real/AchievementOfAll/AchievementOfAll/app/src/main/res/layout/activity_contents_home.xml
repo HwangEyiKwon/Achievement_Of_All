@@ -41,12 +41,13 @@
                     android:layout_marginStart="10dp">
 
                     <customfonts.MyTextView_Roboto_Medium
+                        android:id="@+id/contentName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="@string/story"
-                        android:textStyle="bold"
                         android:textColor="@android:color/black"
-                        android:layout_weight="1"/>
+                        android:textStyle="bold"/>
 
 
                     <!--<ImageView-->

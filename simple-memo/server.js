@@ -1,7 +1,7 @@
 ﻿var mongoose = require('mongoose');
-mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 //  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -144,8 +144,8 @@ require('./config/passport')(passport);
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
 //저장할땐 user1.contentList = {isAuthenticated : 1};
-
 //app.use(session({ secret: 'jang', store : new redisStore({client : client, ttl : 260}), saveUninitialized: true,resave: false }));
+
 
 // POST 데이터
 app.use(bodyParser.json());

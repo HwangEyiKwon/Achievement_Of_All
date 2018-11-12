@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.TextView
 import kotlinx.android.synthetic.main.contents_pager_container.*
 
 
@@ -28,10 +29,17 @@ class ContentsHomeActivity : AppCompatActivity(), View.OnClickListener {
 //    internal var search: ImageView? = null
 //    internal var profile: ImageView? = null
 
+    private var contentName: TextView ?= null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contents_home)
 
+        contentName = findViewById(R.id.contentName)
+
+        if(intent.getStringExtra("contentName")!=null){
+            val name = intent.getStringExtra("contentName")
+            contentName!!.setText(name)
+        }
 //        homelinear = findViewById(R.id.homelinear)
 //        searchlinear = findViewById(R.id.searchlinear)
 //        profilelinear = findViewById(R.id.profilelinear)

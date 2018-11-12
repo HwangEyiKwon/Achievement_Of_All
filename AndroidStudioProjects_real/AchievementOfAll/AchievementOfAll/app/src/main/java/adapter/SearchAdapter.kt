@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
+import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
+import org.jetbrains.anko.startActivity
 
 class SearchAdapter(private val list: List<String>, private val context: Context) : BaseAdapter() {
     private val inflate: LayoutInflater
@@ -22,12 +24,20 @@ class SearchAdapter(private val list: List<String>, private val context: Context
     }
 
     override fun getItem(i: Int): Any? {
+
+        println(list[i])
+        println("왜 두번 호출됨?????????????")
         return null
     }
 
     override fun getItemId(i: Int): Long {
+        // 컨텐츠 홈으로 이동
         Toast.makeText(context, " 서치 어댑터"+ list[i], Toast.LENGTH_LONG).show()
 
+        context.startActivity<ContentsHomeActivity>(
+                "contentName" to  list[i]
+        )
+        println("왜 두번 호출됨")
         return 0
     }
 
