@@ -277,29 +277,32 @@ app.post('/sendToken', function(req, res) {
 
   user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
     console.log(user);
-    console.log(user.contentList);
-    var joinContentCount = user.contentList.length;
-    var authenContentIndex;
-    for(var i = 0; i < joinContentCount; i++){
-      if(user.contentList[i].authenticationDate === today){
-        authenContentIndex = i;
-        break;
+    if(user== null){
+      console.log("User.contentList is null");
+    }else{
+      console.log(user.contentList);
+      var joinContentCount = user.contentList.length;
+      var authenContentIndex;
+      for(var i = 0; i < joinContentCount; i++){
+        if(user.contentList[i].authenticationDate === today){
+          authenContentIndex = i;
+          break;
+        }
+      }
+      console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
+      //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
+
+      if(user.contentList[authenContentIndex].isAuthenticated != 1) {
+        console.log('2: if moon');
+
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
+        sendPushMessage(user, authenContentIndex, sendTime1);
+        sendPushMessage(user, authenContentIndex, sendTime2);
+        sendPushMessage(user, authenContentIndex, sendTime3);
       }
     }
-    console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
-    //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
-
-    if(user.contentList[authenContentIndex].isAuthenticated != 1) {
-      console.log('2: if moon');
-
-      var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
-      var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
-      var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-      sendPushMessage(user, authenContentIndex, sendTime1);
-      sendPushMessage(user, authenContentIndex, sendTime2);
-      sendPushMessage(user, authenContentIndex, sendTime3);
-    }
-    //console.log(user);
   });
 });
 
