@@ -111,11 +111,11 @@ router.post('/getUserInfo', function (req,res) {
   })
 })
 
-// 옮길것
+// 옮길 것, user도 추가해야 함.
 router.get('/getSearchData', function (req,res) {
 
     Content.find(function (err, info) {
-      console.log("seachdata" + info);
+      console.log("searchdata" + info);
 
       var searchData = {
         contents: [],

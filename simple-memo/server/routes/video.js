@@ -3,7 +3,6 @@ const router = express.Router();
 
 var User = require('../models/user');
 
-var http = require("http");
 var fs = require("fs");
 // make sure the db instance is open before passing into `Grid`
 
