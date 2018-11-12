@@ -23,7 +23,7 @@ const userSchema = new Schema({
     type: String,
   },
   //video path들
-  videoPath: [String],
+  //videoPath: [String],
   //사용자 프로필 이미지?
   imagePath: {
     type: String,
@@ -34,6 +34,7 @@ const userSchema = new Schema({
   contentList: [{
     contentId: Number,
     contentName: String,
+    videoPath: [String],
     joinState: Number, //0: 컨텐츠 참가x 1: 컨텐츠 진행중 2: 컨텐츠 is done
     calendar: Array,
     authenticationDate: String, //server change code need!!
