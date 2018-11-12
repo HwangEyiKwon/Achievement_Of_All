@@ -80,6 +80,7 @@ router.post('/signup', function (req, res, next) {
   })(req,res,next);
 });
 
+//jwt token 사용
 router.post('/userInfoEdit', function(req,res){
 
   User.findOne({email: userEmail}, function(err, user){
@@ -137,12 +138,15 @@ router.get('/getAppInfo', function (req,res) {
   }
 )
 
+//jwt토큰으로 사용자 파악,(decode encode)
 router.get('/:contentID/contentJoin',  function (req,res) {
   User.findOne({email: req.body.email}, function(err, user){
     //이건 어떻게 해야 할까??
   });
 })
 
+//calendar : json 배열로 {date, 인증여부} 가지고 있게끔
+//컨텐츠 아이디or네임으로 유저의 해당되는 컨텐츠 리스트를 알아야 함(새로운 컨텐츠 리스트를 추가해야 됨, 푸시만 하면)
 router.post('/:contentID/contentJoinComplete',  function (req,res) {
   User.findOne({email: req.body.email}, function(err, user){
     //이렇게 하는 게 맞는지 토론

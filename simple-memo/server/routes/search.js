@@ -22,7 +22,7 @@ var Content = require('../models/content');
 
 
 
-
+//jwt 토큰
 router.get('/getContentList', function(err, res){
   var userEmail = req.body.email;
   User.findOne({email: userEmail}, function(err, user){
@@ -32,6 +32,8 @@ router.get('/getContentList', function(err, res){
   });
 });
 
+/*
+//컨텐츠의 id를 unique하게 뽑아냄
 router.post('/getAllContentList', function (err, res, ) {
   Content.collection.distinct("id", function(err, results){
     if(err)  console.log(err);
@@ -53,22 +55,30 @@ router.post('/getAllUserList', function (req, res) {
 
   });
 })
+*/
 
+//content id(or name)로 content list중에 해당 애를 뽑아서 content정보를 줘야함
+//jwt토큰 사용 -> post로 변경
+//만약 user의 정보가 필요 없이, content id로만 구분이 가능하면 user에서 find를 할 필요가 없음!!!!!
 router.get('./enterContent/:contentID', function(req, res){
+  var contentId = req.body.contentId;
   User.findOne({email : req.body.email, "contentList.contentId" : req.body.contentId}, function (err, user) {
-    
+    //content db를 접근, id+name(id로만 구분하면 id로)로 해당 컨텐츠 정보를 찾기.
+    //그 후 전송
+    Content.findOne({id: "contentList.contentId"})
     //contentList 몇번째를 가져올지 결정해야 함
-    console.log("content : " +user.contentList);
-    res.send(user.contentList);
+    //res.send(contentInfo);
 
   });
 })
 
+//jwt 토큰 이용, user의 email을 비교해서 contentlist 던저주거나. --> 없애는 방향
+//만약 client에서 토큰 접근이 불가능할 경우에는, email/nickname을 통해 판단한다.
 router.get('./enterUser/:userID', function(req, res){
-  User.findOne({email : req.body.email}, function(err, user){
+  var userEmail = req.body.email
+  User.findOne({email : userEmail}, function(err, user){
 
-    //return 값이 이게 맞나?
-    res.send(user);
+    res.send(user.contentList);
   })
 })
 
