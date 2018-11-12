@@ -64,8 +64,24 @@ require('./config/passport')(passport);
 //     isAuthenticated : 1,
 //   }]
 // });
+// var user2 = new user({
+//   name: "ParkSeungHyun2",
+//   email: "shp2@gmail.com",
+//   // password : user.generateHash("123"),
+//   phoneNumber : "01093969408",
+//   nickName : "4.5man",
+//   contentList:[]
+// });
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+// user2.password = user1.generateHash("123");
+// user2.save(function(err, savedDocument) {
 //   if (err)
 //     return console.error(err);
 //   console.log(savedDocument);
@@ -135,7 +151,7 @@ require('./config/passport')(passport);
 // user.remove(function (err, info) {
 //   console.log("DELETED");
 // });
-//
+
 // content.remove(function (err, info) {
 //   console.log("DELETED");
 // });
@@ -214,10 +230,6 @@ user.findOneAndUpdate(
 // });
 
 
-user.findOne({ email: "psh" }, function(err, user) {
-  var joinContentCount = user.contentList.length;
-  console.log(joinContentCount);
-});
 
 
 app.post('/sendToken', function(req, res) {

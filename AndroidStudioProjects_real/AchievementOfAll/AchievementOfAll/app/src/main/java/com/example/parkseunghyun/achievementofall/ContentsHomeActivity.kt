@@ -123,4 +123,5 @@ class ContentsHomeActivity : AppCompatActivity(), View.OnClickListener {
 //        }
 
     }
+
 }

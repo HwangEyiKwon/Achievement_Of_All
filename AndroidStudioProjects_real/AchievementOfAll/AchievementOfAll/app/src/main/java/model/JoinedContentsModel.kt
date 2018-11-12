@@ -5,6 +5,5 @@ package model
  */
 
 class JoinedContentsModel {
-    var profile: Int? = null
     var name: String? = null
 }
