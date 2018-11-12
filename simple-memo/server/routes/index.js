@@ -6,6 +6,7 @@ var User = require('../models/user');
 var Content = require('../models/content');
 var App = require('../models/app');
 var jwt = require('jwt-simple'); // jwt token 사용
+var mkdirp = require('mkdirp'); // directory 만드는것
 
 
 
@@ -75,7 +76,14 @@ router.post('/signup', function (req, res, next) {
     // console.log(user+"s");
     console.log("signUPPPPPPPP");
     if(err) console.log(err);
-    if(user) res.send({success: true});
+    if(user) {
+      res.send({success: true});
+      var pathName = req.body.email;
+      mkdirp('./server/user/'+pathName+'/video', function (err) {
+        if(err) console.log(err);
+        else console.log("create dir ./user/" +pathName );
+      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+    }
     else res.send({success: false});
   })(req,res,next);
 });

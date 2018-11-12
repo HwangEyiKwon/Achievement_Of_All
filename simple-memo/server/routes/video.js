@@ -13,19 +13,27 @@ var fs = require("fs");
 router.get('/video', function(req,res){
   console.log("video connected");
 
-  /* video path읽어서 pipe해주는 코드.. 어떤 비디오 가져올 지 생각해서 추가하기
+  // video path읽어서 pipe해주는 코드.. 어떤 비디오 가져올 지 생각해서 추가하기
   var userEmail = req.body.email;
   User.findOne({email: userEmail}, function(err, user){
+    var joinContentCount = user.contentList.length;
+
     console.log("video Path: " +user.videoPath);
 
-    var filename = user.contentList[0].videoPath[0];
-    var file = fs.createReadStream(filename, {flags: 'r'});
+    for(var i = 0; i < joinContentCount ;  i++) {
+      var numOfVideo = user.contentList[i].videoPath.length;
+      for(var j = 0; j < numOfVideo; j++) {
+        var filename = user.contentList[i].videoPath[j];
+        var file = fs.createReadStream(filename, {flags: 'r'});
+        file.pipe(res);
+      } //이게 맞는건지??
+    }
   });
-  */
-  var filename = './1.mp4'; //path : /video/userEmail/contentName/date.mp4
-  var file = fs.createReadStream(filename, {flags: 'r'});
 
-  file.pipe(res);
+  // var filename = './1.mp4'; //path : /video/userEmail/contentName/date.mp4
+  // var file = fs.createReadStream(filename, {flags: 'r'});
+
+  // file.pipe(res);
 });
 
 //jwt토큰 필요 -> email 받아옴
