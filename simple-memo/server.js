@@ -1,5 +1,6 @@
 ﻿var mongoose = require('mongoose');
 // mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 mongoose.connect('mongodb://localhost:27017');
 
@@ -12,6 +13,7 @@ const passportConfig = require('./config/passport');
 const bodyParser = require('body-parser');
 const test = require('./server/routes/test');
 const video = require('./server/routes/video');
+const image = require('./server/routes/image');
 const upload = require('./server/routes/upload');
 const index = require('./server/routes/index');
 const search = require('./server/routes/search')
@@ -41,9 +43,9 @@ var appInfo = require('./server/models/app');
 require('./config/passport')(passport);
 
 
-//--------------------------------
-// 유저 디비 초기화
-
+// //--------------------------------
+// // 유저 디비 초기화
+//
 // var user1 = new user({
 //   name: "ParkSeungHyun3",
 //   email: "shp3@gmail.com",
@@ -80,6 +82,7 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
+
 // user2.password = user1.generateHash("123");
 // user2.save(function(err, savedDocument) {
 //   if (err)
@@ -92,6 +95,12 @@ require('./config/passport')(passport);
 //
 //--------------------------------
 // 컨텐츠 디비 초기화
+
+// // --------------------------------
+// //
+// // --------------------------------
+// // 컨텐츠 디비 초기화
+
 // var content1 = new content({
 //   id: 0,
 //   name: "NoSmoking"
@@ -125,9 +134,9 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-//--------------------------------
-//--------------------------------
-// 앱정보 디비 초기화
+// // --------------------------------
+// // --------------------------------
+// //앱정보 디비 초기화
 // var appInfo_ = new appInfo({
 //   appInfo: "앱 정보입니다 \n 개발자는 캡스톤 디자인 냥냥펀치 \n 박승현 외 3명입니다. 현재 버전은 \n 1.0으로 앞으로 계속 업데이트될 \n 예정입니다",
 //   noticeInfo: "공지사항 입니다. \n 이 부분에는 앱에 관련된 공지사항 또는 최신 정보가 업로드 됩니다."
@@ -143,11 +152,11 @@ require('./config/passport')(passport);
 
 //--------------------------------
 //--------------------------------
-// 디비 모두 제거
+//디비 모두 제거
 // appInfo.remove(function (err, info) {
 //   console.log("DELETED");
 // });
-
+//
 // user.remove(function (err, info) {
 //   console.log("DELETED");
 // });
@@ -197,6 +206,8 @@ app.use('/test', test);
 app.use('/', index);
 // video router
 app.use('/', video);
+//image router
+app.use('/image', image);
 // upload router
 app.use('/upload', upload);
 // fcm router
@@ -231,6 +242,12 @@ user.findOneAndUpdate(
 
 
 
+// user.findOne({ email: "shp3@gmail.com" }, function(err, user) {
+//   if(user != null)  var joinContentCount = user.contentList.length;
+//   console.log(joinContentCount);
+// })
+
+
 
 app.post('/sendToken', function(req, res) {
   console.log(req.body.fcmToken);
@@ -258,32 +275,32 @@ app.post('/sendToken', function(req, res) {
   }
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
 
-  // user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
-  //   console.log(user);
-  //   console.log(user.contentList);
-  //   var joinContentCount = user.contentList.length;
-  //   var authenContentIndex;
-  //   for(var i = 0; i < joinContentCount; i++){
-  //     if(user.contentList[i].authenticationDate === today){
-  //       authenContentIndex = i;
-  //       break;
-  //     }
-  //   }
-  //   console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
-  //   //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
-  //
-  //   if(user.contentList[authenContentIndex].isAuthenticated != 1) {
-  //     console.log('2: if moon');
-  //
-  //     var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
-  //     var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
-  //     var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-  //     sendPushMessage(user, authenContentIndex, sendTime1);
-  //     sendPushMessage(user, authenContentIndex, sendTime2);
-  //     sendPushMessage(user, authenContentIndex, sendTime3);
-  //   }
-  //   //console.log(user);
-  // });
+  user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
+    console.log(user);
+    console.log(user.contentList);
+    var joinContentCount = user.contentList.length;
+    var authenContentIndex;
+    for(var i = 0; i < joinContentCount; i++){
+      if(user.contentList[i].authenticationDate === today){
+        authenContentIndex = i;
+        break;
+      }
+    }
+    console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
+    //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
+
+    if(user.contentList[authenContentIndex].isAuthenticated != 1) {
+      console.log('2: if moon');
+
+      var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
+      var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
+      var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
+      sendPushMessage(user, authenContentIndex, sendTime1);
+      sendPushMessage(user, authenContentIndex, sendTime2);
+      sendPushMessage(user, authenContentIndex, sendTime3);
+    }
+    //console.log(user);
+  });
 });
 
 //날짜가 바뀔 때마다 푸쉬알림 해당자에게 전송
