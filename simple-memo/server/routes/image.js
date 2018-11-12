@@ -11,3 +11,5 @@ router.get('/', function(req, res){
 
   file.pipe(res);
 })
+
+module.exports = router ;
