@@ -47,11 +47,12 @@ require('./config/passport')(passport);
 // // 유저 디비 초기화
 //
 // var user1 = new user({
-//   name: "ParkSeungHyun3",
-//   email: "shp3@gmail.com",
+//   name: "ParkSeungHyun1",
+//   email: "shp1@gmail.com",
 //   // password : user.generateHash("123"),
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
+//   imagePath: "./userImage.png",
 //   contentList:[{
 //     contentId : 0,
 //     contentName: "NoSmoking",
@@ -184,7 +185,7 @@ app.use('/', index);
 // video router
 app.use('/', video);
 //image router
-app.use('/image', image);
+app.use('/', image);
 // upload router
 app.use('/upload', upload);
 // fcm router
@@ -382,8 +383,7 @@ function sendPushMessage(user, sendTime) {
     };
   });
 }
-
-// Port 설정
+//Port 설정
 const port = process.env.PORT || '3000';
 app.set('port', port);
 

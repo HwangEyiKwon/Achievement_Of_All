@@ -57,9 +57,11 @@ module.exports = function(passport) {
         else {
           console.log('회원가입 성공');
           var newUser = new User();
-          newUser.name = req.body.name;
+          newUser.name = "name";
           newUser.email = email;
           newUser.password = newUser.generateHash(password);
+          newUser.phoneNumber = "01012345678";
+          newUser.contentList = [];
           //newUser.password = password;
 
           newUser.save(function(err) {
