@@ -24,9 +24,6 @@ class SearchAdapter(private val list: List<String>, private val context: Context
     }
 
     override fun getItem(i: Int): Any? {
-
-        println(list[i])
-        println("왜 두번 호출됨?????????????")
         return null
     }
 
@@ -37,7 +34,8 @@ class SearchAdapter(private val list: List<String>, private val context: Context
         context.startActivity<ContentsHomeActivity>(
                 "contentName" to  list[i]
         )
-        println("왜 두번 호출됨")
+
+        println("왜 두번 호출"+list[i])
         return 0
     }
 

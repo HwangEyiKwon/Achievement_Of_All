@@ -10,9 +10,11 @@ import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 
 
+
+
 object VolleyHttpService{
 
-    val address : String? = "http://192.168.0.22:3000" // 테스트용 주소
+    val address : String? = "http://192.168.8.97:3000" // 테스트용 주소
 
     fun jwtCheck(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
@@ -144,6 +146,4 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(appInfoRequest)
     }
-
-
 }

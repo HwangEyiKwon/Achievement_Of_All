@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import com.example.parkseunghyun.achievementofall.RecyclerViewClickListener
@@ -32,7 +33,7 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.profile.setImageResource(joinedContentsModels[position].profile!!)
+        Glide.with(this.context).load("http://192.168.3.211:3000/getUserImage").into(holder.profile)
         holder.name.text = joinedContentsModels[position].name
 
     }
@@ -61,13 +62,6 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
             context.startActivity<ContentsHomeActivity>(
                     "contentName" to  name.text
             )
-
-//            val intent = Intent(v.context, HomeActivity::class.java)
-//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//            v.context.startActivity(intent)
-
-            //itemListener.recyclerViewListClicked(v, this.getLayoutPosition());
-
         }
 
     }

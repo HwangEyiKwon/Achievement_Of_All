@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
 // mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -67,6 +67,14 @@ require('./config/passport')(passport);
 //     isAuthenticated : 1,
 //   }]
 // });
+// var user2 = new user({
+//   name: "ParkSeungHyun2",
+//   email: "shp2@gmail.com",
+//   // password : user.generateHash("123"),
+//   phoneNumber : "01093969408",
+//   nickName : "4.5man",
+//   contentList:[]
+// });
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
 //   if (err)
@@ -75,10 +83,25 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
+
+// user2.password = user1.generateHash("123");
+// user2.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+//--------------------------------
+//
+//--------------------------------
+// 컨텐츠 디비 초기화
+
 // // --------------------------------
 // //
 // // --------------------------------
 // // 컨텐츠 디비 초기화
+
 // var content1 = new content({
 //   id: 0,
 //   name: "NoSmoking"
@@ -138,7 +161,7 @@ require('./config/passport')(passport);
 // user.remove(function (err, info) {
 //   console.log("DELETED");
 // });
-//
+
 // content.remove(function (err, info) {
 //   console.log("DELETED");
 // });
@@ -219,10 +242,12 @@ user.findOneAndUpdate(
 // });
 
 
+
 // user.findOne({ email: "shp3@gmail.com" }, function(err, user) {
 //   if(user != null)  var joinContentCount = user.contentList.length;
 //   console.log(joinContentCount);
 // })
+
 
 
 app.post('/sendToken', function(req, res) {
@@ -253,29 +278,32 @@ app.post('/sendToken', function(req, res) {
 
   user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
     console.log(user);
-    console.log(user.contentList);
-    var joinContentCount = user.contentList.length;
-    var authenContentIndex;
-    for(var i = 0; i < joinContentCount; i++){
-      if(user.contentList[i].authenticationDate === today){
-        authenContentIndex = i;
-        break;
+    if(user== null){
+      console.log("User.contentList is null");
+    }else{
+      console.log(user.contentList);
+      var joinContentCount = user.contentList.length;
+      var authenContentIndex;
+      for(var i = 0; i < joinContentCount; i++){
+        if(user.contentList[i].authenticationDate === today){
+          authenContentIndex = i;
+          break;
+        }
+      }
+      console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
+      //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
+
+      if(user.contentList[authenContentIndex].isAuthenticated != 1) {
+        console.log('2: if moon');
+
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
+        sendPushMessage(user, authenContentIndex, sendTime1);
+        sendPushMessage(user, authenContentIndex, sendTime2);
+        sendPushMessage(user, authenContentIndex, sendTime3);
       }
     }
-    console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
-    //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
-
-    if(user.contentList[authenContentIndex].isAuthenticated != 1) {
-      console.log('2: if moon');
-
-      var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
-      var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
-      var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-      sendPushMessage(user, authenContentIndex, sendTime1);
-      sendPushMessage(user, authenContentIndex, sendTime2);
-      sendPushMessage(user, authenContentIndex, sendTime3);
-    }
-    //console.log(user);
   });
 });
 

@@ -12,6 +12,11 @@
         android:text="컨텐츠 첫번째 페이지"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/simpleExoPlayerView"
+        android:layout_width="307dp"
+        android:layout_height="233dp" />
+
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
