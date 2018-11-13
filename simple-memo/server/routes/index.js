@@ -79,10 +79,21 @@ router.post('/signup', function (req, res, next) {
     if(user) {
       res.send({success: true});
       var pathName = req.body.email;
+      /*
       mkdirp('./server/user/'+pathName+'/video', function (err) {
         if(err) console.log(err);
         else console.log("create dir ./user/" +pathName );
-      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+      }); //server폴더 아래 /user/useremail/video 폴더가 생김.*/
+
+      //아래 코드는 두 폴더를 만들어버리는 코드.
+      mkdirp('./server/user/'+pathName+'/video/diet', function (err) {
+        if(err) console.log(err);
+        else console.log("create dir ./user/" +pathName );
+      });
+      mkdirp('./server/user/'+pathName+'/video/noSmoking', function (err) {
+        if(err) console.log(err);
+        else console.log("create dir ./user/" +pathName );
+      });
     }
     else res.send({success: false});
   })(req,res,next);

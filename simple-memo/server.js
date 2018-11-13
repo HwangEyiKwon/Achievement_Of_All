@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
-// mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
- mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-// mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -93,10 +93,6 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-//--------------------------------
-//
-//--------------------------------
-// 컨텐츠 디비 초기화
 
 // // --------------------------------
 // //
