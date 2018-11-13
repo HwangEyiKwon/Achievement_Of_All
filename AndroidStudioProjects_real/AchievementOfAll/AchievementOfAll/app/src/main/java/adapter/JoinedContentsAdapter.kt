@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
+import com.example.parkseunghyun.achievementofall.GlobalVariables
 import com.example.parkseunghyun.achievementofall.R
 import com.example.parkseunghyun.achievementofall.RecyclerViewClickListener
 import de.hdodenhof.circleimageview.CircleImageView
@@ -20,7 +21,10 @@ import org.jetbrains.anko.startActivity
 
 class JoinedContentsAdapter(private val context: Context, private val joinedContentsModels: List<model.JoinedContentsModel>, itemListener: RecyclerViewClickListener) : RecyclerView.Adapter<JoinedContentsAdapter.ViewHolder>() {
 
-//
+    // 서버 ip 주소
+    private var globalVariables: GlobalVariables ?= GlobalVariables()
+    private var ipAddress: String = globalVariables!!.ipAddress
+
 //    init {
 //        itemListener = itemListener
 //    }
@@ -33,7 +37,10 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        Glide.with(this.context).load("http://192.168.3.211:3000/getUserImage").into(holder.profile)
+        // 사용자 참여 컨텐츠 이미지 받아오기
+        println("이미지 이름"+joinedContentsModels[position].name)
+        val contentImage = joinedContentsModels[position].name
+        Glide.with(this.context).load("${ipAddress}/getContentImage/${contentImage}").into(holder.profile)
         holder.name.text = joinedContentsModels[position].name
 
     }
@@ -56,10 +63,10 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
         override fun onClick(v: View) {
             val pos = adapterPosition
 
-            // 컨텐츠 홈으로 이동
+            // 해당 컨텐츠 홈으로 이동
             Toast.makeText(v.context, "You clicked "+ name.text, Toast.LENGTH_SHORT).show()
-
             context.startActivity<ContentsHomeActivity>(
+                    // 컨텐츠 이름 넘기기
                     "contentName" to  name.text
             )
         }

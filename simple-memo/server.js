@@ -45,15 +45,15 @@ require('./config/passport')(passport);
 
 
 // //--------------------------------
-// // 유저 디비 초기화
+// 유저 디비 초기화
 //
 // var user1 = new user({
-//   name: "ParkSeungHyun1",
-//   email: "shp1@gmail.com",
+//   name: "ParkSeungHyun14",
+//   email: "shp14@gmail.com",
 //   // password : user.generateHash("123"),
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
-//   imagePath: "./userImage.png",
+//   imagePath: "ParkSeungHyun14",
 //   contentList:[{
 //     contentId : 0,
 //     contentName: "NoSmoking",

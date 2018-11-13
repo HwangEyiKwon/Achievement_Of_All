@@ -6,11 +6,10 @@ var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
 
 // 컨텐트 이미지파일 불러오기
-router.get('/getContentImage', function(req, res){
-
-  var contentImage = req.body.contentName;
-
-  var filename = './server/contentImage/'+contentImage+'.jpg'; // C:\Users\hwang\Desktop\Capstone_Team4\simple-memo/server/contentImage/content.jpg
+router.get('/getContentImage/:contentName', function(req, res){
+  console.log("요청된 컨텐츠 사진 이름"+ req.params.contentName);
+  var contentName = req.params.contentName;
+  var filename = './server/contentImage/'+contentName+'.jpg'; // C:\Users\hwang\Desktop\Capstone_Team4\simple-memo/server/contentImage/content.jpg
   var file = fs.createReadStream(filename, {flags: 'r'});
 
   file.pipe(res);
@@ -28,7 +27,7 @@ router.get('/getUserImage/:jwtToken', function(req, res){
       var filename = './server/user/profile.png'; //기본 이미지
     }
     else{
-      var filename = user.imagePath;
+      var filename = "./server/user/"+email+"/"+user.imagePath+".jpg";
     }
     var file = fs.createReadStream(filename, {flags: 'r'});
     file.pipe(res);
