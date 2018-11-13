@@ -2,30 +2,35 @@ const express = require('express');
 const router = express.Router();
 
 var User = require('../models/user');
-
+var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
 // make sure the db instance is open before passing into `Grid`
 
-// path설정 방식.. server -> /video/userEmail/contentName/date.mp4
-// post로 변경
+
 // jwt token이용 -> email 추출 -> ...진행
-//만약, video path를 직접 받는다면, 상위의 단계 필요없이 바로!!! path만 filename으로 넣어주고 pipe 하면 됨
-router.get('/video', function(req,res){
+//to.승현) get->post로 변경하여 이메일 인증을 위해 req.body에서 token가져올 수 있게끔 함
+router.post('/video', function(req,res){
   console.log("video connected");
+  console.log("video jwt토큰 "+ req.body.token);
+  var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
+  console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
 
-  /* video path읽어서 pipe해주는 코드.. 어떤 비디오 가져올 지 생각해서 추가하기
-  var userEmail = req.body.email;
   User.findOne({email: userEmail}, function(err, user){
+    var joinContentCount = user.contentList.length;
+
     console.log("video Path: " +user.videoPath);
-
-    var filename = user.contentList[0].videoPath[0];
-    var file = fs.createReadStream(filename, {flags: 'r'});
+    for(var i = 0; i < joinContentCount ;  i++) {
+      var numOfVideo = user.contentList[i].videoPath.length;
+      if(numOfVideo != null){
+        for(var j = 0; j < numOfVideo; j++) {
+          var filename = user.contentList[i].videoPath[j];
+          var file = fs.createReadStream(filename, {flags: 'r'});
+          file.pipe(res);
+        }
+      }
+    }
   });
-  */
-  var filename = './1.mp4'; //path : /video/userEmail/contentName/date.mp4
-  var file = fs.createReadStream(filename, {flags: 'r'});
-
-  file.pipe(res);
 });
 
 //jwt토큰 필요 -> email 받아옴

@@ -1,7 +1,7 @@
 ﻿var mongoose = require('mongoose');
-// mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//  mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
@@ -18,6 +18,7 @@ const upload = require('./server/routes/upload');
 const index = require('./server/routes/index');
 const search = require('./server/routes/search')
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
+var mkdirp = require('mkdirp'); // directory 만드는것
 
 var schedule = require('node-schedule');
 var FCM = require('fcm-node');
@@ -92,10 +93,6 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-//--------------------------------
-//
-//--------------------------------
-// 컨텐츠 디비 초기화
 
 // // --------------------------------
 // //
@@ -233,6 +230,7 @@ user.findOneAndUpdate(
   console.log(doc);
 });
 */
+
 //어레이 추가하는 db 코드, 작동 됨.
 // user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isAuthenticated: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
 //   if(err){
@@ -247,6 +245,16 @@ user.findOneAndUpdate(
 //   if(user != null)  var joinContentCount = user.contentList.length;
 //   console.log(joinContentCount);
 // })
+
+// mkdirp('./server/user/sph2@gmail.com/video/NoSmoking', function (err) {
+//   if(err) console.log(err);
+//   else console.log("create dir");
+// }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+
+// mkdirp('./server/contentImage/', function (err) {
+//   if(err) console.log(err);
+//   else console.log("create dir");
+// }); //server폴더 아래 /user/useremail/video 폴더가 생김.
 
 
 
