@@ -19,9 +19,9 @@ router.get('/getUserImage', function(req, res){
 })
 
 router.get('/getUserImage/:jwtToken', function(req, res){
-  console.log("logout jwt토큰 "+ req.params.token);
+  console.log("Image jwt토큰 "+ req.params.token);
   var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
-  console.log("logout jwt토큰 디코딩 "+ decoded.userCheck);
+  console.log("Image jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
 
 

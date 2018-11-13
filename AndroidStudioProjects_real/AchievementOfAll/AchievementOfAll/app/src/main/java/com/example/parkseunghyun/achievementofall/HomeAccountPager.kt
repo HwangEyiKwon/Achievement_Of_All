@@ -88,17 +88,18 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
             email!!.setText(success.getString("email"))
             name!!.setText(success.getString("name"))
             phoneNumber!!.setText(success.getString("phoneNumber"))
-            Glide.with(this).load("http://192.168.3.211:3000/getUserImage/"+jwtToken).into(profile)
+
+            Glide.with(this).load("http://192.168.8.97:3000/getUserImage/"+jwtToken).into(profile)
 
 
             var contentList: JSONObject ?= null
 
-//            // 내 컨텐츠 정보 갱신
-//            for(i in 0.. (success.getJSONArray("contentList").length()-1)){
-//                contentList = success.getJSONArray("contentList")[i] as JSONObject
-//                var contentName =  contentList.getString("contentName")
-//                joinedContents?.add(contentName.toString())
-//            }
+            // 내 컨텐츠 정보 갱신
+            for(i in 0.. (success.getJSONArray("contentList").length()-1)){
+                contentList = success.getJSONArray("contentList")[i] as JSONObject
+                var contentName =  contentList.getString("contentName")
+                joinedContents?.add(contentName.toString())
+            }
 
             // Code for Joined Contents View
             generateJoinedContentsView()
