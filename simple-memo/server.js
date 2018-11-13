@@ -48,19 +48,21 @@ require('./config/passport')(passport);
 // 유저 디비 초기화
 //
 // var user1 = new user({
-//   name: "ParkSeungHyun14",
-//   email: "shp14@gmail.com",
+//   name: "ParkSeungHyun15",
+//   email: "shp15@gmail.com",
 //   // password : user.generateHash("123"),
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
-//   imagePath: "ParkSeungHyun14",
+//   imagePath: "ParkSeungHyun15",
 //   contentList:[{
 //     contentId : 0,
+//     videoPath: ["ns1","ns2"],
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-08",
 //     isAuthenticated : 1,
 //   },{
+//     videoPath: ["d1","d2"],
 //     contentId : 1,
 //     contentName: "Diet",
 //     joinState : 1,

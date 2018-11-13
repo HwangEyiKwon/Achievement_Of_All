@@ -86,11 +86,11 @@ router.post('/signup', function (req, res, next) {
       }); //server폴더 아래 /user/useremail/video 폴더가 생김.*/
 
       //아래 코드는 두 폴더를 만들어버리는 코드.
-      mkdirp('./server/user/'+pathName+'/video/diet', function (err) {
+      mkdirp('./server/user/'+pathName+'/video/Diet', function (err) {
         if(err) console.log(err);
         else console.log("create dir ./user/" +pathName );
       });
-      mkdirp('./server/user/'+pathName+'/video/noSmoking', function (err) {
+      mkdirp('./server/user/'+pathName+'/video/NoSmoking', function (err) {
         if(err) console.log(err);
         else console.log("create dir ./user/" +pathName );
       });

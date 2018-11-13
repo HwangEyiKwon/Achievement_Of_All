@@ -34,6 +34,8 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     // 사용자의 비디오 목록
     private val ACCOUNTPIC = arrayOf(R.drawable.selena12, R.drawable.nature1, R.drawable.nature2, R.drawable.nature3, R.drawable.selena1, R.drawable.selena2, R.drawable.selena3, R.drawable.nature4, R.drawable.nature5, R.drawable.nature6, R.drawable.selena4, R.drawable.selena5, R.drawable.selena6, R.drawable.selena7, R.drawable.selena8, R.drawable.selena9, R.drawable.selena10, R.drawable.selena11)
+    private var videoList = mutableListOf<String>()
+    private var videoContentList = mutableListOf<String>()
 
     private var joinedContentsView: RecyclerView? = null
     private var thumbnailView: RecyclerView? = null
@@ -82,11 +84,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         jwtToken = activity.jwtToken.toString()
         setUserInfo(jwtToken!!)
 
-        // 비디오 썸네일 코드
-//        val requestOptions = RequestOptions()
-//        requestOptions.isMemoryCacheable
-//        Glide.with(context).setDefaultRequestOptions(requestOptions).load("http://192.168.3.211:3000/video/").into(profile)
-
         return view_
     }
 
@@ -106,13 +103,19 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
             // 사용자 프로필 사진 갱신
             Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(profile)
 
-            var contentList: JSONObject ?= null
 
             // 사용자 참여 컨텐츠 정보 갱신
+            var contentList: JSONObject
             for(i in 0.. (success.getJSONArray("contentList").length()-1)){
                 contentList = success.getJSONArray("contentList")[i] as JSONObject
                 var contentName =  contentList.getString("contentName")
                 joinedContents?.add(contentName.toString())
+
+                for(i in 0..(contentList.getJSONArray("videoPath").length()-1)){
+                    videoList?.add(contentList.getJSONArray("videoPath").getString(i))
+                    videoContentList?.add(contentName)
+                }
+
             }
 
             // 사용자 참여 컨텐츠 View 생성
@@ -152,10 +155,12 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         thumbnailModelList = ArrayList()
 
-        for (i in ACCOUNTPIC.indices) {
+        for (i in videoList.indices) {
             val thumbnailModel = ThumbnailModel()
 
-            thumbnailModel.accountpic = ACCOUNTPIC[i]
+            thumbnailModel.userToken = jwtToken
+            thumbnailModel.videoPath = videoList?.get(i)
+            thumbnailModel.contentName = videoContentList?.get(i)
 
             thumbnailModelList!!.add(thumbnailModel)
         }

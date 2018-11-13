@@ -5,5 +5,7 @@ package model
  */
 
 class ThumbnailModel {
-    var accountpic: Int? = null
+    var videoPath: String? = null
+    var userToken: String? = null
+    var contentName: String? = null
 }

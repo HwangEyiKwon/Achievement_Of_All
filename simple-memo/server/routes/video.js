@@ -32,6 +32,26 @@ router.post('/video', function(req,res){
     }
   });
 });
+router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
+
+  console.log("Image jwt토큰 "+ req.params.token);
+  var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
+  console.log("Image jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentName = req.params.contentName;
+  var videoPath = req.params.videoPath;
+
+  console.log("ddd"+userEmail+contentName+videoPath);
+
+  User.findOne({email: userEmail}, function(err, user){
+
+    // 내 비디오가 맞는지 검사해야할 듯
+    var filename = "./server/user/"+userEmail+"/video/"+contentName+"/"+videoPath+".mp4"
+    var file = fs.createReadStream(filename, {flags: 'r'});
+    file.pipe(res);
+
+  });
+});
 
 //jwt토큰 필요 -> email 받아옴
 //email로 해당 유저의 user.contentList[0].videoPath를 가져옴
