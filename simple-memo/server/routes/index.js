@@ -159,8 +159,16 @@ router.get('/getAppInfo', function (req,res) {
 
 //jwt토큰으로 사용자 파악,(decode encode)
 router.get('/:contentID/contentJoin',  function (req,res) {
-  User.findOne({email: req.body.email}, function(err, user){
+  //User.findOne({email: req.body.email}, function(err, user){
+  Content.findOne({id : req.body.id, name : req.body.name}, function(err, content){
+
+
     //이건 어떻게 해야 할까??
+    //요청이 오면 해당하는 컨텐츠에 대해 기간을 보내준다???
+    // 다시 얘기 .
+    res.send(content.startDate, content.endDate);
+
+
   });
 })
 
@@ -169,6 +177,8 @@ router.get('/:contentID/contentJoin',  function (req,res) {
 router.post('/:contentID/contentJoinComplete',  function (req,res) {
   User.findOne({email: req.body.email}, function(err, user){
     //이렇게 하는 게 맞는지 토론
+    //날라온것들 다 저장. 그리고 해당하는 유저를 찾아 contentList에 값 저장.
+
     user.contentList[0].calendar[0] = req.body.periodInfo;
   });
 })
