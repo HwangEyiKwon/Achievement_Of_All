@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -19,6 +19,8 @@ const index = require('./server/routes/index');
 const search = require('./server/routes/search')
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
+var fs = require("fs");
+
 
 var schedule = require('node-schedule');
 var FCM = require('fcm-node');
@@ -258,6 +260,11 @@ user.findOneAndUpdate(
 //   else console.log("create dir");
 // }); //server폴더 아래 /user/useremail/video 폴더가 생김.
 
+
+// var filePath = fs.createReadStream('./1.mp4');
+// var downFile = fs.createWriteStream('./server/user/sph2@gmail.com/video/NoSmoking/2.mp4');
+// filePath.pipe(downFile);
+//1.mp4 파일을 읽어서 './server/user/sph2@gmail.com/video/NoSmoking/' 위치에서 2.mp4 파일을 만드는것.
 
 
 app.post('/sendToken', function(req, res) {

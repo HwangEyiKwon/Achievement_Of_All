@@ -66,9 +66,28 @@ router.get('/getVideoList', function(req, res){
 
 //contents정보 받아야 하고, 현재 date를 넣어줘야 하고, path를 지정해서 해당 user의 video경로에 path를 저장한다.
 router.post('/:contentID/authorizeVideo', function(req, res){
-  var userEmail = req.body.email;
-  User.findOne({email: userEmail}, function(err, user){
+
+  console.log("get authorizeVideo ");
+  console.log("authorize Video User jwt토큰 "+ req.body.token);
+  var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
+  console.log("authorize Video User jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentId = req.body.contentId;
+
+  //createReadStream("./~~~~")이걸로 데이터 받고  createWriteStream("생성할 파일 이름 ")으로 생성 후
+  //fs.createReadStream.pipe(fs.createWriteStream);
+  User.findOne({email: userEmail, "contentList.contentId" : contentId}, function(err, user){
     //video 몇번째인지 체크해서 index수정해야 함..
+    //이게 어떤 컨텐츠인지 확인은 어떻게???
+
+    var filePath1 = user.videoPath;
+    console.log("req video path ");
+    //fs.readFile(req.files.video.originalFilename
+    var filePath = fs.createReadStream(filePath1);
+    var downFile = fs.createWriteStream('./server/user/sph2@gmail.com/video/NoSmoking/2.mp4');
+
+    filePath.pipe(downFile);
+
     user.contentList[0].videoPath[0] = req.body.videoPath;
   });
 });
