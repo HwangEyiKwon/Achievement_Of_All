@@ -6,7 +6,7 @@ var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
 // make sure the db instance is open before passing into `Grid`
 
-
+/*
 // jwt token이용 -> email 추출 -> ...진행
 //to.승현) get->post로 변경하여 이메일 인증을 위해 req.body에서 token가져올 수 있게끔 함
 router.post('/video', function(req,res){
@@ -32,11 +32,14 @@ router.post('/video', function(req,res){
     }
   });
 });
+*/
+
+//android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.
 router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
 
-  console.log("Image jwt토큰 "+ req.params.token);
+  console.log("video jwt토큰 "+ req.params.token);
   var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
-  console.log("Image jwt토큰 디코딩 "+ decoded.userCheck);
+  console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
   var videoPath = req.params.videoPath;
@@ -53,6 +56,7 @@ router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
   });
 });
 
+/*
 //jwt토큰 필요 -> email 받아옴
 //email로 해당 유저의 user.contentList[0].videoPath를 가져옴
 router.get('/getVideoList', function(req, res){
@@ -63,21 +67,22 @@ router.get('/getVideoList', function(req, res){
     res.send(user.contentList[0].videoPath);
   });
 });
+*/
 
+//video 받아서 저장..
 //contents정보 받아야 하고, 현재 date를 넣어줘야 하고, path를 지정해서 해당 user의 video경로에 path를 저장한다.
-router.post('/:contentID/authorizeVideo', function(req, res){
+router.get('/sendVideo/:jwtToken/:contentName', function(req, res){
 
   console.log("get authorizeVideo ");
-  console.log("authorize Video User jwt토큰 "+ req.body.token);
-  var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
+  console.log("authorize Video User jwt토큰 "+ req.params.token);
+  var decoded = jwt.decode(req.params.token,req.app.get("jwtTokenSecret"));
   console.log("authorize Video User jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
-  var contentId = req.body.contentId;
+  var contentName = req.params.contentName;
 
   //createReadStream("./~~~~")이걸로 데이터 받고  createWriteStream("생성할 파일 이름 ")으로 생성 후
   //fs.createReadStream.pipe(fs.createWriteStream);
-  User.findOne({email: userEmail, "contentList.contentId" : contentId}, function(err, user){
-    //video 몇번째인지 체크해서 index수정해야 함..
+  User.findOne({email: userEmail, "contentList.contentName" : contentName}, function(err, user){
     //이게 어떤 컨텐츠인지 확인은 어떻게???
 
     var filePath1 = user.videoPath;
@@ -85,11 +90,23 @@ router.post('/:contentID/authorizeVideo', function(req, res){
     //fs.readFile(req.files.video.originalFilename
     // filename = req.body.filename;
     var filePath = fs.createReadStream(filePath1);
-    var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentId+'/'+filename+); // 이런식으로 파일을 그날의 날짜로 저장.
+    var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentName+'/'+filename+".mp4"); // 이런식으로 파일을 그날의 날짜로 저장.
 
     filePath.pipe(downFile);
+  });
+});
 
-    user.contentList[0].videoPath[0] = req.body.videoPath;
+
+router.post('/sendVideo', function(req, res) {
+  fs.readFile(req.files.video.path, function (err, data){
+    var newPath = "./server/user/" + 	req.files.video.originalFilename;
+    fs.writeFile(newPath, data, function (err) {
+      if(err){
+        res.json({'response':"Failure"});
+      }else {
+        res.json({'response':"Success"});
+      }
+    });
   });
 });
 

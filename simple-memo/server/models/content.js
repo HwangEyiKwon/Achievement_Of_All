@@ -8,8 +8,8 @@ const contentSchema = new Schema({
   startDate: Date,
   endDate: Date,
   achievementRate: Number,
-  userList: Array,
-  isDone: Number,
+  userList: [String],
+  isDone: Number, // 0: 진행중 1: 종료 2: 시작 전
 });
 
 module.exports = mongoose.model('Content', contentSchema);
