@@ -85,7 +85,7 @@ router.post('/:contentID/authorizeVideo', function(req, res){
     //fs.readFile(req.files.video.originalFilename
     // filename = req.body.filename;
     var filePath = fs.createReadStream(filePath1);
-    var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentId+'/'+filename+); // 이런식으로 파일을 그날의 날짜로 저장.
+    var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentId+'/'+filename+'.mp4'); // 이런식으로 파일을 그날의 날짜로 저장.
 
     filePath.pipe(downFile);
 

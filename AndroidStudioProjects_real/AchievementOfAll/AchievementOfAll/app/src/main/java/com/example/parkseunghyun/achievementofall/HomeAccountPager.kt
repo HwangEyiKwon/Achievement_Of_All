@@ -33,9 +33,9 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
     private var joinedContents = mutableListOf<String>()
 
     // 사용자의 비디오 목록
-    private val ACCOUNTPIC = arrayOf(R.drawable.selena12, R.drawable.nature1, R.drawable.nature2, R.drawable.nature3, R.drawable.selena1, R.drawable.selena2, R.drawable.selena3, R.drawable.nature4, R.drawable.nature5, R.drawable.nature6, R.drawable.selena4, R.drawable.selena5, R.drawable.selena6, R.drawable.selena7, R.drawable.selena8, R.drawable.selena9, R.drawable.selena10, R.drawable.selena11)
     private var videoList = mutableListOf<String>()
     private var videoContentList = mutableListOf<String>()
+
 
     private var joinedContentsView: RecyclerView? = null
     private var thumbnailView: RecyclerView? = null

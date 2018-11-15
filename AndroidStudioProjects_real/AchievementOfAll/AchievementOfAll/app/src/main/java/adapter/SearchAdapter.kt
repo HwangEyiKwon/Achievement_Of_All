@@ -11,6 +11,7 @@ import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
 
+
 class SearchAdapter(private val list: List<String>, private val context: Context) : BaseAdapter() {
     private val inflate: LayoutInflater
     private var viewHolder: ViewHolder? = null
@@ -28,14 +29,6 @@ class SearchAdapter(private val list: List<String>, private val context: Context
     }
 
     override fun getItemId(i: Int): Long {
-        // 컨텐츠 홈으로 이동
-        Toast.makeText(context, " 서치 어댑터"+ list[i], Toast.LENGTH_LONG).show()
-
-        context.startActivity<ContentsHomeActivity>(
-                "contentName" to  list[i]
-        )
-
-        println("왜 두번 호출"+list[i])
         return 0
     }
 
@@ -55,11 +48,24 @@ class SearchAdapter(private val list: List<String>, private val context: Context
         // 리스트에 있는 데이터를 리스트뷰 셀에 뿌린다.
         viewHolder!!.label!!.text = list[position]
 
+        viewHolder!!.label!!.setOnClickListener {
+
+            // 컨텐츠 홈으로 이동
+            Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
+            context.startActivity<ContentsHomeActivity>(
+                    "contentName" to  list[position]
+            )
+        }
+
         return convertView
     }
 
+
     internal inner class ViewHolder {
         var label: TextView? = null
+
     }
+
+
 
 }

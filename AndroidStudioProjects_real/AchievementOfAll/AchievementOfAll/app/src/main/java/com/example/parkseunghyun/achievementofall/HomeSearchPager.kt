@@ -104,6 +104,7 @@ class HomeSearchPager : Fragment() {
             // 리스트뷰에 아답터를 연결한다.
             listView?.adapter = adapter
 
+
             // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
             editSearch!!.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}

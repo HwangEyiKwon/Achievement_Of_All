@@ -47,15 +47,6 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_layout)
 
-//        println("PHOTOOOO???1")
-//        VolleyHttpService.getUserImage(this){ success ->
-//            println("PHOTOOOO???dddd")
-//            println(success)
-//        }
-//    println("PHOTOOOO???2")
-
-
-
         // jwt-token 받기
         println("홈페이지에서 토큰 받기(preference에서): "+ loadToken())
         jwtToken = loadToken()
@@ -71,6 +62,17 @@ class HomeActivity : AppCompatActivity() {
         // Code for TabLayout
         generateTabLayout()
 
+    }
+
+
+    private fun generateTabLayout() {
+
+        homeTab = findViewById(R.id.id_home_tab)
+        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_person_black))
+        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
+        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
+        homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
+        println(homeTab)
 
         var viewPager = findViewById<ViewPager>(R.id.home_pager_container)
         var homePagerAdapter = HomePagerAdapter(supportFragmentManager)
@@ -81,16 +83,23 @@ class HomeActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager?.currentItem = tab.position
 
-//                when(viewPager.currentItem) {
-//
-//                    0-> {
-//                        homeTab!!.findViewById<>()
-//                    }
-//                    1-> {
-//                    }
-//                    2-> {
-//                    }
-//                }
+                when(tab.position) {
+                    0-> {
+                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
+                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+                    }
+                    1-> {
+                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
+                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search_black)
+                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+                    }
+                    2-> {
+                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
+                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info_black)
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -101,18 +110,6 @@ class HomeActivity : AppCompatActivity() {
 
             }
         })
-
-    }
-
-
-    private fun generateTabLayout() {
-
-        homeTab = findViewById(R.id.id_home_tab)
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_home_outline))
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_search))
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
-        homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
-        println(homeTab)
     }
 
     private fun logout(token: String){
