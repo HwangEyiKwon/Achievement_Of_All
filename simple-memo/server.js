@@ -1,8 +1,14 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
+
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 mongoose.connect('mongodb://localhost:27017');
+
+ // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://localhost:27017');
+
 
 const express = require('express');
 const path = require('path');
@@ -16,7 +22,9 @@ const video = require('./server/routes/video');
 const image = require('./server/routes/image');
 const upload = require('./server/routes/upload');
 const index = require('./server/routes/index');
-const search = require('./server/routes/search')
+const search = require('./server/routes/search');
+const calendar = require('./server/routes/calendar');
+const applyContent = require('./server/routes/applyContent');
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
 var fs = require("fs");
@@ -105,15 +113,24 @@ require('./config/passport')(passport);
 
 // var content1 = new content({
 //   id: 0,
-//   name: "NoSmoking"
+//   name: "NoSmoking",
+//   startDate: "11/01/2018",
+//   endDate: "11/30/2018",
+//   isDone: 0
 // })
 // var content2 = new content({
 //   id: 1,
-//   name: "Diet"
+//   name: "Diet",
+//   startDate: "11/01/2018",
+//   endDate: "11/20/2018",
+//   isDone: 0
 // })
 // var content3 = new content({
 //   id: 1,
-//   name: "Study"
+//   name: "Study",
+//   startDate: "11/01/2018",
+//   endDate: "11/17/2018",
+//   isDone: 0
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
@@ -216,6 +233,10 @@ app.use('/upload', upload);
 //app.use('/fcm', fcm);
 //search router
 app.use('/', search);
+//calendar router
+app.use('/', calendar);
+//applyContent router
+app.use('/', applyContent);
 
 app.set('jwtTokenSecret', "afafaffffff");
 
@@ -324,7 +345,7 @@ app.post('/sendToken', function(req, res) {
   });
 });
 
-//날짜가 바뀔 때마다 푸쉬알림 해당자에게 전송
+//날짜가 바뀔 때마다 푸쉬알림 해당자에게 전송 및 매일 수행될 기능들
 var scheduler = schedule.scheduleJob('00 * * *', function(){
   var todayDate = new Date();
   var todayYear = todayDate.getFullYear();
@@ -383,6 +404,22 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       }
     }
   });
+
+  //달성률 매일 갱신하는 코드
+  content.find({isDone: 0}, function(err, contentList){
+    for(var i = 0; i < Object.keys(contentList).length; i++){
+      var totalDate = (contentList[i].endDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
+      var remainedDate = (todayDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
+
+      var achievementRate = (remainedDate / totalDate) * 100;
+
+      contentList[i].achievementRate = achievementRate;
+      console.log("Achievement Rate =" + contentList[i].achievementRate);
+    }
+    contentList.save(function (err) {
+      if (err) console.log(err);
+    });
+  });
 });
 
 //푸쉬메시지 펑션
@@ -428,6 +465,7 @@ function sendPushMessage(user, sendTime) {
     };
   });
 }
+
 //Port 설정
 const port = process.env.PORT || '3000';
 app.set('port', port);

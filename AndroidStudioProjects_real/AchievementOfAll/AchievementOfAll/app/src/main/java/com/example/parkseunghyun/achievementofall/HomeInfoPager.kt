@@ -28,7 +28,6 @@ class HomeInfoPager : Fragment() {
         return view_
     }
     private fun setAppInfo() {
-
         VolleyHttpService.getAppInfo(homeInfoPagerContext!!){ success ->
 
             println(success)
