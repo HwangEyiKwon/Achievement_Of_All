@@ -4,6 +4,7 @@ const router = express.Router();
 var User = require('../models/user');
 var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
+var multiparty = require('multiparty');
 // make sure the db instance is open before passing into `Grid`
 
 /*
@@ -71,7 +72,7 @@ router.get('/getVideoList', function(req, res){
 
 //video 받아서 저장..
 //contents정보 받아야 하고, 현재 date를 넣어줘야 하고, path를 지정해서 해당 user의 video경로에 path를 저장한다.
-router.get('/sendVideo/:jwtToken/:contentName', function(req, res){
+router.get('/sendVideo/:jwtToken/:contentName', function(req, res, next){
 
   console.log("get authorizeVideo ");
   console.log("authorize Video User jwt토큰 "+ req.params.jwtToken);
@@ -85,18 +86,70 @@ router.get('/sendVideo/:jwtToken/:contentName', function(req, res){
   User.findOne({email: userEmail, "contentList.contentName" : contentName}, function(err, user){
     //이게 어떤 컨텐츠인지 확인은 어떻게???
 
-    var filePath1 = user.videoPath;
-    console.log("req video path ");
-    //fs.readFile(req.files.video.originalFilename
-    // filename = req.body.filename;
-    var filePath = fs.createReadStream(filePath1);
+    var form = new multiparty.Form();
+    // get field name & value
 
-    var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentId+'/'+filename+'.mp4'); // 이런식으로 파일을 그날의 날짜로 저장.
+    form.on('field',function(name,value){
+      console.log('normal field / name = '+name+' , value = '+value);
+    });
+    // file upload handling
+    form.on('part',function(part){
+      var filename;
+      var size;
+      if (part.filename) {
+        filename = part.filename;
+        filename = filename.split('_');
+        filename = filename[0];
+        var year = filename.substr(5,4);
+        var month = filename.substr(9,2);
+        var day = filename.substr(11,2);
+        filename = year+'-'+month+'-'+day+'.mp4'; // 파일 이름이 year-month-day.mp4 로 나옴.
+        //건희한테 다시 동영상 찍어달라고 해서 확인해봐야 할듯.
+        size = part.byteCount;
+      }else{
+        part.resume();
+      }
+      console.log("Write Streaming file :"+filename);
 
-    var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentName+'/'+filename+".mp4"); // 이런식으로 파일을 그날의 날짜로 저장.
+      var writeStream = fs.createWriteStream('./server/user/'+userEmail+'/video'+contentName+filename);
+      writeStream.filename = filename;
+      part.pipe(writeStream);
 
+      part.on('data',function(chunk){
+        console.log(filename+' read '+chunk.length + 'bytes');
+      });
 
-    filePath.pipe(downFile);
+      part.on('end',function(){
+
+        console.log(filename+' Part read complete');
+        writeStream.end();
+      });
+    });
+
+    // all uploads are completed
+
+    form.on('close',function(){
+      res.status(200).send('Upload complete');
+    });
+    // track progress
+    form.on('progress',function(byteRead,byteExpected){
+
+      console.log(' Reading total  '+byteRead+'/'+byteExpected);
+    });
+    form.parse(req);
+  //
+  //   var filePath1 = user.videoPath;
+  //   console.log("req video path ");
+  //   //fs.readFile(req.files.video.originalFilename
+  //   // filename = req.body.filename;
+  //   var filePath = fs.createReadStream(filePath1);
+  //
+  //   var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentId+'/'+filename+'.mp4'); // 이런식으로 파일을 그날의 날짜로 저장.
+  //
+  //   var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentName+'/'+filename+".mp4"); // 이런식으로 파일을 그날의 날짜로 저장.
+  //
+  //
+  //   filePath.pipe(downFile);
   });
 });
 
