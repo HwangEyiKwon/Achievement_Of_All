@@ -6,6 +6,7 @@ package com.example.parkseunghyun.achievementofall
 //import model.StoriesModel
 import adapter.StoriesAdapter
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -28,12 +29,17 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
     private var text_joinedORnot: TextView? = null
     private var remainingTime: TextView? = null
 
+    // 사용자의 jwt-token
+    var jwtToken: String ?= null
+    var contentName: TextView ?= null
+
+    var content: String ?= null
 
     override fun recyclerViewListClicked(v: View, position: Int) {
         Toast.makeText(getApplicationContext(), "position is $position", Toast.LENGTH_LONG)
     }
 
-    private var contentName: TextView ?= null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contents_home)
@@ -46,9 +52,11 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
 
         contentName = findViewById(R.id.contentName)
 
+        jwtToken = loadToken()
+
         if(intent.getStringExtra("contentName")!=null){
-            val name = intent.getStringExtra("contentName")
-            contentName!!.setText(name)
+            content = intent.getStringExtra("contentName")
+            contentName!!.setText(content)
         }
 
         recyclerView = findViewById(R.id.recystories)
@@ -86,6 +94,10 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
         contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
 
     }
+    private fun loadToken(): String{
+        var auto = PreferenceManager.getDefaultSharedPreferences(this)
 
+        return auto.getString("token", "")
+    }
 
 }

@@ -3,8 +3,10 @@ package com.example.parkseunghyun.achievementofall
 import android.content.Context
 import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
@@ -154,5 +156,24 @@ object VolleyHttpService{
         }){
         }
         Volley.newRequestQueue(context).add(appInfoRequest)
+    }
+
+    // 달력 정보 받아오기
+    fun getCalendarInfo(context: Context, jsonObject: JSONObject, success: (JSONArray)->Unit){
+
+        var token = jsonObject.getString("token")
+        var contentName = jsonObject.getString(
+                "contentName")
+        println(token+contentName)
+        var calendarInfoRequest = object : JsonArrayRequest(Request.Method.GET,"${ipAddress}/getCalendarInfo/$token/$contentName",null, Response.Listener{ response ->
+            println("서버 수신 getCalendar: $response")
+
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(calendarInfoRequest)
     }
 }
