@@ -58,26 +58,28 @@ require('./config/passport')(passport);
 // 유저 디비 초기화
 //
 // var user1 = new user({
-//   name: "ParkSeungHyun15",
-//   email: "shp15@gmail.com",
+//   name: "ParkSeungHyun17",
+//   email: "shp17@gmail.com",
 //   // password : user.generateHash("123"),
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
-//   imagePath: "ParkSeungHyun15",
+//   imagePath: "ParkSeungHyun17",
 //   contentList:[{
 //     contentId : 0,
 //     videoPath: ["ns1","ns2"],
 //     contentName: "NoSmoking",
 //     joinState : 1,
-//     authenticationDate : "2018-11-08",
+//     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
+//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
 //   },{
 //     videoPath: ["d1","d2"],
 //     contentId : 1,
 //     contentName: "Diet",
 //     joinState : 1,
-//     authenticationDate : "2018-11-08",
+//     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
+//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
 //   }]
 // });
 // var user2 = new user({
@@ -240,7 +242,7 @@ app.use('/', applyContent);
 
 app.set('jwtTokenSecret', "afafaffffff");
 
-app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/index.html')); });
+app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/simple-memo/index.html')); });
 //여기 아래
 const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 

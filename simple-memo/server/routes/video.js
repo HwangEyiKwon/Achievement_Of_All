@@ -37,7 +37,7 @@ router.post('/video', function(req,res){
 //android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.
 router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
 
-  console.log("video jwt토큰 "+ req.params.token);
+  console.log("video jwt토큰 "+ req.params.jwtToken);
   var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
   console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
@@ -74,8 +74,8 @@ router.get('/getVideoList', function(req, res){
 router.get('/sendVideo/:jwtToken/:contentName', function(req, res){
 
   console.log("get authorizeVideo ");
-  console.log("authorize Video User jwt토큰 "+ req.params.token);
-  var decoded = jwt.decode(req.params.token,req.app.get("jwtTokenSecret"));
+  console.log("authorize Video User jwt토큰 "+ req.params.jwtToken);
+  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
   console.log("authorize Video User jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;

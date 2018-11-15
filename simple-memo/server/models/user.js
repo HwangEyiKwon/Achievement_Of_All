@@ -36,7 +36,7 @@ const userSchema = new Schema({
     contentName: String,
     videoPath: [String],
     joinState: Number, //0: 컨텐츠 참가x(시작 전) 1: 컨텐츠 참가o, 컨텐츠 진행 중 2: 컨텐츠 참가, 컨텐츠 is done
-    calendar: [{date: String, authen: Number}], // 0: 인증 실패 1: 인증 성공
+    calendar: [{year: String, month: String, day: String, authen: Number}], // 0: 인증 실패 1: 인증 성공
     authenticationDate: String, //server change code need!!
     isAuthenticated: Number,
   }],
