@@ -39,7 +39,7 @@ router.get('/contentJoin/:contentID',  function (req,res) {
 
 //컨텐츠 아이디or네임으로 유저의 해당되는 컨텐츠 리스트를 알아야 함(새로운 컨텐츠 리스트를 추가해야 됨, 푸시만 하면)
 router.get('/contentJoinComplete/:contentId/:jwtToken',  function (req,res) {
-  console.log("contentJoinComplete jwt토큰 "+ req.body.token);
+  console.log("contentJoinComplete jwt토큰 "+ req.body.jwtToken);
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
   console.log("contentJoinComplete jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;

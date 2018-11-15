@@ -7,8 +7,7 @@ var Content = require('../models/content');
 var App = require('../models/app');
 var jwt = require('jwt-simple'); // jwt token 사용
 var mkdirp = require('mkdirp'); // directory 만드는것
-
-
+var nodemailer = require('nodemailer');
 
 router.post('/jwtCheck', function(req, res){
 
@@ -156,5 +155,43 @@ router.get('/getAppInfo', function (req,res) {
     })
   }
 )
+
+router.get("/pwdSendMail", function(req, res, next){
+  let email = "hwangeyikwon@gmail.com";
+
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'hwangeyikwon@gmail.com',  // gmail 계정 아이디를 입력
+      pass: ''          // gmail 계정의 비밀번호를 입력
+    }
+  });
+  let mailOptions = {
+    from: 'hwangeyikwon@gmail.com',
+    to: email,
+    subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
+    html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
+      " <form action=\"http://localhost:3000/pwdEmailAuthen\" method=\"post\"> " +
+      "<label for=\"pwd\">PW</label>" +
+      "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
+      "  <input type=\"submit\" value=\"전송\"> " +
+      "</form>"
+  };
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    }
+    else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+})
+
+router.post("/pwdEmailAuthen", function(req, res, next){
+  console.log(req.body.pwd);
+
+});
+
 
 module.exports = router ;
