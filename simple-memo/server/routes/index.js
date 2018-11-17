@@ -208,6 +208,7 @@ router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
       if(user == null)  res.send({joinState: 3});
       else  {
         var contentIndex;
+        var joinContentCount = user.contentList.length;
 
         for (var i = 0; i < joinContentCount; i++) {
           if (user.contentList[i].contentName === contentName) {

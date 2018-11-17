@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+var Content = require('../models/content');
 var User = require('../models/user');
 var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
@@ -183,8 +184,58 @@ router.post('/:contentID/checkVideo', function(req, res){
   file.pipe(res);
 });
 */
-router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
 
+
+//내가 인증해야 하는 타인들의 비디오를 표시하기 위해 아직 내가 인증 안한 타인의 정보를 가져오는 코드
+router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
+  console.log("getOthers jwt토큰 "+ req.params.jwtToken);
+  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
+  console.log("getOthers jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentName = req.params.contentName;
+
+  var returnName = new Array();
+  var arrayCount = 0;
+
+  User.findOne({email: userEmail}, function(err, user){
+    var userName = user.name;
+  });
+
+  Content.findOne({name: contentName}, function(err, content){
+    console.log("content정보: " + content);
+    if(err){
+      console.log(err);
+      res.send({success: false});
+    }
+    else {
+      var joinUserCount = content.userList.length;
+      var userIndex;
+      if(joinUserCount != 0){
+        for (var i = 0; i < joinUserCount; i++) {
+          if (content.userList[i].email != userEmail && content.userList[i].newVideo.authen == 0) {
+            //내가 다른 사람의 최신 영상을 인증했는지 체크하는 flag
+            var userCheckFlag = 0;
+            var authorizePeopleCount = content.userList[i].newVideo.authorizePeople.length;
+            if(authorizePeopleCount != 0){
+              for(var j = 0; j < authorizePeopleCount; j ++){
+                if(content.userList[i].newVideo.authorizePeople.name === userName) userCheckFlag = 1;
+              }
+            }
+            if(userCheckFlag == 0){
+              User.findOne({email: content.userList[i].email}, function(err, user){
+                var authorizePeopleName = user.name;
+              });
+              returnName[arrayCount] = authorizePeopleName;
+              arrayCount++;
+            }
+          }
+        }
+      }
+      console.log("video를 보여주기 위해 return할 사용자 정보: "+returnName);
+      res.send({others: returnName});
+    }
+
+  });
 });
 
 module.exports = router ;
