@@ -193,5 +193,33 @@ router.post("/pwdEmailAuthen", function(req, res, next){
 
 });
 
+router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
+  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
+  console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+
+  var contentName = req.params.contentName;
+  User.findOne({ email : userEmail , "contentList.contentName": contentName}, function(err, user) {
+    if(err){
+      console.log(err);
+      res.send({success: false});
+    }
+    else{
+      if(user == null)  res.send({joinState: 3});
+      else  {
+        var contentIndex;
+
+        for (var i = 0; i < joinContentCount; i++) {
+          if (user.contentList[i].contentName === contentName) {
+            contentIndex = i;
+            break;
+          }
+        }
+
+        res.send({joinState: user.contentList[contentIndex].joinState});
+      }
+    }
+  });
+});
 
 module.exports = router ;

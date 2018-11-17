@@ -66,20 +66,20 @@ require('./config/passport')(passport);
 //   imagePath: "ParkSeungHyun17",
 //   contentList:[{
 //     contentId : 0,
-//     videoPath: ["ns1","ns2"],
+//     videoPath: [{path: "ns1", videoAuthen: 1},{path: "ns2", videoAuthen: 0}],
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
+//     calendar: [{year: "2018", month: "10", day: "15", authen: 1}, {year: "2018", month: "10", day: "18", authen: 1}, {year: "2018", month: "10", day: "21", authen: 1}]
 //   },{
-//     videoPath: ["d1","d2"],
+//     videoPath: [{path: "d1", videoAuthen: 1},{path: "d2", videoAuthen: 0}],
 //     contentId : 1,
 //     contentName: "Diet",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
+//     calendar: [{year: "2018", month: "10", day: "15", authen: 1}, {year: "2018", month: "10", day: "18", authen: 1}, {year: "2018", month: "10", day: "21", authen: 1}]
 //   }]
 // });
 // var user2 = new user({
@@ -91,23 +91,23 @@ require('./config/passport')(passport);
 //   imagePath: "HwangEyiKWON17",
 //   contentList:[{
 //     contentId : 0,
-//     videoPath: ["ns1","ns2"],
+//     videoPath: [{path: "ns1", videoAuthen: 1},{path: "ns2", videoAuthen: 0}],
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
+//     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "10", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
 //   },{
-//     videoPath: ["d1","d2"],
+//     videoPath: [{path: "d1", videoAuthen: 1},{path: "d2", videoAuthen: 0}],
 //     contentId : 1,
 //     contentName: "Diet",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "14", day: "22", authen: 1}]
+//     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "10", day: "11", authen: 1}, {year: "2018", month: "10", day: "14", authen: 1}]
 //   }]
 // });
-
+//
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
 //   if (err)
@@ -116,7 +116,7 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-
+//
 // user2.password = user1.generateHash("123");
 // user2.save(function(err, savedDocument) {
 //   if (err)
@@ -125,32 +125,38 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-
+//
 // // --------------------------------
 // //
 // // --------------------------------
 // // 컨텐츠 디비 초기화
-
+//
 // var content1 = new content({
 //   id: 0,
 //   name: "NoSmoking",
 //   startDate: "11/01/2018",
 //   endDate: "11/30/2018",
-//   isDone: 0
+//   isDone: 0,
+//   userList: ["shp17@gmail.com", "hek17@gmail.com"],
+//   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content2 = new content({
 //   id: 1,
 //   name: "Diet",
-//   startDate: "11/01/2018",
-//   endDate: "11/20/2018",
-//   isDone: 0
+//   startDate: "09/01/2018",
+//   endDate: "12/01/2018",
+//   isDone: 0,
+//   userList: ["shp17@gmail.com", "hek17@gmail.com"],
+//   description: "다이어트 컨텐츠입니다. \n 18년9월1일부터 18년12월1일까지 진행됩니다. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content3 = new content({
 //   id: 1,
 //   name: "Study",
-//   startDate: "11/01/2018",
-//   endDate: "11/17/2018",
-//   isDone: 0
+//   startDate: "09/01/2018",
+//   endDate: "12/31/2018",
+//   isDone: 0,
+//   userList: ["shp17@gmail.com", "hek17@gmail.com"],
+//   description: "공부 컨텐츠입니다. \n 18년9월1일부터 18년12월31일까지 진행됩니다. /n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
@@ -173,20 +179,20 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-// // --------------------------------
-// // --------------------------------
-// //앱정보 디비 초기화
-// var appInfo_ = new appInfo({
-//   appInfo: "앱 정보입니다 \n 개발자는 캡스톤 디자인 냥냥펀치 \n 박승현 외 3명입니다. 현재 버전은 \n 1.0으로 앞으로 계속 업데이트될 \n 예정입니다",
-//   noticeInfo: "공지사항 입니다. \n 이 부분에는 앱에 관련된 공지사항 또는 최신 정보가 업로드 됩니다."
-// })
-// appInfo_.save(function(err, savedDocument) {
-//   if (err)
-//     return console.error(err);
-//   console.log(savedDocument);
-//   console.log("DB initialization");
-//
-// });
+// --------------------------------
+// --------------------------------
+//앱정보 디비 초기화
+var appInfo_ = new appInfo({
+  appInfo: "앱 정보입니다 \n 개발자는 캡스톤 디자인 냥냥펀치 \n 박승현 외 3명입니다. 현재 버전은 \n 1.0으로 앞으로 계속 업데이트될 \n 예정입니다",
+  noticeInfo: "공지사항 입니다. \n 이 부분에는 앱에 관련된 공지사항 또는 최신 정보가 업로드 됩니다."
+})
+appInfo_.save(function(err, savedDocument) {
+  if (err)
+    return console.error(err);
+  console.log(savedDocument);
+  console.log("DB initialization");
+
+});
 //--------------------------------
 
 //--------------------------------
@@ -199,7 +205,7 @@ require('./config/passport')(passport);
 // user.remove(function (err, info) {
 //   console.log("DELETED");
 // });
-
+//
 // content.remove(function (err, info) {
 //   console.log("DELETED");
 // });
@@ -441,6 +447,35 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
     });
   });
 });
+
+var scheduler = schedule.scheduleJob('00 * * * * *', function(){
+  var todayDate = new Date();
+  var todayYear = todayDate.getFullYear();
+  var todayMonth = todayDate.getMonth() + 1;
+  var todayDay = todayDate.getDate();
+
+  // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+  if ((todayDay+"").length < 2) {
+    todayDay = "0" + todayDay;
+  }
+  var today = todayYear+ "-" + todayMonth + "-" + todayDay;
+  content.find({isDone: 0}, function(err, contentList){
+    for(var i = 0; i < Object.keys(contentList).length; i++){
+      var totalDate = (contentList[i].endDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
+      var remainedDate = (todayDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
+
+      var achievementRate = (remainedDate / totalDate) * 100;
+
+      contentList[i].achievementRate = achievementRate;
+      console.log("Achievement Rate =" + contentList[i].achievementRate);
+      contentList[i].save(function (err) {
+        if (err) console.log(err);
+      });
+    }
+  });
+});
+
+
 
 //푸쉬메시지 펑션
 function sendPushMessage(user, sendTime) {

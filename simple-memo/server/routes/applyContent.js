@@ -63,8 +63,33 @@ router.get('/contentJoinComplete/:contentId/:jwtToken',  function (req,res) {
       
       //content의 user List에 해당 user 추가
       var userIndex = content.userList.length;
+      if(userIndex == null) userIndex = 0;
       content.userList[userIndex] = user.email;
     });
+  });
+});
+
+//달성률과 설명을 보내준다.
+router.get('/getAchievementRate/:contentName',  function (req,res) {
+  console.log("send achievementRate and Description");
+  var contentName = req.params.contentName;
+  console.log(contentName);
+
+  Content.findOne({name: contentName}, function(err, content){
+    console.log(content);
+    if(err) {
+      console.log(err);
+      res.send({success: false});
+    }
+    else{
+      if(content.description != null && content.achievementRate != null){
+        console.log(content.description + " and "  + content.achievementRate);
+        res.send({success: true, description: content.description, rate: content.achievementRate});
+      }
+      else{
+        res.send({success: false});
+      }
+    }
   });
 });
 

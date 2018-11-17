@@ -167,11 +167,12 @@ router.post('/sendVideo', function(req, res) {
   });
 });
 
+/*
 //남에게 videolist를 줘야하는 것... -> 같은 컨텐츠의 참여하는 다른 사람에게 전송 or 같은 방 참여 다른 사람에게 전송
 //인증여부에 대한 것도 post로 만들어야 하지 않나?????
 //단계 -> server야 나 인증할거야! -> client에게 videopath보내주기 -> 인증 성공 여부 server에게 보내기
 router.post('/:contentID/checkVideo', function(req, res){
-  /* video path읽어서 pipe해주는 코드.. 어떤 비디오 가져올 지 생각해서 추가하기
+  // video path읽어서 pipe해주는 코드.. 어떤 비디오 가져올 지 생각해서 추가하기
   var userEmail = req.body.email;
   User.findOne({email: userEmail}, function(err, user){
     console.log("video Path: " +user.videoPath);
@@ -179,8 +180,11 @@ router.post('/:contentID/checkVideo', function(req, res){
     var filename = user.videoPath[0];
     var file = fs.createReadStream(filename, {flags: 'r'});
   });
-  */
   file.pipe(res);
+});
+*/
+router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
+
 });
 
 module.exports = router ;
