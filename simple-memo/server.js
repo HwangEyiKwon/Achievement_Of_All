@@ -83,13 +83,31 @@ require('./config/passport')(passport);
 //   }]
 // });
 // var user2 = new user({
-//   name: "ParkSeungHyun2",
-//   email: "shp2@gmail.com",
+//   name: "HwangEyiKWON17",
+//   email: "hek17@gmail.com",
 //   // password : user.generateHash("123"),
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
-//   contentList:[]
+//   imagePath: "HwangEyiKWON17",
+//   contentList:[{
+//     contentId : 0,
+//     videoPath: ["ns1","ns2"],
+//     contentName: "NoSmoking",
+//     joinState : 1,
+//     authenticationDate : "2018-11-15",
+//     isAuthenticated : 1,
+//     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
+//   },{
+//     videoPath: ["d1","d2"],
+//     contentId : 1,
+//     contentName: "Diet",
+//     joinState : 1,
+//     authenticationDate : "2018-11-15",
+//     isAuthenticated : 1,
+//     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "14", day: "22", authen: 1}]
+//   }]
 // });
+
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
 //   if (err)
