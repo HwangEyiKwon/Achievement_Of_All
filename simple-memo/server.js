@@ -352,6 +352,13 @@ user.findOneAndUpdate(
 // filePath.pipe(downFile);
 //1.mp4 파일을 읽어서 './server/user/sph2@gmail.com/video/NoSmoking/' 위치에서 2.mp4 파일을 만드는것.
 
+// var threeDaysAgo = new Date(Date.now());
+// for(var i =0;i < 100;i++) {
+//   // 2014-03-01 - 월은 0에서부터 시작된다.
+//    threeDaysAgo.setDate(threeDaysAgo.getDate() + 3); // 2014-02-26 => 3일전으로~
+//   // console.log("year : " + todayYear + "month : " + todayMonth + " day : " + todayDay);
+//   console.log("date : "+threeDaysAgo);
+// } 얘를 나중에 authen 0 에서 1 로 바꾸는 애한테 끼워넣으면서 date 업데이트 해주면 됨.
 
 app.post('/sendToken', function(req, res) {
   console.log(req.body.fcmToken);

@@ -97,23 +97,32 @@ router.get('/getVideoList', function(req, res){
 
 //video 받아서 저장..
 //contents정보 받아야 하고, 현재 date를 넣어줘야 하고, path를 지정해서 해당 user의 video경로에 path를 저장한다.
-router.get('/sendVideo/:jwtToken/:contentName', function(req, res, next){
+//video 받아서 저장..
+//contents정보 받아야 하고, 현재 date를 넣어줘야 하고, path를 지정해서 해당 user의 video경로에 path를 저장한다.
+// router.get('/sendVideo/:jwtToken/:contentName', function(req, res, next){
+router.post('/asd', function(req, res, next){
 
-  console.log("get authorizeVideo ");
-  console.log("authorize Video User jwt토큰 "+ req.params.jwtToken);
-  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  console.log("authorize Video User jwt토큰 디코딩 "+ decoded.userCheck);
-  var userEmail = decoded.userCheck;
-  var contentName = req.params.contentName;
+  // console.log("get authorizeVideo ");
+  // console.log("authorize Video User jwt토큰 "+ req.params.jwtToken);
+  // var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
+  // console.log("authorize Video User jwt토큰 디코딩 "+ decoded.userCheck);
+  //var userEmail = decoded.userCheck;
+  var userEmail = req.headers.jwt_token;
+  console.log("userEmail : "+userEmail);
+  // var contentName = req.params.contentName;
+  // var contentId = req.params.contentId;
+  console.log(req.headers.content_name);
+  var contentName = req.headers.content_name;//건희가 보내는 거에서 header에 들어있는 내용 꺼내옴
+  var filenamePath;
+  var index;
 
   //createReadStream("./~~~~")이걸로 데이터 받고  createWriteStream("생성할 파일 이름 ")으로 생성 후
   //fs.createReadStream.pipe(fs.createWriteStream);
-  User.findOne({email: userEmail, "contentList.contentName" : contentName}, function(err, user){
-    //이게 어떤 컨텐츠인지 확인은 어떻게???
+  Content.findOne({name : contentName, "userList.email" : userEmail}, function(err, content){
 
+    var joinUserCount = content.userList.length;
     var form = new multiparty.Form();
     // get field name & value
-
     form.on('field',function(name,value){
       console.log('normal field / name = '+name+' , value = '+value);
     });
@@ -125,56 +134,66 @@ router.get('/sendVideo/:jwtToken/:contentName', function(req, res, next){
         filename = part.filename;
         filename = filename.split('_');
         filename = filename[0];
-        var year = filename.substr(5,4);
-        var month = filename.substr(9,2);
-        var day = filename.substr(11,2);
+        var year = filename.substr(0,4);
+        var month = filename.substr(4,2);
+        var day = filename.substr(6,2);
+        filenamePath = year+'-'+month+'-'+day;
         filename = year+'-'+month+'-'+day+'.mp4'; // 파일 이름이 year-month-day.mp4 로 나옴.
-        //건희한테 다시 동영상 찍어달라고 해서 확인해봐야 할듯.
         size = part.byteCount;
       }else{
         part.resume();
       }
       console.log("Write Streaming file :"+filename);
-
-      var writeStream = fs.createWriteStream('./server/user/'+userEmail+'/video'+contentName+filename);
+      var writeStream = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentName+'/'+filename);
       writeStream.filename = filename;
       part.pipe(writeStream);
-
       part.on('data',function(chunk){
-        console.log(filename+' read '+chunk.length + 'bytes');
+        // console.log(filename+' read '+chunk.length + 'bytes');
       });
-
       part.on('end',function(){
-
         console.log(filename+' Part read complete');
         writeStream.end();
       });
     });
-
     // all uploads are completed
-
     form.on('close',function(){
-      res.status(200).send('Upload complete');
+      if(content == null){
+        console.log("not found User and content");
+        res.send({success : false});
+      }
+      else  {
+        var userListIndex;
+        for (var i = 0; i < joinUserCount; i++) {
+          if (content.userList[i].email === userEmail) {
+            userListIndex = i;
+            break;
+          }
+        }
+        content.userList[userListIndex].newVideo.path = filenamePath;
+        content.userList[userListIndex].newVideo.authen = 0;
+        content.userList[userListIndex].newVideo.authorizePeople = [];
+        content.save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+          console.log("content DB initialization");
+        });
+
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.videoPath": [{path : filenamePath, authen: 0}]}},function(err, doc){
+          if(err){
+            console.log(err);
+          }
+          console.log("USER !!!!! : "+user);
+          console.log("update videoPath : Path : "+filenamePath+" authen : "+0);
+        });
+        res.send({success : true});
+        console.log("send success : true ");
+      }
     });
     // track progress
     form.on('progress',function(byteRead,byteExpected){
-
-      console.log(' Reading total  '+byteRead+'/'+byteExpected);
+      // console.log(' Reading total  '+byteRead+'/'+byteExpected);
     });
     form.parse(req);
-  //
-  //   var filePath1 = user.videoPath;
-  //   console.log("req video path ");
-  //   //fs.readFile(req.files.video.originalFilename
-  //   // filename = req.body.filename;
-  //   var filePath = fs.createReadStream(filePath1);
-  //
-  //   var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentId+'/'+filename+'.mp4'); // 이런식으로 파일을 그날의 날짜로 저장.
-  //
-  //   var downFile = fs.createWriteStream('./server/user/'+userEmail+'/video/'+contentName+'/'+filename+".mp4"); // 이런식으로 파일을 그날의 날짜로 저장.
-  //
-  //
-  //   filePath.pipe(downFile);
   });
 });
 
