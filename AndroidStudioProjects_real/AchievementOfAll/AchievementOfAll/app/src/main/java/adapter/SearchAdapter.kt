@@ -66,6 +66,4 @@ class SearchAdapter(private val list: List<String>, private val context: Context
 
     }
 
-
-
 }

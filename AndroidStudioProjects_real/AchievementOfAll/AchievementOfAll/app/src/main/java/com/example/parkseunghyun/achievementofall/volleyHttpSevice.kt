@@ -176,4 +176,40 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(calendarInfoRequest)
     }
+
+    // 컨텐츠 달성율 받아오기
+    fun getAcheivementRate(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var contentName = jsonObject.getString(
+                "contentName")
+
+        var acheivementRateRequest = object : JsonObjectRequest(Request.Method.GET,"${ipAddress}/getAchievementRate/$contentName",null, Response.Listener{ response ->
+            println("서버 수신 getInfoInfo: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(acheivementRateRequest)
+    }
+
+    // 사용자 참가 유무 정보
+    fun getParticipatedInfo(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var token = jsonObject.getString("token")
+        var contentName = jsonObject.getString("contentName")
+
+        var participatedInfoRequest = object : JsonObjectRequest(Request.Method.GET,"${ipAddress}/isParticipated/$token/$contentName",null, Response.Listener{ response ->
+            println("서버 수신 getparti: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(participatedInfoRequest)
+    }
+
+    fun 
 }

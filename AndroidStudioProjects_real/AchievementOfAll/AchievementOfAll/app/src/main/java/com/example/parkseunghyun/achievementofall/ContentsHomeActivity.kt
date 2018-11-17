@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.contents_pager_container.*
 import model.StoriesModel
+import org.json.JSONObject
 
 
 class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
@@ -34,6 +35,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
     var contentName: TextView ?= null
 
     var content: String ?= null
+    var joinState: Int ?= null
 
     override fun recyclerViewListClicked(v: View, position: Int) {
         Toast.makeText(getApplicationContext(), "position is $position", Toast.LENGTH_LONG)
@@ -58,6 +60,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
             content = intent.getStringExtra("contentName")
             contentName!!.setText(content)
         }
+        getParticipatedInfo()
 
         recyclerView = findViewById(R.id.recystories)
         val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
@@ -98,6 +101,39 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 
         return auto.getString("token", "")
+    }
+
+    private fun getParticipatedInfo(){
+
+        val jsonObject = JSONObject()
+        jsonObject.put("token", jwtToken)
+        jsonObject.put("contentName", contentName)
+
+        VolleyHttpService.getParticipatedInfo(this, jsonObject){ success ->
+            println(success)
+            println("팔티시페이트")
+            // 3: 참여 X
+
+            // 0: 시작전 컨텐츠
+            // 1: 진행중 컨텐츠
+            // 2: 종료된 컨텐츠
+            joinState = success.getInt("joinState")
+            when(joinState){
+                0 -> {
+                    text_joinedORnot?.setText("참가중 (시작전)")
+                }
+                1 -> {
+                    text_joinedORnot?.setText("참가중 (진행중)")
+                }
+                2 -> {
+                    text_joinedORnot?.setText("참가중 (종료)")
+                }
+                3-> {
+                    text_joinedORnot?.setText("미참가중")
+                }
+            }
+
+        }
     }
 
 }

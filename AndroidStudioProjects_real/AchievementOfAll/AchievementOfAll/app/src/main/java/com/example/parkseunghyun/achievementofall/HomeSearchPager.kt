@@ -38,21 +38,21 @@ class HomeSearchPager : Fragment() {
         // 검색에 사용할 데이터을 미리 저장한다.
         settingList()
 
-//        // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
-//        editSearch!!.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-//
-//            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-//
-//            }
-//
-//            override fun afterTextChanged(editable: Editable) {
-//                // input창에 문자를 입력할때마다 호출된다.
-//                // search 메소드를 호출한다.
-//                val text = editSearch?.text.toString()
-//                search(text)
-//            }
-//        })
+        // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
+        editSearch!!.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+
+            }
+
+            override fun afterTextChanged(editable: Editable) {
+                // input창에 문자를 입력할때마다 호출된다.
+                // search 메소드를 호출한다.
+                val text = editSearch?.text.toString()
+                search(text)
+            }
+        })
 
         return view_
     }
