@@ -171,9 +171,9 @@ require('./config/passport')(passport);
 //   startDate: "11/01/2018",
 //   endDate: "11/30/2018",
 //   isDone: 0,
-//   userList: [{email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 0}, {name: "ChoGeonHee17", authenInfo: 0}]}},
-//     {email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: [{name: "ParkSeungHyun17", authenInfo: 1}, {name: "ChoGeonHee17", authenInfo: 0}]}},
-//     {email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 1}, {name: "ParkSeungHyun17", authenInfo: 0}]}}],
+//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: []}},
+//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople:[{name: "ParkSeungHyun17", authenInfo: 1}]}},
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 1}]}}],
 //   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content2 = new content({
@@ -181,8 +181,11 @@ require('./config/passport')(passport);
 //   name: "Diet",
 //   startDate: "09/01/2018",
 //   endDate: "12/01/2018",
+//   endDate: "12/01/2018",
 //   isDone: 0,
-//   userList: ["shp17@gmail.com", "hek17@gmail.com"],
+//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: []}},
+//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: [{name: "ParkSeungHyun17", authenInfo: 1}]}},
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 1}]}}],
 //   description: "다이어트 컨텐츠입니다. \n 18년9월1일부터 18년12월1일까지 진행됩니다. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content3 = new content({
@@ -215,20 +218,20 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
-//--------------------------------
-//--------------------------------
-//앱정보 디비 초기화
-var appInfo_ = new appInfo({
-  appInfo: "앱 정보입니다 \n 개발자는 캡스톤 디자인 냥냥펀치 \n 박승현 외 3명입니다. 현재 버전은 \n 1.0으로 앞으로 계속 업데이트될 \n 예정입니다",
-  noticeInfo: "공지사항 입니다. \n 이 부분에는 앱에 관련된 공지사항 또는 최신 정보가 업로드 됩니다."
-})
-appInfo_.save(function(err, savedDocument) {
-  if (err)
-    return console.error(err);
-  console.log(savedDocument);
-  console.log("DB initialization");
-
-});
+// ///--------------------------------
+// ///--------------------------------
+// ///앱정보 디비 초기화
+// var appInfo_ = new appInfo({
+//   appInfo: "앱 정보입니다 \n 개발자는 캡스톤 디자인 냥냥펀치 \n 박승현 외 3명입니다. 현재 버전은 \n 1.0으로 앞으로 계속 업데이트될 \n 예정입니다",
+//   noticeInfo: "공지사항 입니다. \n 이 부분에는 앱에 관련된 공지사항 또는 최신 정보가 업로드 됩니다."
+// })
+// appInfo_.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
 //--------------------------------
 
 //--------------------------------

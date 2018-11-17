@@ -58,6 +58,30 @@ router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
   });
 });
 
+router.get('/getOthersVideo/:email/:contentName', function(req,res){
+  var userEmail = req.params.email;
+  var contentName = req.params.contentName;
+
+  User.findOne({email: userEmail}, function(err, user){
+    var joinContentCount = user.contentList.length;
+    var contentIndex;
+
+    for (var i = 0; i < joinContentCount; i++) {
+      if (user.contentList[i].contentName === contentName) {
+        contentIndex = i;
+        break;
+      }
+    }
+    var videoIndex = user.contentList[contentIndex].videoPath.length - 1;
+    var videoPath = user.contentList[contentIndex].videoPath[videoIndex].path;
+    // 내 비디오가 맞는지 검사해야할 듯
+    var filename = "./server/user/"+userEmail+"/video/"+contentName+"/"+videoPath+".mp4"
+    var file = fs.createReadStream(filename, {flags: 'r'});
+    file.pipe(res);
+
+  });
+});
+
 /*
 //jwt토큰 필요 -> email 받아옴
 //email로 해당 유저의 user.contentList[0].videoPath를 가져옴
@@ -194,48 +218,70 @@ router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
 
-  var returnName = new Array();
+  console.log(userEmail + contentName);
+  var others = new Array();
   var arrayCount = 0;
 
   User.findOne({email: userEmail}, function(err, user){
     var userName = user.name;
-  });
+    Content.findOne({name: contentName}, function(err, content){
+      console.log("content정보: " + content);
+      if(err){
+        console.log(err);
+        res.send({success: false});
+      }
+      else {
+        var joinUserCount = content.userList.length;
+        console.log("user num = "+joinUserCount);
+        var userIndex;
+        if(joinUserCount != 0){
+          for (var i = 0; i < joinUserCount; i++) {
+            var authorizePeopleEmail = content.userList[i].email;
+            var authorizePeopleName = content.userList[i].name;
+            console.log("user리스트 이메일= " + content.userList[i].email + " userList 이름 " + content.userList[i].name);
+            if (content.userList[i].email != userEmail && content.userList[i].newVideo.authen == 0) {
+              //내가 다른 사람의 최신 영상을 인증했는지 체크하는 flag
+              var userCheckFlag = 0;
+              var authorizePeopleCount = content.userList[i].newVideo.authorizePeople.length;
+              console.log("사람 수 = " + authorizePeopleCount);
+              if(authorizePeopleCount != 0){
+                for(var j = 0; j < authorizePeopleCount; j ++){
+                  console.log("인증한 사람의 이름: " + content.userList[i].newVideo.authorizePeople[j].name);
+                  if(content.userList[i].newVideo.authorizePeople[j].name === userName) userCheckFlag = 1;
+                }
+              }
+              if(userCheckFlag == 0){
+                console.log("flag is 0");
 
-  Content.findOne({name: contentName}, function(err, content){
-    console.log("content정보: " + content);
-    if(err){
-      console.log(err);
-      res.send({success: false});
-    }
-    else {
-      var joinUserCount = content.userList.length;
-      var userIndex;
-      if(joinUserCount != 0){
-        for (var i = 0; i < joinUserCount; i++) {
-          if (content.userList[i].email != userEmail && content.userList[i].newVideo.authen == 0) {
-            //내가 다른 사람의 최신 영상을 인증했는지 체크하는 flag
-            var userCheckFlag = 0;
-            var authorizePeopleCount = content.userList[i].newVideo.authorizePeople.length;
-            if(authorizePeopleCount != 0){
-              for(var j = 0; j < authorizePeopleCount; j ++){
-                if(content.userList[i].newVideo.authorizePeople.name === userName) userCheckFlag = 1;
+                var othersInfo = new Object();
+                othersInfo.email = authorizePeopleEmail;
+                othersInfo.name = authorizePeopleName;
+
+                console.log("object 출력"+ JSON.stringify(othersInfo));
+                others[arrayCount] = othersInfo;
+                arrayCount++;
               }
             }
-            if(userCheckFlag == 0){
-              User.findOne({email: content.userList[i].email}, function(err, user){
-                var authorizePeopleName = user.name;
-              });
-              returnName[arrayCount] = authorizePeopleName;
-              arrayCount++;
-            }
           }
+          console.log("video를 보여주기 위해 return할 사용자 정보: " + others);
+          res.send({others: others});
         }
       }
-      console.log("video를 보여주기 위해 return할 사용자 정보: "+returnName);
-      res.send({others: returnName});
-    }
 
+    });
   });
+
+
 });
+
+/*
+function getOtherInfo(){
+  return new Promise((resolve,reject )=>{
+
+
+    resolve();
+  })
+}
+*/
 
 module.exports = router ;

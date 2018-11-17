@@ -22,17 +22,46 @@ router.get('/getUserImage/:jwtToken', function(req, res){
   var email = decoded.userCheck;
 
   User.findOne({ email : email }, function(err, user) {
-    console.log("user.imagePath =" + user.imagePath);
-    if(user.imagePath == null){
-      var filename = './server/user/profile.png'; //기본 이미지
+    if(err){
+      console.log(err);
+      res.send({success: false});
     }
     else{
-      var filename = "./server/user/"+email+"/"+user.imagePath+".jpg";
+      console.log("user.imagePath =" + user.imagePath);
+      if(user.imagePath == null || user.imagePath != user.name){
+        var filename = './server/user/profile.png'; //기본 이미지
+      }
+      else{
+        var filename = "./server/user/"+email+"/"+user.imagePath+".jpg";
+      }
+      var file = fs.createReadStream(filename, {flags: 'r'});
+      file.pipe(res);
     }
-    var file = fs.createReadStream(filename, {flags: 'r'});
-    file.pipe(res);
  // 유저에 이미지 패스를 사용할 필요가 있나? 그냥 ./server/user/user.email/user.name Or user.email .jpg 하면 될듯.
   });
 })
+
+router.get('/getOthersImage/:email', function(req, res){
+  console.log("get others image...!");
+  var email = req.params.email;
+
+  User.findOne({ email : email }, function(err, user) {
+    if(err){
+      console.log(err);
+      res.send({success: false});
+    }
+    else{
+      console.log("user.imagePath =" + user.imagePath);
+      if(user.imagePath == null || user.imagePath != user.name){
+        var filename = './server/user/profile.png'; //기본 이미지
+      }
+      else{
+        var filename = "./server/user/"+email+"/"+user.imagePath+".jpg";
+      }
+      var file = fs.createReadStream(filename, {flags: 'r'});
+      file.pipe(res);
+    }
+  });
+});
 
 module.exports = router ;

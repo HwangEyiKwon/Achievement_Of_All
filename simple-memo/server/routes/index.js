@@ -129,24 +129,39 @@ router.post('/getUserInfo', function (req,res) {
   })
 })
 
-// 옮길 것, user도 추가해야 함.
-router.get('/getSearchData', function (req,res) {
+// 옮길 것,
+router.get('/getSearchUserData', function (req,res) {
+  var searchData = new Array();
 
-    Content.find(function (err, info) {
-      console.log("searchdata" + info);
+  User.find(function(err, info){
+    console.log("search user data" + info);
 
-      var searchData = {
-        contents: [],
-        users: []
-      }
+    var searchData = {
+      users: [],
+    }
 
-      for(var i in info){
-        searchData.contents.push(info[i].name);
-      }
-      res.send(searchData);
-    })
-  }
-)
+    for(var i in info){
+      searchData.users.push(info[i].name);
+    }
+    res.send(searchData);
+  });
+});
+
+router.get('/getSearchContentData', function (req,res) {
+  Content.find(function (err, info) {
+    console.log("search content data" + info);
+
+    var searchData = {
+      contents: [],
+    }
+
+    for(var i in info){
+      searchData.contents.push(info[i].name);
+    }
+    res.send(searchData);
+  });
+});
+
 router.get('/getAppInfo', function (req,res) {
 
     App.findOne(function (err, info) {

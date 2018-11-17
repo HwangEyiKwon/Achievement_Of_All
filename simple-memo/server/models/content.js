@@ -8,7 +8,7 @@ const contentSchema = new Schema({
   startDate: Date,
   endDate: Date,
   achievementRate: Number,
-  userList: [{email: String, newVideo: {path: String, authen: Number, authorizePeople: [{name: String, authenInfo: Number}] } }], //authenInfo: 1: O 2: X
+  userList: [{name: String, email: String, newVideo: {path: String, authen: Number, authorizePeople: [{name: String, authenInfo: Number}] } }], //authenInfo: 0: O 1: X
   isDone: Number, // 0: 진행중 1: 종료 2: 시작 전
   description: String,
 });
