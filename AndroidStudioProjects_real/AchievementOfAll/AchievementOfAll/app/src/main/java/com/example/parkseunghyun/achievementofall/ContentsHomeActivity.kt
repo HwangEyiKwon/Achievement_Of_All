@@ -22,9 +22,12 @@ import org.json.JSONObject
 
 class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
 
+    // 타 사용자 인증 영상
+    private var othersList = mutableListOf<String>()
+
     private val PROFILE = arrayOf(R.drawable.rdj, R.drawable.rocky, R.drawable.rock, R.drawable.will, R.drawable.hitler, R.drawable.mj, R.drawable.miketyson, R.drawable.jt, R.drawable.johnnydepp, R.drawable.jfk, R.drawable.barackobama)
     private val NAME = arrayOf("Sam", "Rick", "Richard", "Tony", "Bruce", "Steve", "Chandler", "Star", "Stark", "Joey", "Ross")
-    private var storiesModelArrayList: ArrayList<StoriesModel>? = null
+    private var storiesModelArrayList=  mutableListOf<StoriesModel>()
     private var recyclerView: RecyclerView? = null
     private var storiesAdapter: StoriesAdapter? = null
     private var text_joinedORnot: TextView? = null
@@ -61,22 +64,8 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
             contentName!!.setText(content)
         }
         getParticipatedInfo()
+        getOthers()
 
-        recyclerView = findViewById(R.id.recystories)
-        val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView!!.layoutManager = layoutManager
-        recyclerView!!.itemAnimator = DefaultItemAnimator()
-        storiesModelArrayList = ArrayList()
-
-        for (i in PROFILE.indices) {
-            val storiesModel = StoriesModel()
-            storiesModel.profile = PROFILE[i]
-            storiesModel.name = NAME[i]
-            storiesModelArrayList!!.add(storiesModel)
-        }
-
-        storiesAdapter = StoriesAdapter(this@ContentsHomeActivity, storiesModelArrayList!!, this)
-        recyclerView!!.adapter = storiesAdapter
 
         val viewPager = findViewById<ViewPager>(R.id.contents_pager_container)
         val pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
@@ -107,7 +96,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
 
         val jsonObject = JSONObject()
         jsonObject.put("token", jwtToken)
-        jsonObject.put("contentName", contentName)
+        jsonObject.put("contentName", content)
 
         VolleyHttpService.getParticipatedInfo(this, jsonObject){ success ->
             println(success)
@@ -132,6 +121,37 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener {
                     text_joinedORnot?.setText("미참가중")
                 }
             }
+
+        }
+    }
+    private fun getOthers(){
+
+        val jsonObject = JSONObject()
+        jsonObject.put("token", jwtToken)
+        jsonObject.put("contentName", content)
+
+        VolleyHttpService.getOthers(this, jsonObject){ success ->
+            println(success)
+            var others = success.getJSONArray("others")
+
+            recyclerView = findViewById(R.id.recystories)
+            val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
+            recyclerView!!.layoutManager = layoutManager
+            recyclerView!!.itemAnimator = DefaultItemAnimator()
+            storiesModelArrayList = ArrayList()
+
+            for(i in 0..(others.length()-1)){
+                val storiesModel = StoriesModel()
+                var other = others[i] as JSONObject
+                println(other)
+                storiesModel.email = other.getString("email")
+                storiesModel.name = other.getString("name")
+                storiesModel.contentName = content
+                storiesModelArrayList!!.add(storiesModel)
+            }
+
+            storiesAdapter = StoriesAdapter(this@ContentsHomeActivity, storiesModelArrayList!!, this)
+            recyclerView!!.adapter = storiesAdapter
 
         }
     }

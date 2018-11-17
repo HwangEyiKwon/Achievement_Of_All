@@ -8,11 +8,12 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
+import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
 
 
-class SearchAdapter(private val list: List<String>, private val context: Context) : BaseAdapter() {
+class SearchAdapter(private val list: List<String>, private val context: Context, private  val cu: String) : BaseAdapter() {
     private val inflate: LayoutInflater
     private var viewHolder: ViewHolder? = null
 
@@ -50,11 +51,20 @@ class SearchAdapter(private val list: List<String>, private val context: Context
 
         viewHolder!!.label!!.setOnClickListener {
 
-            // 컨텐츠 홈으로 이동
-            Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
-            context.startActivity<ContentsHomeActivity>(
-                    "contentName" to  list[position]
-            )
+            if(cu == "content"){
+                // 컨텐츠 홈으로 이동
+                Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
+                context.startActivity<ContentsHomeActivity>(
+                        "contentName" to  list[position]
+                )
+            }else if(cu == "user"){
+                // 사용자 홈으로 이동
+                Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
+                context.startActivity<OtherUserHomeActivity>(
+                        "email" to  list[position]
+                )
+            }
+
         }
 
         return convertView

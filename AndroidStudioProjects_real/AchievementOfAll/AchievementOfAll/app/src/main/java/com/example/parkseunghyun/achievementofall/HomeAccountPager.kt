@@ -33,7 +33,7 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
     private var joinedContents = mutableListOf<String>()
 
     // 사용자의 비디오 목록
-    private var videoList = mutableListOf<String>()
+    private var videoList = mutableListOf<JSONObject>()
     private var videoContentList = mutableListOf<String>()
 
 
@@ -103,7 +103,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
             // 사용자 프로필 사진 갱신
             Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(profile)
 
-
             // 사용자 참여 컨텐츠 정보 갱신
             var contentList: JSONObject
             for(i in 0.. (success.getJSONArray("contentList").length()-1)){
@@ -112,10 +111,9 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
                 joinedContents?.add(contentName.toString())
 
                 for(i in 0..(contentList.getJSONArray("videoPath").length()-1)){
-                    videoList?.add(contentList.getJSONArray("videoPath").getString(i))
+                    videoList?.add(contentList.getJSONArray("videoPath").getJSONObject(i))
                     videoContentList?.add(contentName)
                 }
-
             }
 
             // 사용자 참여 컨텐츠 View 생성

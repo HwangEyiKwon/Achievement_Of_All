@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
-
+import com.bumptech.glide.Glide
+import com.example.parkseunghyun.achievementofall.ExoplayerActivity
+import com.example.parkseunghyun.achievementofall.GlobalVariables
 import com.example.parkseunghyun.achievementofall.R
 import com.example.parkseunghyun.achievementofall.RecyclerViewClickListener
-
 import de.hdodenhof.circleimageview.CircleImageView
 import model.StoriesModel
 import org.jetbrains.anko.startActivity
@@ -22,6 +22,10 @@ import org.jetbrains.anko.startActivity
 
 class StoriesAdapter(private val context: Context, private val storiesModels: List<StoriesModel>, itemListener: RecyclerViewClickListener) : RecyclerView.Adapter<StoriesAdapter.ViewHolder>() {
 
+    // 서버 ip 주소
+    private var globalVariables: GlobalVariables?= GlobalVariables()
+    private var ipAddress: String = globalVariables!!.ipAddress
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.stories_view, parent, false)
 
@@ -29,8 +33,12 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.profile.setImageResource(storiesModels[position].profile!!)
+
+        var email = storiesModels[position].email
+        Glide.with(this.context).load("${ipAddress}/getOthersImage/$email").into(holder.profile)
+//        holder.profile.setImageResource(storiesModels[position].profile!!)
         holder.name.text = storiesModels[position].name
+//        Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(profile)
 
     }
 
@@ -50,19 +58,17 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
 
         override fun onClick(v: View) {
             val pos = adapterPosition
+            var email = storiesModels[pos].email
+            var contentName = storiesModels[pos].contentName
 
             // 클릭 처리
             Toast.makeText(v.context, "You clicked "+ name.text, Toast.LENGTH_SHORT).show()
+            context.startActivity<ExoplayerActivity>(
+                    "email" to email,
+                    "contentName" to contentName,
+                    "who" to "others"
+            )
 
-//            context.startActivity<ContentsHomeActivity>(
-//                    "contentName" to  name.text
-//            )
-
-//            val intent = Intent(v.context, HomeActivity::class.java)
-//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//            v.context.startActivity(intent)
-
-            //itemListener.recyclerViewListClicked(v, this.getLayoutPosition());
 
         }
     }

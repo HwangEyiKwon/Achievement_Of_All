@@ -131,9 +131,9 @@ object VolleyHttpService{
     }
 
     // 찾기 정보 받아오기
-    fun getSearchData(context: Context, success: (JSONObject)->Unit){
+    fun getSearchContentData(context: Context, success: (JSONObject)->Unit){
 
-        var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"${ipAddress}/getSearchData",null, Response.Listener{ response ->
+        var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"${ipAddress}/getSearchContentData",null, Response.Listener{ response ->
             println("서버 수신 getSearchData: $response")
             success(response)
 
@@ -143,6 +143,19 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(searchDataRequest)
     }
+    fun getSearchUserData(context: Context, success: (JSONObject)->Unit){
+
+        var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"${ipAddress}/getSearchUserData",null, Response.Listener{ response ->
+            println("서버 수신 getSearchData: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(searchDataRequest)
+    }
+
 
     // 앱 정보 받아오기
     fun getAppInfo(context: Context, success: (JSONObject)->Unit){
@@ -211,5 +224,22 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(participatedInfoRequest)
     }
 
-    fun 
+    // 인증 필요한 타 사용자 리스트 불러오기
+    fun getOthers(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var token = jsonObject.getString("token")
+        var contentName = jsonObject.getString("contentName")
+
+        var othersInfoRequest = object : JsonObjectRequest(Request.Method.GET,"${ipAddress}/getOthers/$token/$contentName",null, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(othersInfoRequest)
+    }
+
+
 }

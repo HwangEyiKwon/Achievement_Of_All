@@ -5,6 +5,7 @@ package model
  */
 
 class StoriesModel {
-    var profile: Int? = null
+    var contentName: String? = null
     var name: String? = null
+    var email: String? = null
 }

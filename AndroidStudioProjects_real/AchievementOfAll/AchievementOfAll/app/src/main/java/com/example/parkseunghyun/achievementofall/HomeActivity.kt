@@ -2,18 +2,11 @@ package com.example.parkseunghyun.achievementofall
 
 
 import adapter.HomePagerAdapter
-import android.content.ComponentName
-import android.content.Intent
-import android.media.MediaRecorder
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.provider.MediaStore
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -28,11 +21,6 @@ class HomeActivity : AppCompatActivity() {
     // jwt-token
     var jwtToken: String?= null
 
-    // 카메라 연동
-    private var cam: android.hardware.Camera ?= null;
-    private var MediaRecorder: MediaRecorder?= null;
-    private var sv: SurfaceView?= null;
-    private var sh: SurfaceHolder?= null;
 
 //    override fun onRestart() {
 //        super.onRestart()
@@ -143,39 +131,6 @@ class HomeActivity : AppCompatActivity() {
         return auto.getString("token", "")
     }
 
-
-
-
-    fun callCamera() {
-
-        var i = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        try {
-            var pm = getPackageManager();
-
-            var mInfo = pm.resolveActivity(i, 0);
-
-            var intent =  Intent();
-            intent.setComponent(ComponentName(mInfo.activityInfo.packageName, mInfo.activityInfo.name));
-            intent.setAction(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-            startActivity(intent);
-        } catch (e: Exception){ Log.i("TAG", "Unable to launch camera: " + e); }
-    }
-//
-//    fun setting(){
-//        cam = android.hardware.Camera.open();
-//        cam?.setDisplayOrientation(90);
-//        sv = findViewById(R.id.surfaceView);
-//        sh = sv?.getHolder();
-//        sh?.addCallback(this);
-//        sh?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-//    <SurfaceView
-//    android:layout_width="wrap_content"
-//    android:layout_height="wrap_content"
-//    android:id = "@+id/surfaceView"/>
-//    }
 
 }
 

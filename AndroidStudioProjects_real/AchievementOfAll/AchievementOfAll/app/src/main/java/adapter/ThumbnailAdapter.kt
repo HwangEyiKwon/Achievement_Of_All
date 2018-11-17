@@ -9,9 +9,11 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.GlobalVariables
 import com.example.parkseunghyun.achievementofall.R
 import model.ThumbnailModel
+import org.jetbrains.anko.startActivity
 
 
 /**
@@ -31,7 +33,12 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        var videoPath = thumbnailModels[position].videoPath
+        var videoPath = thumbnailModels[position].videoPath!!.getString("path")
+        println("fasdfasdfasdfasdf")
+        println(videoPath)
+//        println(pathJSON)
+//        var videoPath = pathJSON.get
+
         var jwtToken = thumbnailModels[position].userToken
         var contentName = thumbnailModels[position].contentName
 
@@ -59,7 +66,18 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
         override fun onClick(v: View) {
             val pos = adapterPosition
             println("clickcliclcilcicliclic")
+
+            var jwtToken = thumbnailModels[pos].userToken
+            var contentName = thumbnailModels[pos].contentName
+            var videoPath = thumbnailModels[position].videoPath!!.getString("path")
+
             Toast.makeText(v.context, "You clicked "+ videoName, Toast.LENGTH_SHORT).show()
+            context.startActivity<ExoplayerActivity>(
+                    "token" to jwtToken,
+                    "contentName" to contentName,
+                    "videoPath" to videoPath,
+                    "who" to "me"
+            )
         }
     }
 }

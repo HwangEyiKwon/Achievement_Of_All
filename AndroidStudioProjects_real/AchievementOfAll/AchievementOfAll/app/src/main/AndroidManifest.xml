@@ -29,7 +29,9 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".SignupActivity" />
-        <activity android:name=".ContentsHomeActivity"></activity>
+        <activity android:name=".ContentsHomeActivity"/>
+        <activity android:name=".OtherUserHomeActivity"/>
+        <activity android:name=".ExoplayerActivity"/>
         <service
             android:name=".MyFirebaseMessagingService">
             <intent-filter>

@@ -1,7 +1,9 @@
 package com.example.parkseunghyun.achievementofall
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,11 +19,14 @@ import org.json.JSONArray
 class HomeSearchPager : Fragment() {
     private var view_: View? = null
     private var list: MutableList<String>? = null  // 데이터를 넣은 리스트변수
+
     private var listView: ListView? = null          // 검색을 보여줄 리스트변수
     private var editSearch: EditText? = null        // 검색어를 입력할 Input 창
     private var adapter: SearchAdapter? = null      // 리스트뷰에 연결할 아답터
     private var arraylist: ArrayList<String>? = null
 
+
+    private var homeTab: TabLayout? = null
 
     private var homeSearchPagerContext: Context? = null
 
@@ -35,24 +40,12 @@ class HomeSearchPager : Fragment() {
         // 리스트를 생성한다.
         list = ArrayList()
 
+
+        generateTabLayout()
+
         // 검색에 사용할 데이터을 미리 저장한다.
-        settingList()
+        settingContentList()
 
-        // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
-        editSearch!!.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-
-            }
-
-            override fun afterTextChanged(editable: Editable) {
-                // input창에 문자를 입력할때마다 호출된다.
-                // search 메소드를 호출한다.
-                val text = editSearch?.text.toString()
-                search(text)
-            }
-        })
 
         return view_
     }
@@ -79,15 +72,45 @@ class HomeSearchPager : Fragment() {
         adapter!!.notifyDataSetChanged()
     }
 
-    private fun settingList() {
+    private fun settingContentList() {
 
-        VolleyHttpService.getSearchData(homeSearchPagerContext!!){ success ->
+        list!!.clear()
+        VolleyHttpService.getSearchContentData(homeSearchPagerContext!!){ success ->
             println(success)
             println(success.get("contents"))
             var contentsData = success.get("contents")as JSONArray
 
             for (i in 0..(contentsData.length() - 1)) {
                 val item = contentsData[i]
+
+                list?.add(item.toString())
+                // Your code here
+            }
+
+
+            arraylist = ArrayList()
+            arraylist!!.addAll(list!!)
+
+            // 리스트에 연동될 아답터를 생성한다.
+            adapter = SearchAdapter(list!!, this.context, "content")
+
+            // 리스트뷰에 아답터를 연결한다.
+            listView?.adapter = adapter
+
+        }
+
+    }
+
+    private fun settingUserList() {
+
+        list!!.clear()
+        VolleyHttpService.getSearchUserData(homeSearchPagerContext!!){ success ->
+            println(success)
+            println(success.get("users"))
+            var usersData = success.get("users")as JSONArray
+
+            for (i in 0..(usersData.length() - 1)) {
+                val item = usersData[i]
                 println("item"+ item)
 
                 list?.add(item.toString())
@@ -99,7 +122,7 @@ class HomeSearchPager : Fragment() {
             arraylist!!.addAll(list!!)
 
             // 리스트에 연동될 아답터를 생성한다.
-            adapter = SearchAdapter(list!!, this.context)
+            adapter = SearchAdapter(list!!, this.context, "user")
 
             // 리스트뷰에 아답터를 연결한다.
             listView?.adapter = adapter
@@ -121,6 +144,38 @@ class HomeSearchPager : Fragment() {
                 }
             })
         }
+
+    }
+
+    private fun generateTabLayout() {
+
+
+        homeTab = view_!!.findViewById(R.id.id_search_tab)
+        homeTab!!.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#000000"))
+        homeTab!!.addTab(homeTab!!.newTab().setText("Content").setTag("content"))
+        homeTab!!.addTab(homeTab!!.newTab().setText("User").setTag("user"))
+        homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
+        println(homeTab)
+
+        homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+
+                if(tab.tag == "content"){
+                    settingContentList()
+                }else if(tab.tag == "user"){
+                    settingUserList()
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+
+            }
+        })
+
 
     }
 }

@@ -20,6 +20,8 @@
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/black" />
 
+        <include layout="@layout/search_toolbar"/>
+
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
