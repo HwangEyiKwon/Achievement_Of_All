@@ -6,8 +6,8 @@ var User = require('../models/user');
 var Content = require('../models/content');
 var App = require('../models/app');
 var jwt = require('jwt-simple'); // jwt token 사용
-var mkdirp = require('mkdirp'); // directory 만드는것
-var nodemailer = require('nodemailer');
+
+
 
 router.post('/jwtCheck', function(req, res){
 
@@ -75,25 +75,7 @@ router.post('/signup', function (req, res, next) {
     // console.log(user+"s");
     console.log("signUPPPPPPPP");
     if(err) console.log(err);
-    if(user) {
-      res.send({success: true});
-      var pathName = req.body.email;
-      /*
-      mkdirp('./server/user/'+pathName+'/video', function (err) {
-        if(err) console.log(err);
-        else console.log("create dir ./user/" +pathName );
-      }); //server폴더 아래 /user/useremail/video 폴더가 생김.*/
-
-      //아래 코드는 두 폴더를 만들어버리는 코드.
-      mkdirp('./server/user/'+pathName+'/video/Diet', function (err) {
-        if(err) console.log(err);
-        else console.log("create dir ./user/" +pathName );
-      });
-      mkdirp('./server/user/'+pathName+'/video/NoSmoking', function (err) {
-        if(err) console.log(err);
-        else console.log("create dir ./user/" +pathName );
-      });
-    }
+    if(user) res.send({success: true});
     else res.send({success: false});
   })(req,res,next);
 });
@@ -129,39 +111,24 @@ router.post('/getUserInfo', function (req,res) {
   })
 })
 
-// 옮길 것,
-router.get('/getSearchUserData', function (req,res) {
-  var searchData = new Array();
+// 옮길것
+router.get('/getSearchData', function (req,res) {
 
-  User.find(function(err, info){
-    console.log("search user data" + info);
+    Content.find(function (err, info) {
+      console.log("seachdata" + info);
 
-    var searchData = {
-      users: [],
-    }
+      var searchData = {
+        contents: [],
+        users: []
+      }
 
-    for(var i in info){
-      searchData.users.push(info[i].name);
-    }
-    res.send(searchData);
-  });
-});
-
-router.get('/getSearchContentData', function (req,res) {
-  Content.find(function (err, info) {
-    console.log("search content data" + info);
-
-    var searchData = {
-      contents: [],
-    }
-
-    for(var i in info){
-      searchData.contents.push(info[i].name);
-    }
-    res.send(searchData);
-  });
-});
-
+      for(var i in info){
+        searchData.contents.push(info[i].name);
+      }
+      res.send(searchData);
+    })
+  }
+)
 router.get('/getAppInfo', function (req,res) {
 
     App.findOne(function (err, info) {
@@ -171,71 +138,20 @@ router.get('/getAppInfo', function (req,res) {
   }
 )
 
-router.get("/pwdSendMail", function(req, res, next){
-  let email = "hwangeyikwon@gmail.com";
-
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'hwangeyikwon@gmail.com',  // gmail 계정 아이디를 입력
-      pass: ''          // gmail 계정의 비밀번호를 입력
-    }
-  });
-  let mailOptions = {
-    from: 'hwangeyikwon@gmail.com',
-    to: email,
-    subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
-    html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
-      " <form action=\"http://localhost:3000/pwdEmailAuthen\" method=\"post\"> " +
-      "<label for=\"pwd\">PW</label>" +
-      "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
-      "  <input type=\"submit\" value=\"전송\"> " +
-      "</form>"
-  };
-
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    }
-    else {
-      console.log('Email sent: ' + info.response);
-    }
+//jwt토큰으로 사용자 파악,(decode encode)
+router.get('/:contentID/contentJoin',  function (req,res) {
+  User.findOne({email: req.body.email}, function(err, user){
+    //이건 어떻게 해야 할까??
   });
 })
 
-router.post("/pwdEmailAuthen", function(req, res, next){
-  console.log(req.body.pwd);
-
-});
-
-router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
-  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
-  var userEmail = decoded.userCheck;
-
-  var contentName = req.params.contentName;
-  User.findOne({ email : userEmail , "contentList.contentName": contentName}, function(err, user) {
-    if(err){
-      console.log(err);
-      res.send({success: false});
-    }
-    else{
-      if(user == null)  res.send({joinState: 3});
-      else  {
-        var contentIndex;
-        var joinContentCount = user.contentList.length;
-
-        for (var i = 0; i < joinContentCount; i++) {
-          if (user.contentList[i].contentName === contentName) {
-            contentIndex = i;
-            break;
-          }
-        }
-
-        res.send({joinState: user.contentList[contentIndex].joinState});
-      }
-    }
+//calendar : json 배열로 {date, 인증여부} 가지고 있게끔
+//컨텐츠 아이디or네임으로 유저의 해당되는 컨텐츠 리스트를 알아야 함(새로운 컨텐츠 리스트를 추가해야 됨, 푸시만 하면)
+router.post('/:contentID/contentJoinComplete',  function (req,res) {
+  User.findOne({email: req.body.email}, function(err, user){
+    //이렇게 하는 게 맞는지 토론
+    user.contentList[0].calendar[0] = req.body.periodInfo;
   });
-});
+})
 
 module.exports = router ;

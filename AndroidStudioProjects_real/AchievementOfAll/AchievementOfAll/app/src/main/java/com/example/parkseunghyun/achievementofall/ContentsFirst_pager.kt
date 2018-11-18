@@ -1,5 +1,8 @@
 package com.example.parkseunghyun.achievementofall
 
+import android.Manifest
+import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -17,10 +20,23 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import android.net.Uri
+import android.text.TextUtils
+import android.widget.Toast
+import java.io.File
+import pub.devrel.easypermissions.EasyPermissions
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import okhttp3.*
+import okhttp3.OkHttpClient
+import java.io.IOException
 
-class ContentsFirst_pager : Fragment() {
+class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
-    private var view_: View? = null
+    private var mView: View? = null
     private var calendar: MaterialCalendarView? = null
     private var goToVideoButton: Button? = null
 
@@ -28,20 +44,88 @@ class ContentsFirst_pager : Fragment() {
     private var jwtToken: String ?= null
     private var contentName: String? = null
 
+    private val TAG = MainActivity::class.java.simpleName
+    private val REQUEST_VIDEO_CAPTURE = 300
+    private val READ_REQUEST_CODE = 200
+    private var uri: Uri? = null
+    private var pathToStoredVideo: String? = null
+
+    private var globalVariables: GlobalVariables ?= GlobalVariables()
+    private var ipAddress: String = globalVariables!!.ipAddress
+
+    private var forRemoveFile: File? = null
+
+    /**/
+    private var tmpContentName = "NoSmoking"
+    private var tmpMyEmail = "shp3@gmail.com"
+    /**/
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        view_ =  inflater!!.inflate(R.layout.contents_fragment_1, container, false)
+        mView =  inflater!!.inflate(R.layout.contents_fragment_1, container, false)
         val activity = activity as ContentsHomeActivity
         jwtToken = activity.jwtToken.toString()
         contentName = activity.content.toString()
         println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
         getCalendarInfo(jwtToken!!,contentName!!)
 
-        return view_
+        goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
+        goToVideoButton?.setOnClickListener{
+            val videoCaptureIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            if (videoCaptureIntent.resolveActivity(activity.packageManager) != null) {
+                Log.d(TAG, "UNZI --")
+
+                startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+            }
+        }
+
+        return mView
 
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "UNZI OK? --")
+
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_VIDEO_CAPTURE) {
+            uri = data?.data
+            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
+                Log.d(TAG, "Recorded Video Path $pathToStoredVideo")
+
+                uploadVideoToServer(pathToStoredVideo!!)
+            } else {
+                Log.d(TAG, "UNZI OK? permission--")
+
+                EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+
+            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Don't do anything.
+            } else {
+                EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        if (uri != null) {
+            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
+                Log.d(TAG, "Recorded Video Path $pathToStoredVideo")
+                uploadVideoToServer(pathToStoredVideo!!)
+            }
+            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Don't do anything
+            }
+        }
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        Log.d(TAG, "User has denied requested permission")
     }
 
     private fun getCalendarInfo(token: String, contentName: String){
@@ -54,9 +138,81 @@ class ContentsFirst_pager : Fragment() {
             settingCalendar(success)
         }
     }
+
+    private fun uploadVideoToServer(pathToVideoFile: String) {
+        val videoFile = File(pathToVideoFile)
+        Log.d(TAG, "Recorded Video Path $pathToVideoFile")
+        Log.d(TAG, "Recorded Video is $videoFile")
+
+        val videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile)
+        val vFile = MultipartBody.Part.createFormData("video", videoFile.name, videoBody)
+        /**/
+
+        val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(object:Interceptor {
+            @Throws(IOException::class)
+            override fun intercept(chain: Interceptor.Chain?): okhttp3.Response {
+                val original = chain!!.request()
+                val request = original.newBuilder()
+                        .header("content_name", "${tmpContentName}")
+                        .header("jwt_token", "${tmpMyEmail}")
+                        .method(original.method(), original.body())
+                        .build()
+                return chain!!.proceed(request)
+            }
+        })
+
+        val client = httpClient.build()
+
+        /**/
+        val retrofit = Retrofit.Builder()
+                .baseUrl(ipAddress)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client) // >>>>>>
+                .build()
+        val vInterface = retrofit.create(VideoInterface::class.java)
+        val serverCom = vInterface.uploadVideoToServer(vFile)
+
+        serverCom.enqueue(object : Callback<ResultObject> {
+            override fun onResponse(call: Call<ResultObject>, response: Response<ResultObject>) {
+                val result = response.body()
+                Log.d(TAG, "result is??? ---- $result")
+
+                if (!TextUtils.isEmpty(result.success)) {
+                    Toast.makeText(activity, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
+                    Log.d(TAG, "Result " + result.success)
+                }
+
+                // Remove video from my storage.
+                forRemoveFile = File(pathToStoredVideo)
+                forRemoveFile?.delete()
+                var resolver: ContentResolver? = activity.contentResolver
+                resolver?.delete(uri, null, null)
+
+            }
+
+            override fun onFailure(call: Call<ResultObject>, t: Throwable) {
+                Log.d(TAG, "Error message ---- " + t.message)
+            }
+        })
+    }
+
+    private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String? {
+        val cursor = activity.contentResolver.query(contentURI, null, null, null, null)
+        if (cursor == null) {
+            return contentURI.path
+        } else {
+            cursor.moveToFirst()
+            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            return cursor.getString(idx)
+        }
+    }
+
+
+
     private fun settingCalendar(jsonArray: JSONArray){
 
-        calendar = view_?.findViewById(R.id.calendarView)
+        calendar = mView?.findViewById(R.id.calendarView)
         calendar!!.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
                 .setMinimumDate(CalendarDay.from(2017, 0, 1))
@@ -85,7 +241,7 @@ class ContentsFirst_pager : Fragment() {
         }
 
 
-        goToVideoButton = view_?.findViewById(R.id.go_to_video_button)
+        goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
         goToVideoButton?.setOnClickListener{
             var intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
             startActivity(intent)

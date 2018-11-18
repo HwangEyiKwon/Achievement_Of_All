@@ -34,11 +34,11 @@ const userSchema = new Schema({
   contentList: [{
     contentId: Number,
     contentName: String,
-    videoPath: [{path: String, authen: Number}], //authen = 0:아직 완료 전, 1: 성공 2: 실패
-    joinState: Number, //0: 시작 전 컨텐츠 1:컨텐츠 진행 중 2: 컨텐츠 is done
-    calendar: [{year: String, month: String, day: String, authen: Number}], // 0: 인증 실패 1: 인증 성공
-    authenticationDate: String, //최근 날짜 비디오 기준
-    isAuthenticated: Number, // fcm 용도. 최근 날짜 비디오 기준
+    videoPath: [String],
+    joinState: Number, //0: 컨텐츠 참가x 1: 컨텐츠 진행중 2: 컨텐츠 is done
+    calendar: Array,
+    authenticationDate: String, //server change code need!!
+    isAuthenticated: Number,
   }],
   pushToken: {
     type: String,
@@ -49,6 +49,7 @@ const userSchema = new Schema({
 userSchema.methods.generateHash = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
+
 userSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password)
 };

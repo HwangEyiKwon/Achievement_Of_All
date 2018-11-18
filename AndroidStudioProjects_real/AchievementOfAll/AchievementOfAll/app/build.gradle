@@ -28,10 +28,23 @@ android {
 
 dependencies {
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
+
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.okio:okio:1.7.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.1'
+    compile 'pub.devrel:easypermissions:0.2.0'
+//    compile 'com.wdullaer:materialdatetimepicker:4.0.1'
+    compile 'com.github.wdullaer:MaterialDateTimePicker:v3.0.0'
 
     compile 'com.android.support:design:24.1.1'
     compile 'com.google.firebase:firebase-messaging:11.8.0'
