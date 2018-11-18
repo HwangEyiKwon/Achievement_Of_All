@@ -1,9 +1,13 @@
 package model
 
+import org.json.JSONObject
+
 /**
  * Created by A on 23-03-2018.
  */
 
 class ThumbnailModel {
-    var accountpic: Int? = null
+    var videoPath: JSONObject? = null
+    var userToken: String? = null
+    var contentName: String? = null
 }

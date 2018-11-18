@@ -2,31 +2,14 @@ package com.example.parkseunghyun.achievementofall
 
 
 import adapter.HomePagerAdapter
-import android.content.ComponentName
-import android.content.Intent
-import android.media.MediaRecorder
-import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.provider.MediaStore
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
@@ -38,11 +21,6 @@ class HomeActivity : AppCompatActivity() {
     // jwt-token
     var jwtToken: String?= null
 
-    // 카메라 연동
-    private var cam: android.hardware.Camera ?= null;
-    private var MediaRecorder: MediaRecorder?= null;
-    private var sv: SurfaceView?= null;
-    private var sh: SurfaceHolder?= null;
 
 //    override fun onRestart() {
 //        super.onRestart()
@@ -72,6 +50,17 @@ class HomeActivity : AppCompatActivity() {
         // Code for TabLayout
         generateTabLayout()
 
+    }
+
+
+    private fun generateTabLayout() {
+
+        homeTab = findViewById(R.id.id_home_tab)
+        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_person_black))
+        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
+        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
+        homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
+        println(homeTab)
 
         var viewPager = findViewById<ViewPager>(R.id.home_pager_container)
         var homePagerAdapter = HomePagerAdapter(supportFragmentManager)
@@ -82,16 +71,23 @@ class HomeActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager?.currentItem = tab.position
 
-//                when(viewPager.currentItem) {
-//
-//                    0-> {
-//                        homeTab!!.findViewById<>()
-//                    }
-//                    1-> {
-//                    }
-//                    2-> {
-//                    }
-//                }
+                when(tab.position) {
+                    0-> {
+                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
+                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+                    }
+                    1-> {
+                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
+                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search_black)
+                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+                    }
+                    2-> {
+                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
+                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info_black)
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -102,18 +98,6 @@ class HomeActivity : AppCompatActivity() {
 
             }
         })
-
-    }
-
-
-    private fun generateTabLayout() {
-
-        homeTab = findViewById(R.id.id_home_tab)
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_home_outline))
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_search))
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
-        homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
-        println(homeTab)
     }
 
     private fun logout(token: String){
@@ -147,71 +131,6 @@ class HomeActivity : AppCompatActivity() {
         return auto.getString("token", "")
     }
 
-
-//    override fun onStart() {
-//        super.onStart()
-//        initializePlayer()
-//    }
-
-    fun initializePlayer(){
-        // Create a default TrackSelector
-        val bandwidthMeter =  DefaultBandwidthMeter();
-        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwidthMeter);
-        val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory);
-
-        //Initialize the player
-        val player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
-
-        //Initialize simpleExoPlayerView
-        val simpleExoPlayerView = findViewById(R.id.simpleExoPlayerView) as SimpleExoPlayerView
-
-        simpleExoPlayerView.setPlayer(player)
-
-        // Produces DataSource instances through which media data is loaded.
-        val dataSourceFactory = DefaultDataSourceFactory(this, Util.getUserAgent(this, "CloudinaryExoplayer"));
-
-        // Produces Extractor instances for parsing the media data.
-        val extractorsFactory = DefaultExtractorsFactory();
-
-        // This is the MediaSource representing the media to be played.
-        val videoUri = Uri.parse("http:// 192.168.0.13:3000/video");
-        val videoSource =  ExtractorMediaSource(videoUri, dataSourceFactory, extractorsFactory, null, null);
-
-        // Prepare the player with the source.
-        player.prepare(videoSource);
-
-    }
-
-    fun callCamera() {
-
-        var i = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        try {
-            var pm = getPackageManager();
-
-            var mInfo = pm.resolveActivity(i, 0);
-
-            var intent =  Intent();
-            intent.setComponent(ComponentName(mInfo.activityInfo.packageName, mInfo.activityInfo.name));
-            intent.setAction(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-            startActivity(intent);
-        } catch (e: Exception){ Log.i("TAG", "Unable to launch camera: " + e); }
-    }
-//
-//    fun setting(){
-//        cam = android.hardware.Camera.open();
-//        cam?.setDisplayOrientation(90);
-//        sv = findViewById(R.id.surfaceView);
-//        sh = sv?.getHolder();
-//        sh?.addCallback(this);
-//        sh?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-//    <SurfaceView
-//    android:layout_width="wrap_content"
-//    android:layout_height="wrap_content"
-//    android:id = "@+id/surfaceView"/>
-//    }
 
 }
 

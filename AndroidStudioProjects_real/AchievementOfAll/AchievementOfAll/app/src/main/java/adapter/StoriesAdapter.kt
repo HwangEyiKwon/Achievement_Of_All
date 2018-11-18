@@ -8,26 +8,23 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
+import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.GlobalVariables
 import com.example.parkseunghyun.achievementofall.R
 import com.example.parkseunghyun.achievementofall.RecyclerViewClickListener
 import de.hdodenhof.circleimageview.CircleImageView
+import model.StoriesModel
 import org.jetbrains.anko.startActivity
 
 /**
  * Created by A on 23-03-2018.
  */
 
-class JoinedContentsAdapter(private val context: Context, private val joinedContentsModels: List<model.JoinedContentsModel>, itemListener: RecyclerViewClickListener) : RecyclerView.Adapter<JoinedContentsAdapter.ViewHolder>() {
+class StoriesAdapter(private val context: Context, private val storiesModels: List<StoriesModel>, itemListener: RecyclerViewClickListener) : RecyclerView.Adapter<StoriesAdapter.ViewHolder>() {
 
     // 서버 ip 주소
-    private var globalVariables: GlobalVariables ?= GlobalVariables()
+    private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
-
-//    init {
-//        itemListener = itemListener
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.stories_view, parent, false)
@@ -37,16 +34,16 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        // 사용자 참여 컨텐츠 이미지 받아오기
-        println("이미지 이름"+joinedContentsModels[position].name)
-        val contentImage = joinedContentsModels[position].name
-        Glide.with(this.context).load("${ipAddress}/getContentImage/${contentImage}").into(holder.profile)
-        holder.name.text = joinedContentsModels[position].name
+        var email = storiesModels[position].email
+        Glide.with(this.context).load("${ipAddress}/getOthersImage/$email").into(holder.profile)
+//        holder.profile.setImageResource(storiesModels[position].profile!!)
+        holder.name.text = storiesModels[position].name
+//        Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(profile)
 
     }
 
     override fun getItemCount(): Int {
-        return this.joinedContentsModels.size
+        return storiesModels.size
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
@@ -54,7 +51,6 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
         internal var name: TextView
 
         init {
-
             itemView.setOnClickListener(this)
             profile = itemView.findViewById(R.id.profile_image)
             name = itemView.findViewById(R.id.txtname)
@@ -62,19 +58,22 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
 
         override fun onClick(v: View) {
             val pos = adapterPosition
+            var email = storiesModels[pos].email
+            var contentName = storiesModels[pos].contentName
 
-            // 해당 컨텐츠 홈으로 이동
+            // 클릭 처리
             Toast.makeText(v.context, "You clicked "+ name.text, Toast.LENGTH_SHORT).show()
-            context.startActivity<ContentsHomeActivity>(
-                    // 컨텐츠 이름 넘기기
-                    "contentName" to  name.text
+            context.startActivity<ExoplayerActivity>(
+                    "email" to email,
+                    "contentName" to contentName,
+                    "who" to "others"
             )
-        }
 
+
+        }
     }
 
     companion object {
         private val itemListener: RecyclerViewClickListener? = null
     }
-
 }
