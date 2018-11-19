@@ -71,7 +71,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 0}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
 //     contentId : 1,

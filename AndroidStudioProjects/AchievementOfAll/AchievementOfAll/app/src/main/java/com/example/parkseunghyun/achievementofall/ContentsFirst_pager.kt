@@ -237,12 +237,17 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 SaturdayDecorator(),
                 OneDayDecorator())
 
-        val calendar2 = Calendar.getInstance()
-        calendar2.add(Calendar.MONTH, -2)
+//        val calendar2 = Calendar.getInstance()
+//        calendar2.add(Calendar.MONTH, -2)
 
-        val dates = mutableListOf<CalendarDay>()
+        val successDates = mutableListOf<CalendarDay>()
+        val failDates = mutableListOf<CalendarDay>()
+        val notYetDates = mutableListOf<CalendarDay>()
+
         val sDate = mutableListOf<CalendarDay>()
         val eDate = mutableListOf<CalendarDay>()
+
+
         sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
         eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
 
@@ -253,16 +258,27 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
             var d = jsonArray.getJSONObject(i).getString("day").toInt()
 
             var day = CalendarDay.from(y,m,d)
-            dates.add(day)
-            calendar2.add(Calendar.DATE, 5) // 5가 뭐지?
+
+            println(jsonArray.getJSONObject(i))
+            if(jsonArray.getJSONObject(i).getInt("authen")==1){// success
+                println("SUCCESS")
+                successDates.add(day)
+            }else if(jsonArray.getJSONObject(i).getInt("authen")==0){ // fail
+                println("FAIL")
+                failDates.add(day)
+            }else{ // not yet
+                notYetDates.add(day)
+            }
+
+//            calendar2.add(Calendar.DATE, 5) // 5가 뭐지?
         }
 
-        println("dates "+dates)
-        println("dates "+dates)
-        println("dates "+dates)
 
         calendar!!.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected -> Log.e("DAY", "DAY:$date") })
-        calendar!!.addDecorators(EventDecorator(Color.RED, dates,activity, "dates"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, successDates,activity, "success"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, failDates,activity, "fail"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, notYetDates,activity, "notYet"))
+
         calendar!!.addDecorators(EventDecorator(Color.RED, sDate,activity, "startDate"))
         calendar!!.addDecorators(EventDecorator(Color.RED, eDate,activity, "endDate"))
     }

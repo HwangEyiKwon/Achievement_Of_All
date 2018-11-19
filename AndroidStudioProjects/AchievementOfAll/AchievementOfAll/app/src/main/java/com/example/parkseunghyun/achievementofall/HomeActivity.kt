@@ -47,6 +47,7 @@ class HomeActivity : AppCompatActivity() {
 //    generateTabLayout()
 
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -128,6 +129,7 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_LONG).show()
                 println("로그아웃 후 토큰"+loadToken())
                 startActivity<LoginActivity>()
+                finish()
 
             }else{
                 Toast.makeText(this, "로그아웃 실패", Toast.LENGTH_LONG).show()

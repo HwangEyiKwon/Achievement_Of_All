@@ -69,14 +69,16 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
 
             var jwtToken = thumbnailModels[pos].userToken
             var contentName = thumbnailModels[pos].contentName
-            var videoPath = thumbnailModels[position].videoPath!!.getString("path")
+            var videoPath = thumbnailModels[pos].videoPath!!.getString("path")
+            var isAuthen = thumbnailModels[pos].videoPath!!.getInt("authen")
 
             Toast.makeText(v.context, "You clicked "+ videoName, Toast.LENGTH_SHORT).show()
             context.startActivity<ExoplayerActivity>(
                     "token" to jwtToken,
                     "contentName" to contentName,
                     "videoPath" to videoPath,
-                    "who" to "me"
+                    "who" to "me",
+                    "isAuthen" to isAuthen
             )
         }
     }

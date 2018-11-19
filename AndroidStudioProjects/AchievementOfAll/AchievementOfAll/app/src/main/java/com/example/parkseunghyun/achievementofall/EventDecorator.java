@@ -21,11 +21,15 @@ public class EventDecorator implements DayViewDecorator {
 
     public EventDecorator(int color, Collection<CalendarDay> dates,Activity context, String which) {
 
-        if(which == "dates"){
+        if(which == "success"){
             drawable = context.getResources().getDrawable(R.drawable.ic_icons_check);
+        }else if(which == "fail"){
+            drawable = context.getResources().getDrawable(R.drawable.ic_icons_wrong);
+        }else if(which == "notYet"){
+            drawable = context.getResources().getDrawable(R.drawable.ic_icons_notyet);
         }else if(which == "startDate"){
             drawable = context.getResources().getDrawable(R.drawable.ic_icons_start);
-        }else{
+        }else {
             drawable = context.getResources().getDrawable(R.drawable.ic_icons_end);
         }
 

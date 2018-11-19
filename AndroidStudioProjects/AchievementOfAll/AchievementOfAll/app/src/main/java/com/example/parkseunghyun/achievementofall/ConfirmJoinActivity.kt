@@ -85,9 +85,6 @@ class ConfirmJoinActivity : AppCompatActivity() {
 //        var ca = activity?.getContentsHomeActivity()
 //        ca!!.finish()
 //        finish()
-        var contentsHomeActivity = ContentsHomeActivity().contentsHomeContext
-        (ContentsHomeActivity()).reset()
-
 
         VolleyHttpService.contentJoinComplete(this, jsonObject){ success ->
 

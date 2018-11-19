@@ -146,6 +146,11 @@ class LoginActivity : AppCompatActivity() {
                 saveToken(jwt_token.toString())
                 startActivity<HomeActivity>()
 
+                text_email.setText("")
+                text_password.setText("")
+
+
+
             }else{ // 로그인 실패
                 saveData("0","0",isChecked)
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_LONG).show()
