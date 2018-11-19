@@ -19,8 +19,16 @@ public class EventDecorator implements DayViewDecorator {
     private int color;
     private HashSet<CalendarDay> dates;
 
-    public EventDecorator(int color, Collection<CalendarDay> dates,Activity context) {
-        drawable = context.getResources().getDrawable(R.drawable.ic_icons_check);
+    public EventDecorator(int color, Collection<CalendarDay> dates,Activity context, String which) {
+
+        if(which == "dates"){
+            drawable = context.getResources().getDrawable(R.drawable.ic_icons_check);
+        }else if(which == "startDate"){
+            drawable = context.getResources().getDrawable(R.drawable.ic_icons_start);
+        }else{
+            drawable = context.getResources().getDrawable(R.drawable.ic_icons_end);
+        }
+
         this.color = color;
         this.dates = new HashSet<>(dates);
     }

@@ -43,6 +43,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var jwtToken: String ?= null
     private var contentName: String? = null
     private var joinState: Int ?= null
+    private var startDate: JSONObject ?= null
+    private var endDate: JSONObject ?= null
 
 
     private val TAG = MainActivity::class.java.simpleName
@@ -71,6 +73,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         jwtToken = contentHomeActivity.jwtToken.toString()
         contentName = contentHomeActivity.content.toString()
         joinState = contentHomeActivity.joinState
+        startDate = contentHomeActivity.startDate
+        endDate = contentHomeActivity.endDate
 
         println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
         getCalendarInfo(jwtToken!!,contentName!!)
@@ -82,7 +86,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
             }
         }
-        
+
         if(joinState != 1){
             goToVideoButton!!.isEnabled = false
         }else{
@@ -223,8 +227,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         calendar = mView?.findViewById(R.id.calendarView)
         calendar!!.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setMinimumDate(CalendarDay.from(2017, 0, 1))
-                .setMaximumDate(CalendarDay.from(2030, 11, 31))
+                .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month"),startDate!!.getInt("day")))
+                .setMaximumDate(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month"),endDate!!.getInt("day")))
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
@@ -235,7 +239,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         val calendar2 = Calendar.getInstance()
         calendar2.add(Calendar.MONTH, -2)
+
         val dates = mutableListOf<CalendarDay>()
+        val sDate = mutableListOf<CalendarDay>()
+        val eDate = mutableListOf<CalendarDay>()
+        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month"),startDate!!.getInt("day")))
+        eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month"),endDate!!.getInt("day")))
 
         for (i in 0..(jsonArray.length() - 1)) {
 
@@ -245,11 +254,17 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
             var day = CalendarDay.from(y,m,d)
             dates.add(day)
-            calendar2.add(Calendar.DATE, 5)
+            calendar2.add(Calendar.DATE, 5) // 5가 뭐지?
         }
 
+        println("dates "+dates)
+        println("dates "+dates)
+        println("dates "+dates)
+
         calendar!!.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected -> Log.e("DAY", "DAY:$date") })
-        calendar!!.addDecorators(EventDecorator(Color.RED, dates,activity))
+        calendar!!.addDecorators(EventDecorator(Color.RED, dates,activity, "dates"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, sDate,activity, "startDate"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, eDate,activity, "endDate"))
     }
 
 

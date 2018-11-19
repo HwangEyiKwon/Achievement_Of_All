@@ -3,10 +3,12 @@ package com.example.parkseunghyun.achievementofall
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
-import java.util.*
-import android.widget.*
+import android.widget.Button
 import android.widget.CheckBox
+import android.widget.DatePicker
+import android.widget.TextView
 import org.json.JSONObject
+import java.util.*
 
 
 class ConfirmJoinActivity : AppCompatActivity() {
@@ -83,6 +85,9 @@ class ConfirmJoinActivity : AppCompatActivity() {
 //        var ca = activity?.getContentsHomeActivity()
 //        ca!!.finish()
 //        finish()
+        var contentsHomeActivity = ContentsHomeActivity().contentsHomeContext
+        println("앙앙??????"+contentsHomeActivity)
+
 
         VolleyHttpService.contentJoinComplete(this, jsonObject){ success ->
 

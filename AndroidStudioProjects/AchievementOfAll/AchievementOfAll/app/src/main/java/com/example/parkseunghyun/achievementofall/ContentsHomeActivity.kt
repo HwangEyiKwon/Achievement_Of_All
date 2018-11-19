@@ -29,9 +29,8 @@ import kotlin.collections.ArrayList
 class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, DatePickerDialog.OnDateSetListener {
 
     // 타 사용자 인증 영상
-    private var othersList = mutableListOf<String>()
 
-    private var storiesModelArrayList=  mutableListOf<StoriesModel>()
+    private var othersArrayList=  mutableListOf<StoriesModel>()
     private var recyclerView: RecyclerView? = null
     private var storiesAdapter: StoriesAdapter? = null
     private var text_joinedORnot: TextView? = null
@@ -56,7 +55,6 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
     var tmpCalendar: Calendar? = null
 
     var contentsHomeContext: Context? = null
-//    var  ca: ContentsHomeActivity ?= null
 
     override fun recyclerViewListClicked(v: View, position: Int) {
         Toast.makeText(getApplicationContext(), "position is $position", Toast.LENGTH_LONG)
@@ -64,6 +62,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
 
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+
         selectedYear = year
         selectedMonthOfYear = monthOfYear + 1
         selectedDayOfMonth = dayOfMonth
@@ -77,20 +76,15 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         goToConfirmingPage.putExtra("contentName", content!!)
         goToConfirmingPage.putExtra("token", jwtToken!!)
 
-
-
-
         startActivity(goToConfirmingPage)
     }
-    fun getContentsHomeActivity(): Context{
-        return contentsHomeContext!!
+    override fun onRestart() {
+        super.onRestart()
+        println("RESTART contentHOME")
     }
     override fun onResume(){
         super.onResume();
         println("RESUMERESUMERESUMEcontentHome")
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contents_home)
         contentsHomeContext = this
 
@@ -127,6 +121,84 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             contentJoin()
 
         }
+
+    }
+    fun reset(){
+        contentsHomeContext = this
+
+        text_joinedORnot = findViewById(R.id.id_joined_OR_not)
+        text_joinedORnot?.setText("참가중 or 미참가중")
+
+        remainingTime = findViewById(R.id.ydh_remaining_time)
+        remainingTime?.setText("남은 인증시간")
+
+        contentName = findViewById(R.id.contentName)
+        contentDuration = findViewById(R.id.duration)
+
+        contentDuration!!.setText("기간")
+
+        jwtToken = loadToken()
+
+        if(intent.getStringExtra("contentName")!=null){
+            content = intent.getStringExtra("contentName")
+            contentName!!.setText(content)
+        }
+
+        getParticipatedInfo()
+        getOthers()
+
+
+
+
+
+        val cal = Calendar.getInstance()
+        println("CALENDER TEST: " + cal)
+
+        contentJoinButton = findViewById(R.id.button_to_join)
+        contentJoinButton?.setOnClickListener {
+            contentJoin()
+
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_contents_home)
+//
+//        contentsHomeContext = this
+//
+//        text_joinedORnot = findViewById(R.id.id_joined_OR_not)
+//        text_joinedORnot?.setText("참가중 or 미참가중")
+//
+//        remainingTime = findViewById(R.id.ydh_remaining_time)
+//        remainingTime?.setText("남은 인증시간")
+//
+//        contentName = findViewById(R.id.contentName)
+//        contentDuration = findViewById(R.id.duration)
+//
+//        contentDuration!!.setText("기간")
+//
+//        jwtToken = loadToken()
+//
+//        if(intent.getStringExtra("contentName")!=null){
+//            content = intent.getStringExtra("contentName")
+//            contentName!!.setText(content)
+//        }
+//
+//        getParticipatedInfo()
+//        getOthers()
+//
+//
+//
+//
+//
+//        val cal = Calendar.getInstance()
+//        println("CALENDER TEST: " + cal)
+//
+//        contentJoinButton = findViewById(R.id.button_to_join)
+//        contentJoinButton?.setOnClickListener {
+//            contentJoin()
+//
+//        }
 
     }
 
@@ -215,7 +287,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
             recyclerView!!.layoutManager = layoutManager
             recyclerView!!.itemAnimator = DefaultItemAnimator()
-            storiesModelArrayList = ArrayList()
+            othersArrayList = ArrayList()
 
             for(i in 0..(others.length()-1)){
                 val storiesModel = StoriesModel()
@@ -224,15 +296,16 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                 storiesModel.email = other.getString("email")
                 storiesModel.name = other.getString("name")
                 storiesModel.contentName = content
-                storiesModelArrayList!!.add(storiesModel)
+                othersArrayList!!.add(storiesModel)
             }
 
-            storiesAdapter = StoriesAdapter(this@ContentsHomeActivity, storiesModelArrayList!!, this)
+            storiesAdapter = StoriesAdapter(this@ContentsHomeActivity, othersArrayList!!, this)
             recyclerView!!.adapter = storiesAdapter
 
         }
     }
     private fun contentJoin(){
+
         val jsonObject = JSONObject()
         jsonObject.put("token", jwtToken)
         jsonObject.put("contentName", content)

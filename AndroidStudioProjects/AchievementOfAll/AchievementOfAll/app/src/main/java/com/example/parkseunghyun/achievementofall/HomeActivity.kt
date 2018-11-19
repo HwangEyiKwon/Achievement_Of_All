@@ -22,17 +22,30 @@ class HomeActivity : AppCompatActivity() {
     var jwtToken: String?= null
 
 
-//    override fun onRestart() {
-//        super.onRestart()
-//        println("restart")
-//        println("홈페이지에서 토큰 받기(preference에서): "+ loadToken())
-//        jwtToken = loadToken()
-//
-//
-//    }
+    override fun onRestart() {
+        super.onRestart()
+        println("RESTART HOME")
+    }
     override fun onResume(){
         super.onResume();
         println("RESUMERESUMERESUMEHome")
+//    setContentView(R.layout.home_layout)
+//
+//    // jwt-token 받기
+//    println("홈페이지에서 토큰 받기(preference에서): "+ loadToken())
+//    jwtToken = loadToken()
+////        savedInstanceState?.putString("jwtToken", jwtToken)
+//
+//
+//    // 로그아웃 버튼
+//    val logoutBt = findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.logoutButton)
+//    logoutBt.setOnClickListener {
+//        logout(jwtToken.toString())
+//    }
+//
+//    // Code for TabLayout
+//    generateTabLayout()
+
     }
     override fun onCreate(savedInstanceState: Bundle?) {
 

@@ -54,7 +54,7 @@ var appInfoSchema = require('./server/models/app');
 require('./config/passport')(passport);
 
 
-// //--------------------------------
+//--------------------------------
 // 유저 디비 초기화
 //
 // var user1 = new user({
@@ -185,8 +185,8 @@ require('./config/passport')(passport);
 // var content1 = new content({
 //   id: 0,
 //   name: "NoSmoking",
-//   startDate: "11/01/2018",
-//   endDate: "11/30/2018",
+//   startDate: "10/01/2018",
+//   endDate: "10/30/2018",
 //   isDone: 0,
 //   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: []}},
 //     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople:[{name: "ParkSeungHyun17", authenInfo: 1}]}},
@@ -289,7 +289,7 @@ require('./config/passport')(passport);
 
 //--------------------------------
 //--------------------------------
-//디비 모두 제거
+// 디비 모두 제거
 // appInfoSchema.remove(function (err, info) {
 //   console.log("DELETED");
 // });
@@ -301,8 +301,8 @@ require('./config/passport')(passport);
 // content.remove(function (err, info) {
 //   console.log("DELETED");
 // });
-//--------------------------------
-//
+// --------------------------------
+
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
 //저장할땐 user1.contentList = {isAuthenticated : 1};
