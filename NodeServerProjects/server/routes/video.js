@@ -85,7 +85,7 @@ router.post('/sendVideo', function(req, res, next){
           console.log("content DB saving in sendVideo");
         });
 
-        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.videoPath": [{path : filenamePath, authen: 0}]}},function(err, doc){
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.videoPath": [{path : filenamePath, authen: 2}]}},function(err, doc){
           if(err){
             console.log(err);
           }
