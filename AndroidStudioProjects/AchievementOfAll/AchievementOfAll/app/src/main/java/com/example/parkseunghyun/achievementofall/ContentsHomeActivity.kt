@@ -5,8 +5,8 @@ package com.example.parkseunghyun.achievementofall
 //import adapter.StoriesAdapter
 //import model.StoriesModel
 import adapter.StoriesAdapter
-import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.view.ViewPager
@@ -15,14 +15,13 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.contents_pager_container.*
 import model.StoriesModel
 import org.json.JSONObject
-import android.content.Intent
-import android.widget.Button
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -117,23 +116,6 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         getOthers()
 
 
-        val viewPager = findViewById<ViewPager>(R.id.contents_pager_container)
-        val pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
-        viewPager.adapter = pAdapter
-
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-            override fun onPageScrollStateChanged(p0: Int) {
-
-            }
-            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
-
-            }
-            override fun onPageSelected(p0: Int) {
-                contents_circle_indicator.selectDot(p0)
-            }
-        })
-
-        contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
 
 
 
@@ -173,6 +155,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             joinState = success.getInt("joinState")
             startDate = success.getJSONObject("startDate")
             endDate = success.getJSONObject("endDate")
+
             var d = "${startDate!!.getInt("year")}/${startDate!!.getInt("month")}/${startDate!!.getInt("day")} \n~ ${endDate!!.getInt("year")}/${endDate!!.getInt("month")}/${endDate!!.getInt("day")}"
 
             when(joinState){
@@ -197,6 +180,24 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
                 }
             }
+            val viewPager = findViewById<ViewPager>(R.id.contents_pager_container)
+            val pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
+            viewPager.adapter = pAdapter
+
+            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+                override fun onPageScrollStateChanged(p0: Int) {
+
+                }
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+
+                }
+                override fun onPageSelected(p0: Int) {
+                    contents_circle_indicator.selectDot(p0)
+                }
+            })
+
+            contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+
 
         }
     }

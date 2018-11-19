@@ -5,34 +5,33 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
+import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.*
-import android.net.Uri
-import android.text.TextUtils
-import android.widget.Toast
-import java.io.File
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.*
-import okhttp3.OkHttpClient
+import java.io.File
 import java.io.IOException
+import java.util.*
 
 class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
@@ -58,8 +57,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var forRemoveFile: File? = null
 
     /**/
-    private var tmpContentName = "NoSmoking"
-    private var tmpMyEmail = "shp3@gmail.com"
+//    private var tmpContentName = "NoSmoking"
+//    private var tmpMyEmail = "shp3@gmail.com"
     /**/
 
 
@@ -67,6 +66,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mView =  inflater!!.inflate(R.layout.contents_fragment_1, container, false)
+
         val contentHomeActivity = activity as ContentsHomeActivity
         jwtToken = contentHomeActivity.jwtToken.toString()
         contentName = contentHomeActivity.content.toString()
@@ -82,9 +82,11 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
             }
         }
-        println("join state"+joinState)
+        
         if(joinState != 1){
             goToVideoButton!!.isEnabled = false
+        }else{
+            goToVideoButton!!.isEnabled = true
         }
 
         return mView
@@ -160,8 +162,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
             override fun intercept(chain: Interceptor.Chain?): okhttp3.Response {
                 val original = chain!!.request()
                 val request = original.newBuilder()
-                        .header("content_name", "${tmpContentName}")
-                        .header("jwt_token", "${tmpMyEmail}")
+                        .header("content_name", contentName)
+                        .header("jwt_token", jwtToken)
                         .method(original.method(), original.body())
                         .build()
                 return chain!!.proceed(request)
