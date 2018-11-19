@@ -388,6 +388,7 @@ user.findOneAndUpdate(
 // } 얘를 나중에 authen 0 에서 1 로 바꾸는 애한테 끼워넣으면서 date 업데이트 해주면 됨.
 
 app.post('/sendToken', function(req, res) {
+  console.log("sendToken Start");
   console.log(req.body.fcmToken);
   console.log(req.body.email);
 

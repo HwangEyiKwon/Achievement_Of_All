@@ -10,16 +10,16 @@ var mkdirp = require('mkdirp'); // directory 만드는것
 var nodemailer = require('nodemailer');
 
 router.post('/jwtCheck', function(req, res){
-
-  console.log("jwtCheck jwt토큰 "+ req.body.token);
+  console.log("jwtCheck Start");
+  // console.log("jwtCheck jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  console.log("jwtCheck jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("jwtCheck jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
 
   User.findOne({ email : email }, function(err, user) {
-    console.log(user);
+    // console.log(user);
     if(err){
-      console.log(err);
+      console.log("jwtCheck err : "+err);
       res.send({success: false});
     }
     res.send({success: true});
@@ -27,10 +27,10 @@ router.post('/jwtCheck', function(req, res){
 
 });
 router.post('/login', function(req,res,next){
-
+  console.log("login Start");
   passport.authenticate('login', function (err, user, info) {
 
-    if(err) console.log(err);
+    if(err) console.log("login err : "+err);
     if(user){
       // var expires = moment().add('days', 7).valueOf();
 
@@ -49,16 +49,16 @@ router.post('/login', function(req,res,next){
 });
 
 router.post('/logout', function(req, res){
-
-  console.log("logout jwt토큰 "+ req.body.token);
+  console.log("logout Start");
+  // console.log("logout jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  console.log("logout jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("logout jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
 
   User.findOne({ email : email }, function(err, user) {
-    console.log(user);
+    // console.log(user);
     if(err){
-      console.log(err);
+      console.log("logout err : "+err);
       res.send({success: false});
     }
     user.pushToken = null;
@@ -70,17 +70,17 @@ router.post('/logout', function(req, res){
 });
 
 router.post('/signup', function (req, res, next) {
-
+  console.log("signup Start");
   passport.authenticate('signup', function (err, user, info) {
     // console.log(user+"s");
     console.log("signUPPPPPPPP");
-    if(err) console.log(err);
+    if(err) console.log("signup err : "+err);
     if(user) {
       res.send({success: true});
       var userEmail = req.body.email;
 
       mkdirp('./server/user/'+userEmail+'/video', function (err) {
-        if(err) console.log(err);
+        if(err) console.log("create dir user err : "+err);
         else console.log("create dir ./user/" +userEmail );
       }); //server폴더 아래 /user/useremail/video 폴더가 생김.
 
@@ -100,7 +100,7 @@ router.post('/signup', function (req, res, next) {
 
 //jwt token 사용
 router.post('/userInfoEdit', function(req,res){
-
+  console.log("userInfoEdit Start");
   User.findOne({email: userEmail}, function(err, user){
     user.password = user.generateHash(req.body.password);
     user.nickname = req.body.nickname;
@@ -110,15 +110,15 @@ router.post('/userInfoEdit', function(req,res){
 })
 
 router.post('/getUserInfo', function (req,res) {
-
-  console.log("get User Info: "+JSON.stringify(req.body));
-  console.log("받은 jwt토큰 "+ req.body.token);
+  console.log("getUserInfo Start");
+  // console.log("get User Info: "+JSON.stringify(req.body));
+  // console.log("받은 jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-  console.log("받은 jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("받은 jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
-  console.log(email);
+  // console.log(email);
   User.findOne({email: email}, function(err, info){
-    if(err) console.log(err);
+    if(err) console.log("getUserInfo err : "+err);
     if(info == null) {
       console.log("사용자 아님");
     }
@@ -130,6 +130,7 @@ router.post('/getUserInfo', function (req,res) {
 })
 
 router.get("/pwdSendMail", function(req, res, next){
+  console.log("pwdSendMail Start");
   let email = "hwangeyikwon@gmail.com";
 
   let transporter = nodemailer.createTransport({
@@ -162,13 +163,15 @@ router.get("/pwdSendMail", function(req, res, next){
 })
 
 router.post("/pwdEmailAuthen", function(req, res, next){
-  console.log(req.body.pwd);
+  console.log("pwdEmailAuthen Start ");
+  // console.log(req.body.pwd);
 
 });
 
 router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
+  console.log("isParticipated Start");
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
 
   var contentName = req.params.contentName;
@@ -178,7 +181,7 @@ router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
   var endDate;
   User.findOne({ email : userEmail , "contentList.contentName": contentName}, function(err, user) {
     if(err){
-      console.log(err);
+      console.log("isparticipated err : "+err);
       res.send({success: false});
     }
     else{

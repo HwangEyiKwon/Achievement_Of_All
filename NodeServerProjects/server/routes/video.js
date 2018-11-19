@@ -27,6 +27,9 @@ router.post('/sendVideo', function(req, res, next){
 
     var joinUserCount = content.userList.length;
     var form = new multiparty.Form();
+    var year;
+    var month;
+    var day;
     // get field name & value
     form.on('field',function(name,value){
       console.log('normal field / name = '+name+' , value = '+value);
@@ -39,9 +42,9 @@ router.post('/sendVideo', function(req, res, next){
         filename = part.filename;
         filename = filename.split('_');
         filename = filename[0];
-        var year = filename.substr(0,4);
-        var month = filename.substr(4,2);
-        var day = filename.substr(6,2);
+        year = filename.substr(0,4);
+        month = filename.substr(4,2);
+        day = filename.substr(6,2);
         filenamePath = year+'-'+month+'-'+day;
         filename = year+'-'+month+'-'+day+'.mp4'; // 파일 이름이 year-month-day.mp4 로 나옴.
         size = part.byteCount;
@@ -78,15 +81,21 @@ router.post('/sendVideo', function(req, res, next){
         content.userList[userListIndex].newVideo.authen = 0;
         content.userList[userListIndex].newVideo.authorizePeople = [];
         content.save(function(err, savedDocument) {
-          if (err) console.log(err);
+          if (err) console.log("save err : "+err);
           console.log("content DB saving in sendVideo");
         });
 
-        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.videoPath": [{path : filenamePath, authen: 0}]}},function(err, doc){
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.videoPath": [{path : filenamePath, authen: 2}]}},function(err, doc){
           if(err){
-            console.log(err);
+            console.log("User findOneAndUpdate err : "+err);
           }
-          console.log("update videoPath : Path : "+filenamePath+" authen : "+0);
+          console.log("send video_update videoPath : Path : "+filenamePath+" authen : "+0);
+        });
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.calendar": [{year : year, month: month, day: day, authen: 2}]}},function(err, doc){
+          if(err){
+            console.log("User findOneAndUpdate err : "+err);
+          }
+          console.log("send video_update calendar");
         });
         res.send({success : true});
         console.log("send success : true ");
@@ -103,9 +112,10 @@ router.post('/sendVideo', function(req, res, next){
 //android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.
 router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
 
-  console.log("video jwt토큰 "+ req.params.jwtToken);
+  console.log("getVideo Start");
+  // console.log("video jwt토큰 "+ req.params.jwtToken);
   var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
-  console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
   var videoPath = req.params.videoPath;
@@ -145,9 +155,10 @@ router.get('/getOthersVideo/:email/:contentName', function(req,res){
 
 //내가 인증해야 하는 타인들의 비디오를 표시하기 위해 아직 내가 인증 안한 타인의 정보를 가져오는 코드
 router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
-  console.log("getOthers jwt토큰 "+ req.params.jwtToken);
+  console.log("getOthers Start");
+  // console.log("getOthers jwt토큰 "+ req.params.jwtToken);
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  console.log("getOthers jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("getOthers jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
 
@@ -156,7 +167,7 @@ router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
   var arrayCount = 0;
 
   User.findOne({email: userEmail}, function(err, user){
-    console.log(user);
+    // console.log(user);
     var userName = user.name;
     if(user.contentList.length == 0){
       var array = new Array();
