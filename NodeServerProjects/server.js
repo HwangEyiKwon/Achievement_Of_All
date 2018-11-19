@@ -71,7 +71,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "10", day: "15", authen: 1}, {year: "2018", month: "10", day: "18", authen: 1}, {year: "2018", month: "10", day: "21", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
 //     contentId : 1,
@@ -79,7 +79,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isAuthenticated : 1,
-//     calendar: [{year: "2018", month: "10", day: "15", authen: 1}, {year: "2018", month: "10", day: "18", authen: 1}, {year: "2018", month: "10", day: "21", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
 //   }]
 // });
 // var user2 = new user({
@@ -185,8 +185,8 @@ require('./config/passport')(passport);
 // var content1 = new content({
 //   id: 0,
 //   name: "NoSmoking",
-//   startDate: "10/01/2018",
-//   endDate: "10/30/2018",
+//   startDate: "11/01/2018",
+//   endDate: "11/30/2018",
 //   isDone: 0,
 //   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: []}},
 //     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople:[{name: "ParkSeungHyun17", authenInfo: 1}]}},
@@ -288,7 +288,7 @@ require('./config/passport')(passport);
 //--------------------------------
 
 //--------------------------------
-//--------------------------------
+// --------------------------------
 // 디비 모두 제거
 // appInfoSchema.remove(function (err, info) {
 //   console.log("DELETED");

@@ -86,7 +86,7 @@ class ConfirmJoinActivity : AppCompatActivity() {
 //        ca!!.finish()
 //        finish()
         var contentsHomeActivity = ContentsHomeActivity().contentsHomeContext
-        println("앙앙??????"+contentsHomeActivity)
+        (ContentsHomeActivity()).reset()
 
 
         VolleyHttpService.contentJoinComplete(this, jsonObject){ success ->

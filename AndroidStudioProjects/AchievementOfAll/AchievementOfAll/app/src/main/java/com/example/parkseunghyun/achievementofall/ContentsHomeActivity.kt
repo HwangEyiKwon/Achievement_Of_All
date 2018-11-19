@@ -86,6 +86,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         super.onResume();
         println("RESUMERESUMERESUMEcontentHome")
         setContentView(R.layout.activity_contents_home)
+
         contentsHomeContext = this
 
         text_joinedORnot = findViewById(R.id.id_joined_OR_not)
@@ -124,41 +125,6 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
     }
     fun reset(){
-        contentsHomeContext = this
-
-        text_joinedORnot = findViewById(R.id.id_joined_OR_not)
-        text_joinedORnot?.setText("참가중 or 미참가중")
-
-        remainingTime = findViewById(R.id.ydh_remaining_time)
-        remainingTime?.setText("남은 인증시간")
-
-        contentName = findViewById(R.id.contentName)
-        contentDuration = findViewById(R.id.duration)
-
-        contentDuration!!.setText("기간")
-
-        jwtToken = loadToken()
-
-        if(intent.getStringExtra("contentName")!=null){
-            content = intent.getStringExtra("contentName")
-            contentName!!.setText(content)
-        }
-
-        getParticipatedInfo()
-        getOthers()
-
-
-
-
-
-        val cal = Calendar.getInstance()
-        println("CALENDER TEST: " + cal)
-
-        contentJoinButton = findViewById(R.id.button_to_join)
-        contentJoinButton?.setOnClickListener {
-            contentJoin()
-
-        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

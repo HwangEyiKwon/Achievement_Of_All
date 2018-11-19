@@ -227,8 +227,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         calendar = mView?.findViewById(R.id.calendarView)
         calendar!!.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month"),startDate!!.getInt("day")))
-                .setMaximumDate(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month"),endDate!!.getInt("day")))
+                .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
+                .setMaximumDate(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
@@ -243,13 +243,13 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         val dates = mutableListOf<CalendarDay>()
         val sDate = mutableListOf<CalendarDay>()
         val eDate = mutableListOf<CalendarDay>()
-        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month"),startDate!!.getInt("day")))
-        eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month"),endDate!!.getInt("day")))
+        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
+        eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
 
         for (i in 0..(jsonArray.length() - 1)) {
 
             var y = jsonArray.getJSONObject(i).getString("year").toInt()
-            var m = jsonArray.getJSONObject(i).getString("month").toInt()
+            var m = jsonArray.getJSONObject(i).getString("month").toInt()-1
             var d = jsonArray.getJSONObject(i).getString("day").toInt()
 
             var day = CalendarDay.from(y,m,d)
