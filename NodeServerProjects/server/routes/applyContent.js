@@ -3,8 +3,11 @@ const router = express.Router();
 var jwt = require('jwt-simple'); // jwt token 사용
 var Content = require('../models/content')
 var User = require('../models/user');
+var mkdirp = require('mkdirp'); // directory 만드는것
+
 
 router.get('/contentJoin/:contentName', function (req,res) {
+  console.log("contentJoin Start");
   var contentName = req.params.contentName;
 
   Content.find({name : contentName, isDone: 2}, function(err, contentList) {
@@ -31,14 +34,15 @@ router.get('/contentJoin/:contentName', function (req,res) {
 
 //컨텐츠 아이디or네임으로 유저의 해당되는 컨텐츠 리스트를 알아야 함(새로운 컨텐츠 리스트를 추가해야 됨, 푸시만 하면)
 router.post('/contentJoinComplete',  function (req,res) {
-  console.log("contentJoinComplete jwt토큰 "+ req.body.token);
+  console.log("contentJoinComplete Start")
+  // console.log("contentJoinComplete jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  console.log("contentJoinComplete jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("contentJoinComplete jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.body.contentName;
   /**/
   Content.find({name: contentName}, function(err, contentList){
-    console.log(contentList);
+    // console.log(contentList);
     var year = req.body.year;
     var month = req.body.month;
     var day = req.body.day;
@@ -69,7 +73,7 @@ router.post('/contentJoinComplete',  function (req,res) {
           User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isAuthenticated: "0",
                 authenticationDate: date, joinState: 0}]}},function(err, doc){
             if(err){
-              console.log(err);
+              console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
             }
             console.log("join user update done");
           });
@@ -79,13 +83,13 @@ router.post('/contentJoinComplete',  function (req,res) {
           //content의 user List에 해당 user 추가
           Content.findOneAndUpdate({name: contentName, id: contentId}, {$push:{userList : [{name: userName, email: userEmail}]}}, function(err,doc){
             if(err){
-              console.log(err);
+              console.log("contentJoinComplete Content findOneAndUpdate err :"+err);
             }
             console.log("join content update done");
-            // mkdirp('./server/user/'+useEmail+'/video/'+contentName, function (err) {
-            //   if(err) console.log(err);
-            //   else console.log("create dir : "+contentName);
-            // }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+            mkdirp('./server/user/'+userEmail+'/video/'+contentName, function (err) {
+              if(err) console.log("create dir content err : "+err);
+              else console.log("create dir : "+contentName);
+            }); //server폴더 아래 /user/useremail/video 폴더가 생김.
           });
         });
 
@@ -135,7 +139,7 @@ router.post('/contentJoinComplete',  function (req,res) {
 router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
   console.log("send achievementRate and Description");
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
+  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
 
@@ -169,7 +173,7 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
     }
     Content.findOne({name: contentName, id: contentId}, function(err, content){
       if(err) {
-        console.log(err);
+        console.log("getAchievementRate err : "+err);
         res.send({rate: -1});
       }
       else if(content != null){

@@ -4,8 +4,8 @@ var User = require('../models/user');
 var Content = require('../models/content');
 
 router.get('/getSearchUserData', function (req,res) {
+  console.log("getSearchUserData Start");
   var searchData = new Array();
-
   User.find(function(err, info){
     console.log("search user data" + info);
 
@@ -20,23 +20,8 @@ router.get('/getSearchUserData', function (req,res) {
   });
 });
 
-
-// router.get('/getSearchContentData', function (req,res) {
-//   Content.find(function (err, info) {
-//     console.log("search content data" + info);
-//
-//     var searchData = {
-//       contents: [],
-//     }
-//
-//     for(var i in info){
-//       searchData.contents.push(info[i].name);
-//     }
-//     res.send(searchData);
-//   });
-// });
-
 router.get('/getSearchContentData', function (err, res, ) {
+  console.log("getSearchContentData Start ");
   Content.collection.distinct("name", function(err, results){
     if(err)  console.log(err);
     else{
