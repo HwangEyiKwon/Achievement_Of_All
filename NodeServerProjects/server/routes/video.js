@@ -27,6 +27,9 @@ router.post('/sendVideo', function(req, res, next){
 
     var joinUserCount = content.userList.length;
     var form = new multiparty.Form();
+    var year;
+    var month;
+    var day;
     // get field name & value
     form.on('field',function(name,value){
       console.log('normal field / name = '+name+' , value = '+value);
@@ -39,9 +42,9 @@ router.post('/sendVideo', function(req, res, next){
         filename = part.filename;
         filename = filename.split('_');
         filename = filename[0];
-        var year = filename.substr(0,4);
-        var month = filename.substr(4,2);
-        var day = filename.substr(6,2);
+        year = filename.substr(0,4);
+        month = filename.substr(4,2);
+        day = filename.substr(6,2);
         filenamePath = year+'-'+month+'-'+day;
         filename = year+'-'+month+'-'+day+'.mp4'; // 파일 이름이 year-month-day.mp4 로 나옴.
         size = part.byteCount;
@@ -86,7 +89,13 @@ router.post('/sendVideo', function(req, res, next){
           if(err){
             console.log(err);
           }
-          console.log("update videoPath : Path : "+filenamePath+" authen : "+0);
+          console.log("send video_update videoPath : Path : "+filenamePath+" authen : "+0);
+        });
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.calendar": [{year : year, month: month, day: day, authen: 2}]}},function(err, doc){
+          if(err){
+            console.log(err);
+          }
+          console.log("send video_update calendar");
         });
         res.send({success : true});
         console.log("send success : true ");
