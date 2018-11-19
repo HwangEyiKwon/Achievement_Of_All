@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -302,7 +302,7 @@ require('./config/passport')(passport);
 //   console.log("DELETED");
 // });
 //--------------------------------
-
+//
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
 //저장할땐 user1.contentList = {isAuthenticated : 1};
