@@ -70,7 +70,7 @@ require('./config/passport')(passport);
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
-//     isAuthenticated : 1,
+//     isUploaded : 1,
 //     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 0}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
@@ -78,7 +78,7 @@ require('./config/passport')(passport);
 //     contentName: "Diet",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
-//     isAuthenticated : 1,
+//     isUploaded : 1,
 //     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
 //   }]
 // });
@@ -95,7 +95,7 @@ require('./config/passport')(passport);
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
-//     isAuthenticated : 1,
+//     isUploaded : 1,
 //     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "10", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
@@ -103,7 +103,7 @@ require('./config/passport')(passport);
 //     contentName: "Diet",
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
-//     isAuthenticated : 1,
+//     isUploaded : 1,
 //     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "10", day: "11", authen: 1}, {year: "2018", month: "10", day: "14", authen: 1}]
 //   }]
 // });
@@ -121,7 +121,7 @@ require('./config/passport')(passport);
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
-//     isAuthenticated : 0,
+//     isUploaded : 0,
 //     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "10", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
@@ -129,7 +129,7 @@ require('./config/passport')(passport);
 //     contentName: "Diet",
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
-//     isAuthenticated : 0,
+//     isUploaded : 0,
 //     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "10", day: "11", authen: 1}, {year: "2018", month: "10", day: "14", authen: 1}]
 //   }]
 // });
@@ -305,7 +305,7 @@ require('./config/passport')(passport);
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
-//저장할땐 user1.contentList = {isAuthenticated : 1};
+//저장할땐 user1.contentList = {isUploaded : 1};
 
 
 // POST 데이터
@@ -352,7 +352,7 @@ const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG
 /*
 //수정하는 db 코드, 참고용, 이걸 실제 코드에 넣어야 됨. 작동 됨
 user.findOneAndUpdate(
-{"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isAuthenticated" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
+{"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isUploaded" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
   if(err){
     console.log(err);
   }
@@ -362,7 +362,7 @@ user.findOneAndUpdate(
 */
 
 //어레이 추가하는 db 코드, 작동 됨.
-// user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isAuthenticated: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
+// user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isUploaded: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
 //   if(err){
 //     console.log(err);
 //   }
@@ -428,10 +428,10 @@ app.post('/sendToken', function(req, res) {
           break;
         }
       }
-      console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isAuthenticated + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
+      console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isUploaded + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
       //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
 
-      if(user.contentList[authenContentIndex].isAuthenticated != 1) {
+      if(user.contentList[authenContentIndex].isUploaded != 1) {
         console.log('2: if moon');
 
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
@@ -471,7 +471,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           break;
         }
       }
-      if(userList[i].pushToken != null  && userList[i].contentList[authenContentIndex].isAuthenticated != 1) {
+      if(userList[i].pushToken != null  && userList[i].contentList[authenContentIndex].isUploaded != 1) {
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
@@ -483,7 +483,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   });
 
   //컨텐츠 진행중인데, 인증 실패하거나 인증 수행 안한 사람 데이터 뽑아 처리하기 위한 코드
-  user.find({"contentList.authenticationDate": yesterday, "contentList.isAuthenticated" : "0", "contentList.joinState" : "1"}, function(err, userList){
+  user.find({"contentList.authenticationDate": yesterday, "contentList.isUploaded" : "0", "contentList.joinState" : "1"}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++) {
       //fail에 대한 정보를 전달해줘야 할 것임
     }
@@ -494,10 +494,10 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   });
 
   //매일마다 인증 현황을 0으로 수정해줌
-  user.find({isAuthenticated: 1}, function(err, userList){
+  user.find({isUploaded: 1}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
       for(var j = 0; j < Object.keys(userList[i].contentList).length; j++){
-        userlist[i].contentList[j].isAuthenticated = 0;
+        userlist[i].contentList[j].isUploaded = 0;
         user.save(function (err) {
           if (err) console.log(err);
         });
@@ -575,10 +575,10 @@ function sendPushMessage(user, sendTime) {
 
   var scheduler = schedule.scheduleJob(sendTime, arrayIndex, function(){
     console.log('7');
-    if(user.contentList[arrayIndex].isAuthenticated == 1 ) {
-      console.log('before user authen : ' + user.contentList[0].isAuthenticated);
-      user.contentList[arrayIndex].isAuthenticated = 0;
-      console.log('after user authen : ' + user.contentList[0].isAuthenticated);
+    if(user.contentList[arrayIndex].isUploaded == 1 ) {
+      console.log('before user authen : ' + user.contentList[0].isUploaded);
+      user.contentList[arrayIndex].isUploaded = 0;
+      console.log('after user authen : ' + user.contentList[0].isUploaded);
     } //추후 ) 변수 수정 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     else{
       console.log('8');

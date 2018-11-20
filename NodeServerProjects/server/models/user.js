@@ -19,7 +19,7 @@ const userSchema = new Schema({
     joinState: Number, //0: 시작 전 컨텐츠 1:컨텐츠 진행 중 2: 컨텐츠 is done
     calendar: [{year: String, month: String, day: String, authen: Number}], // 0: 인증 실패 1: 인증 성공 2: 인증 Not yet
     authenticationDate: String, //최근 날짜 비디오 기준
-    isAuthenticated: Number, // fcm 용도. 최근 날짜 비디오 기준
+    isUploaded: Number, // fcm 용도. 최근 날짜 비디오 기준
   }],
   pushToken: String,
 });
