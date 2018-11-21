@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.util.Log
-import com.example.parkseunghyun.achievementofall.HomeAccountPager
-import com.example.parkseunghyun.achievementofall.HomeInfoPager
-import com.example.parkseunghyun.achievementofall.HomeSearchPager
+import com.example.parkseunghyun.achievementofall.Fragments.HomeAccountPager
+import com.example.parkseunghyun.achievementofall.Fragments.HomeInfoPager
+import com.example.parkseunghyun.achievementofall.Fragments.HomeSearchPager
 
 
 

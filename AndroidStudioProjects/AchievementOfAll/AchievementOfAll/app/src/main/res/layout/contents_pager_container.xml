@@ -18,7 +18,7 @@
         />
 
 
-    <com.example.parkseunghyun.achievementofall.CircleIndicator
+    <com.example.parkseunghyun.achievementofall.Configurations.CircleIndicator
         android:id="@+id/contents_circle_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -10,6 +10,8 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 26
     defaultConfig {
+        multiDexEnabled true
+
         applicationId "com.example.parkseunghyun.achievementofall"
         minSdkVersion 19
         targetSdkVersion 28
@@ -27,6 +29,10 @@ android {
 }
 
 dependencies {
+
+    compile 'me.relex:circleindicator:1.2.2@aar'
+    compile 'com.makeramen:roundedimageview:2.3.0'
+
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
     //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     compile fileTree(include: ['*.jar'], dir: 'libs')

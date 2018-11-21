@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
-import com.example.parkseunghyun.achievementofall.ContentsFirst_pager
-import com.example.parkseunghyun.achievementofall.ContentsSecond_pager
-import com.example.parkseunghyun.achievementofall.ContentsThird_pager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsFirst_pager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsSecond_pager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsThird_pager
 
 
 

@@ -21,30 +21,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.AppStartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".SignupActivity" />
+        <activity android:name=".Activities.LoginActivity" android:theme="@style/AppTheme"/>
+        <activity android:name=".Activities.HomeActivity" />
+        <activity android:name=".Activities.SignupActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".ContentsHomeActivity"/>
         <activity android:name=".OtherUserHomeActivity"/>
         <activity android:name=".ExoplayerActivity"/>
         <activity android:name=".ConfirmJoinActivity" android:theme="@style/AppTheme" />
 
         <service
-            android:name=".MyFirebaseMessagingService">
+            android:name=".Configurations.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".MyFirebaseInstanceIDService">
+            android:name=".Configurations.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

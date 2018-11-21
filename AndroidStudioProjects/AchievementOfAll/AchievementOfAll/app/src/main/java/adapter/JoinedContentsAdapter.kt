@@ -9,9 +9,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
-import com.example.parkseunghyun.achievementofall.GlobalVariables
+import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.R
-import com.example.parkseunghyun.achievementofall.RecyclerViewClickListener
+import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.startActivity
 
@@ -22,7 +22,7 @@ import org.jetbrains.anko.startActivity
 class JoinedContentsAdapter(private val context: Context, private val joinedContentsModels: List<model.JoinedContentsModel>, itemListener: RecyclerViewClickListener) : RecyclerView.Adapter<JoinedContentsAdapter.ViewHolder>() {
 
     // 서버 ip 주소
-    private var globalVariables: GlobalVariables ?= GlobalVariables()
+    private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
 //    init {

@@ -120,7 +120,7 @@ router.get('/checkVideo/:jwtToken/:contentName/:othersNickname/:authenInfo', fun
   var othersNickname = req.params.othersNickname;
   var authenInfo = req.params.authenInfo;
 
-  User.findOne({nicename: othersNickname}, function(err, user){
+  User.findOne({nickname: othersNickname}, function(err, user){
     var userName;
     User.findOne({email: userEmail}, function(err, user){
       userName = user.name;

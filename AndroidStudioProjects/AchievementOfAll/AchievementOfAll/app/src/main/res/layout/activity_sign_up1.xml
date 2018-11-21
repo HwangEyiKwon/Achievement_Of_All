@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/modal5"
+    tools:context=".Activities.AppStartActivity">
+
+
+    <!--<android.support.v4.view.ViewPager-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/v2">-->
+
+    <!--</android.support.v4.view.ViewPager>-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="모두의 달성"
+        android:textStyle="bold"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="35dp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="45dp"
+        android:gravity="center"
+        android:layout_marginRight="45dp"
+        android:layout_marginTop="120dp"/>
+
+    <TextView
+        android:id="@+id/main_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="목표를 달성할\n의지가 부족하신가요 ?"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="28sp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="45dp"
+        android:gravity="center"
+        android:layout_marginRight="45dp"
+        android:layout_marginTop="10dp"/>
+
+
+    <TextView
+        android:id="@+id/sub_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="의지가 부족한 당신!\n모두의 달성과 함께라면\n실천의지가 팍팍!"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/icongrey"
+        android:textSize="16sp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/more_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="의지를 북돋아주는\n보상 및 패널티 시스템!\n목표도 달성! 보상도 GET!!"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/icongrey"
+        android:textSize="16sp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/v1">
+
+        </android.support.v4.view.ViewPager>
+
+        <me.relex.circleindicator.CircleIndicator
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/view"
+            android:backgroundTint="@android:color/white"
+            app:ci_drawable="@drawable/ic_dot"
+            app:ci_drawable_unselected="@drawable/ic_dot"
+            app:ci_height="8dp"
+            app:ci_width="8dp" />
+
+        <TextView
+            android:id="@+id/sign_up_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/signup_ract"
+            android:fontFamily="@font/font5"
+            android:gravity="bottom"
+            android:paddingLeft="50dp"
+            android:paddingTop="13dp"
+            android:paddingRight="50dp"
+            android:paddingBottom="15dp"
+            android:text="Sign Up"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mediatransperent_ract"
+            android:text="Login"
+            android:fontFamily="@font/font5"
+            android:paddingTop="13dp"
+            android:paddingBottom="15dp"
+            android:textSize="18sp"
+            android:paddingRight="58dp"
+            android:paddingLeft="58dp"
+            android:gravity="bottom"
+            android:layout_gravity="center"
+            android:layout_marginTop="70dp"
+            android:textColor="#000000"/>
+    </FrameLayout>
+
+
+</LinearLayout>

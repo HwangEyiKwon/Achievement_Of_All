@@ -39,6 +39,13 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/authorize_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="인증하기" />
+
     </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
 
 
