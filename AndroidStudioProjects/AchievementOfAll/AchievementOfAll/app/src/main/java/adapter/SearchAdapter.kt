@@ -1,6 +1,7 @@
 package com.studio572.searchlistview
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,11 @@ class SearchAdapter(private val list: List<String>, private val context: Context
             if(cu == "content"){
                 // 컨텐츠 홈으로 이동
                 Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
+
+//                val goToContentsHome = Intent(context, ContentsHomeActivity::class.java)
+//                goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+//                goToContentsHome.putExtra("contentName", list[position])
+//                context.startActivity(goToContentsHome)
                 context.startActivity<ContentsHomeActivity>(
                         "contentName" to  list[position]
                 )

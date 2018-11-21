@@ -1,5 +1,6 @@
 package com.example.parkseunghyun.achievementofall.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
@@ -86,7 +87,11 @@ class LoginActivity : AppCompatActivity() {
                 // 토큰 저장
                 saveToken(jwt_token.toString())
 
-                startActivity<HomeActivity>()
+                val goToHome = Intent(applicationContext, HomeActivity::class.java)
+//                goToHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                startActivity(goToHome)
+
+//                startActivity<HomeActivity>()
 //                finish()
 
 

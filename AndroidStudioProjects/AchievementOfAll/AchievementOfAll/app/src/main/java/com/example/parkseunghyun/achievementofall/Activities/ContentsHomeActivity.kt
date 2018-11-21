@@ -18,14 +18,17 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.contents_pager_container.*
 import model.StoriesModel
+import org.jetbrains.anko.startActivityForResult
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
+import android.R.attr.data
 
 
 class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, DatePickerDialog.OnDateSetListener {
@@ -57,6 +60,17 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
     var tmpCalendar: Calendar? = null
 
     var contentsHomeContext: Context? = null
+    val REQUEST_FOR_UPDATE_CONTENTS = 222
+
+    override fun onBackPressed() {
+//        super.onBackPressed()
+
+//        val goToHome = Intent(applicationContext, HomeActivity::class.java)
+//        goToHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+//        startActivity(goToHome)
+        finish()
+    }
+
 
     override fun recyclerViewListClicked(v: View, position: Int) {
         Toast.makeText(getApplicationContext(), "position is $position", Toast.LENGTH_LONG)
@@ -78,21 +92,47 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         goToConfirmingPage.putExtra("contentName", content!!)
         goToConfirmingPage.putExtra("token", jwtToken!!)
 
-        startActivity(goToConfirmingPage)
+        startActivityForResult(goToConfirmingPage, REQUEST_FOR_UPDATE_CONTENTS)
     }
+
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+
+        when (requestCode) {
+            REQUEST_FOR_UPDATE_CONTENTS -> {
+                println("TEST------ 1")
+                getParticipatedInfo()
+                getOthers()
+                /* */
+            }
+            101 -> {
+                println("TEST------ 2")
+                /* TODO: 여기서 스토리를 없애는 처리를 해야된다.*/
+                getParticipatedInfo()
+                getOthers()
+            }
+
+        }
+        println("ONACTIVITYTEST")
+    }
+
     override fun onRestart() {
         super.onRestart()
         println("RESTART contentHOME")
     }
-    override fun onResume(){
-        super.onResume();
-        println("RESUMERESUMERESUMEcontentHome")
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contents_home)
 
         contentsHomeContext = this
 
         text_joinedORnot = findViewById(R.id.id_joined_OR_not)
-        text_joinedORnot?.setText("참가중 or 미참가중")
 
         remainingTime = findViewById(R.id.ydh_remaining_time)
         remainingTime?.setText("남은 인증시간")
@@ -112,61 +152,13 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         getParticipatedInfo()
         getOthers()
 
-
-
-
-
         val cal = Calendar.getInstance()
         println("CALENDER TEST: " + cal)
 
         contentJoinButton = findViewById(R.id.button_to_join)
         contentJoinButton?.setOnClickListener {
             contentJoin()
-
         }
-
-    }
-    fun reset(){
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_contents_home)
-//
-//        contentsHomeContext = this
-//
-//        text_joinedORnot = findViewById(R.id.id_joined_OR_not)
-//        text_joinedORnot?.setText("참가중 or 미참가중")
-//
-//        remainingTime = findViewById(R.id.ydh_remaining_time)
-//        remainingTime?.setText("남은 인증시간")
-//
-//        contentName = findViewById(R.id.contentName)
-//        contentDuration = findViewById(R.id.duration)
-//
-//        contentDuration!!.setText("기간")
-//
-//        jwtToken = loadToken()
-//
-//        if(intent.getStringExtra("contentName")!=null){
-//            content = intent.getStringExtra("contentName")
-//            contentName!!.setText(content)
-//        }
-//
-//        getParticipatedInfo()
-//        getOthers()
-//
-//
-//
-//
-//
-//        val cal = Calendar.getInstance()
-//        println("CALENDER TEST: " + cal)
-//
-//        contentJoinButton = findViewById(R.id.button_to_join)
-//        contentJoinButton?.setOnClickListener {
-//            contentJoin()
-//
-//        }
 
     }
 
@@ -293,6 +285,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             /*------*/
             datePickerDialog.show(fragmentManager, "DatePicker")
 
+            super.onResume()
         }
     }
 

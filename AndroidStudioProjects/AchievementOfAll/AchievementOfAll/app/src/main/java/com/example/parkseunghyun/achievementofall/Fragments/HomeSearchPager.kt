@@ -16,6 +16,10 @@ import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpServi
 import com.example.parkseunghyun.achievementofall.R
 import com.studio572.searchlistview.SearchAdapter
 import org.json.JSONArray
+import android.content.Intent
+import android.content.BroadcastReceiver
+
+
 
 
 class HomeSearchPager : Fragment() {
@@ -51,6 +55,7 @@ class HomeSearchPager : Fragment() {
 
         return view_
     }
+
 
     fun search(charText: String) {
 

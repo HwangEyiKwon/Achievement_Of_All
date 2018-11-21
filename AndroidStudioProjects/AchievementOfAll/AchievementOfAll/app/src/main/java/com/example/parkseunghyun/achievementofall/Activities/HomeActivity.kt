@@ -24,6 +24,14 @@ class HomeActivity : AppCompatActivity() {
     var jwtToken: String?= null
 
 
+    override fun onRestart() {
+        super.onRestart()
+        //When BACK BUTTON is pressed, the activity on the stack is restarted
+        //Do what you want on the refresh procedure here
+    }
+
+
+
 
     // TODO - GEONHEE's UI 이 함수를 넣음으로써 로그아웃 방지함. 위의 주석은 지워도 될거같다.
     override fun onBackPressed() {
@@ -33,7 +41,7 @@ class HomeActivity : AppCompatActivity() {
             time = System.currentTimeMillis()
             Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 앱을 종료합니다.",Toast.LENGTH_SHORT).show();
         }
-        else if(System.currentTimeMillis() - time<2000){
+        else if(System.currentTimeMillis() - time < 2000){
             finishAffinity()
         }
     }

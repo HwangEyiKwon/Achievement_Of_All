@@ -56,7 +56,6 @@ class AppStartActivity : AppCompatActivity() {
             val goToSignUp = Intent(applicationContext, SignupActivity::class.java)
             goToSignUp.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             startActivity(goToSignUp)
-
         }
         loginButton!!.setOnClickListener {
             val goToLogin = Intent(applicationContext, LoginActivity::class.java)
@@ -155,6 +154,7 @@ class AppStartActivity : AppCompatActivity() {
                 // 토큰 저장
                 saveToken(jwt_token.toString())
 
+                var homeActivityIntent: Intent = Intent()
                 startActivity<HomeActivity>()
 //                finish()
 

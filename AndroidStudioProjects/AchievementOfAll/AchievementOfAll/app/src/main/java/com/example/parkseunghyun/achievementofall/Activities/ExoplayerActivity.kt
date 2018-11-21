@@ -1,5 +1,6 @@
 package com.example.parkseunghyun.achievementofall
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -35,6 +36,7 @@ class ExoplayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         println("DESTROY")
+
         finish()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,6 +107,14 @@ class ExoplayerActivity : AppCompatActivity() {
             }
         }
         authorizeButton.setOnClickListener{
+
+
+            /* TODO - 어떻게 처리할까 */
+//            val goBackToContentsHome = Intent(applicationContext, ContentsHomeActivity::class.java)
+//            goBackToContentsHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+//            startActivity(goBackToContentsHome)
+
+
             this.finish()
 
 

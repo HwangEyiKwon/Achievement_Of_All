@@ -1,6 +1,7 @@
 package adapter
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -65,6 +66,12 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
 
             // 해당 컨텐츠 홈으로 이동
             Toast.makeText(v.context, "You clicked "+ name.text, Toast.LENGTH_SHORT).show()
+
+//            val goToContentsHome = Intent(context, ContentsHomeActivity::class.java)
+//            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+//            goToContentsHome.putExtra("contentName", name.text)
+//            context.startActivity(goToContentsHome)
+
             context.startActivity<ContentsHomeActivity>(
                     // 컨텐츠 이름 넘기기
                     "contentName" to  name.text

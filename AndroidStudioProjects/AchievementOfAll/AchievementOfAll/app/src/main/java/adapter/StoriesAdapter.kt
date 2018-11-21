@@ -1,6 +1,9 @@
 package adapter
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.parkseunghyun.achievementofall.Activities.SignupActivity
 import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.R
@@ -15,6 +19,7 @@ import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickLi
 import de.hdodenhof.circleimageview.CircleImageView
 import model.StoriesModel
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 
 /**
  * Created by A on 23-03-2018.
@@ -46,6 +51,13 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
         return storiesModels.size
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        println("TEST_FOR_ADAPTER")
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         internal var profile: CircleImageView
         internal var name: TextView
@@ -63,13 +75,20 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
 
             // 클릭 처리
             Toast.makeText(v.context, "You clicked "+ name.text, Toast.LENGTH_SHORT).show()
-            context.startActivity<ExoplayerActivity>(
-                    "email" to email,
-                    "contentName" to contentName,
-                    "who" to "others"
-            )
 
+            val goToExoPlayer = Intent(context, ExoplayerActivity::class.java)
+            goToExoPlayer.putExtra("email", email)
+            goToExoPlayer.putExtra("contentName", contentName)
+            goToExoPlayer.putExtra("who", "others")
+            val contextToActivity = context as Activity
 
+            contextToActivity.startActivityForResult(goToExoPlayer, 101)
+
+//            context.startActivity<ExoplayerActivity>(
+//                    "email" to email,
+//                    "contentName" to contentName,
+//                    "who" to "others"
+//            )
         }
     }
 
