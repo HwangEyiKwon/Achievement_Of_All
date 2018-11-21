@@ -109,85 +109,94 @@ router.post('/sendVideo', function(req, res, next){
   });
 });
 
-router.get('/checkVideo/:jwtToken/:contentName/:othersNickname/:authenInfo', function(req,res){
+router.post('/checkVideo', function(req,res){
+
+  // /:jwtToken/:contentName/:othersNickname/:authenInfo
 
   console.log("checkVideo Start");
+  console.log(JSON.stringify(req.body));
+
+  var jwtToken = req.body.token; // 내꺼 토큰
+  var contentName = req.body.contentName; // 컨텐츠 이름
+  var otherEmail = req.body.email; // 상대방 메일
+  var authenInfo = req.body.authenInfo; // 인증
+  console.log(jwtToken+contentName+otherEmail+authenInfo+"ㅇㅇ");
+
+
   // console.log("video jwt토큰 "+ req.params.jwtToken);
-  var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
+  var decoded = jwt.decode(jwtToken, req.app.get("jwtTokenSecret"));
   // console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
-  var userEmail = decoded.userCheck;
-  var contentName = req.params.contentName;
-  var othersNickname = req.params.othersNickname;
-  var authenInfo = req.params.authenInfo;
+  var userEmail = decoded.userCheck; // 내 이메일
 
-  User.findOne({nickname: othersNickname}, function(err, user){
-    var userName;
-    User.findOne({email: userEmail}, function(err, user){
-      userName = user.name;
-    });
-    var othersEmail = user.email;
-    if(user.contentList.length != 0){
-      var contentListCount = user.contentList.length;
-      var contentListIndex;
-      for (var i = 0; i < contentListCount; i++) {
-        if (user.contentList[i].contentName === contentName) {
-          contentListIndex = i;
-          break;
-        }
-      }
-      var contentId = user.contentList[contentListIndex].contentId;
-      console.log(contentId + "    " + contentName);
-      Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": othersEmail}, {$push:{"userList.0.newVideo.authorizePeople": [{name : userName, authenInfo: authenInfo}]}},function(err, content){
-        if(err){
-          console.log("User findOneAndUpdate err : "+err);
-        }
-        console.log("check video_update authorizePeople: name : "+userName+" authenInfo : "+ authenInfo);
-      });
-
-      Content.findOne({name: contentName, id: contentId}, function(err, content){
-        var userListCount = content.userList.length;
-        var userListIndex;
-        var authorizeUserCount;
-        var successCount = 0;
-        var voteRate;
-
-        for (var i = 0; i < userListCount; i++) {
-          if (content.userList[i].email === othersEmail) {
-            userListIndex = i;
-            break;
-          }
-        }
-        authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
-        if(authorizeUserCount === userListCount){
-          for (var i = 0; i < authorizeUserCount; i++) {
-            if(content.userList[userListIndex].newVideo.authorizePeople[authorizeUserCount].authenInfo == 1){
-              successCount++;
-            }
-          }
-          voteRate = (successCount / content.totalUser) * 100;
-          if(successCount > 50){
-            content.userList[userListIndex].newVideo.authen = 1;
-          }
-          else{
-            content.userList[userListIndex].newVideo.authen = 0;
-          }
-          var threeDaysAfter = new Date(Date.now());
-          threeDaysAfter.setDate(threeDaysAfter.getDate() + 3);
-          var month = threeDaysAfter.getMonth() + 1;
-          var day = threeDaysAfter.getDate();
-          var year = threeDaysAfter.getFullYear();
-          // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
-          if ((day+"").length < 2) {
-            day = "0" + day;
-          }
-          var date = year+ "-" + month + "-" + day;
-
-          user.contentList[contentListIndex].authenticationDate = date;
-          user.contentList[contentListIndex].isUploaded = 1;
-        }
-      });
-    }
-  });
+  //
+  // User.findOne({nickname: othersNickname}, function(err, user){
+  //   var userName;
+  //   User.findOne({email: userEmail}, function(err, user){
+  //     userName = user.name;
+  //   });
+  //   var othersEmail = user.email;
+  //   if(user.contentList.length != 0){
+  //     var contentListCount = user.contentList.length;
+  //     var contentListIndex;
+  //     for (var i = 0; i < contentListCount; i++) {
+  //       if (user.contentList[i].contentName === contentName) {
+  //         contentListIndex = i;
+  //         break;
+  //       }
+  //     }
+  //     var contentId = user.contentList[contentListIndex].contentId;
+  //     console.log(contentId + "    " + contentName);
+  //     Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": othersEmail}, {$push:{"userList.0.newVideo.authorizePeople": [{name : userName, authenInfo: authenInfo}]}},function(err, content){
+  //       if(err){
+  //         console.log("User findOneAndUpdate err : "+err);
+  //       }
+  //       console.log("check video_update authorizePeople: name : "+userName+" authenInfo : "+ authenInfo);
+  //     });
+  //
+  //     Content.findOne({name: contentName, id: contentId}, function(err, content){
+  //       var userListCount = content.userList.length;
+  //       var userListIndex;
+  //       var authorizeUserCount;
+  //       var successCount = 0;
+  //       var voteRate;
+  //
+  //       for (var i = 0; i < userListCount; i++) {
+  //         if (content.userList[i].email === othersEmail) {
+  //           userListIndex = i;
+  //           break;
+  //         }
+  //       }
+  //       authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
+  //       if(authorizeUserCount === userListCount){
+  //         for (var i = 0; i < authorizeUserCount; i++) {
+  //           if(content.userList[userListIndex].newVideo.authorizePeople[authorizeUserCount].authenInfo == 1){
+  //             successCount++;
+  //           }
+  //         }
+  //         voteRate = (successCount / content.totalUser) * 100;
+  //         if(successCount > 50){
+  //           content.userList[userListIndex].newVideo.authen = 1;
+  //         }
+  //         else{
+  //           content.userList[userListIndex].newVideo.authen = 0;
+  //         }
+  //         var threeDaysAfter = new Date(Date.now());
+  //         threeDaysAfter.setDate(threeDaysAfter.getDate() + 3);
+  //         var month = threeDaysAfter.getMonth() + 1;
+  //         var day = threeDaysAfter.getDate();
+  //         var year = threeDaysAfter.getFullYear();
+  //         // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+  //         if ((day+"").length < 2) {
+  //           day = "0" + day;
+  //         }
+  //         var date = year+ "-" + month + "-" + day;
+  //
+  //         user.contentList[contentListIndex].authenticationDate = date;
+  //         user.contentList[contentListIndex].isUploaded = 1;
+  //       }
+  //     });
+  //   }
+  // });
 });
 
 //android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.

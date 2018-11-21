@@ -1,6 +1,5 @@
 package com.example.parkseunghyun.achievementofall
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -9,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
+import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import org.json.JSONObject
 
 class ExoplayerActivity : AppCompatActivity() {
     // 서버 ip 주소
@@ -31,7 +32,7 @@ class ExoplayerActivity : AppCompatActivity() {
     private var videoPath: String?= null
     private var isAuthen: Int?= null
 
-    private var authorizeButton: Button?= null
+    private var check: Int? = null
 
     override fun onDestroy() {
         super.onDestroy()
@@ -72,6 +73,8 @@ class ExoplayerActivity : AppCompatActivity() {
                 failButton.requestLayout()
 
                 authorizeButton.isEnabled = true
+
+                check = 1
             }
             failButton.setOnClickListener {
 
@@ -84,6 +87,8 @@ class ExoplayerActivity : AppCompatActivity() {
                 failButton.requestLayout()
 
                 authorizeButton.isEnabled = true
+
+                check = 0
             }
         }
 
@@ -108,16 +113,8 @@ class ExoplayerActivity : AppCompatActivity() {
         }
         authorizeButton.setOnClickListener{
 
-
-            /* TODO - 어떻게 처리할까 */
-//            val goBackToContentsHome = Intent(applicationContext, ContentsHomeActivity::class.java)
-//            goBackToContentsHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-//            startActivity(goBackToContentsHome)
-
-
+            checkVideo()
             this.finish()
-
-
         }
 
     }
@@ -159,5 +156,19 @@ class ExoplayerActivity : AppCompatActivity() {
         // Prepare the player with the source.
         player.prepare(videoSource);
 
+    }
+    private fun checkVideo(){
+
+        val jsonObject = JSONObject()
+
+        jsonObject.put("authenInfo", check)
+        jsonObject.put("contentName",contentName)
+        jsonObject.put("token",token)
+        jsonObject.put("email",email)
+
+        println("첵첵")
+        VolleyHttpService.checkVideo(this, jsonObject) { success ->
+            println(success)
+        }
     }
 }

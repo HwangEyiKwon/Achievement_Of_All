@@ -12,11 +12,12 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.parkseunghyun.achievementofall.Activities.SignupActivity
-import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
-import com.example.parkseunghyun.achievementofall.R
+import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
+import com.example.parkseunghyun.achievementofall.R
 import de.hdodenhof.circleimageview.CircleImageView
+
 import model.StoriesModel
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult

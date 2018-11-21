@@ -19,19 +19,19 @@ object VolleyHttpService{
     private var ipAddress: String = globalVariables!!.ipAddress
 
     // 사용자 jwt-token 확인
-    fun jwtCheck(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
-
-        var jwtCheckRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/jwtCheck", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
-            success(response.getString("success").toBoolean())
-
-        }, Response.ErrorListener { error ->
-            println("수신 에러: $error")
-            success(false)
-        }){
-        }
-        Volley.newRequestQueue(context).add(jwtCheckRequest)
-    }
+//    fun jwtCheck(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
+//
+//        var jwtCheckRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/jwtCheck", jsonObject, Response.Listener{ response ->
+//            println("서버 수신: $response")
+//            success(response.getString("success").toBoolean())
+//
+//        }, Response.ErrorListener { error ->
+//            println("수신 에러: $error")
+//            success(false)
+//        }){
+//        }
+//        Volley.newRequestQueue(context).add(jwtCheckRequest)
+//    }
     // 사용자 fcm-token
     fun sendToken(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
@@ -272,8 +272,24 @@ object VolleyHttpService{
         }){
         }
         Volley.newRequestQueue(context).add(contentJoinCompleteRequest)
-
     }
+
+    // 영상 인증
+    fun checkVideo(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        println("컨텐츠 영상 인증")
+
+        var checkVideoRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/checkVideo",jsonObject, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(checkVideoRequest)
+    }
+
 
 
 }
