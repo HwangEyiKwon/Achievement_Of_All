@@ -75,6 +75,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onResume() {
         super.onResume()
         println("ONRESUME CONTENTFIRST PAGER")
+        val contentHomeActivity = activity as ContentsHomeActivity
+        jwtToken = contentHomeActivity.jwtToken.toString()
+        contentName = contentHomeActivity.content.toString()
+        joinState = contentHomeActivity.joinState
+        startDate = contentHomeActivity.startDate
+        endDate = contentHomeActivity.endDate
         getCalendarInfo(jwtToken!!,contentName!!)
 
     }
@@ -235,6 +241,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun settingCalendar(jsonArray: JSONArray){
 
         calendar = mView?.findViewById(R.id.calendarView)
+
         if(joinState == 3)
             calendar!!.visibility = View.GONE
         else
