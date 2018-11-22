@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
+import com.example.parkseunghyun.achievementofall.Fragments.HomeAccountPager
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 
@@ -96,6 +97,9 @@ class HomeActivity : AppCompatActivity() {
             homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
             viewPager = findViewById<ViewPager>(R.id.home_pager_container)
 
+
+            viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
+
             homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     viewPager?.currentItem = tab.position
@@ -103,11 +107,10 @@ class HomeActivity : AppCompatActivity() {
 
                     when(tab.position) {
                         0-> {
-
+                            var homeAccountPager = HomeAccountPager()
                             homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
                             homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
                             homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
-
                         }
 
                         1-> {
@@ -129,9 +132,11 @@ class HomeActivity : AppCompatActivity() {
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
                     println("UNSELECTED??" + tab.position)
-                    if(tab.position == 0){
-                        /* TODO 아오 모르겟다 */
-                    }
+
+//                    /* TODO 아오 모르겟다 */
+//                    viewPager!!.adapter!!.notifyDataSetChanged()
+//                    viewPager!!.adapter!!.startUpdate()
+
 
                 }
                 override fun onTabReselected(tab: TabLayout.Tab) {
@@ -147,11 +152,11 @@ class HomeActivity : AppCompatActivity() {
             homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
             homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
 
+
         }
 
         homePagerAdapter = HomePagerAdapter(supportFragmentManager)
         viewPager?.adapter = homePagerAdapter
-        viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
 
 
     }
@@ -169,7 +174,7 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_LONG).show()
                 println("로그아웃 후 토큰" + loadToken())
 
-            /*TODO: 이것은 로그아웃 후 어플 재실행 시 자동로그인이 되버리는 것을 방지. */
+            /*TODO(완료) 이것은 로그아웃 후 어플 재실행 시 자동로그인이 되버리는 것을 방지. */
                 var auto2 = PreferenceManager.getDefaultSharedPreferences(this)
                 val editor = auto2.edit()
                 editor.clear()
