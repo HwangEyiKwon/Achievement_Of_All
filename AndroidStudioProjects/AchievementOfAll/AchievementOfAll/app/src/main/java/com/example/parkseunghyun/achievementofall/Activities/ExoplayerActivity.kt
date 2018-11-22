@@ -48,6 +48,8 @@ class ExoplayerActivity : AppCompatActivity() {
 
         val successButton = findViewById(R.id.success) as ImageView
         val failButton = findViewById(R.id.fail) as ImageView
+        val notYetButton = findViewById(R.id.notYet) as ImageView
+
         val authorizeButton = findViewById(R.id.authorize_button) as Button
         authorizeButton.isEnabled = false
 
@@ -59,7 +61,7 @@ class ExoplayerActivity : AppCompatActivity() {
             initializePlayer("other", uri)
 
             println("상대방" + email + token)
-
+            notYetButton.visibility = View.GONE
 
             successButton.setOnClickListener {
 
@@ -104,12 +106,19 @@ class ExoplayerActivity : AppCompatActivity() {
             var uri = "$ipAddress/getVideo/$token/$contentName/$videoPath"
             initializePlayer("me", uri)
 
-            if(isAuthen == 1){
+            if(isAuthen == 1){ // 성공
                 failButton.visibility = View.GONE
+                notYetButton.visibility = View.GONE
 
-            }else if(isAuthen == 0){
+            }else if(isAuthen == 0){ // 실패
                 successButton.visibility = View.GONE
+                notYetButton.visibility = View.GONE
+
+            }else{ // 대기
+                successButton.visibility = View.GONE
+                failButton.visibility = View.GONE
             }
+
         }
         authorizeButton.setOnClickListener{
 
