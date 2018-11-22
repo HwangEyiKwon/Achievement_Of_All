@@ -434,9 +434,9 @@ app.post('/sendToken', function(req, res) {
       if(user.contentList[authenContentIndex].isUploaded != 1) {
         console.log('2: if moon');
 
-        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 15, 52, 0);
-        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 15, 53, 0);
-        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 15, 50, 0);
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
         sendPushMessage(user, authenContentIndex, sendTime1);
         sendPushMessage(user, authenContentIndex, sendTime2);
         sendPushMessage(user, authenContentIndex, sendTime3);
@@ -573,7 +573,7 @@ function sendPushMessage(user, arrayIndex, sendTime) {
     restricted_package_name: "com.example.parkseunghyun.achievementofall",
   };
 
-  var scheduler = schedule.scheduleJob(sendTime, arrayIndex, function(){
+  var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
     if(user.contentList[arrayIndex].isUploaded == 1 ) {
       console.log('before user authen : ' + user.contentList[0].isUploaded);

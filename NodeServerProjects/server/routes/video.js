@@ -15,8 +15,9 @@ router.post('/sendVideo', function(req, res, next){
   // console.log("send Video User jwt토큰 디코딩 "+ decoded.userCheck);
   // var userEmail = decoded.userCheck;
 
-  //var userEmail = req.headers.jwt_token;
-  var userEmail = "shp17@gmail.com";
+  var decoded = jwt.decode(req.headers.jwt_token, req.app.get("jwtTokenSecret"));
+  var userEmail = decoded.userCheck;
+
   console.log("userEmail : "+userEmail);
   console.log(req.headers.content_name);
   var contentName = req.headers.content_name;//건희가 보내는 거에서 header에 들어있는 내용 꺼내옴
@@ -24,7 +25,6 @@ router.post('/sendVideo', function(req, res, next){
   var index;
 
   Content.findOne({name : contentName, "userList.email" : userEmail}, function(err, content){
-
     var joinUserCount = content.userList.length;
     var form = new multiparty.Form();
     var year;
@@ -98,7 +98,7 @@ router.post('/sendVideo', function(req, res, next){
           console.log("send video_update calendar");
         });
 
-        User.findOne({email: userEmail, "contentList.contentName": contentName}, function(err, user){
+        User.findOne({email: userEmail}, function(err, user){
           if(user.contentList.length != 0) {
             var contentListCount = user.contentList.length;
             var contentListIndex;
@@ -123,6 +123,11 @@ router.post('/sendVideo', function(req, res, next){
             user.contentList[contentListIndex].authenticationDate = date;
             user.contentList[contentListIndex].isUploaded = 1;
             console.log("authenticate date and is uploaded update");
+
+            user.save(function(err, savedDocument) {
+              if (err) console.log("save err : "+err);
+              console.log("user DB saving in sendVideo");
+            });
           }
         });
 
