@@ -75,13 +75,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onResume() {
         super.onResume()
         println("ONRESUME CONTENTFIRST PAGER")
-        val contentHomeActivity = activity as ContentsHomeActivity
-        jwtToken = contentHomeActivity.jwtToken.toString()
-        contentName = contentHomeActivity.content.toString()
-        joinState = contentHomeActivity.joinState
-        startDate = contentHomeActivity.startDate
-        endDate = contentHomeActivity.endDate
-        getCalendarInfo(jwtToken!!,contentName!!)
+
 
     }
 
@@ -97,7 +91,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         endDate = contentHomeActivity.endDate
 
         println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
-
+        getCalendarInfo(jwtToken!!,contentName!!)
 
         goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
         goToVideoButton?.setOnClickListener{
@@ -212,6 +206,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                     Toast.makeText(activity, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
                 }
 
+                getCalendarInfo(jwtToken!!,contentName!!)
+                
                 // Remove video from my storage.
                 forRemoveFile = File(pathToStoredVideo)
                 forRemoveFile?.delete()
