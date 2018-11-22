@@ -132,8 +132,8 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
         text_joinedORnot = findViewById(R.id.id_joined_OR_not)
 
-        remainingTime = findViewById(R.id.ydh_remaining_time)
-        remainingTime?.setText("남은 인증시간")
+//        remainingTime = findViewById(R.id.ydh_remaining_time)
+//        remainingTime?.setText("남은 인증시간")
 
         contentName = findViewById(R.id.contentName)
         contentDuration = findViewById(R.id.duration)

@@ -87,7 +87,7 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun generateTabLayout(request: Int) {
-
+        viewPager = findViewById<ViewPager>(R.id.home_pager_container)
         if(request == REQUEST_FIRST_CREATE) {
 
             homeTab = findViewById(R.id.id_home_tab)
@@ -95,7 +95,7 @@ class HomeActivity : AppCompatActivity() {
             homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
             homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
             homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
-            viewPager = findViewById<ViewPager>(R.id.home_pager_container)
+//            viewPager = findViewById<ViewPager>(R.id.home_pager_container)
 
 
             viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
@@ -208,18 +208,18 @@ class HomeActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         println("TEST---- HomeActivity로 오나?")
 
-//        when (requestCode) {
-//            REQUEST_FROM_JCA -> {
-//                println("TEST------ HomeActivity from jca")
-//                generateTabLayout(REQUEST_UPDATE)
-//
-//            }
-//            REQUEST_FROM_SEARCH -> {
-//                println("TEST------ HomeActivity from search")
-//                generateTabLayout(REQUEST_UPDATE)
-//            }
-//
-//        }
+        when (requestCode) {
+            REQUEST_FROM_JCA -> {
+                println("TEST------ HomeActivity from jca")
+                generateTabLayout(REQUEST_UPDATE)
+
+            }
+            REQUEST_FROM_SEARCH -> {
+                println("TEST------ HomeActivity from search")
+                generateTabLayout(REQUEST_UPDATE)
+            }
+
+        }
 
     }
 

@@ -41,11 +41,12 @@
 
                     <TextView
                         android:id="@+id/id_joined_OR_not"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
-                        android:layout_weight="1"
+                        android:layout_marginLeft="10dp"
                         android:text="TextView"
+                        android:fontFamily="@font/font5"
                         android:textColor="@android:color/black"
                         android:textSize="15dp" />
 
@@ -60,7 +61,10 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
+                            android:layout_marginLeft="65dp"
+                            android:layout_marginRight="60dp"
                             android:text="@string/story"
+                            android:fontFamily="@font/font5"
                             android:textAlignment="center"
                             android:textColor="@android:color/black"
                             android:textSize="17dp"
@@ -70,9 +74,11 @@
                             android:id="@+id/duration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="5dp"
                             android:gravity="center"
                             android:textColor="@android:color/black"
+                            android:fontFamily="@font/font5"
                             android:text="TextView" />
 
                     </LinearLayout>
@@ -80,10 +86,15 @@
 
                     <Button
                         android:id="@+id/button_to_join"
-                        android:layout_width="2dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="참여하기" />
+                        android:layout_gravity="right"
+                        android:fontFamily="@font/font5"
+                        android:text="참여하기"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:background="@drawable/round2"
+
+                        />
 
 
                 </LinearLayout>
@@ -94,13 +105,14 @@
                     android:layout_marginTop="10dp"
                     android:background="@color/viewgrey" />
 
-                <customfonts.MyTextView_Roboto_Bold
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:layout_marginTop="3dp"
                     android:layout_weight="1"
+                    android:fontFamily="@font/font5"
                     android:text=" 인증이 필요한 영상 "
                     android:textColor="@android:color/black"
                     android:textSize="15dp"

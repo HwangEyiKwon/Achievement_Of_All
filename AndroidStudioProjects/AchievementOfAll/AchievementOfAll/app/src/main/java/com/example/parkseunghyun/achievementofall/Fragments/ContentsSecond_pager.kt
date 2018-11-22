@@ -10,11 +10,15 @@ import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpServi
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
+import android.widget.ProgressBar
+
+
 
 class ContentsSecond_pager : Fragment() {
 
     private var view_: View? = null
     private var achievementRate: TextView ? = null
+    private var contentsName: TextView? = null
 
     // 사용자의 jwt-token
     private var jwtToken: String ?= null
@@ -31,6 +35,10 @@ class ContentsSecond_pager : Fragment() {
         val activity = activity as ContentsHomeActivity
         jwtToken = activity.jwtToken.toString()
         contentName = activity.content.toString()
+        println("TEST2 " + contentName)
+
+        contentsName = view_?.findViewById(R.id.id_contents_name_2)
+        contentsName?.setText(contentName)
 
         getAchievementRate()
 
@@ -45,15 +53,28 @@ class ContentsSecond_pager : Fragment() {
         VolleyHttpService.getAchievementRate(this.context, jsonObject){ success ->
             println("getAcheidfdsa "+success)
 
-                var rate = success.getInt("rate")
+            var rate = success.getInt("rate")
 
-                if(rate == 0){
-                    achievementRate!!.setText("시작 전인 컨텐츠 방입니다..")
-                }else if(rate == -1){
-                    achievementRate!!.setText("참가 중인 컨텐츠 방 정보가 없습니다.")
-                }else{
-                    achievementRate!!.setText(rate.toString())
-                }
+            val progress = view_?.findViewById(R.id.progress) as ProgressBar
+            progress.progress = rate
+            progress.visibility = View.GONE
+
+            val progressText = view_?.findViewById(R.id.id_achievement_rate_support) as TextView
+            progressText.visibility = View.GONE
+
+            println("TESTTEST: " + rate)
+
+            if(rate == 0){
+                achievementRate!!.setText("시작 전인 컨텐츠 방입니다..")
+            }else if(rate == -1){
+                achievementRate!!.setText("참가 중인 컨텐츠 방 정보가 없습니다.")
+            }else{
+                achievementRate!!.setText(rate.toString())
+                progress.visibility = View.VISIBLE
+                progress.progress = rate
+                progressText.visibility = View.VISIBLE
+
+            }
 
 
 

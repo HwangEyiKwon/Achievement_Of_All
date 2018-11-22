@@ -9,32 +9,67 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/contents_my_info"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="13dp"
-            android:textSize="15dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:text="내 정보" />
+            android:layout_marginTop="10dp">
 
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/calendarView"
-            android:layout_width="215dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@android:color/black"
-            app:mcv_selectionColor="#a9dbf0cb"
-            app:mcv_showOtherDates="defaults" />
+            <TextView
+                android:id="@+id/id_contents_name_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="50dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:fontFamily="@font/font5"
+                android:layout_marginLeft="30dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="25dp"
+                android:fontFamily="@font/font4"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="내 정보"/>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round3"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"/>
+
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/calendarView"
+                android:layout_width="250dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/colorPrimaryDark"
+                app:mcv_selectionColor="#a9dbf0cb"
+                app:mcv_showOtherDates="defaults"
+
+               />
+
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/contents_remaining_time"
@@ -44,7 +79,8 @@
             android:layout_marginBottom="10dp"
             android:layout_marginStart="13dp"
             android:gravity="center"
-            android:textSize="15dp"
+            android:fontFamily="@font/font5"
+            android:textSize="25dp"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
             android:text="남은 인증시간" />
@@ -52,27 +88,65 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_gravity="center">
 
-            <TextView
-                android:id="@+id/ydh_remaining_time"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="13dp"
-                android:gravity="center"
-                android:textSize="15dp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
-                android:text="임시 - X일 Y시간 Z분" />
-
-            <Button
-                android:id="@+id/go_to_video_button"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="인증하기" />
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/remaining_days"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/font5"
+                    android:text=" 일  " />
+                <TextView
+                    android:id="@+id/remaining_hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/font5"
+                    android:text=" 시간  " />
+                <TextView
+                    android:id="@+id/remaining_minutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/font5"
+                    android:text=" 분  " />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+                <Button
+                    android:id="@+id/go_to_video_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:fontFamily="@font/font5"
+                    android:background="@drawable/round2"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="인증하기" />
+
+            </LinearLayout>
 
             <!--<SurfaceView-->
             <!--android:layout_width="wrap_content"-->

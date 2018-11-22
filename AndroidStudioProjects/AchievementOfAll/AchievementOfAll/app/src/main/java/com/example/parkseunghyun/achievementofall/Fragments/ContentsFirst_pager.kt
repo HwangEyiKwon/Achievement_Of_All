@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.ResultObject
@@ -33,6 +34,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
+import org.w3c.dom.Text
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
@@ -67,6 +69,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var forRemoveFile: File? = null
 
+    private var contentsName: TextView? = null
+
+    private var remainingDays:TextView?=null
+    private var remainingHours:TextView?=null
+    private var remainingMinutes:TextView?=null
+
     /**/
 //    private var tmpContentName = "NoSmoking"
 //    private var tmpMyEmail = "shp3@gmail.com"
@@ -78,12 +86,19 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         mView =  inflater!!.inflate(R.layout.contents_fragment_1, container, false)
 
+        remainingDays = mView?.findViewById(R.id.remaining_days)
+        remainingHours = mView?.findViewById(R.id.remaining_hours)
+        remainingMinutes = mView?.findViewById(R.id.remaining_minutes)
+
         val contentHomeActivity = activity as ContentsHomeActivity
         jwtToken = contentHomeActivity.jwtToken.toString()
         contentName = contentHomeActivity.content.toString()
         joinState = contentHomeActivity.joinState
         startDate = contentHomeActivity.startDate
         endDate = contentHomeActivity.endDate
+
+        contentsName = mView?.findViewById(R.id.id_contents_name_1)
+        contentsName?.setText(contentName)
 
         println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
         getCalendarInfo(jwtToken!!,contentName!!)
@@ -230,6 +245,13 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun settingCalendar(jsonArray: JSONArray){
 
         calendar = mView?.findViewById(R.id.calendarView)
+
+        if(joinState == 3)
+            calendar!!.visibility = View.GONE
+        else
+            calendar!!.visibility = View.VISIBLE
+
+        calendar!!.setHeaderTextAppearance(R.color.abc_background_cache_hint_selector_material_dark)
         calendar!!.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
                 .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
