@@ -2,7 +2,6 @@ package com.example.parkseunghyun.achievementofall.Activities
 
 
 import adapter.HomePagerAdapter
-import adapter.JoinedContentsAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -203,18 +202,18 @@ class HomeActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         println("TEST---- HomeActivity로 오나?")
 
-//        when (requestCode) {
-//            REQUEST_FROM_JCA -> {
-//                println("TEST------ HomeActivity from jca")
-//                generateTabLayout(REQUEST_UPDATE)
-//
-//            }
-//            REQUEST_FROM_SEARCH -> {
-//                println("TEST------ HomeActivity from search")
-//                generateTabLayout(REQUEST_UPDATE)
-//            }
-//
-//        }
+        when (requestCode) {
+            REQUEST_FROM_JCA -> {
+                println("TEST------ HomeActivity from jca")
+                generateTabLayout(REQUEST_UPDATE)
+
+            }
+            REQUEST_FROM_SEARCH -> {
+                println("TEST------ HomeActivity from search")
+                generateTabLayout(REQUEST_UPDATE)
+            }
+
+        }
 
     }
 

@@ -3,7 +3,6 @@ package adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,16 +10,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.parkseunghyun.achievementofall.Activities.SignupActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.example.parkseunghyun.achievementofall.R
 import de.hdodenhof.circleimageview.CircleImageView
-
 import model.StoriesModel
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 
 /**
  * Created by A on 23-03-2018.

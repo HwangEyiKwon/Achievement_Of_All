@@ -114,8 +114,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
                 uploadVideoToServer(pathToStoredVideo!!)
-            } else {
 
+            } else {
                 EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
             }
 
