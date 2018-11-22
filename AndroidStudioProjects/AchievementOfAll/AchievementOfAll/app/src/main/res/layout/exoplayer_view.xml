@@ -36,6 +36,14 @@
                 android:clickable="true"
                 app:srcCompat="@drawable/ic_icons_wrong" />
 
+            <ImageView
+                android:id="@+id/notYet"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_icons_notyet" />
+
+
 
         </LinearLayout>
 

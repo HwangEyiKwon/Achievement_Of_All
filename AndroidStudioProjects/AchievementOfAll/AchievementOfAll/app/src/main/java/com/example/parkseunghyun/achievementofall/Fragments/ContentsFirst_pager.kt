@@ -230,6 +230,11 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun settingCalendar(jsonArray: JSONArray){
 
         calendar = mView?.findViewById(R.id.calendarView)
+        if(joinState == 3)
+            calendar!!.visibility = View.GONE
+        else
+            calendar!!.visibility = View.VISIBLE
+
         calendar!!.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
                 .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
