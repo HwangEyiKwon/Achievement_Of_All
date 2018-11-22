@@ -85,18 +85,47 @@ router.post('/sendVideo', function(req, res, next){
           console.log("content DB saving in sendVideo");
         });
 
-        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.videoPath": [{path : filenamePath, authen: 2}]}},function(err, doc){
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.$.videoPath": [{path : filenamePath, authen: 2}]}},function(err, user){
           if(err){
             console.log("User findOneAndUpdate err : "+err);
           }
           console.log("send video_update videoPath : Path : "+filenamePath+" authen : "+0);
         });
-        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.0.calendar": [{year : year, month: month, day: day, authen: 2}]}},function(err, doc){
+        User.findOneAndUpdate({email: userEmail, "contentList.contentName": contentName}, {$push:{"contentList.$.calendar": [{year : year, month: month, day: day, authen: 2}]}},function(err, doc){
           if(err){
             console.log("User findOneAndUpdate err : "+err);
           }
           console.log("send video_update calendar");
         });
+
+        User.findOne({email: userEmail, "contentList.contentName": contentName}, function(err, user){
+          if(user.contentList.length != 0) {
+            var contentListCount = user.contentList.length;
+            var contentListIndex;
+            for (var i = 0; i < contentListCount; i++) {
+              if (user.contentList[i].contentName === contentName) {
+                contentListIndex = i;
+                break;
+              }
+            }
+
+            var threeDaysAfter = new Date(Date.now());
+            threeDaysAfter.setDate(threeDaysAfter.getDate() + 3);
+            var month = threeDaysAfter.getMonth() + 1;
+            var day = threeDaysAfter.getDate();
+            var year = threeDaysAfter.getFullYear();
+            // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+            if ((day+"").length < 2) {
+              day = "0" + day;
+            }
+            var date = year+ "-" + month + "-" + day;
+
+            user.contentList[contentListIndex].authenticationDate = date;
+            user.contentList[contentListIndex].isUploaded = 1;
+            console.log("authenticate date and is uploaded update");
+          }
+        });
+
         res.send({success : true});
         console.log("send success : true ");
       }
@@ -122,81 +151,103 @@ router.post('/checkVideo', function(req,res){
   var authenInfo = req.body.authenInfo; // 인증
   console.log(jwtToken+contentName+otherEmail+authenInfo+"ㅇㅇ");
 
-
   // console.log("video jwt토큰 "+ req.params.jwtToken);
   var decoded = jwt.decode(jwtToken, req.app.get("jwtTokenSecret"));
-  // console.log("video jwt토큰 디코딩 "+ decoded.userCheck);
+   console.log("check video jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck; // 내 이메일
+  var contentId;
 
-  //
-  // User.findOne({nickname: othersNickname}, function(err, user){
-  //   var userName;
-  //   User.findOne({email: userEmail}, function(err, user){
-  //     userName = user.name;
-  //   });
-  //   var othersEmail = user.email;
-  //   if(user.contentList.length != 0){
-  //     var contentListCount = user.contentList.length;
-  //     var contentListIndex;
-  //     for (var i = 0; i < contentListCount; i++) {
-  //       if (user.contentList[i].contentName === contentName) {
-  //         contentListIndex = i;
-  //         break;
-  //       }
-  //     }
-  //     var contentId = user.contentList[contentListIndex].contentId;
-  //     console.log(contentId + "    " + contentName);
-  //     Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": othersEmail}, {$push:{"userList.0.newVideo.authorizePeople": [{name : userName, authenInfo: authenInfo}]}},function(err, content){
-  //       if(err){
-  //         console.log("User findOneAndUpdate err : "+err);
-  //       }
-  //       console.log("check video_update authorizePeople: name : "+userName+" authenInfo : "+ authenInfo);
-  //     });
-  //
-  //     Content.findOne({name: contentName, id: contentId}, function(err, content){
-  //       var userListCount = content.userList.length;
-  //       var userListIndex;
-  //       var authorizeUserCount;
-  //       var successCount = 0;
-  //       var voteRate;
-  //
-  //       for (var i = 0; i < userListCount; i++) {
-  //         if (content.userList[i].email === othersEmail) {
-  //           userListIndex = i;
-  //           break;
-  //         }
-  //       }
-  //       authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
-  //       if(authorizeUserCount === userListCount){
-  //         for (var i = 0; i < authorizeUserCount; i++) {
-  //           if(content.userList[userListIndex].newVideo.authorizePeople[authorizeUserCount].authenInfo == 1){
-  //             successCount++;
-  //           }
-  //         }
-  //         voteRate = (successCount / content.totalUser) * 100;
-  //         if(successCount > 50){
-  //           content.userList[userListIndex].newVideo.authen = 1;
-  //         }
-  //         else{
-  //           content.userList[userListIndex].newVideo.authen = 0;
-  //         }
-  //         var threeDaysAfter = new Date(Date.now());
-  //         threeDaysAfter.setDate(threeDaysAfter.getDate() + 3);
-  //         var month = threeDaysAfter.getMonth() + 1;
-  //         var day = threeDaysAfter.getDate();
-  //         var year = threeDaysAfter.getFullYear();
-  //         // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
-  //         if ((day+"").length < 2) {
-  //           day = "0" + day;
-  //         }
-  //         var date = year+ "-" + month + "-" + day;
-  //
-  //         user.contentList[contentListIndex].authenticationDate = date;
-  //         user.contentList[contentListIndex].isUploaded = 1;
-  //       }
-  //     });
-  //   }
-  // });
+  function uf(callback) {
+    return new Promise(function (resolve,reject) {
+      User.findOne({email: otherEmail}, function(err, otherUser){
+        if(otherUser.contentList.length != 0){
+          var contentListCount = otherUser.contentList.length;
+          var contentListIndex;
+          for (var i = 0; i < contentListCount; i++) {
+            if (otherUser.contentList[i].contentName === contentName) {
+              contentListIndex = i;
+              break;
+            }
+          }
+          contentId = otherUser.contentList[contentListIndex].contentId;
+          console.log(contentId + "    " + contentName +"FFF"+otherEmail);
+
+
+          resolve();
+        }
+      })
+    });
+  }
+
+  function cf(callback) {
+    return new Promise(function (resolve,reject) {
+
+      console.log(contentName + contentId + otherEmail);
+
+
+      Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": otherEmail},
+        {$push:{"userList.$.newVideo.authorizePeople": [{email : userEmail, authenInfo: authenInfo}]}},function(err, content){
+
+            console.log(content);
+            if(err){
+              console.log("User findOneAndUpdate err : "+err);
+            }
+            console.log("check video_update authorizePeople: email : "+userEmail+" authenInfo : "+ authenInfo);
+
+            // Content.findOne({name: contentName, id: contentId}, function(err, content){
+            //   var userListCount = content.userList.length;
+            //   var userListIndex;
+            //   var authorizeUserCount;
+            //   var successCount = 0;
+            //   var voteRate;
+            //
+            //   for (var i = 0; i < userListCount; i++) {
+            //     if (content.userList[i].email === otherEmail) {
+            //       userListIndex = i;
+            //       break;
+            //     }
+            //   }
+            //   authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
+            //   if(authorizeUserCount === userListCount){
+            //     for (var i = 0; i < authorizeUserCount; i++) {
+            //       if(content.userList[userListIndex].newVideo.authorizePeople[authorizeUserCount].authenInfo == 1){
+            //         successCount++;
+            //       }
+            //     }
+            //     voteRate = (successCount / content.totalUser) * 100;
+            //     if(voteRate > 50){
+            //       content.userList[userListIndex].newVideo.authen = 1;
+            //     }
+            //     else{
+            //       content.userList[userListIndex].newVideo.authen = 0;
+            //     }
+            //     var threeDaysAfter = new Date(Date.now());
+            //     threeDaysAfter.setDate(threeDaysAfter.getDate() + 3);
+            //     var month = threeDaysAfter.getMonth() + 1;
+            //     var day = threeDaysAfter.getDate();
+            //     var year = threeDaysAfter.getFullYear();
+            //     // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
+            //     if ((day+"").length < 2) {
+            //       day = "0" + day;
+            //     }
+            //     var date = year+ "-" + month + "-" + day;
+            //
+            //     otherUser.contentList[contentListIndex].authenticationDate = date;
+            //     otherUser.contentList[contentListIndex].isUploaded = 1;
+            //   }
+            // });
+          })
+
+        });
+
+
+  }
+
+
+  uf().then(function (asdf) {
+    cf()
+  })
+
 });
 
 //android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.
@@ -289,15 +340,15 @@ router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
               var authorizePeopleEmail = content.userList[i].email;
               var authorizePeopleName = content.userList[i].name;
               console.log("user리스트 이메일= " + content.userList[i].email + " userList 이름 " + content.userList[i].name);
-              if (content.userList[i].email != userEmail && content.userList[i].newVideo.authen == 0) {
+              if (content.userList[i].email != userEmail && content.userList[i].newVideo.authen == 2) {
                 //내가 다른 사람의 최신 영상을 인증했는지 체크하는 flag
                 var userCheckFlag = 0;
                 var authorizePeopleCount = content.userList[i].newVideo.authorizePeople.length;
                 console.log("사람 수 = " + authorizePeopleCount);
                 if(authorizePeopleCount != 0){
                   for(var j = 0; j < authorizePeopleCount; j ++){
-                    console.log("인증한 사람의 이름: " + content.userList[i].newVideo.authorizePeople[j].name);
-                    if(content.userList[i].newVideo.authorizePeople[j].name === userName) userCheckFlag = 1;
+                    console.log("인증한 사람의 이메일: " + content.userList[i].newVideo.authorizePeople[j].email);
+                    if(content.userList[i].newVideo.authorizePeople[j].email === userEmail) userCheckFlag = 1;
                   }
                 }
                 if(userCheckFlag == 0){

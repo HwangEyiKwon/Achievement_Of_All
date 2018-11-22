@@ -2,6 +2,7 @@ package com.example.parkseunghyun.achievementofall.Activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
@@ -30,10 +31,12 @@ class SignupActivity : AppCompatActivity() {
 
         val email = text_email2.text.toString()
         val password = text_password2.text.toString()
+        val name = user_nickname.text.toString()
         val jsonObject = JSONObject()
 
         jsonObject.put("email", email)
         jsonObject.put("password",password)
+        jsonObject.put("name", name)
 
         VolleyHttpService.signup(this, jsonObject) { success ->
             if (success) {

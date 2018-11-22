@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+ mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -66,14 +66,14 @@ require('./config/passport')(passport);
 //   imagePath: "ParkSeungHyun17",
 //   contentList:[{
 //     contentId : 0,
-//     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
+//     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}, {path: "2018-11-18", authen: 1}],
 //     contentName: "NoSmoking",
 //     joinState : 1,
-//     authenticationDate : "2018-11-15",
-//     isUploaded : 1,
-//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 0}]
+//     authenticationDate : "2018-11-22",
+//     isUploaded : 0,
+//     calendar: [{year: "2018", month: "11", day: "13", authen: 1}, {year: "2018", month: "11", day: "16", authen: 1}, {year: "2018", month: "11", day: "19", authen: 1}]
 //   },{
-//     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
+//     videoPath: [],
 //     contentId : 1,
 //     contentName: "Diet",
 //     joinState : 1,
@@ -96,7 +96,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isUploaded : 1,
-//     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "10", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
 //     contentId : 1,
@@ -122,7 +122,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
 //     isUploaded : 0,
-//     calendar: [{year: "2018", month: "10", day: "7", authen: 1}, {year: "2018", month: "10", day: "10", authen: 1}, {year: "2018", month: "10", day: "13", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}]
 //   },{
 //     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
 //     contentId : 1,
@@ -188,9 +188,9 @@ require('./config/passport')(passport);
 //   startDate: "11/01/2018",
 //   endDate: "11/30/2018",
 //   isDone: 0,
-//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: []}},
-//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople:[{name: "ParkSeungHyun17", authenInfo: 1}]}},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 1}]}}],
+//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}},
+//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[{email: "shp17@gmail.com", authenInfo: 1}]}},
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: []}}],
 //   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content2 = new content({
@@ -200,9 +200,9 @@ require('./config/passport')(passport);
 //   endDate: "12/01/2018",
 //   endDate: "12/01/2018",
 //   isDone: 0,
-//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: []}},
-//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: [{name: "ParkSeungHyun17", authenInfo: 1}]}},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 1}]}}],
+//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: []}},
+//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: [{email: "shp17@gmail.com", authenInfo: 1}]}},
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: []}}],
 //   description: "다이어트 컨텐츠입니다. \n 18년9월1일부터 18년12월1일까지 진행됩니다. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content3 = new content({
@@ -211,9 +211,9 @@ require('./config/passport')(passport);
 //   startDate: "01/01/2019",
 //   endDate: "06/30/2019",
 //   isDone: 2,
-//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: []}},
-//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: [{name: "ParkSeungHyun17", authenInfo: 1}]}},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 0, authorizePeople: [{name: "HwangEyiKWON17", authenInfo: 1}]}}],
+//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: []}},
+//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: [{email: "shp17@gmail.com", authenInfo: 1}]}},
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: [{email: "shp17@gmail.com", authenInfo: 1}]}}],
 //   description: "공부 컨텐츠입니다. \n 18년9월1일부터 18년12월31일까지 진행됩니다. /n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content4 = new content({
@@ -230,7 +230,7 @@ require('./config/passport')(passport);
 //   id: 4,
 //   name: "NoSmoking",
 //   roomNum: 3,
-//   startDate: "09/01/2019",
+//   startDate: "01/08/2019",
 //   endDate: "12/30/2019",
 //   isDone: 2,
 //   userList: [],
@@ -434,9 +434,9 @@ app.post('/sendToken', function(req, res) {
       if(user.contentList[authenContentIndex].isUploaded != 1) {
         console.log('2: if moon');
 
-        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
-        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
-        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 15, 52, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 15, 53, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 15, 50, 0);
         sendPushMessage(user, authenContentIndex, sendTime1);
         sendPushMessage(user, authenContentIndex, sendTime2);
         sendPushMessage(user, authenContentIndex, sendTime3);
@@ -552,7 +552,7 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
 
 
 //푸쉬메시지 펑션
-function sendPushMessage(user, sendTime) {
+function sendPushMessage(user, arrayIndex, sendTime) {
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
