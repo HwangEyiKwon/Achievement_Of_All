@@ -1,5 +1,6 @@
 package adapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -11,6 +12,7 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
+import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.R
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import de.hdodenhof.circleimageview.CircleImageView
@@ -25,6 +27,7 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
     // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
+    val REQUEST_FROM_JCA = 10101
 
 //    init {
 //        itemListener = itemListener
@@ -72,10 +75,18 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
 //            goToContentsHome.putExtra("contentName", name.text)
 //            context.startActivity(goToContentsHome)
 
-            context.startActivity<ContentsHomeActivity>(
-                    // 컨텐츠 이름 넘기기
-                    "contentName" to  name.text
-            )
+
+            val goToContents = Intent(context, ContentsHomeActivity::class.java)
+            goToContents.putExtra("contentName", name.text)
+            val contextToActivity = context as Activity
+            contextToActivity.startActivityForResult(goToContents, REQUEST_FROM_JCA)
+
+
+
+//            context.startActivity<ContentsHomeActivity>(
+//                    // 컨텐츠 이름 넘기기
+//                    "contentName" to  name.text
+//            )
         }
 
     }

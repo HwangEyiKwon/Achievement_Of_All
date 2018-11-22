@@ -3,6 +3,7 @@ package com.example.parkseunghyun.achievementofall.Fragments
 import adapter.JoinedContentsAdapter
 import adapter.ThumbnailAdapter
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -53,6 +54,9 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     private var view_: View ?= null
     private var homeAccountPagerContext: Context? = null
+
+    val REQUEST_FROM_JCA = 10101
+    val REQUEST_FROM_SEARCH = 1010
 
     //    static final Class<?>[] ACTIVITIES = { X_Home_no.class }; // 각각의 LIST_MENU의 원소에 대응되는 액티비티의 각 클래스 이름을 써줍니다.
 
@@ -147,6 +151,8 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         joinedContentsView!!.adapter = joinedContentsAdapter
 
     }
+
+
     // 사용자 비디오 목록 View 생성 함수
     private fun generateVideoCollection() {
 

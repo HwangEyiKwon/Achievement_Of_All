@@ -12,28 +12,31 @@ import com.example.parkseunghyun.achievementofall.Fragments.HomeSearchPager
 
 class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     internal var mNumOfTabs: Int = 0
+    var homeAccountPager: HomeAccountPager? = null
+    var homeSearchPager: HomeSearchPager? = null
+    var homeInfoPager: HomeInfoPager? = null
 
     init {
         this.mNumOfTabs = 3
     }
 
+
     override fun getItem(position: Int): Fragment? {
-        Log.d(this.javaClass.name, "POSITION LOGGING   $position")
 
         when (position) {
             0 -> {
-                val homeAccountPager = HomeAccountPager()
-                Log.d(this.javaClass.name, "POSITION 0")
+                homeAccountPager = HomeAccountPager()
+                Log.d(this.javaClass.name, "POSITION ACCOUNT")
                 return homeAccountPager
             }
             1 -> {
-                val homeSearchPager = HomeSearchPager()
-                Log.d(this.javaClass.name, "POSITION 2")
+                homeSearchPager = HomeSearchPager()
+                Log.d(this.javaClass.name, "POSITION SEARCH")
                 return homeSearchPager
             }
             2 -> {
-                val homeInfoPager = HomeInfoPager()
-                Log.d(this.javaClass.name, "POSITION 1")
+                homeInfoPager = HomeInfoPager()
+                Log.d(this.javaClass.name, "POSITION INFO")
                 return homeInfoPager
             }
             else -> return null
