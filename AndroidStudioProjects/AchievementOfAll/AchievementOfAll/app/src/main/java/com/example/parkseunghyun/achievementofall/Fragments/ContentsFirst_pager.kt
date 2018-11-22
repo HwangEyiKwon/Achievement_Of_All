@@ -76,6 +76,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         super.onResume()
         println("ONRESUME CONTENTFIRST PAGER")
         getCalendarInfo(jwtToken!!,contentName!!)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -90,7 +91,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         endDate = contentHomeActivity.endDate
 
         println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
-//        getCalendarInfo(jwtToken!!,contentName!!)
+
 
         goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
         goToVideoButton?.setOnClickListener{
