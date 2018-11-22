@@ -2,7 +2,6 @@ package com.example.parkseunghyun.achievementofall.Activities
 
 
 import adapter.HomePagerAdapter
-import adapter.JoinedContentsAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -87,10 +86,15 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun generateTabLayout(request: Int) {
-        viewPager = findViewById<ViewPager>(R.id.home_pager_container)
+
+
         if(request == REQUEST_FIRST_CREATE) {
 
+            viewPager = findViewById(R.id.home_pager_container)
             homeTab = findViewById(R.id.id_home_tab)
+
+
+//            homeTab = findViewById(R.id.id_home_tab)
             homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_person_black))
             homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
             homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
@@ -100,6 +104,11 @@ class HomeActivity : AppCompatActivity() {
 
             viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
 
+            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
+            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+
+
             homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     viewPager?.currentItem = tab.position
@@ -107,14 +116,13 @@ class HomeActivity : AppCompatActivity() {
 
                     when(tab.position) {
                         0-> {
-                            var homeAccountPager = HomeAccountPager()
+
                             homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
                             homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
                             homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
                         }
 
                         1-> {
-
                             homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
                             homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search_black)
                             homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
@@ -131,11 +139,6 @@ class HomeActivity : AppCompatActivity() {
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
-                    println("UNSELECTED??" + tab.position)
-
-//                    /* TODO 아오 모르겟다 */
-//                    viewPager!!.adapter!!.notifyDataSetChanged()
-//                    viewPager!!.adapter!!.startUpdate()
 
 
                 }
@@ -143,21 +146,20 @@ class HomeActivity : AppCompatActivity() {
                 }
             })
 
+            homePagerAdapter = HomePagerAdapter(supportFragmentManager)
+            viewPager?.adapter = homePagerAdapter
+            viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
 
         }
 
         if(request == REQUEST_UPDATE){
 
-            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
-            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
-            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+            homePagerAdapter = HomePagerAdapter(supportFragmentManager)
+            viewPager?.adapter = homePagerAdapter
+            viewPager!!.currentItem = homeTab!!.selectedTabPosition
 
 
         }
-
-        homePagerAdapter = HomePagerAdapter(supportFragmentManager)
-        viewPager?.adapter = homePagerAdapter
-
 
     }
 

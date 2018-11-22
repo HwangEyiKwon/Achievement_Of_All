@@ -80,7 +80,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 //    private var tmpMyEmail = "shp3@gmail.com"
     /**/
 
+    override fun onResume() {
+        super.onResume()
+        println("ONRESUME CONTENTFIRST PAGER")
 
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -129,8 +134,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
                 uploadVideoToServer(pathToStoredVideo!!)
-            } else {
 
+            } else {
                 EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
             }
 
@@ -215,6 +220,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 if (!TextUtils.isEmpty(result.success)) {
                     Toast.makeText(activity, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
                 }
+
+                getCalendarInfo(jwtToken!!,contentName!!)
 
                 // Remove video from my storage.
                 forRemoveFile = File(pathToStoredVideo)

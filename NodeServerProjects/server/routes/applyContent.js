@@ -70,7 +70,7 @@ router.post('/contentJoinComplete',  function (req,res) {
           console.log("date: " + date);
 
           //user의 content List에 해당 content 정보들 추가
-          User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isAuthenticated: "0",
+          User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
                 authenticationDate: date, joinState: 0}]}},function(err, doc){
             if(err){
               console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
@@ -113,7 +113,7 @@ router.post('/contentJoinComplete',  function (req,res) {
       var contentName = content.contentName;
 
       //user의 content List에 해당 content 정보들 추가
-      User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isAuthenticated: "0",
+      User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
             authenticationDate: day, joinState: 0}]}},function(err, doc){
         if(err){
           console.log(err);

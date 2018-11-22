@@ -12,7 +12,9 @@ import com.example.parkseunghyun.achievementofall.Fragments.HomeSearchPager
 
 
 class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
     internal var mNumOfTabs: Int = 0
+
     var homeAccountPager: HomeAccountPager? = null
     var homeSearchPager: HomeSearchPager? = null
     var homeInfoPager: HomeInfoPager? = null
