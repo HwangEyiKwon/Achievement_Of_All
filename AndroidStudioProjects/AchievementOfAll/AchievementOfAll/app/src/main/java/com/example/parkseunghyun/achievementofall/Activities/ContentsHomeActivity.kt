@@ -100,8 +100,6 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-
         when (requestCode) {
             REQUEST_FOR_UPDATE_CONTENTS -> {
                 println("TEST------ 1")

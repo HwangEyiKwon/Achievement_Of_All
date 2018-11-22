@@ -20,7 +20,7 @@ router.get('/getSearchUserData', function (req,res) {
   });
 });
 
-router.get('/getSearchContentData', function (err, res, ) {
+router.get('/getSearchContentData', function (err, res ) {
   console.log("getSearchContentData Start ");
   Content.collection.distinct("name", function(err, results){
     if(err)  console.log(err);

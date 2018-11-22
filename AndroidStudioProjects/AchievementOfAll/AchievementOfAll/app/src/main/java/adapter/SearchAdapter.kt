@@ -1,5 +1,6 @@
 package com.studio572.searchlistview
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
+import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
@@ -17,6 +19,7 @@ import org.jetbrains.anko.startActivity
 class SearchAdapter(private val list: List<String>, private val context: Context, private  val cu: String) : BaseAdapter() {
     private val inflate: LayoutInflater
     private var viewHolder: ViewHolder? = null
+    val REQUEST_FROM_SEARCH = 1010
 
     init {
         this.inflate = LayoutInflater.from(context)
@@ -56,13 +59,15 @@ class SearchAdapter(private val list: List<String>, private val context: Context
                 // 컨텐츠 홈으로 이동
                 Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
 
-//                val goToContentsHome = Intent(context, ContentsHomeActivity::class.java)
-//                goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-//                goToContentsHome.putExtra("contentName", list[position])
-//                context.startActivity(goToContentsHome)
-                context.startActivity<ContentsHomeActivity>(
-                        "contentName" to  list[position]
-                )
+                val goToContents = Intent(context, ContentsHomeActivity::class.java)
+                goToContents.putExtra("contentName", list[position])
+                val contextToActivity = context as Activity
+                contextToActivity.startActivityForResult(goToContents, REQUEST_FROM_SEARCH)
+
+//                context.startActivity<ContentsHomeActivity>(
+//                        "contentName" to  list[position]
+//                )
+
             }else if(cu == "user"){
                 // 사용자 홈으로 이동
                 Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()

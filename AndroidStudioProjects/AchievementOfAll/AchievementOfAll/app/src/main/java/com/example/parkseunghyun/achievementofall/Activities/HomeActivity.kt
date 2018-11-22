@@ -2,11 +2,14 @@ package com.example.parkseunghyun.achievementofall.Activities
 
 
 import adapter.HomePagerAdapter
+import adapter.JoinedContentsAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -19,9 +22,18 @@ class HomeActivity : AppCompatActivity() {
 
     private var homeTab: TabLayout? = null
     private var time: Long = 0
+    val REQUEST_FROM_JCA = 10101
+    val REQUEST_FROM_SEARCH = 1010
+    var homePagerAdapter: HomePagerAdapter? = null
+    var viewPager:ViewPager? = null
 
     // jwt-token
     var jwtToken: String?= null
+
+    val REQUEST_FIRST_CREATE = 808
+    val REQUEST_UPDATE = 111
+
+
 
 
     override fun onRestart() {
@@ -68,56 +80,80 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // Code for TabLayout
-        generateTabLayout()
+        generateTabLayout(REQUEST_FIRST_CREATE)
 
     }
 
 
-    private fun generateTabLayout() {
+    private fun generateTabLayout(request: Int) {
 
-        homeTab = findViewById(R.id.id_home_tab)
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_person_black))
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
-        homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
-        homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
-        println(homeTab)
+        if(request == REQUEST_FIRST_CREATE) {
 
-        var viewPager = findViewById<ViewPager>(R.id.home_pager_container)
-        var homePagerAdapter = HomePagerAdapter(supportFragmentManager)
+            homeTab = findViewById(R.id.id_home_tab)
+            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_person_black))
+            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
+            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
+            homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
+            viewPager = findViewById<ViewPager>(R.id.home_pager_container)
+
+            homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    viewPager?.currentItem = tab.position
+                    Log.d(this.javaClass.name, "POSITION LOGGING   $tab.position")
+
+                    when(tab.position) {
+                        0-> {
+
+                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
+                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+
+                        }
+
+                        1-> {
+
+                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
+                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search_black)
+                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+
+                        }
+                        2-> {
+
+                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
+                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info_black)
+
+                        }
+                    }
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                    println("UNSELECTED??" + tab.position)
+                    if(tab.position == 0){
+                        /* TODO 아오 모르겟다 */
+                    }
+
+                }
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                }
+            })
+
+
+        }
+
+        if(request == REQUEST_UPDATE){
+
+            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
+            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
+            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+
+        }
+
+        homePagerAdapter = HomePagerAdapter(supportFragmentManager)
         viewPager?.adapter = homePagerAdapter
         viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
 
-        homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                viewPager?.currentItem = tab.position
 
-                when(tab.position) {
-                    0-> {
-                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
-                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
-                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
-                    }
-                    1-> {
-                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
-                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search_black)
-                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
-                    }
-                    2-> {
-                        homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
-                        homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
-                        homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info_black)
-                    }
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-
-            }
-        })
     }
 
 
@@ -160,6 +196,26 @@ class HomeActivity : AppCompatActivity() {
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 
         return auto.getString("token", "")
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        println("TEST---- HomeActivity로 오나?")
+
+//        when (requestCode) {
+//            REQUEST_FROM_JCA -> {
+//                println("TEST------ HomeActivity from jca")
+//                generateTabLayout(REQUEST_UPDATE)
+//
+//            }
+//            REQUEST_FROM_SEARCH -> {
+//                println("TEST------ HomeActivity from search")
+//                generateTabLayout(REQUEST_UPDATE)
+//            }
+//
+//        }
+
     }
 
 
