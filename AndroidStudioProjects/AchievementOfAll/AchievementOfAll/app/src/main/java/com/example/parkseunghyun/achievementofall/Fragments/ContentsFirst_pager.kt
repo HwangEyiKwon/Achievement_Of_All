@@ -207,7 +207,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 }
 
                 getCalendarInfo(jwtToken!!,contentName!!)
-                
+
                 // Remove video from my storage.
                 forRemoveFile = File(pathToStoredVideo)
                 forRemoveFile?.delete()
