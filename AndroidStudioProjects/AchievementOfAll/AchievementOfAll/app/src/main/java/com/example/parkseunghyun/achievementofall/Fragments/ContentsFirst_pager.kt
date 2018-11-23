@@ -34,7 +34,6 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
-import org.w3c.dom.Text
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback

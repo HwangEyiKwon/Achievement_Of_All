@@ -13,7 +13,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
-import com.example.parkseunghyun.achievementofall.Fragments.HomeAccountPager
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 

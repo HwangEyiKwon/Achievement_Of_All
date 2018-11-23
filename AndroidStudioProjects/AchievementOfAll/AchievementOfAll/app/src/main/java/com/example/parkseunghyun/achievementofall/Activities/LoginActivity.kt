@@ -35,6 +35,12 @@ class LoginActivity : AppCompatActivity() {
             // 로그인
             login(email, password)
         }
+        goPassword.setOnClickListener {
+
+            startActivity<ForgotPasswordActivity>()
+            finish()
+
+        }
 
     }
 
