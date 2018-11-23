@@ -4,6 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -11,23 +14,36 @@
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/viewgrey"/>
+
+        <include layout="@layout/search_toolbar"/>
+
         <EditText
             android:id="@+id/editSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp"
+            android:textSize="25dp"
+            android:fontFamily="@font/font5"
+            android:backgroundTint="@android:color/darker_gray"
             android:hint="검색어를 입력하세요."
             android:textColor="@android:color/black"
-            android:textColorHint="@android:color/black" />
+            android:textColorHint="@android:color/darker_gray" />
 
-        <include layout="@layout/search_toolbar"/>
+
 
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="#999999"
-            android:dividerHeight="1dp"></ListView>
+            android:dividerHeight="1dp" />
+
+
     </LinearLayout>
 
 

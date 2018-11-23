@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
@@ -14,6 +15,7 @@ import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
+import org.w3c.dom.Text
 
 
 class SearchAdapter(private val list: List<String>, private val context: Context, private  val cu: String) : BaseAdapter() {
@@ -50,8 +52,11 @@ class SearchAdapter(private val list: List<String>, private val context: Context
             viewHolder = convertView.tag as ViewHolder
         }
 
+
+
         // 리스트에 있는 데이터를 리스트뷰 셀에 뿌린다.
         viewHolder!!.label!!.text = list[position]
+
 
         viewHolder!!.label!!.setOnClickListener {
 
