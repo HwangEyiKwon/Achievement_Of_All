@@ -3,20 +3,9 @@
     <item>
         <shape android:shape="oval" >
             <solid
-            android:color="#000"/>
-            <size android:width="15dp"
-                android:height="15dp"/>
+            android:color="#a1a09f"/>
+            <size android:width="4dp"
+                android:height="4dp"/>
         </shape>
     </item>
-
-    <item
-        android:bottom="0.5dp"
-        android:left="0.5dp"
-        android:right="0.5dp"
-        android:top="0.5dp">
-        <shape android:shape="oval" >
-            <solid android:color="#fff" />
-        </shape>
-    </item>
-
 </layer-list>

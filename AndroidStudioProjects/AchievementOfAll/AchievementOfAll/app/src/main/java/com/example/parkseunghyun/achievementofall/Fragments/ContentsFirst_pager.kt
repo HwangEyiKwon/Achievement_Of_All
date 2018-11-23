@@ -252,9 +252,9 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         calendar = mView?.findViewById(R.id.calendarView)
 
-        if(joinState == 3)
-            calendar!!.visibility = View.GONE
-        else
+        if(joinState == 3) {
+//            calendar!!.visibility = View.GONE
+        } else
             calendar!!.visibility = View.VISIBLE
 
         calendar!!.setHeaderTextAppearance(R.color.abc_background_cache_hint_selector_material_dark)

@@ -21,11 +21,14 @@
     <com.example.parkseunghyun.achievementofall.Configurations.CircleIndicator
         android:id="@+id/contents_circle_indicator"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
-        android:layout_gravity="center_horizontal|bottom"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal|top"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </FrameLayout>
