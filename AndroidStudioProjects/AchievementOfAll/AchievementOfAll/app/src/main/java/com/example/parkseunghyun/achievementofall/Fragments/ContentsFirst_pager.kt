@@ -398,7 +398,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         super.onDestroy()
     }
 
-
     val diffUpdateThreadHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
 
