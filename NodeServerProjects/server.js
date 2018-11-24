@@ -389,7 +389,7 @@ app.post('/sendToken', function(req, res) {
   });
 });
 
-//날짜가 바뀔 때마다 푸쉬알림 해당자에게 전송 및 매일 수행될 기능들
+//날짜가 바뀔 때마다 푸쉬알림 전송 및 매일 수행될 기능들
 var scheduler = schedule.scheduleJob('00 * * *', function(){
   var todayDate = new Date();
   var todayYear = todayDate.getFullYear();
@@ -419,7 +419,6 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         if (err) console.log("save err : "+err);
       });
 
-
       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
         for(var i = 0; i < Object.keys(userList).length; i++){
           var contentListCount = userList[i].contentList.length;
@@ -439,7 +438,53 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
     }
   });
 
-  /* 모든 유저에 대해 authentication Date체크 */
+  /* 모든 유저에 대해 authentication Date가 지났는데 인증 안된사람 체크 */
+  user.find({"contentList.authenticationDate" : yesterday, "contentList.isUploaded": 0}, function(err, userList){
+    for(var i = 0; i < Object.keys(userList).length; i++){
+      var authenContentIndex;
+      var contentListCount = userList[i].contentList.length;
+
+      var userListCount;
+      var userListIndex;
+
+      for(var j = 0; j < contentListCount; j++){
+        if(userList[i].contentList[j].authenticationDate === yesterday){
+          authenContentIndex = j;
+          break;
+        }
+      }
+
+      content.findOne({name: contentName, id: contentId}, function(err, content){
+        userListCount = content.userList.length;
+        var calendarIndex = userList[i].contentList[authenContentIndex].calendar.length - 1;
+
+        for (var m = 0; m < userListCount; m++) {
+          if (content.userList[m].email === userList[m].email) {
+            userListIndex = m;
+            break;
+          }
+        }
+        content.userList[userListIndex].result = 0;
+        userList[i].contentList[authenContentIndex].joinState = 4;
+        userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
+
+        content.save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
+        userList[i].save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
+      });
+
+
+
+
+    }
+  });
+
+  /* 모든 유저에 대해 authentication Date가 오늘인지 체크해서 푸쉬메시지 전송 */
   user.find({"contentList.authenticationDate" : today}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
       var joinContentCount = userList[i].contentList.length;
