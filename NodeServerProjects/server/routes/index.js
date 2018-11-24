@@ -116,11 +116,38 @@ router.post('/edit', function (req, res, next) {
 //jwt token 사용
 router.post('/userInfoEdit', function(req,res){
   console.log("userInfoEdit Start");
+
+  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
+  var userEmail = decoded.userCheck;
+  var phoneNumber = req.body.phoneNumber;
+  var name = req.body.name;
+  var password = req.body.password
+
+  console.log("edit EMAIL" + userEmail);
+  console.log("edit PW" + password);
+  console.log("edit phoneNumber" + phoneNumber);
+  console.log("edit name" + name);
+
   User.findOne({email: userEmail}, function(err, user){
-    user.password = user.generateHash(req.body.password);
-    user.nickname = req.body.nickname;
-    user.phoneNumber = req.body.phoneNumber;
-    user.imagePath = req.body.imagePath;
+    if(err){
+      res.send({success: false});
+      console.log("userInfoEdit err")
+    }else{
+
+      user.password = user.generateHash(password);
+      user.name = name;
+      user.phoneNumber = phoneNumber;
+      user.save(function (err) {
+        if(err) {
+          console.log(err);
+          res.send({success: false});
+        }else{
+          res.send({success: true});
+        }
+      })
+
+      // res.send({success: true});
+    }
   })
 })
 

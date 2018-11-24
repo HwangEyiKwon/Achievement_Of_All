@@ -73,26 +73,4 @@ module.exports = function(passport) {
         }
       });
     }));
-
-  passport.use('edit', new LocalStrategy({
-
-      passwordField : 'password',
-      passReqToCallback : true
-    },
-    function(req, password, done) {
-
-      var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-      var email = decoded.userCheck;
-      var phoneNumber = req.body.phoneNumber;
-      var name = req.body.name;
-
-      console.log("edit EMAIL" + email);
-      console.log("edit PW" + password);
-      console.log("edit phoneNumber" + phoneNumber);
-      console.log("edit name" + name);
-
-      // 기존 데이터 위로 바꿔야됨 + 비번도 갱신!!
-
-
-    }));
 };

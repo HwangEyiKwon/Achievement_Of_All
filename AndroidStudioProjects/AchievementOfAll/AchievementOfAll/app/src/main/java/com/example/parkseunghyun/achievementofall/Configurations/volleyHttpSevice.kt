@@ -104,7 +104,7 @@ object VolleyHttpService{
     // 사용자 정보 수정
     fun edit(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
-        var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/edit", jsonObject, Response.Listener{ response ->
+        var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/userInfoEdit", jsonObject, Response.Listener{ response ->
             println("서버 수신: $response")
             success(response.getString("success").toBoolean())
 

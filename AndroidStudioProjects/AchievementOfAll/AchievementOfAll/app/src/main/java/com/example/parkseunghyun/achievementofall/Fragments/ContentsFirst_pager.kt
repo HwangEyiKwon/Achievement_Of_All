@@ -291,7 +291,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 println("i는 무엇인가"+ i)
                 // y, m, d + 3일 + 자정
                 println("TESTINGING----" + y + "년" + ( m + 1 ) + "월" + ( d + 3 ) + "일")
-                
+
                 var nextYear = y
                 var nextMonth = m
                 var nextDay = d + 3
