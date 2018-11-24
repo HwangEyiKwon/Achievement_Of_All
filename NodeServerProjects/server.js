@@ -108,7 +108,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
 //     isUploaded : 0,
-//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}],
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "23", authen: 1}],
 //     money: 100000
 //   }]
 // });
@@ -165,7 +165,7 @@ require('./config/passport')(passport);
 //   id: 0,
 //   name: "NoSmoking",
 //   startDate: "11/01/2018",
-//   endDate: "12/30/2018",
+//   endDate: "11/23/2018",
 //   isDone: 0,
 //   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
 //     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
@@ -406,10 +406,10 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
 
   /* 모든 컨텐츠에 대해 endDate체크하여 디비 수정 */
   content.find({"endDate" : yesterday}, function(err, contentList){
+    console.log("contents done code in!!!!!");
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
       var contentName = contentList[i].name;
-      var userEmail;
       var userListCount = contentList[i].userList.length;
       for(var j = 0; j < userListCount; j ++){
         if(contentList[i].userList[j].result == 2) contentList[i].userList[j].result = 1;
@@ -418,6 +418,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       contentList[i].save(function(err, savedDocument) {
         if (err) console.log("save err : "+err);
       });
+
 
       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
         for(var i = 0; i < Object.keys(userList).length; i++){
@@ -501,16 +502,6 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
 });
 
 var scheduler = schedule.scheduleJob('00 * * * * *', function(){
-  var todayDate = new Date();
-  var todayYear = todayDate.getFullYear();
-  var todayMonth = todayDate.getMonth() + 1;
-  var todayDay = todayDate.getDate();
-
-  // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
-  if ((todayDay+"").length < 2) {
-    todayDay = "0" + todayDay;
-  }
-  var today = todayYear+ "-" + todayMonth + "-" + todayDay;
   content.find({isDone: 0}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var totalDate = (contentList[i].endDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
