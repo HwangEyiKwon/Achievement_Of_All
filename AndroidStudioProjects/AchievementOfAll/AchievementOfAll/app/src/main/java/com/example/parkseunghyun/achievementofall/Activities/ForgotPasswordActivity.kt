@@ -19,22 +19,22 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
 
         bt_send_email.setOnClickListener{
-            println("이메일 전송~~")
-        }
-        goLogin.setOnClickListener {
-            println("다시 로그인 창~~")
-
             if(!android.util.Patterns.EMAIL_ADDRESS.matcher(send_email.text).matches())
             {
                 Toast.makeText(this,"이메일 형식이 아닙니다. \n Modal@gmail.com",Toast.LENGTH_SHORT).show();
 
             }else{
-                startActivity<LoginActivity>()
-
-                sendEmail()
-                Toast.makeText(this,"이메일이 발송되었습니다. \n 확인해주세요.",Toast.LENGTH_SHORT).show();
-                finish()
+                println("이메일 전송~~")
             }
+        }
+        goLogin.setOnClickListener {
+            println("다시 로그인 창~~")
+
+            startActivity<LoginActivity>()
+
+            sendEmail()
+            Toast.makeText(this,"이메일이 발송되었습니다. \n 확인해주세요.",Toast.LENGTH_SHORT).show();
+            finish()
         }
 
     }
