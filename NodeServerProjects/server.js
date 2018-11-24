@@ -401,7 +401,18 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   /* 모든 컨텐츠에 대해 endDate체크하여 디비 수정 */
   content.find({"endDate" : yesterday}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
+      var contentId = contentList[i].id;
+      var contentName = contentList[i].name;
+      var userListCount = contentList[i].userList.length;
+      for(var j = 0; j < userListCount; j ++){
+        if(contentList[i].userList[j].result == 2) contentList[i].userList[j].result = 1;
+      }
+      contentList[i].isDone = 1;
+      contentList[i].save(function(err, savedDocument) {
+        if (err) console.log("save err : "+err);
+      });
 
+      u
     }
   });
 
