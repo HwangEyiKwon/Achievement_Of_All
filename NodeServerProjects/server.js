@@ -1,7 +1,7 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
- // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 mongoose.connect('mongodb://localhost:27017');
 
@@ -72,14 +72,6 @@ require('./config/passport')(passport);
 //     authenticationDate : "2018-11-22",
 //     isUploaded : 0,
 //     calendar: [{year: "2018", month: "11", day: "13", authen: 1}, {year: "2018", month: "11", day: "16", authen: 1}, {year: "2018", month: "11", day: "19", authen: 1}]
-//   },{
-//     videoPath: [],
-//     contentId : 1,
-//     contentName: "Diet",
-//     joinState : 1,
-//     authenticationDate : "2018-11-15",
-//     isUploaded : 1,
-//     calendar: [{year: "2018", month: "11", day: "15", authen: 1}, {year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}]
 //   }]
 // });
 // var user2 = new user({
@@ -97,14 +89,6 @@ require('./config/passport')(passport);
 //     authenticationDate : "2018-11-15",
 //     isUploaded : 1,
 //     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}]
-//   },{
-//     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
-//     contentId : 1,
-//     contentName: "Diet",
-//     joinState : 1,
-//     authenticationDate : "2018-11-15",
-//     isUploaded : 1,
-//     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "10", day: "11", authen: 1}, {year: "2018", month: "10", day: "14", authen: 1}]
 //   }]
 // });
 //
@@ -122,15 +106,7 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
 //     isUploaded : 0,
-//     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}]
-//   },{
-//     videoPath: [{path: "d1", authen: 1},{path: "d2", authen: 0}],
-//     contentId : 1,
-//     contentName: "Diet",
-//     joinState : 1,
-//     authenticationDate : "2018-11-18",
-//     isUploaded : 0,
-//     calendar: [{year: "2018", month: "10", day: "8", authen: 1}, {year: "2018", month: "10", day: "11", authen: 1}, {year: "2018", month: "10", day: "14", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}]
 //   }]
 // });
 //  var user4 = new user({
@@ -186,48 +162,24 @@ require('./config/passport')(passport);
 //   id: 0,
 //   name: "NoSmoking",
 //   startDate: "11/01/2018",
-//   endDate: "11/30/2018",
+//   endDate: "12/30/2018",
 //   isDone: 0,
-//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}},
-//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[{email: "shp17@gmail.com", authenInfo: 1}]}},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: []}}],
+//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
+//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 1}]}, result: 2}],
 //   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
 // var content2 = new content({
 //   id: 1,
-//   name: "Diet",
-//   startDate: "09/01/2018",
-//   endDate: "12/01/2018",
-//   endDate: "12/01/2018",
-//   isDone: 0,
-//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: []}},
-//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: [{email: "shp17@gmail.com", authenInfo: 1}]}},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: []}}],
-//   description: "다이어트 컨텐츠입니다. \n 18년9월1일부터 18년12월1일까지 진행됩니다. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
-// })
-// var content3 = new content({
-//   id: 2,
-//   name: "Study",
-//   startDate: "01/01/2019",
-//   endDate: "06/30/2019",
-//   isDone: 2,
-//   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: []}},
-//     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: [{email: "shp17@gmail.com", authenInfo: 1}]}},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "d2", authen: 2, authorizePeople: [{email: "shp17@gmail.com", authenInfo: 1}]}}],
-//   description: "공부 컨텐츠입니다. \n 18년9월1일부터 18년12월31일까지 진행됩니다. /n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
-// })
-// var content4 = new content({
-//   id: 3,
 //   name: "NoSmoking",
-//   roomNum: 2,
 //   startDate: "01/01/2019",
 //   endDate: "11/30/2019",
 //   isDone: 2,
 //   userList: [],
 //   description: "금연 컨텐츠입니다. \n 19년1월1일부터 19년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
 // })
-// var content5 = new content({
-//   id: 4,
+// var content3 = new content({
+//   id: 2,
 //   name: "NoSmoking",
 //   roomNum: 3,
 //   startDate: "01/08/2019",
@@ -251,20 +203,6 @@ require('./config/passport')(passport);
 //
 // });
 // content3.save(function(err, savedDocument) {
-//   if (err)
-//     return console.error(err);
-//   console.log(savedDocument);
-//   console.log("DB initialization");
-//
-// });
-// content4.save(function(err, savedDocument) {
-//   if (err)
-//     return console.error(err);
-//   console.log(savedDocument);
-//   console.log("DB initialization");
-//
-// });
-// content5.save(function(err, savedDocument) {
 //   if (err)
 //     return console.error(err);
 //   console.log(savedDocument);
@@ -459,6 +397,13 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
 
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
   var yesterday = todayYear+ "-" + todayMonth + "-" + todayDay-1;
+
+  /* 모든 컨텐츠에 대해 endDate체크하여 디비 수정 */
+  content.find({"endDate" : yesterday}, function(err, contentList){
+    for(var i = 0; i < Object.keys(contentList).length; i++){
+
+    }
+  });
 
   /* 모든 유저에 대해 authentication Date체크 */
   user.find({"contentList.authenticationDate" : today}, function(err, userList){

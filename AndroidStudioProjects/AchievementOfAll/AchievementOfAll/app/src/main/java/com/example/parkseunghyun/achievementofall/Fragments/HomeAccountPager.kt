@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.parkseunghyun.achievementofall.Activities.EditActivity
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
@@ -23,6 +24,7 @@ import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickLi
 import com.example.parkseunghyun.achievementofall.R
 import model.JoinedContentsModel
 import model.ThumbnailModel
+import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 import java.util.*
 
@@ -66,6 +68,7 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
     private var name: TextView ?=null
     private var email: TextView ?=null
     private var phoneNumber: TextView ?=null
+    private var editButton: ImageView ?= null
 
     // 사용자 프로필 사진 (ImageView)
     private var profile: ImageView ?=null
@@ -84,6 +87,8 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         email = view_!!.findViewById(R.id.email)
         phoneNumber = view_!!.findViewById(R.id.phoneNumber)
 
+        editButton = view_!!.findViewById(R.id.edit)
+
         // xml로부터 ImageView 설정
         profile = view_!!.findViewById(R.id.post_profile_image)
 
@@ -91,6 +96,11 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         val activity = activity as HomeActivity
         jwtToken = activity.jwtToken.toString()
         setUserInfo(jwtToken!!)
+
+        editButton!!.setOnClickListener {
+            println("editedit")
+            homeAccountPagerContext!!.startActivity<EditActivity>()
+        }
 
         return view_
     }

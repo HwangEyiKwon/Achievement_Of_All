@@ -81,7 +81,7 @@ router.post('/contentJoinComplete',  function (req,res) {
           var userName = user.name;
 
           //content의 user List에 해당 user 추가
-          Content.findOneAndUpdate({name: contentName, id: contentId}, {$push:{userList : [{name: userName, email: userEmail}]}}, function(err,doc){
+          Content.findOneAndUpdate({name: contentName, id: contentId}, {$push:{userList : [{name: userName, email: userEmail, result: 2}]}}, function(err,doc){
             if(err){
               console.log("contentJoinComplete Content findOneAndUpdate err :"+err);
             }

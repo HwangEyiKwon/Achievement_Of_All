@@ -3,13 +3,11 @@ package com.example.parkseunghyun.achievementofall.Activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
 import kotlinx.android.synthetic.main.activity_signup.*
 import org.json.JSONObject
-import java.util.regex.Pattern
 
 
 class SignupActivity : AppCompatActivity() {
@@ -21,35 +19,29 @@ class SignupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
 
-        text_email2.setOnFocusChangeListener(object : View.OnFocusChangeListener {
-
-            override fun onFocusChange(v: View, hasFocus: Boolean) {
-                if (hasFocus) {
-                    val p = Pattern.compile("^[a-zA-X0-9]@[a-zA-Z0-9].[a-zA-Z0-9]")
-                    val m = p.matcher(text_email2.getText().toString())
-
-                    if (!m.matches()) {
-                        Toast.makeText(this@SignupActivity, "Email형식으로 입력하세요", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
-
-
         bt_signup.setOnClickListener{
-            signup()
+            if(!android.util.Patterns.EMAIL_ADDRESS.matcher(signup_email.text).matches())
+            {
+                Toast.makeText(this,"이메일 형식이 아닙니다. \n Modal@gmail.com",Toast.LENGTH_SHORT).show();
+
+            }else if(signup_password.text.toString() != signup_password_check.text.toString()){
+                println(signup_password.text)
+                println(signup_password_check.text)
+                Toast.makeText(this,"비밀번호 체크가 틀립니다.",Toast.LENGTH_SHORT).show();
+            }else{
+                signup()
+            }
+
         }
-//        goLogin.setOnClickListener {
-//            startActivity<LoginActivity>()
-//        }
+
 
     }
     private fun signup(){
 
-        val email = text_email2.text.toString()
-        val password = text_password2.text.toString()
-        val name = user_nickname.text.toString()
-        val phoneNumber = user_phone_number.text.toString()
+        val email = signup_email.text.toString()
+        val password = signup_password.text.toString()
+        val name = signup_nickname.text.toString()
+        val phoneNumber = signup_phone_number.text.toString()
         val jsonObject = JSONObject()
 
         jsonObject.put("email", email)

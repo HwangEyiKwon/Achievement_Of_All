@@ -177,83 +177,94 @@ router.post('/checkVideo', function(req,res){
           contentId = otherUser.contentList[contentListIndex].contentId;
           console.log(contentId + "    " + contentName +"FFF"+otherEmail);
 
-
-          resolve();
+          resolve(otherUser);
         }
       })
     });
   }
 
-  function cf(callback) {
-    return new Promise(function (resolve,reject) {
-
-      console.log(contentName + contentId + otherEmail);
 
 
-      Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": otherEmail},
-        {$push:{"userList.$.newVideo.authorizePeople": [{email : userEmail, authenInfo: authenInfo}]}},function(err, content){
+  uf().then(function (otherUser) {
 
-            console.log(content);
-            if(err){
-              console.log("User findOneAndUpdate err : "+err);
+    console.log("other User?? : " + otherUser);
+    console.log(contentName + contentId + otherEmail);
+
+    Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": otherEmail},
+      {$addToSet:{"userList.$.newVideo.authorizePeople": { $each: [{email : userEmail, authenInfo: authenInfo}]}}},function(err, content){
+        if(err){
+          console.log("User findOneAndUpdate err : "+err);
+        }
+        console.log("check video_update authorizePeople: email : "+userEmail+" authenInfo : "+ authenInfo);
+
+        Content.findOne({name: contentName, id: contentId}, function(err, content){
+          var userListCount = content.userList.length;
+          var userListIndex;
+          var contentListCount = otherUser.contentList.length;
+          var contentListIndex;
+          var authorizeUserCount;
+          var successCount = 0;
+          var voteRate;
+          var videoIndex;
+          var calendarIndex;
+
+          for (var i = 0; i < userListCount; i++) {
+            if (content.userList[i].email === otherEmail) {
+              userListIndex = i;
+              break;
             }
-            console.log("check video_update authorizePeople: email : "+userEmail+" authenInfo : "+ authenInfo);
+          }
+          authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
+          console.log("authorizeUserCount count = " + authorizeUserCount);
+          //2명일 때 체크
+          if(authorizeUserCount === 2){
+            for(var j = 0; j < contentListCount; j++){
+              if(otherUser.contentList[j].contentName === contentName){
+                contentListIndex = j;
+                break;
+              }
+            }
+            videoIndex = otherUser.contentList[contentListIndex].videoPath.length - 1;
+            calendarIndex = otherUser.contentList[contentListIndex].calendar.length - 1;
+            for (var i = 0; i < authorizeUserCount; i++) {
+              if(content.userList[userListIndex].newVideo.authorizePeople[i].authenInfo == 1){
+                successCount++;
+              }
+            }
 
-            // Content.findOne({name: contentName, id: contentId}, function(err, content){
-            //   var userListCount = content.userList.length;
-            //   var userListIndex;
-            //   var authorizeUserCount;
-            //   var successCount = 0;
-            //   var voteRate;
-            //
-            //   for (var i = 0; i < userListCount; i++) {
-            //     if (content.userList[i].email === otherEmail) {
-            //       userListIndex = i;
-            //       break;
-            //     }
-            //   }
-            //   authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
-            //   if(authorizeUserCount === userListCount){
-            //     for (var i = 0; i < authorizeUserCount; i++) {
-            //       if(content.userList[userListIndex].newVideo.authorizePeople[authorizeUserCount].authenInfo == 1){
-            //         successCount++;
-            //       }
-            //     }
-            //     voteRate = (successCount / content.totalUser) * 100;
-            //     if(voteRate > 50){
-            //       content.userList[userListIndex].newVideo.authen = 1;
-            //     }
-            //     else{
-            //       content.userList[userListIndex].newVideo.authen = 0;
-            //     }
-            //     var threeDaysAfter = new Date(Date.now());
-            //     threeDaysAfter.setDate(threeDaysAfter.getDate() + 3);
-            //     var month = threeDaysAfter.getMonth() + 1;
-            //     var day = threeDaysAfter.getDate();
-            //     var year = threeDaysAfter.getFullYear();
-            //     // 일이 한자리 수인 경우 앞에 0을 붙여주기 위해
-            //     if ((day+"").length < 2) {
-            //       day = "0" + day;
-            //     }
-            //     var date = year+ "-" + month + "-" + day;
-            //
-            //     otherUser.contentList[contentListIndex].authenticationDate = date;
-            //     otherUser.contentList[contentListIndex].isUploaded = 1;
-            //   }
-            // });
-          })
+            voteRate = (successCount / authorizeUserCount) * 100;
+            console.log("voteRate = " + voteRate);
+            if(voteRate >= 50){
+              content.userList[userListIndex].newVideo.authen = 1;
 
+              otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 1;
+              otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 1;
+            }
+            else{
+              content.userList[userListIndex].newVideo.authen = 0;
+              content.userList[userListIndex].result = 0;
+
+              otherUser.contentList[contentListIndex].joinState = 4;
+              otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 0;
+              otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
+            }
+
+            otherUser.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+            });
+            content.save(function(err, savedDocument) {
+              if (err)
+                return console.error(err);
+            });
+          }
         });
+      })
 
-
-  }
-
-
-  uf().then(function (asdf) {
-    cf()
   })
 
 });
+
 
 //android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.
 router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){

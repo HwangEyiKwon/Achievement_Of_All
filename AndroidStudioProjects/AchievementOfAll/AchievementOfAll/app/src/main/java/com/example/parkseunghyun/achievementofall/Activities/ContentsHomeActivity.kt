@@ -18,17 +18,14 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.contents_pager_container.*
 import model.StoriesModel
-import org.jetbrains.anko.startActivityForResult
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
-import android.R.attr.data
 
 
 class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, DatePickerDialog.OnDateSetListener {
@@ -200,7 +197,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                     contentDuration!!.setText(d)
                 }
                 2 -> {
-                    text_joinedORnot?.setText("참가중 (종료)")
+                    text_joinedORnot?.setText("목표 달성 성공")
                     contentJoinButton!!.isEnabled = false
                     contentDuration!!.setText(d)
                 }
@@ -208,6 +205,11 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                     text_joinedORnot?.setText("미참가중")
                     contentJoinButton!!.isEnabled = true
 
+                }
+                4->{
+                    text_joinedORnot?.setText("목표 달성 실패")
+                    contentJoinButton!!.isEnabled = false
+                    contentDuration!!.setText(d)
                 }
             }
             val viewPager = findViewById<ViewPager>(R.id.contents_pager_container)
