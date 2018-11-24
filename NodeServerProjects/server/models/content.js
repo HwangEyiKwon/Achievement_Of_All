@@ -13,6 +13,7 @@ const contentSchema = new Schema({
   userList: [{name: String, email: String, newVideo: {path: String, authen: Number, authorizePeople: [{}] }, result: Number }], //: 인증 Not yet
   isDone: Number, // 0: 진행중 1: 종료 2: 시작 전
   description: String,
+  balance: Number,
 });
 
 module.exports = mongoose.model('Content', contentSchema);
