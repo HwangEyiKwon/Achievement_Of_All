@@ -16,7 +16,7 @@ const userSchema = new Schema({
     contentId: Number,
     contentName: String,
     videoPath: [{path: String, authen: Number}], //authen = 0: 인증 실패 1: 인증 성공 2: 인증 Not yet
-    joinState: Number, //0: 시작 전 컨텐츠 1:컨텐츠 진행 중 2: 컨텐츠 is done
+    joinState: Number, //0: 시작 전 컨텐츠 1:컨텐츠 진행 중 2: 컨텐츠 is done 4: 컨텐츠 참가 중이지만, 최종 실패
     calendar: [{year: String, month: String, day: String, authen: Number}], // 0: 인증 실패 1: 인증 성공 2: 인증 Not yet
     authenticationDate: String, //최근 날짜 비디오 기준
     isUploaded: Number, // fcm 용도. 최근 날짜 비디오 기준
