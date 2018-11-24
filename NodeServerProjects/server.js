@@ -71,7 +71,8 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-22",
 //     isUploaded : 0,
-//     calendar: [{year: "2018", month: "11", day: "13", authen: 1}, {year: "2018", month: "11", day: "16", authen: 1}, {year: "2018", month: "11", day: "19", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "13", authen: 1}, {year: "2018", month: "11", day: "16", authen: 1}, {year: "2018", month: "11", day: "19", authen: 1}],
+//     money: 100000
 //   }]
 // });
 // var user2 = new user({
@@ -88,7 +89,8 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-15",
 //     isUploaded : 1,
-//     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}]
+//     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}],
+//     money: 100000
 //   }]
 // });
 //
@@ -106,7 +108,8 @@ require('./config/passport')(passport);
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
 //     isUploaded : 0,
-//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}]
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}],
+//     money: 100000
 //   }]
 // });
 //  var user4 = new user({
@@ -167,7 +170,8 @@ require('./config/passport')(passport);
 //   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
 //     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
 //     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 1}]}, result: 2}],
-//   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
+//   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+//   balance: 0
 // })
 // var content2 = new content({
 //   id: 1,
@@ -176,7 +180,8 @@ require('./config/passport')(passport);
 //   endDate: "11/30/2019",
 //   isDone: 2,
 //   userList: [],
-//   description: "금연 컨텐츠입니다. \n 19년1월1일부터 19년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
+//   description: "금연 컨텐츠입니다. \n 19년1월1일부터 19년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+//   balance: 0
 // })
 // var content3 = new content({
 //   id: 2,
@@ -186,7 +191,8 @@ require('./config/passport')(passport);
 //   endDate: "12/30/2019",
 //   isDone: 2,
 //   userList: [],
-//   description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n"
+//   description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+//   balance: 0
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
@@ -403,6 +409,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
       var contentName = contentList[i].name;
+      var userEmail;
       var userListCount = contentList[i].userList.length;
       for(var j = 0; j < userListCount; j ++){
         if(contentList[i].userList[j].result == 2) contentList[i].userList[j].result = 1;
@@ -412,7 +419,22 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         if (err) console.log("save err : "+err);
       });
 
-      u
+      user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
+        for(var i = 0; i < Object.keys(userList).length; i++){
+          var contentListCount = userList[i].contentList.length;
+          var contentListIndex;
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentName === contentName) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          userList[i].contentList[contentListIndex].joinState = 2;
+          userList[i].save(function(err, savedDocument) {
+            if (err) console.log("save err : "+err);
+          });
+        }
+      });
     }
   });
 

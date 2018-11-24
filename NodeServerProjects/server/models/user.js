@@ -20,6 +20,7 @@ const userSchema = new Schema({
     calendar: [{year: String, month: String, day: String, authen: Number}], // 0: 인증 실패 1: 인증 성공 2: 인증 Not yet
     authenticationDate: String, //최근 날짜 비디오 기준
     isUploaded: Number, // fcm 용도. 최근 날짜 비디오 기준
+    money: Number, //컨텐츠 별 개인 금액
   }],
   pushToken: String,
 });
