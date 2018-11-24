@@ -20,7 +20,10 @@ class EditActivity : AppCompatActivity() {
             println("앙기모")
 
             if(edit_password.text.toString() == edit_passwordCheck.text.toString()){
+
                 edit()
+                finish()
+
             }else{
                 Toast.makeText(this,"비밀번호 체크가 틀립니다.", Toast.LENGTH_SHORT).show();
             }

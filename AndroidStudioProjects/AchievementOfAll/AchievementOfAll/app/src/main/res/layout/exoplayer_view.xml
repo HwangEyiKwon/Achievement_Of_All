@@ -52,6 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:background="@drawable/round2"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="@font/font5"
             android:text="인증하기" />
 
     </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
