@@ -189,20 +189,24 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                 0 -> {
                     text_joinedORnot?.setText("참가중 (시작전)")
                     contentJoinButton!!.isEnabled = false
+                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
                     contentDuration!!.setText(d)
                 }
                 1 -> {
                     text_joinedORnot?.setText("참가중 (진행중)")
                     contentJoinButton!!.isEnabled = false
+                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
                     contentDuration!!.setText(d)
                 }
                 2 -> {
                     text_joinedORnot?.setText("목표 달성 성공")
+                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
                     contentJoinButton!!.isEnabled = false
                     contentDuration!!.setText(d)
                 }
                 3-> {
                     text_joinedORnot?.setText("미참가중")
+                    contentJoinButton!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
                     contentJoinButton!!.isEnabled = true
 
                 }

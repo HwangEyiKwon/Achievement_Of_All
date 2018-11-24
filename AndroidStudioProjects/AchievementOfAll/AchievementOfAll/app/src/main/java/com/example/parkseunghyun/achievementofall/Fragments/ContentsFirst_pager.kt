@@ -79,6 +79,9 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var diffOfHour: Long?= null
     private var diffOfMinute: Long?= null
 
+    var tt: TimerTask ? = null
+    var timer: Timer? = null
+
     override fun onResume() {
         super.onResume()
         println("ONRESUME CONTENTFIRST PAGER")
@@ -115,8 +118,10 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         if(joinState != 1){
             goToVideoButton!!.isEnabled = false
+            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
         }else{
             goToVideoButton!!.isEnabled = true
+            goToVideoButton!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
         }
 
         return mView
@@ -239,7 +244,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     }
 
 
-
     private fun settingCalendar(jsonArray: JSONArray){
 
         calendar = mView?.findViewById(R.id.calendarView)
@@ -274,6 +278,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         val loopCount = jsonArray.length() - 1
 
+
         for (i in 0..loopCount) {
 
             var y = jsonArray.getJSONObject(i).getString("year").toInt()
@@ -286,11 +291,13 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 println("i는 무엇인가"+ i)
                 // y, m, d + 3일 + 자정
                 println("TESTINGING----" + y + "년" + ( m + 1 ) + "월" + ( d + 3 ) + "일")
-                val nextYear = y
-                val nextMonth = m + 1
-                val nextDay = d + 3
+                
+                var nextYear = y
+                var nextMonth = m
+                var nextDay = d + 3
 
-                val tt = object : TimerTask() {
+
+                tt = object : TimerTask() {
                     override fun run() {
 
                         val calendarCurrent = Calendar.getInstance()
@@ -298,15 +305,21 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
                         calendarNext.set(nextYear, nextMonth, nextDay + 1, 0, 0)
 
-                        var diffInMinuteUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
+                        var diffInSecondUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
+                        var diffInMinuteUnit = diffInSecondUnit / 60
+                        println("TESTING 남은 시간은 ---- " + diffInMinuteUnit + "분::::")
 
-                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
-                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
-                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
+//                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
+//                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
+//                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
+
+                        diffOfDay = ((diffInSecondUnit / (60 * 60 * 24))) // 일 계산
+                        diffOfHour = ((diffInSecondUnit - (diffOfDay!!*60*60*24)) / (60*60))   // 시간 계산
+                        diffOfMinute = ((diffInSecondUnit - diffOfDay!!*60*60*24 - diffOfHour!!*3600)/60)  // 분 계산
 
                         println("TESTING 현재 시간은: "+ calendarCurrent.get(Calendar.DAY_OF_MONTH) + "일" + calendarCurrent.get(Calendar.HOUR_OF_DAY) + "분" + calendarCurrent.get(Calendar.MINUTE) + "분")
                         println("TESTING 다음 인증은 언제 직전까지?: "+ calendarNext.get(Calendar.DAY_OF_MONTH) + "일" + calendarNext.get(Calendar.HOUR_OF_DAY) + "분" + calendarNext.get(Calendar.MINUTE) + "분")
-                        println("TESTING 남은 시간은 ---- " + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
+                        println("TESTING 남은 시간은 ---- " + diffInSecondUnit + "초::::" + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
 
                         val diffUpdateMsg = diffUpdateThreadHandler.obtainMessage()
                         diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
@@ -314,8 +327,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                     }
                 }
 
-                var timer: Timer = Timer()
-                timer.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
+                timer = Timer()
+                timer!!.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
 
             }
 
@@ -345,6 +358,11 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     }
 
 
+    override fun onDestroy() {
+        tt!!.cancel()
+        super.onDestroy()
+    }
+
     val diffUpdateThreadHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
 
@@ -354,8 +372,5 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         }
     }
-
-
-
 }
 
