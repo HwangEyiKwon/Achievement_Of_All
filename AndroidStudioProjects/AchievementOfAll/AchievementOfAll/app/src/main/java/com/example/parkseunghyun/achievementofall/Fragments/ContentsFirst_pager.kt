@@ -61,6 +61,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private val REQUEST_VIDEO_CAPTURE = 300
     private val READ_REQUEST_CODE = 200
+    private val WRITE_REQUEST_CODE = 400
     private var uri: Uri? = null
     private var pathToStoredVideo: String? = null
 
@@ -79,13 +80,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var diffOfHour: Long?= null
     private var diffOfMinute: Long?= null
 
+    private var videoCaptureIntent:Intent? = null
+
     var tt: TimerTask ? = null
     var timer: Timer? = null
 
-    override fun onResume() {
-        super.onResume()
-        println("ONRESUME CONTENTFIRST PAGER")
-    }
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -110,9 +110,26 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
         goToVideoButton?.setOnClickListener{
-            val videoCaptureIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-            if (videoCaptureIntent.resolveActivity(activity.packageManager) != null) {
-                startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+            videoCaptureIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+            if (videoCaptureIntent!!.resolveActivity(activity.packageManager) != null) {
+
+                if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.CAMERA)) {
+                            startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                            // 1) 모든 권한이 있다면 바로 카메라 실행
+                        } else {
+                            EasyPermissions.requestPermissions(this, getString(R.string.read_file), REQUEST_VIDEO_CAPTURE, Manifest.permission.CAMERA)
+                            // 4) READ권한, WRITE권한이 있는데 카메라 권한이 없다면 권한 요청 -> onPermissionsGranted 함수에서 바로 카메라 실행.
+                        }
+                    } else {
+                        EasyPermissions.requestPermissions(this, getString(R.string.read_file), WRITE_REQUEST_CODE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        // 3) READ권한은 있고 WRITE권한이 없다면 권한 요청 -> onPermissionsGranted 함수에서 체인형태로 CAMERA 이어서 확인.
+                    }
+                } else {
+                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    // 2) READ권한이 없다면 권한 요청 -> onPermissionsGranted 함수에서 체인형태로 WRITE, CAMERA 이어서 확인.
+                }
             }
         }
 
@@ -128,36 +145,50 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_VIDEO_CAPTURE) {
-            uri = data?.data
-            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
-                uploadVideoToServer(pathToStoredVideo!!)
-            } else {
-                EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+        if (resultCode == Activity.RESULT_OK ) {
 
-            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Don't do anything.
-            } else {
-                EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            when (requestCode){
+                REQUEST_VIDEO_CAPTURE -> {
+                    uri = data?.data
+                    pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
+                    uploadVideoToServer(pathToStoredVideo!!)
+                }
             }
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        if (uri != null) {
-            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
-                uploadVideoToServer(pathToStoredVideo!!)
+
+        when(requestCode){
+            READ_REQUEST_CODE -> {
+                if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.CAMERA)) {
+                        startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                    } else {
+                        EasyPermissions.requestPermissions(this, getString(R.string.read_file), REQUEST_VIDEO_CAPTURE, Manifest.permission.CAMERA)
+                    }
+                } else {
+                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), WRITE_REQUEST_CODE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
             }
-            if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Don't do anything
+
+            WRITE_REQUEST_CODE -> {
+                if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.CAMERA)) {
+                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                } else {
+                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), REQUEST_VIDEO_CAPTURE, Manifest.permission.CAMERA)
+                }
+            }
+
+            REQUEST_VIDEO_CAPTURE -> {
+                startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
             }
         }
     }
@@ -327,8 +358,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                     }
                 }
 
-                timer = Timer()
-                timer!!.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
+                // 타이머 재생성 방지 (타 액티비티 수행 후 재생성 등)
+                if(timer == null){
+                    println("TESTING --- HOW MANY TIMER MADE")
+                    timer = Timer()
+                    timer!!.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
+                }
 
             }
 
@@ -359,9 +394,10 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
     override fun onDestroy() {
-        tt!!.cancel()
+        timer!!.cancel()
         super.onDestroy()
     }
+
 
     val diffUpdateThreadHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
