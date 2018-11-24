@@ -283,11 +283,12 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
             var day = CalendarDay.from(y, m, d)
 
             if( i == loopCount ) {
+                println("i는 무엇인가"+ i)
                 // y, m, d + 3일 + 자정
                 println("TESTINGING----" + y + "년" + ( m + 1 ) + "월" + ( d + 3 ) + "일")
-                var nextYear = y
-                var nextMonth = m + 1
-                var nextDay = d + 3
+                val nextYear = y
+                val nextMonth = m + 1
+                val nextDay = d + 3
 
                 val tt = object : TimerTask() {
                     override fun run() {

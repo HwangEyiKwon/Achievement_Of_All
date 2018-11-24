@@ -98,6 +98,21 @@ router.post('/signup', function (req, res, next) {
   })(req,res,next);
 });
 
+router.post('/edit', function (req, res, next) {
+  console.log("edit Start");
+  passport.authenticate('edit', function (err, user, info) {
+    // console.log(user+"s");
+    console.log("Edit");
+    if(err) console.log("Edit err : "+err);
+    if(user) {
+      res.send({success: true});
+
+      // 폴더 바꾸는 함수 구현 해야됨
+    }
+    else res.send({success: false});
+  })(req,res,next);
+});
+
 //jwt token 사용
 router.post('/userInfoEdit', function(req,res){
   console.log("userInfoEdit Start");
