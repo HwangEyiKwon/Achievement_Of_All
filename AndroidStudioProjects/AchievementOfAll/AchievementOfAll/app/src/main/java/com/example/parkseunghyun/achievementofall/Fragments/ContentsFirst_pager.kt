@@ -7,6 +7,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.text.TextUtils
@@ -57,7 +59,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var startDate: JSONObject ?= null
     private var endDate: JSONObject ?= null
 
-
     private val REQUEST_VIDEO_CAPTURE = 300
     private val READ_REQUEST_CODE = 200
     private var uri: Uri? = null
@@ -74,16 +75,13 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var remainingHours:TextView?=null
     private var remainingMinutes:TextView?=null
 
-    /**/
-//    private var tmpContentName = "NoSmoking"
-//    private var tmpMyEmail = "shp3@gmail.com"
-    /**/
+    private var diffOfDay: Long?= null
+    private var diffOfHour: Long?= null
+    private var diffOfMinute: Long?= null
 
     override fun onResume() {
         super.onResume()
         println("ONRESUME CONTENTFIRST PAGER")
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -122,7 +120,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         return mView
-
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
@@ -130,10 +127,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
             uri = data?.data
             if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
-
-
                 uploadVideoToServer(pathToStoredVideo!!)
-
             } else {
                 EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
             }
@@ -155,7 +149,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         if (uri != null) {
             if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
-
                 uploadVideoToServer(pathToStoredVideo!!)
             }
             if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -181,11 +174,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private fun uploadVideoToServer(pathToVideoFile: String) {
         val videoFile = File(pathToVideoFile)
-
-
         val videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile)
         val vFile = MultipartBody.Part.createFormData("video", videoFile.name, videoBody)
-        /**/
 
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(object:Interceptor {
@@ -202,8 +192,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         })
 
         val client = httpClient.build()
-
-        /**/
         val retrofit = Retrofit.Builder()
                 .baseUrl(ipAddress)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -229,8 +217,8 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 resolver?.delete(uri, null, null)
 
             }
-
             override fun onFailure(call: Call<ResultObject>, t: Throwable) {
+
             }
         })
     }
@@ -238,11 +226,15 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String? {
         val cursor = activity.contentResolver.query(contentURI, null, null, null, null)
         if (cursor == null) {
+
             return contentURI.path
+
         } else {
+
             cursor.moveToFirst()
             val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
             return cursor.getString(idx)
+
         }
     }
 
@@ -270,9 +262,6 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 SaturdayDecorator(),
                 OneDayDecorator())
 
-//        val calendar2 = Calendar.getInstance()
-//        calendar2.add(Calendar.MONTH, -2)
-
         val successDates = mutableListOf<CalendarDay>()
         val failDates = mutableListOf<CalendarDay>()
         val notYetDates = mutableListOf<CalendarDay>()
@@ -280,17 +269,55 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         val sDate = mutableListOf<CalendarDay>()
         val eDate = mutableListOf<CalendarDay>()
 
-
         sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
         eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
 
-        for (i in 0..(jsonArray.length() - 1)) {
+        val loopCount = jsonArray.length() - 1
+
+        for (i in 0..loopCount) {
 
             var y = jsonArray.getJSONObject(i).getString("year").toInt()
             var m = jsonArray.getJSONObject(i).getString("month").toInt()-1
             var d = jsonArray.getJSONObject(i).getString("day").toInt()
 
-            var day = CalendarDay.from(y,m,d)
+            var day = CalendarDay.from(y, m, d)
+
+            if( i == loopCount ) {
+                // y, m, d + 3일 + 자정
+                println("TESTINGING----" + y + "년" + ( m + 1 ) + "월" + ( d + 3 ) + "일")
+                var nextYear = y
+                var nextMonth = m + 1
+                var nextDay = d + 3
+
+                val tt = object : TimerTask() {
+                    override fun run() {
+
+                        val calendarCurrent = Calendar.getInstance()
+                        var calendarNext = Calendar.getInstance()
+
+                        calendarNext.set(nextYear, nextMonth, nextDay + 1, 0, 0)
+
+                        var diffInMinuteUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
+
+                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
+                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
+                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
+
+                        println("TESTING 현재 시간은: "+ calendarCurrent.get(Calendar.DAY_OF_MONTH) + "일" + calendarCurrent.get(Calendar.HOUR_OF_DAY) + "분" + calendarCurrent.get(Calendar.MINUTE) + "분")
+                        println("TESTING 다음 인증은 언제 직전까지?: "+ calendarNext.get(Calendar.DAY_OF_MONTH) + "일" + calendarNext.get(Calendar.HOUR_OF_DAY) + "분" + calendarNext.get(Calendar.MINUTE) + "분")
+                        println("TESTING 남은 시간은 ---- " + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
+
+                        val diffUpdateMsg = diffUpdateThreadHandler.obtainMessage()
+                        diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
+
+                    }
+                }
+
+                var timer: Timer = Timer()
+                timer.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
+
+            }
+
 
             println(jsonArray.getJSONObject(i))
             if(jsonArray.getJSONObject(i).getInt("authen")==1){// success
@@ -315,6 +342,18 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
         calendar!!.addDecorators(EventDecorator(Color.RED, sDate, activity, "startDate"))
         calendar!!.addDecorators(EventDecorator(Color.RED, eDate, activity, "endDate"))
     }
+
+
+    val diffUpdateThreadHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+
+            remainingDays!!.setText(diffOfDay.toString())
+            remainingHours!!.setText(diffOfHour.toString())
+            remainingMinutes!!.setText(diffOfMinute.toString())
+
+        }
+    }
+
 
 
 }

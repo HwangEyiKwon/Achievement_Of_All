@@ -111,7 +111,10 @@ object VolleyHttpService{
         }, Response.ErrorListener { error ->
             println("수신 에러: $error")
             success(false)
-        })
+        }){
+
+        }
+
         Volley.newRequestQueue(context).add(editRequest)
     }
 

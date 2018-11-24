@@ -24,16 +24,16 @@ class SignupActivity : AppCompatActivity() {
             {
                 Toast.makeText(this,"이메일 형식이 아닙니다. \n Modal@gmail.com",Toast.LENGTH_SHORT).show();
 
-            }else if(signup_password.text != signup_password_check.text){
+            }else if(signup_password.text.toString() != signup_password_check.text.toString()){
+                println(signup_password.text)
+                println(signup_password_check.text)
                 Toast.makeText(this,"비밀번호 체크가 틀립니다.",Toast.LENGTH_SHORT).show();
             }else{
                 signup()
             }
 
         }
-//        goLogin.setOnClickListener {
-//            startActivity<LoginActivity>()
-//        }
+
 
     }
     private fun signup(){

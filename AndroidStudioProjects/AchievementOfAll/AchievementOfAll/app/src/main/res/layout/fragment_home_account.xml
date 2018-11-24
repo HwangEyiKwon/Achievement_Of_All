@@ -103,6 +103,7 @@
 
                         <ImageView
                             android:id="@+id/edit"
+                            android:onClick="imageClick"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="right"
@@ -146,7 +147,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/id_my_contents"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="95dp"
                     android:nestedScrollingEnabled="false"
                     android:orientation="horizontal" />
 
