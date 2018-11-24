@@ -2,7 +2,9 @@ package com.example.parkseunghyun.achievementofall.Fragments
 
 import adapter.JoinedContentsAdapter
 import adapter.ThumbnailAdapter
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -20,11 +22,11 @@ import com.example.parkseunghyun.achievementofall.Activities.EditActivity
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
+import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.example.parkseunghyun.achievementofall.R
 import model.JoinedContentsModel
 import model.ThumbnailModel
-import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 import java.util.*
 
@@ -58,6 +60,8 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     val REQUEST_FROM_JCA = 10101
     val REQUEST_FROM_SEARCH = 1010
+    val REQUEST_FROM_EDIT = 333
+
 
     //    static final Class<?>[] ACTIVITIES = { X_Home_no.class }; // 각각의 LIST_MENU의 원소에 대응되는 액티비티의 각 클래스 이름을 써줍니다.
 
@@ -99,10 +103,30 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         editButton!!.setOnClickListener {
             println("editedit")
-            homeAccountPagerContext!!.startActivity<EditActivity>()
+//            homeAccountPagerContext!!.startActivity<EditActivity>()
+
+
+            val goToEditPage = Intent(homeAccountPagerContext, EditActivity::class.java)
+            val contextToActivity = homeAccountPagerContext as Activity
+            contextToActivity.startActivityForResult(goToEditPage, REQUEST_FROM_EDIT)
+
+//            val goToContents = Intent(context, ContentsHomeActivity::class.java)
+//            contextToActivity.startActivityForResult(goToContents, REQUEST_FROM_SEARCH)
+
+//                context.startActivity<ContentsHomeActivity>(
+//                        "contentName" to  list[position]
+//                )
+
+
+
         }
 
         return view_
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
     }
 
     // 사용자 페이지 정보 Setting 함수

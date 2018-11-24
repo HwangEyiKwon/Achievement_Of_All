@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
     android:layout_marginTop="10dp">
 
     <LinearLayout
@@ -23,12 +24,14 @@
 
     </LinearLayout>
 
-    <customfonts.MyTextView_Roboto_Medium
+    <TextView
         android:id="@+id/txtname"
         android:textSize = "10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:textAlignment="center"
+        android:fontFamily="@font/font5"
         android:layout_marginTop="5dp"
         android:textColor="@android:color/black" />
 

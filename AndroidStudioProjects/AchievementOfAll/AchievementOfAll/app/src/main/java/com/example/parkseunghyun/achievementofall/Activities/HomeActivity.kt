@@ -31,6 +31,7 @@ class HomeActivity : AppCompatActivity() {
 
     val REQUEST_FIRST_CREATE = 808
     val REQUEST_UPDATE = 111
+    val REQUEST_FROM_EDIT = 333
 
 
 
@@ -82,7 +83,6 @@ class HomeActivity : AppCompatActivity() {
         generateTabLayout(REQUEST_FIRST_CREATE)
 
     }
-
 
     private fun generateTabLayout(request: Int) {
 
@@ -207,7 +207,8 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        println("TEST---- HomeActivity로 오나?")
+        println("TEST---- HomeActivity로 오나?" + requestCode)
+
 
         when (requestCode) {
             REQUEST_FROM_JCA -> {
@@ -217,6 +218,10 @@ class HomeActivity : AppCompatActivity() {
             }
             REQUEST_FROM_SEARCH -> {
                 println("TEST------ HomeActivity from search")
+                generateTabLayout(REQUEST_UPDATE)
+            }
+            REQUEST_FROM_EDIT -> {
+                println("TEST----- EDIT??")
                 generateTabLayout(REQUEST_UPDATE)
             }
 

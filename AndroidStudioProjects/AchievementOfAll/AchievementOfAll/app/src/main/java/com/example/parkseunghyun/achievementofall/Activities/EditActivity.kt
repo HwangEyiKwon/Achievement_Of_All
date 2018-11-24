@@ -26,7 +26,7 @@ class EditActivity : AppCompatActivity() {
             if(edit_password.text.toString() == edit_passwordCheck.text.toString()){
 
                 edit()
-                finish()
+
 
             }else{
                 Toast.makeText(this,"비밀번호 체크가 틀립니다.", Toast.LENGTH_SHORT).show();
@@ -52,6 +52,7 @@ class EditActivity : AppCompatActivity() {
        VolleyHttpService.edit(this, jsonObject){success ->
 
            println(success)
+           finish()
        }
     }
     private fun loadToken(): String{
