@@ -546,7 +546,8 @@ function sendPushMessage(user, arrayIndex, sendTime) {
       title: "모두의 달성",
       body: "목표 달성을 인증하셔야 합니다.",
       sound: "default",
-      click_action: "FCM_PLUGIN_ACTIVITY",
+      // click_action: "FCM_PLUGIN_ACTIVITY",
+      click_action:"OPEN_ACTIVITY",
       icon: "fcm_push_icon"
     },
     // 메시지 중요도
