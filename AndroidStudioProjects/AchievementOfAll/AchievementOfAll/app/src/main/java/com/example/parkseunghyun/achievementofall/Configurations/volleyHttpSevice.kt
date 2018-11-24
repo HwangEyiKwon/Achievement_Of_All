@@ -101,6 +101,20 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(logoutRequest)
     }
 
+    // 사용자 정보 수정
+    fun edit(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
+
+        var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/edit", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response.getString("success").toBoolean())
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+            success(false)
+        })
+        Volley.newRequestQueue(context).add(editRequest)
+    }
+
     // 사용자 회원가입
     fun signup(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 

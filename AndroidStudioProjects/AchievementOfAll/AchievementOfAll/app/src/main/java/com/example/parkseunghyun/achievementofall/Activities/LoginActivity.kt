@@ -22,18 +22,24 @@ class LoginActivity : AppCompatActivity() {
         // 회원가입 직후 로그인 화면 전환
         if(intent.getStringExtra("email")!=null){
             val afterSignup = intent.getStringExtra("email")
-            text_email.setText(afterSignup)
+            send_email.setText(afterSignup)
         }
 
         // 로그인 버튼 리스너
         bt_login.setOnClickListener{
 
-            var email = text_email.text.toString()
+            var email = send_email.text.toString()
             var password = text_password.text.toString()
 //            isChecked = autoLogin.isChecked
 
             // 로그인
-            login(email, password)
+            if(!android.util.Patterns.EMAIL_ADDRESS.matcher(send_email.text).matches())
+            {
+                Toast.makeText(this,"이메일 형식이 아닙니다. \n Modal@gmail.com",Toast.LENGTH_SHORT).show();
+
+            }else{
+                login(email, password)
+            }
         }
         goPassword.setOnClickListener {
 

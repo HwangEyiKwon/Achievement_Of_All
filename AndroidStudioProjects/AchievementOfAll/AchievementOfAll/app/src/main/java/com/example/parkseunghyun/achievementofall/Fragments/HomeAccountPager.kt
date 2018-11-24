@@ -21,6 +21,7 @@ import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.example.parkseunghyun.achievementofall.R
+import kotlinx.android.synthetic.main.fragment_home_account.*
 import model.JoinedContentsModel
 import model.ThumbnailModel
 import org.json.JSONObject
@@ -91,6 +92,10 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         val activity = activity as HomeActivity
         jwtToken = activity.jwtToken.toString()
         setUserInfo(jwtToken!!)
+
+        edit.setOnClickListener {
+//            startActivity<>()
+        }
 
         return view_
     }

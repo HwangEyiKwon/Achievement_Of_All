@@ -102,7 +102,7 @@
                             android:textSize="15sp" />
 
                         <ImageView
-                            android:id="@+id/imageView3"
+                            android:id="@+id/edit"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="right"
