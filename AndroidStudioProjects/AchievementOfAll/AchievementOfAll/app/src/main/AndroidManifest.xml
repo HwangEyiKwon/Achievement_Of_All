@@ -33,7 +33,7 @@
         <activity android:name=".Activities.HomeActivity" />
         <activity android:name=".Activities.SignupActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".Activities.ForgotPasswordActivity" android:theme="@style/AppTheme"/>
-        <activity android:name=".Activities.EditActivity" android:theme="@style/AppTheme"/>
+        <activity android:name=".Activities.ProfileEditActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".ContentsHomeActivity"/>
         <activity android:name=".OtherUserHomeActivity"/>
         <activity android:name=".ExoplayerActivity"/>

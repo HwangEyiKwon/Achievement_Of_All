@@ -65,7 +65,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_layout)
+        setContentView(R.layout.my_home_layout)
 
         // jwt-token 받기
         println("홈페이지에서 토큰 받기(preference에서): "+ loadToken())

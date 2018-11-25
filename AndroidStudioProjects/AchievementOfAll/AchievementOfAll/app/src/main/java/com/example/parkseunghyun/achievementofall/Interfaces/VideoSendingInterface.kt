@@ -8,7 +8,7 @@ import com.google.android.gms.tasks.Task
 
 
 
-interface VideoInterface {
+interface VideoSendingInterface {
 
     fun getTasks(@Header("Content-Range") contentRange: String): Call<List<Task<*>>>
     @Multipart

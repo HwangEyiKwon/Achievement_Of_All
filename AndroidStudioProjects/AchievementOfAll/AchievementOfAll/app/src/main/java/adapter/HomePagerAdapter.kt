@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.util.Log
 import com.example.parkseunghyun.achievementofall.Fragments.HomeAccountPager
-import com.example.parkseunghyun.achievementofall.Fragments.HomeInfoPager
+import com.example.parkseunghyun.achievementofall.Fragments.HomeAppInfoPager
 import com.example.parkseunghyun.achievementofall.Fragments.HomeSearchPager
 
 
@@ -16,7 +16,7 @@ class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     var homeAccountPager: HomeAccountPager? = null
     var homeSearchPager: HomeSearchPager? = null
-    var homeInfoPager: HomeInfoPager? = null
+    var homeInfoPager: HomeAppInfoPager? = null
 
     init {
         this.mNumOfTabs = 3
@@ -40,7 +40,7 @@ class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
                 return homeSearchPager
             }
             2 -> {
-                homeInfoPager = HomeInfoPager()
+                homeInfoPager = HomeAppInfoPager()
                 Log.d(this.javaClass.name, "POSITION INFO")
                 return homeInfoPager
             }

@@ -14,7 +14,7 @@ import android.widget.ProgressBar
 
 
 
-class ContentsSecond_pager : Fragment() {
+class ContentsProgressPager : Fragment() {
 
     private var view_: View? = null
     private var achievementRate: TextView ? = null
@@ -26,7 +26,7 @@ class ContentsSecond_pager : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        view_ =  inflater!!.inflate(R.layout.contents_fragment_2, container, false)
+        view_ =  inflater!!.inflate(R.layout.fragment_contents_progress, container, false)
 
         achievementRate = view_?.findViewById(R.id.achievementRate)
 

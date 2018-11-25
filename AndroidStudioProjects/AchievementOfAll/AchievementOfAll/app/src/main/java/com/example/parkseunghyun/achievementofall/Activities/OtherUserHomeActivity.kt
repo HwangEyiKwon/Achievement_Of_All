@@ -9,7 +9,7 @@ class OtherUserHomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.other_home_layout)
+        setContentView(R.layout.other_user_home_layout)
 
         if(intent.getStringExtra("email")!=null){
             val otherUser = intent.getStringExtra("email")

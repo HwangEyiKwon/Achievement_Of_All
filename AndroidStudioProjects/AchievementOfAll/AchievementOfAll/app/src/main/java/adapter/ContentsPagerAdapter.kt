@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
-import com.example.parkseunghyun.achievementofall.Fragments.ContentsFirst_pager
-import com.example.parkseunghyun.achievementofall.Fragments.ContentsSecond_pager
-import com.example.parkseunghyun.achievementofall.Fragments.ContentsThird_pager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsMyInfoPager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsProgressPager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsNoticePager
 
 
 
@@ -24,15 +24,15 @@ class ContentsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
         when (position) {
             0 -> {
                 println("adapter1")
-                return ContentsFirst_pager()
+                return ContentsMyInfoPager()
             }
             1 -> {
                 println("adapter2")
-                return ContentsSecond_pager()
+                return ContentsProgressPager()
             }
             2 -> {
                 println("adapter3")
-                return ContentsThird_pager()
+                return ContentsNoticePager()
             }
 
             else -> return null

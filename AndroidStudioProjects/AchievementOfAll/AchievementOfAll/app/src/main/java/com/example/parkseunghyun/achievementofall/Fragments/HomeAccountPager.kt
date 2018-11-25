@@ -18,11 +18,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.parkseunghyun.achievementofall.Activities.EditActivity
+import com.example.parkseunghyun.achievementofall.Activities.ProfileEditActivity
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
-import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.example.parkseunghyun.achievementofall.R
 import model.JoinedContentsModel
@@ -103,10 +102,10 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         editButton!!.setOnClickListener {
             println("editedit")
-//            homeAccountPagerContext!!.startActivity<EditActivity>()
+//            homeAccountPagerContext!!.startActivity<ProfileEditActivity>()
 
 
-            val goToEditPage = Intent(homeAccountPagerContext, EditActivity::class.java)
+            val goToEditPage = Intent(homeAccountPagerContext, ProfileEditActivity::class.java)
             val contextToActivity = homeAccountPagerContext as Activity
             contextToActivity.startActivityForResult(goToEditPage, REQUEST_FROM_EDIT)
 

@@ -6,18 +6,18 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
-import kotlinx.android.synthetic.main.activity_edit.*
+import kotlinx.android.synthetic.main.activity_profile_edit.*
 import org.json.JSONObject
 
 
-class EditActivity : AppCompatActivity() {
+class ProfileEditActivity : AppCompatActivity() {
 
     // jwt-token
     var jwtToken: String?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit)
+        setContentView(R.layout.activity_profile_edit)
 
         bt_edit.setOnClickListener{
             println("앙기모")

@@ -7,15 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
-import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
-import org.w3c.dom.Text
 
 
 class SearchAdapter(private val list: List<String>, private val context: Context, private  val cu: String) : BaseAdapter() {
@@ -42,7 +39,7 @@ class SearchAdapter(private val list: List<String>, private val context: Context
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup): View {
         var convertView = convertView
         if (convertView == null) {
-            convertView = inflate.inflate(R.layout.row_listview, null)
+            convertView = inflate.inflate(R.layout.ractangle_listview, null)
 
             viewHolder = ViewHolder()
             viewHolder!!.label = convertView!!.findViewById(R.id.label) as TextView

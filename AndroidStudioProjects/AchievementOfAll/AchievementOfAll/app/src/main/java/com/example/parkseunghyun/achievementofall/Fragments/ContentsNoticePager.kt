@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 
-class ContentsThird_pager : Fragment() {
+class ContentsNoticePager : Fragment() {
 
 
     private var view_: View? = null
@@ -18,7 +18,7 @@ class ContentsThird_pager : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        view_ =  inflater!!.inflate(R.layout.contents_fragment_3, container, false)
+        view_ =  inflater!!.inflate(R.layout.fragment_contents_noti, container, false)
         val activity = activity as ContentsHomeActivity
         contentName = activity.content.toString()
         println("TEST3 " + contentName)

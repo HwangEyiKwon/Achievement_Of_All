@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
 
-class HomeInfoPager : Fragment() {
+class HomeAppInfoPager : Fragment() {
 
     private var view_: View? = null
     private var homeInfoPagerContext: Context? = null

@@ -11,6 +11,6 @@ import com.example.parkseunghyun.achievementofall.R
 
 class DummyFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.simple, container, false)
+        return inflater.inflate(R.layout.fragment_dummy, container, false)
     }
 }

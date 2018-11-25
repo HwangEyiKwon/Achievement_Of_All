@@ -27,7 +27,7 @@ import com.example.parkseunghyun.achievementofall.Decorator.EventDecorator
 import com.example.parkseunghyun.achievementofall.Decorator.OneDayDecorator
 import com.example.parkseunghyun.achievementofall.Decorator.SaturdayDecorator
 import com.example.parkseunghyun.achievementofall.Decorator.SundayDecorator
-import com.example.parkseunghyun.achievementofall.Interfaces.VideoInterface
+import com.example.parkseunghyun.achievementofall.Interfaces.VideoSendingInterface
 import com.example.parkseunghyun.achievementofall.R
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
@@ -46,7 +46,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
+class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private var mView: View? = null
     private var calendar: MaterialCalendarView? = null
@@ -89,7 +89,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        mView =  inflater!!.inflate(R.layout.contents_fragment_1, container, false)
+        mView =  inflater!!.inflate(R.layout.fragment_contents_myinfo, container, false)
 
         remainingDays = mView?.findViewById(R.id.remaining_days)
         remainingHours = mView?.findViewById(R.id.remaining_hours)
@@ -233,7 +233,7 @@ class ContentsFirst_pager : Fragment(), EasyPermissions.PermissionCallbacks {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client) // >>>>>>
                 .build()
-        val vInterface = retrofit.create(VideoInterface::class.java)
+        val vInterface = retrofit.create(VideoSendingInterface::class.java)
         val serverCom = vInterface.uploadVideoToServer(vFile)
 
         serverCom.enqueue(object : Callback<ResultObject> {
