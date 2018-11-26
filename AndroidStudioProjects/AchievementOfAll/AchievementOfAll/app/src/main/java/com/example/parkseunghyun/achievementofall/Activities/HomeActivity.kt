@@ -94,18 +94,18 @@ class HomeActivity : AppCompatActivity() {
 
 
 //            homeTab = findViewById(R.id.id_home_tab)
-            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_person_black))
-            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_search))
-            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_icons_info))
+            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_user_on))
+            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_search_off))
+            homeTab!!.addTab(homeTab!!.newTab().setIcon(R.drawable.ic_info_off))
             homeTab!!.tabGravity = TabLayout.GRAVITY_FILL
 //            viewPager = findViewById<ViewPager>(R.id.home_pager_container)
 
 
             viewPager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(homeTab))
 
-            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
-            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
-            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_user_on)
+            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_search_off)
+            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_info_off)
 
 
             homeTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -116,22 +116,22 @@ class HomeActivity : AppCompatActivity() {
                     when(tab.position) {
                         0-> {
 
-                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person_black)
-                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
-                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_user_on)
+                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_search_off)
+                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_info_off)
                         }
 
                         1-> {
-                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
-                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search_black)
-                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info)
+                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_user_off)
+                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_search_on)
+                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_info_off)
 
                         }
                         2-> {
 
-                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_icons_person)
-                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_icons_search)
-                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_icons_info_black)
+                            homeTab!!.getTabAt(0)!!.setIcon(R.drawable.ic_user_off)
+                            homeTab!!.getTabAt(1)!!.setIcon(R.drawable.ic_search_off)
+                            homeTab!!.getTabAt(2)!!.setIcon(R.drawable.ic_info_on)
 
                         }
                     }

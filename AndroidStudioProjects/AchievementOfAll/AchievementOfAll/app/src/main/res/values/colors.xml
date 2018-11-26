@@ -9,6 +9,8 @@
     <color name="apptool">#e8eff5</color>
     <color name="icons">#2e2e30</color>
     <color name="viewgrey">#DCDCDC</color>
+    <color name="blue">#0099CC</color>
+    <color name="yellow">#FFBB33</color>
     <color name="purple_500">#9C27B0</color>
     <color name="deep_purple_500">#673AB7</color>
 </resources>

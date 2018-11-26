@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
@@ -33,13 +35,27 @@ class ExoplayerActivity : AppCompatActivity() {
     private var isAuthen: Int?= null
 
     private var check: Int? = null
+    private var time: Long = 0
+    private var player:SimpleExoPlayer? = null
+
 
     override fun onDestroy() {
+        finish()
         super.onDestroy()
         println("DESTROY")
-
-        finish()
     }
+
+    override fun onBackPressed() {
+        if(System.currentTimeMillis() - time >= 2000){
+            time = System.currentTimeMillis()
+            Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 영상을 종료합니다.", Toast.LENGTH_SHORT).show();
+        }
+        else if(System.currentTimeMillis() - time < 2000){
+            player!!.stop()
+            finish()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -78,6 +94,7 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 check = 1
             }
+
             failButton.setOnClickListener {
 
                 successButton.layoutParams.height = 50
@@ -143,7 +160,7 @@ class ExoplayerActivity : AppCompatActivity() {
         val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory);
 
         //Initialize the player
-        val player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
 
         //Initialize simpleExoPlayerView
         val simpleExoPlayerView = findViewById(R.id.simpleExoPlayerView) as SimpleExoPlayerView
@@ -163,7 +180,7 @@ class ExoplayerActivity : AppCompatActivity() {
         val videoSource =  ExtractorMediaSource(videoUri, dataSourceFactory, extractorsFactory, null, null);
 
         // Prepare the player with the source.
-        player.prepare(videoSource);
+        player!!.prepare(videoSource);
 
     }
     private fun checkVideo(){
