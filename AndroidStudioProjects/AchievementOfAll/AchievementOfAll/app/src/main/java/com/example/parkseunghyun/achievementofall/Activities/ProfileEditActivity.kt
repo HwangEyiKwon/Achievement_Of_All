@@ -1,6 +1,6 @@
 package com.example.parkseunghyun.achievementofall.Activities
 
-import android.content.CursorLoader
+import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -22,6 +22,8 @@ import java.io.DataOutputStream
 import java.io.FileInputStream
 import java.net.HttpURLConnection
 import java.net.URL
+
+
 
 
 class ProfileEditActivity : AppCompatActivity() {
@@ -66,7 +68,7 @@ class ProfileEditActivity : AppCompatActivity() {
 
             val intent = Intent()
             intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
+            intent.action = Intent.ACTION_PICK
             startActivityForResult(intent, 1)
 
             println("이미지이미지2")
@@ -91,6 +93,8 @@ class ProfileEditActivity : AppCompatActivity() {
                 try {
                     // 선택한 이미지에서 비트맵 생성
                     val `in` = contentResolver.openInputStream(data.data!!)
+                    println(`in`)
+
                     val img = BitmapFactory.decodeStream(`in`)
                     `in`!!.close()
                     // 이미지 표시
@@ -121,8 +125,10 @@ class ProfileEditActivity : AppCompatActivity() {
 //                    cursor.close()
 
                     println("앱솔" )
-                    println(getRealPathFromURI(data.data!!))
-                    val absolutePath = getRealPathFromURI(data.data!!)
+//                    println(getRealPathFromURI(data.data!!))
+                    println(getRealPathFromURIPath( data.data!!,this))
+
+                    var absolutePath = getRealPathFromURIPath( data.data!!,this)
 
                     DoFileUpload(urlString, absolutePath)
 
@@ -135,30 +141,16 @@ class ProfileEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun getRealPathFromURI(contentURI: Uri): String {
-        val filePath: String
-//        val cursor = this.contentResolver.query(contentURI, null, null, null, null)
-//        if (cursor == null) {
-//            filePath = contentURI.getPath()
-//        } else {
-//            cursor!!.moveToFirst()
-//            val idx = cursor!!.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-//            filePath = cursor!!.getString(idx)
-//            cursor!!.close()
-//        }
 
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-
-        val cursorLoader = CursorLoader(this, contentURI, proj, null, null, null)
-
-        var cursor = cursorLoader.loadInBackground()
-
-        val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor.moveToFirst()
-
-        filePath = cursor.getString(columnIndex)
-
-        return filePath
+    private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String {
+        val cursor = activity.contentResolver.query(contentURI, null, null, null, null)
+        if (cursor == null) {
+            return contentURI.path
+        } else {
+            cursor.moveToFirst()
+            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            return cursor.getString(idx)
+        }
     }
     fun DoFileUpload(apiUrl: String, absolutePath: String) {
         println("개다2")
@@ -170,13 +162,12 @@ class ProfileEditActivity : AppCompatActivity() {
     var boundary = "*****";
 
     fun HttpFileUpload(urlString: String, params: String, fileName: String ) {
-        try {
 
             println("개다3")
             var mFileInputStream = FileInputStream(fileName);
             var connectUrl = URL(urlString);
             Log.d("Test", "mFileInputStream  is " + mFileInputStream);
-
+            println("개다4")
             // open connection
             var conn = connectUrl.openConnection() as HttpURLConnection;
             conn.setDoInput(true);
@@ -185,9 +176,11 @@ class ProfileEditActivity : AppCompatActivity() {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            println("개다5")
+
 
             // write data
-            var dos = DataOutputStream(conn.getOutputStream());
+            var dos = DataOutputStream(conn.outputStream);
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + fileName+"\"" + lineEnd);
             dos.writeBytes(lineEnd);
@@ -202,6 +195,7 @@ class ProfileEditActivity : AppCompatActivity() {
             Log.d("Test", "image byte is " + bytesRead);
 
             // read image
+            println("개다6")
             while (bytesRead > 0) {
                 dos.write(buffer, 0, bufferSize);
                 bytesAvailable = mFileInputStream.available();
@@ -209,6 +203,7 @@ class ProfileEditActivity : AppCompatActivity() {
                 bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
             }
 
+            println("개다7")
             dos.writeBytes(lineEnd);
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
@@ -216,7 +211,7 @@ class ProfileEditActivity : AppCompatActivity() {
             Log.e("Test" , "File is written");
             mFileInputStream.close();
             dos.flush(); // finish upload...
-
+            println("개다8")
             // get response
 //            var ch = 0;
 //            var i = conn.getInputStream();
@@ -229,10 +224,7 @@ class ProfileEditActivity : AppCompatActivity() {
 //            mEdityEntry.setText(s);
             dos.close();
 
-        } catch (e: Exception) {
-            Log.d("Test", "exception " + e);
-            // TODO: handle exception
-        }
+
     }
 
 
