@@ -98,6 +98,42 @@ router.post('/signup', function (req, res, next) {
   })(req,res,next);
 });
 
+router.post('/userPasswordEdit', function(req,res){
+  console.log("userPasswordEdit Start");
+
+  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
+  var originPassword = req.body.password1;
+  var changePassword = req.body.password2;
+  
+  var hashOriginPassword;
+
+  User.findOne({email: userEmail}, function(err, user) {
+    if (err) {
+      res.send({success: false});
+      console.log("userInfoEdit err")
+    } else {
+      hashOriginPassword = user.generateHash(originPassword);
+      if(user.password != hashOriginPassword){
+        res.send({success: false});
+        console.log("origin password is not correct")
+      }
+      else{
+        user.password = user.generateHash(changePassword);
+        user.save(function (err) {
+          if (err) {
+            console.log(err);
+            res.send({success: false});
+          } else {
+            res.send({success: true});
+          }
+        })
+      }
+      // res.send({success: true});
+    }
+  });
+
+});
+
 //jwt token 사용
 router.post('/userInfoEdit', function(req,res){
   console.log("userInfoEdit Start");
@@ -106,10 +142,8 @@ router.post('/userInfoEdit', function(req,res){
   var userEmail = decoded.userCheck;
   var phoneNumber = req.body.phoneNumber;
   var name = req.body.name;
-  var password = req.body.password
 
   console.log("edit EMAIL" + userEmail);
-  console.log("edit PW" + password);
   console.log("edit phoneNumber" + phoneNumber);
   console.log("edit name" + name);
 

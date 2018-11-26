@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+ mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+// mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -125,6 +125,15 @@ require('./config/passport')(passport);
 //   imagePath: "JangDongIk17",
 //   contentList:[]
 // });
+//  var user5 = new user({
+//   name: "HEK",
+//   email: "hwangeyikwon@gmail.com",
+//   // password : user.generateHash("123"),
+//   phoneNumber : "01084222446",
+//   nickName : "HandsomeMan",
+//   imagePath: "HEK",
+//   contentList:[]
+//  });
 //
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
@@ -153,6 +162,14 @@ require('./config/passport')(passport);
 // });
 // user4.password = user4.generateHash("123");
 // user4.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+// user5.password = user5.generateHash("123");
+// user5.save(function(err, savedDocument) {
 //   if (err)
 //     return console.error(err);
 //   console.log(savedDocument);
