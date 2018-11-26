@@ -187,9 +187,12 @@ router.post('/getUserInfo', function (req,res) {
   })
 })
 
-router.get("/pwdSendMail", function(req, res, next){
+router.get("/pwdSendMail/:jwtToken", function(req, res, next){
   console.log("pwdSendMail Start");
-  let email = "hwangeyikwon@gmail.com";
+  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
+  // console.log("받은 jwt토큰 디코딩 "+ decoded.userCheck);
+  let email = decoded.userCheck;
+  // let email = "hwangeyikwon@gmail.com";
 
   let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -206,6 +209,7 @@ router.get("/pwdSendMail", function(req, res, next){
       " <form action=\"http://localhost:3000/pwdEmailAuthen\" method=\"post\"> " +
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
+      "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
       "  <input type=\"submit\" value=\"전송\"> " +
       "</form>"
   };
@@ -223,6 +227,20 @@ router.get("/pwdSendMail", function(req, res, next){
 router.post("/pwdEmailAuthen", function(req, res, next){
   console.log("pwdEmailAuthen Start ");
   // console.log(req.body.pwd);
+  var newPassword = req.body.pwd;
+  var userEamil = req.body.email;
+  User.findOne({email: userEmail}, function(err, user) {
+    if (err) {
+      console.log("pwdEmailAuthen err : "+err);
+    }
+    else{
+      user.password = user.generateHash(newPassword);
+      user.save(function (err) {
+        if (err) {console.log(err);}
+        else console.log("newPassword Change");
+      })
+      }
+  });
 
 });
 
