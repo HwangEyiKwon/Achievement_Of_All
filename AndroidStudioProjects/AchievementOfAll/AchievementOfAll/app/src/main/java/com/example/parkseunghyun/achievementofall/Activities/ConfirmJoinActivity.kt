@@ -25,7 +25,6 @@ class ConfirmJoinActivity : AppCompatActivity() {
 
     var areYouAgreeToJoin: CheckBox? = null
 
-
     var content: String?= null
     var jwtToken: String ?= null
 

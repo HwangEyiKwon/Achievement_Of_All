@@ -10,13 +10,17 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
@@ -36,6 +40,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
+import org.w3c.dom.Text
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
@@ -85,6 +90,14 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     var tt: TimerTask ? = null
     var timer: Timer? = null
 
+    private var fab_open: Animation? = null
+    private var fab_close: Animation? = null
+    private var isFabOpen:Boolean = false
+    private var fab: FloatingActionButton? = null
+    private var fab1: TextView? = null
+    private var fab2: TextView? = null
+    private var fabText: LinearLayout? = null
+
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -94,6 +107,13 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         remainingDays = mView?.findViewById(R.id.remaining_days)
         remainingHours = mView?.findViewById(R.id.remaining_hours)
         remainingMinutes = mView?.findViewById(R.id.remaining_minutes)
+        fab = mView?.findViewById(R.id.fab)
+//        fab1 = mView?.findViewById(R.id.fab1)
+//        fab2 = mView?.findViewById(R.id.fab2)
+        fabText = mView?.findViewById(R.id.fab_text)
+
+        fab_open = AnimationUtils.loadAnimation(activity, R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(activity, R.anim.fab_close);
 
         val contentHomeActivity = activity as ContentsHomeActivity
         jwtToken = contentHomeActivity.jwtToken.toString()
@@ -104,6 +124,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         contentsName = mView?.findViewById(R.id.id_contents_name_1)
         contentsName?.setText(contentName)
+
 
         println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
         getCalendarInfo(jwtToken!!,contentName!!)
@@ -133,6 +154,11 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             }
         }
 
+        fab?.setOnClickListener {
+            anim()
+        }
+
+
         if(joinState != 1){
             goToVideoButton!!.isEnabled = false
             goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
@@ -143,6 +169,22 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         return mView
     }
+
+    fun anim() {
+
+        if (isFabOpen) {
+            fabText?.startAnimation(fab_close)
+            isFabOpen = false
+        } else {
+            fabText?.startAnimation(fab_open)
+            isFabOpen = true
+        }
+    }
+
+
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (resultCode == Activity.RESULT_OK ) {
