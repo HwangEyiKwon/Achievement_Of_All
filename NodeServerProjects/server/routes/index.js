@@ -135,6 +135,7 @@ router.post('/userPasswordEdit', function(req,res){
 
 });
 router.get('/editUserImage/:jwtToken', function(req,res) {
+  console.log("edit User Image start!!");
   var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
 
