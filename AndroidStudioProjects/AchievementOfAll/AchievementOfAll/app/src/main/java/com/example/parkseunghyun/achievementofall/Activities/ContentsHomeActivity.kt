@@ -101,14 +101,12 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             REQUEST_FOR_UPDATE_CONTENTS -> {
                 println("TEST------ 1")
                 getParticipatedInfo()
-                getOthers()
                 /* */
             }
             101 -> {
                 println("TEST------ 2")
                 /* TODO: 여기서 스토리를 없애는 처리를 해야된다.*/
                 getParticipatedInfo()
-                getOthers()
             }
 
         }
@@ -145,7 +143,6 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         }
 
         getParticipatedInfo()
-        getOthers()
 
         val cal = Calendar.getInstance()
         println("CALENDER TEST: " + cal)
@@ -179,6 +176,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             // 0: 시작전 컨텐츠
             // 1: 진행중 컨텐츠
             // 2: 종료된 컨텐츠
+
             joinState = success.getInt("joinState")
             startDate = success.getJSONObject("startDate")
             endDate = success.getJSONObject("endDate")
@@ -233,7 +231,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             })
 
             contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
-
+            getOthers()
 
         }
     }

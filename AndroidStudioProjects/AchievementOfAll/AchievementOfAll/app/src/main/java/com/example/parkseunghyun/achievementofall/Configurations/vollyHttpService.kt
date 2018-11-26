@@ -117,6 +117,20 @@ object VolleyHttpService{
 
         Volley.newRequestQueue(context).add(editRequest)
     }
+    fun editPassword(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var editPasswordRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/userPasswordEdit", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+
+        }
+
+        Volley.newRequestQueue(context).add(editPasswordRequest)
+    }
 
     // 사용자 회원가입
     fun signup(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
@@ -307,6 +321,21 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(checkVideoRequest)
     }
 
+    // 비밀번호 찾
+    fun sendMail (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+        var email = jsonObject.getString("email")
 
+        println("컨텐츠 조인")
+        var sendMailRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/pwdSendMail/$email",null, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(sendMailRequest)
+
+    }
 
 }

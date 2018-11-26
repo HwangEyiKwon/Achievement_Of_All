@@ -84,7 +84,7 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
 //                    "email" to email,
 //                    "contentName" to contentName,
 //                    "who" to "others"
-//            )
+//            )e
         }
     }
 
