@@ -18,8 +18,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.parkseunghyun.achievementofall.Activities.ProfileEditActivity
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
+import com.example.parkseunghyun.achievementofall.Activities.ProfileEditActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
@@ -106,6 +106,10 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
 
             val goToEditPage = Intent(homeAccountPagerContext, ProfileEditActivity::class.java)
+
+            goToEditPage.putExtra("name",name!!.text)
+            goToEditPage.putExtra("phoneNumber",phoneNumber!!.text)
+
             val contextToActivity = homeAccountPagerContext as Activity
             contextToActivity.startActivityForResult(goToEditPage, REQUEST_FROM_EDIT)
 

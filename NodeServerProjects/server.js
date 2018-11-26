@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-// mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+  mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -28,6 +28,10 @@ const applyContent = require('./server/routes/applyContent');
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
 var fs = require("fs");
+
+var fcmMessageFormat1 = "목표 달성을 인증하셔야 합니다."
+var fcmMessageFormat2 = "목표 달성에 실패하셨습니다!"
+var fcmMessageFormat3 = "목표 달성에 성공하셨습니다!"
 
 
 var schedule = require('node-schedule');
@@ -121,6 +125,15 @@ require('./config/passport')(passport);
 //   imagePath: "JangDongIk17",
 //   contentList:[]
 // });
+//  var user5 = new user({
+//   name: "HEK",
+//   email: "hwangeyikwon@gmail.com",
+//   // password : user.generateHash("123"),
+//   phoneNumber : "01084222446",
+//   nickName : "HandsomeMan",
+//   imagePath: "HEK",
+//   contentList:[]
+//  });
 //
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
@@ -155,6 +168,14 @@ require('./config/passport')(passport);
 //   console.log("DB initialization");
 //
 // });
+// user5.password = user5.generateHash("123");
+// user5.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
 //
 // // --------------------------------
 // //
@@ -169,7 +190,7 @@ require('./config/passport')(passport);
 //   isDone: 0,
 //   userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
 //     {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
-//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 1}]}, result: 2}],
+//     {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0}]}, result: 2}],
 //   description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
 //   balance: 0
 // })
@@ -381,9 +402,9 @@ app.post('/sendToken', function(req, res) {
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(user, authenContentIndex, sendTime1);
-        sendPushMessage(user, authenContentIndex, sendTime2);
-        sendPushMessage(user, authenContentIndex, sendTime3);
+        sendPushMessage(user, authenContentIndex, sendTime1, fcmMessageFormat1);
+        sendPushMessage(user, authenContentIndex, sendTime2, fcmMessageFormat1);
+        sendPushMessage(user, authenContentIndex, sendTime3, fcmMessageFormat1);
       }
     }
   });
@@ -404,7 +425,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
   var yesterday = todayYear+ "-" + todayMonth + "-" + todayDay-1;
 
-  /* 모든 컨텐츠에 대해 endDate체크하여 디비 수정 */
+  /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
   content.find({"endDate" : yesterday}, function(err, contentList){
     console.log("contents done code in!!!!!");
     for(var i = 0; i < Object.keys(contentList).length; i++){
@@ -434,11 +455,16 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
             if (err) console.log("save err : "+err);
           });
         }
+        //푸쉬메시지 전송
+        if(userList[i].pushToken != null) {
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 0, 5, 0);
+          sendPushMessage(userList[i], contentListIndex, sendTime, fcmMessageFormat3);
+        }
       });
     }
   });
 
-  /* 모든 유저에 대해 authentication Date가 지났는데 인증 안된사람 체크 */
+  /* 모든 유저에 대해 authentication Date가 지났는데 인증 안된사람 체크 후 실패 메시지 전송 */
   user.find({"contentList.authenticationDate" : yesterday, "contentList.isUploaded": 0}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
       var authenContentIndex;
@@ -476,12 +502,16 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           if (err)
             return console.error(err);
         });
+
+        //푸쉬메시지 전송
+        if(userList[i].pushToken != null){
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 0, 5, 0);
+          sendPushMessage(userList[i], authenContentIndex, sendTime, fcmMessageFormat2);
+        }
       });
 
-
-
-
     }
+
   });
 
   /* 모든 유저에 대해 authentication Date가 오늘인지 체크해서 푸쉬메시지 전송 */
@@ -499,9 +529,9 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime1);
-        sendPushMessage(userList[i], authenContentIndex, sendTime2);
-        sendPushMessage(userList[i], authenContentIndex, sendTime3);
+        sendPushMessage(userList[i], authenContentIndex, sendTime1, fcmMessageFormat1);
+        sendPushMessage(userList[i], authenContentIndex, sendTime2, fcmMessageFormat1);
+        sendPushMessage(userList[i], authenContentIndex, sendTime3, fcmMessageFormat1);
       }
     }
   });
@@ -577,9 +607,8 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
 });
 
 
-
 //푸쉬메시지 펑션
-function sendPushMessage(user, arrayIndex, sendTime) {
+exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat) {
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
@@ -589,7 +618,7 @@ function sendPushMessage(user, arrayIndex, sendTime) {
     // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
     notification: {
       title: "모두의 달성",
-      body: "목표 달성을 인증하셔야 합니다.",
+      body: fcmMessageFormat,
       sound: "default",
       // click_action: "FCM_PLUGIN_ACTIVITY",
       click_action:"OPEN_ACTIVITY",
@@ -603,23 +632,47 @@ function sendPushMessage(user, arrayIndex, sendTime) {
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
-    if(user.contentList[arrayIndex].isUploaded == 1 ) {
-      console.log('before user authen : ' + user.contentList[0].isUploaded);
-      user.contentList[arrayIndex].isUploaded = 0;
-      console.log('after user authen : ' + user.contentList[0].isUploaded);
-    } //추후 ) 변수 수정 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    else{
-      console.log('8');
+    if(fcmMessageFormat === fcmMessageFormat1){
+      if(user.contentList[arrayIndex].isUploaded == 1 ) {
+        console.log('before user authen : ' + user.contentList[0].isUploaded);
+        user.contentList[arrayIndex].isUploaded = 0;
+        console.log('after user authen : ' + user.contentList[0].isUploaded);
+      }
+      else{
+        console.log('8');
+        fcm.send(push_data, function(err, response) {
+          if (err) {
+            console.error('Push메시지 발송에 실패했습니다.');
+            console.error(err);
+            return;
+          }
+          console.log('Push메시지가 발송되었습니다.');
+          console.log(response);
+        });
+      };
+    }
+    else if(fcmMessageFormat === fcmMessageFormat2){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('Push메시지 발송에 실패했습니다.');
+          console.error('실패 Push메시지 발송에 실패했습니다.');
           console.error(err);
           return;
         }
-        console.log('Push메시지가 발송되었습니다.');
+        console.log('실패 Push메시지가 발송되었습니다.');
         console.log(response);
       });
-    };
+    }
+    else if(fcmMessageFormat === fcmMessageFormat3){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('성공 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('성공 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
   });
 }
 

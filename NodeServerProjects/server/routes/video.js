@@ -6,6 +6,7 @@ var User = require('../models/user');
 var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
 var multiparty = require('multiparty');
+var fcmMessage = require('../../server.js')
 
 //사용자의 video 받아서 서버에 저장하는 코드
 router.post('/sendVideo', function(req, res, next){
@@ -247,6 +248,22 @@ router.post('/checkVideo', function(req,res){
               otherUser.contentList[contentListIndex].joinState = 4;
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 0;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
+
+              console.log("push message 문 전");
+              if(otherUser.pushToken != null){
+                console.log("push message 문");
+                var todayDate = new Date();
+                var todayMonth = todayDate.getMonth() + 1;
+                var todayDay = todayDate.getDate();
+                var todayYear = todayDate.getFullYear();
+                var currentHour = todayDate.getHours();
+                var currentMinute = todayDate.getMinutes();
+
+                var fcmMessageFormat = "목표 달성에 실패하셨습니다!"
+                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, fcmMessageFormat);
+              }
+
             }
 
             otherUser.save(function(err, savedDocument) {
@@ -380,7 +397,7 @@ router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
                 }
               }
             }
-            console.log("video를 보여주기 위해 return할 사용자 정보: " + others);
+            console.log("video를 보여주기 위해 return할 사용자 정보: " + JSON.stringify(others));
             res.send({others: others});
           }
         }
