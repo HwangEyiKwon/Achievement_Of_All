@@ -134,9 +134,9 @@ router.post('/userPasswordEdit', function(req,res){
   });
 
 });
-router.get('/editUserImage/:jwtToken', function(req,res) {
+router.post('/editUserImage', function(req,res) {
   console.log("edit User Image start!!");
-  var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
+  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
 
   User.findOne({email: userEmail}, function(err, user) {
