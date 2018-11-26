@@ -394,7 +394,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
     override fun onDestroy() {
-        timer!!.cancel()
+        timer?.cancel()
         super.onDestroy()
     }
 

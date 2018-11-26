@@ -12,36 +12,51 @@ import org.json.JSONObject
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
+    var email: String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
 
-
         bt_send_email.setOnClickListener{
+
+            // 비밀번호, 비밀번호 체크 비교
             if(!android.util.Patterns.EMAIL_ADDRESS.matcher(send_email.text).matches())
             {
                 Toast.makeText(this,"이메일 형식이 아닙니다. \n Modal@gmail.com",Toast.LENGTH_SHORT).show();
 
             }else{
+
+                email = send_email.text.toString()
                 println("이메일 전송~~")
+                sendEmail()
             }
         }
+        // 로그인창 이동
         goLogin.setOnClickListener {
             println("다시 로그인 창~~")
 
             startActivity<LoginActivity>()
-
-            sendEmail()
-            Toast.makeText(this,"이메일이 발송되었습니다. \n 확인해주세요.",Toast.LENGTH_SHORT).show();
             finish()
         }
 
     }
     private fun sendEmail(){
 
-    }
+        val jsonObject = JSONObject()
+        jsonObject.put("email", email)
 
+        VolleyHttpService.sendMail(this, jsonObject) { success ->
+
+            println(success)
+            if(success.getBoolean("success")){
+                Toast.makeText(this,"이메일이 발송되었습니다. \n 확인해주세요.",Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this,"이메일이 발송 실패하였습니다. \n 확인해주세요.",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
 
     // SharedPreferences
     private fun saveData(email: String, password: String){
