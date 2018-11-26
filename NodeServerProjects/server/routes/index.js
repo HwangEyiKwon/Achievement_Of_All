@@ -187,22 +187,20 @@ router.post('/getUserInfo', function (req,res) {
   })
 })
 
-router.get("/pwdSendMail/:jwtToken", function(req, res, next){
+router.get("/pwdSendMail/:email", function(req, res, next){
   console.log("pwdSendMail Start");
-  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-  // console.log("받은 jwt토큰 디코딩 "+ decoded.userCheck);
-  let email = decoded.userCheck;
+  let email = req.params.email;
   // let email = "hwangeyikwon@gmail.com";
 
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'hwangeyikwon@gmail.com',  // gmail 계정 아이디를 입력
-      pass: ''          // gmail 계정의 비밀번호를 입력
+      user: 'ehddlrdk123@ajou.ac.kr',  // gmail 계정 아이디를 입력
+      pass: 'wkdehddlr12'          // gmail 계정의 비밀번호를 입력
     }
   });
   let mailOptions = {
-    from: 'hwangeyikwon@gmail.com',
+    from: 'ehddlrdk123@ajou.ac.kr',
     to: email,
     subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
     html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
@@ -217,9 +215,11 @@ router.get("/pwdSendMail/:jwtToken", function(req, res, next){
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
       console.log(error);
+      res.send({success: false});
     }
     else {
       console.log('Email sent: ' + info.response);
+      res.send({success: true});
     }
   });
 })
@@ -228,7 +228,7 @@ router.post("/pwdEmailAuthen", function(req, res, next){
   console.log("pwdEmailAuthen Start ");
   // console.log(req.body.pwd);
   var newPassword = req.body.pwd;
-  var userEamil = req.body.email;
+  var userEmail = req.body.email;
   User.findOne({email: userEmail}, function(err, user) {
     if (err) {
       console.log("pwdEmailAuthen err : "+err);
