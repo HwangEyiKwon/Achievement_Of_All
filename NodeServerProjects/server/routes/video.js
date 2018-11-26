@@ -249,7 +249,9 @@ router.post('/checkVideo', function(req,res){
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 0;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
 
+              console.log("push message 문 전");
               if(otherUser.pushToken != null){
+                console.log("push message 문");
                 var todayDate = new Date();
                 var todayMonth = todayDate.getMonth() + 1;
                 var todayDay = todayDate.getDate();
@@ -258,7 +260,7 @@ router.post('/checkVideo', function(req,res){
                 var currentMinute = todayDate.getMinutes();
 
                 var fcmMessageFormat = "목표 달성에 실패하셨습니다!"
-                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 5, 0);
+                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
                 fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, fcmMessageFormat);
               }
 
@@ -395,7 +397,7 @@ router.get("/getOthers/:jwtToken/:contentName", function(req,res) {
                 }
               }
             }
-            console.log("video를 보여주기 위해 return할 사용자 정보: " + others);
+            console.log("video를 보여주기 위해 return할 사용자 정보: " + JSON.stringify(others));
             res.send({others: others});
           }
         }

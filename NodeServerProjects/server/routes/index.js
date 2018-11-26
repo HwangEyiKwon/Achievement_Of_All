@@ -102,19 +102,18 @@ router.post('/userPasswordEdit', function(req,res){
   console.log("userPasswordEdit Start");
 
   var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-  var originPassword = req.body.password1;
-  var changePassword = req.body.password2;
-  
-  var hashOriginPassword;
+  var userEmail = decoded.userCheck;
+  var originPassword = req.body.passwordCurrent;
+  var changePassword = req.body.password;
 
   User.findOne({email: userEmail}, function(err, user) {
     if (err) {
-      res.send({success: false});
+      res.send({success: 2});
       console.log("userInfoEdit err")
     } else {
-      hashOriginPassword = user.generateHash(originPassword);
-      if(user.password != hashOriginPassword){
-        res.send({success: false});
+      console.log("user pwd hash: "+ user.password);
+      if(! user.validPassword(originPassword)){
+        res.send({success: 0});
         console.log("origin password is not correct")
       }
       else{
@@ -122,9 +121,9 @@ router.post('/userPasswordEdit', function(req,res){
         user.save(function (err) {
           if (err) {
             console.log(err);
-            res.send({success: false});
+            res.send({success: 2});
           } else {
-            res.send({success: true});
+            res.send({success: 1});
           }
         })
       }
@@ -152,8 +151,6 @@ router.post('/userInfoEdit', function(req,res){
       res.send({success: false});
       console.log("userInfoEdit err")
     }else{
-
-      user.password = user.generateHash(password);
       user.name = name;
       user.phoneNumber = phoneNumber;
       user.save(function (err) {
