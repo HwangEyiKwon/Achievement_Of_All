@@ -8,6 +8,8 @@ var App = require('../models/app');
 var jwt = require('jwt-simple'); // jwt token 사용
 var mkdirp = require('mkdirp'); // directory 만드는것
 var nodemailer = require('nodemailer');
+var multiparty = require('multiparty');
+
 
 router.post('/jwtCheck', function(req, res){
   console.log("jwtCheck Start");
@@ -132,7 +134,64 @@ router.post('/userPasswordEdit', function(req,res){
   });
 
 });
+router.get('/editUserImage/:jwtToken', function(req,res) {
+  var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
+  var userEmail = decoded.userCheck;
 
+  User.findOne({email: userEmail}, function(err, user) {
+    var userName = user.name;
+    var form = new multiparty.Form();
+    form.on('field', function (name, value) {
+      console.log('normal field / name = ' + name + ' , value = ' + value);
+    });
+    form.on('part', function (part) {
+      var filename;
+      var size;
+      if (part.filename) {
+        // filename = part.filename;
+        filename = userName + '.jpg';
+        size = part.byteCount;
+      } else {
+        part.resume();
+      }
+      console.log("Write Streaming file :" + filename);
+      var writeStream = fs.createWriteStream('./server/user/' + userEmail + '/' + filename);
+      writeStream.filename = filename;
+      part.pipe(writeStream);
+      part.on('data', function (chunk) {
+        console.log(filename + ' read ' + chunk.length + 'bytes');
+      });
+      part.on('end', function () {
+        console.log(filename + ' Part read complete');
+        writeStream.end();
+      });
+    });
+    form.on('close', function (err) {
+      if (err) {
+        console.log("close err : " + err);
+        res.send({success: false});
+      }
+      else {
+        console.log("Edit Image success");
+        user.imagePath = userName;
+        user.save(function (err) {
+          if (err) {
+            console.log(err);
+            res.send({success: false});
+          } else {
+            console.log("ImagePath modi Success ");
+          }
+        });
+      }
+    });
+    // track progress
+    form.on('progress', function (byteRead, byteExpected) {
+      console.log(' Reading total  ' + byteRead + '/' + byteExpected);
+    });
+    form.parse(req);
+  });
+
+});
 //jwt token 사용
 router.post('/userInfoEdit', function(req,res){
   console.log("userInfoEdit Start");
@@ -140,32 +199,32 @@ router.post('/userInfoEdit', function(req,res){
   var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
   var phoneNumber = req.body.phoneNumber;
-  var name = req.body.name;
+  var userName = req.body.name;
 
   console.log("edit EMAIL" + userEmail);
   console.log("edit phoneNumber" + phoneNumber);
-  console.log("edit name" + name);
+  console.log("edit name" + userName);
 
   User.findOne({email: userEmail}, function(err, user){
     if(err){
       res.send({success: false});
       console.log("userInfoEdit err")
     }else{
-      user.name = name;
+      user.name = userName;
       user.phoneNumber = phoneNumber;
       user.save(function (err) {
         if(err) {
           console.log(err);
           res.send({success: false});
         }else{
+          console.log("userInfoEdit Success ");
           res.send({success: true});
         }
       })
-
       // res.send({success: true});
     }
   })
-})
+});
 
 router.post('/getUserInfo', function (req,res) {
   console.log("getUserInfo Start");
@@ -185,7 +244,7 @@ router.post('/getUserInfo', function (req,res) {
       res.send(info);
     }
   })
-})
+});
 
 router.get("/pwdSendMail/:email", function(req, res, next){
   console.log("pwdSendMail Start");
@@ -288,4 +347,4 @@ router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
   });
 });
 
-module.exports = router ;
+module.exports = router;
