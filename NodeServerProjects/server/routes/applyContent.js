@@ -67,29 +67,30 @@ router.post('/contentJoinComplete',  function (req,res) {
           var contentId = contentList[i].id;
           var contentName = contentList[i].name;
 
-          // if(contentName === "NoSmoking"){
-          //   Content.findOne({name: contentName, id: contentId},function(err, content){
-          //     if(err){
-          //       console.log(err);
-          //     }
-          //
-          //   });
-          // }
-
           console.log("contentId: "+ contentId + "content Name: " + contentName);
           console.log("date: " + date);
 
           //user의 content List에 해당 content 정보들 추가
-          User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
-                authenticationDate: date, joinState: 0}]}},function(err, doc){
-            if(err){
-              console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
-            }
-            console.log("join user update done");
-          });
+          if(contentName === "NoSmoking"){
+            User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
+                  authenticationDate: date, joinState: 0, money: 100000}]}},function(err, doc){
+              if(err){
+                console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
+              }
+              console.log("join user update done");
+            });
+          }
+          else{
+            User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
+                  authenticationDate: date, joinState: 0}]}},function(err, doc){
+              if(err){
+                console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
+              }
+              console.log("join user update done");
+            });
+          }
 
           var userName = user.name;
-
           //content의 user List에 해당 user 추가
           Content.findOneAndUpdate({name: contentName, id: contentId}, {$push:{userList : [{name: userName, email: userEmail, result: 2},]}}, function(err,doc){
             if(err){

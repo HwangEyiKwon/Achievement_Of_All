@@ -24,7 +24,7 @@ android {
 }
 
 dependencies {
-
+    implementation 'com.beust:klaxon:3.0.1'
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation "org.jetbrains.anko:anko-commons:$anko_version"

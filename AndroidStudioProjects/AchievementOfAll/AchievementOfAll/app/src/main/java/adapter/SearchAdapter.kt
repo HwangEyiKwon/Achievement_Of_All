@@ -9,15 +9,29 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
+import com.google.android.exoplayer2.upstream.ParsingLoadable
+import com.google.gson.JsonParser
 import org.jetbrains.anko.startActivity
+import org.json.JSONObject
+import com.google.gson.Gson
+
+
+
+
+
+
 
 
 class SearchAdapter(private val list: List<String>, private val context: Context, private  val cu: String) : BaseAdapter() {
     private val inflate: LayoutInflater
     private var viewHolder: ViewHolder? = null
+    private var userName: String? = null
+
     val REQUEST_FROM_SEARCH = 1010
 
     init {
@@ -49,11 +63,23 @@ class SearchAdapter(private val list: List<String>, private val context: Context
             viewHolder = convertView.tag as ViewHolder
         }
 
+        if(cu == "content"){
 
+            viewHolder!!.label!!.text = list[position]
 
-        // 리스트에 있는 데이터를 리스트뷰 셀에 뿌린다.
-        viewHolder!!.label!!.text = list[position]
+        }
+        else if (cu == "user"){
 
+            println("TEST_-_- : " + list[position])
+
+            var string= list[position]
+            var userObjects = JSONObject(string)
+            userName = userObjects.getString("name")
+            println("TEST_-_-NAME : " + userName)
+
+            // 리스트에 있는 데이터를 리스트뷰 셀에 뿌린다.
+            viewHolder!!.label!!.text = userName
+        }
 
         viewHolder!!.label!!.setOnClickListener {
 
@@ -72,12 +98,18 @@ class SearchAdapter(private val list: List<String>, private val context: Context
 
             }else if(cu == "user"){
                 // 사용자 홈으로 이동
+
+                // 값 두개 넘겨야 됨
+
+                var string= list[position]
+                var userObjects = JSONObject(string)
+
                 Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
                 context.startActivity<OtherUserHomeActivity>(
-                        "email" to  list[position]
+                        "email" to  userObjects.getString("email"),
+                        "userName" to userObjects.getString("name")
                 )
             }
-
         }
 
         return convertView

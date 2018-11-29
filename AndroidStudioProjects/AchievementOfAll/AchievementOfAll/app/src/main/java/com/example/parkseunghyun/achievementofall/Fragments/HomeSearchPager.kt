@@ -18,8 +18,7 @@ import com.studio572.searchlistview.SearchAdapter
 import org.json.JSONArray
 import android.content.Intent
 import android.content.BroadcastReceiver
-
-
+import org.json.JSONObject
 
 
 class HomeSearchPager : Fragment() {
@@ -30,7 +29,6 @@ class HomeSearchPager : Fragment() {
     private var editSearch: EditText? = null        // 검색어를 입력할 Input 창
     private var adapter: SearchAdapter? = null      // 리스트뷰에 연결할 아답터
     private var arraylist: ArrayList<String>? = null
-
 
     private var homeTab: TabLayout? = null
 
@@ -71,7 +69,7 @@ class HomeSearchPager : Fragment() {
                 // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
                 if (arraylist!!.get(i).toLowerCase().contains(charText)) {
                     // 검색된 데이터를 리스트에 추가한다.
-                    list!!.add(arraylist!!.get(i))
+                    list!!.add(arraylist!!.get(i)) // c
                 }
             }
         }// 문자 입력을 할때..
@@ -112,13 +110,14 @@ class HomeSearchPager : Fragment() {
 
         list!!.clear()
         VolleyHttpService.getSearchUserData(homeSearchPagerContext!!){ success ->
-            println(success)
-            println(success.get("users"))
-            var usersData = success.get("users")as JSONArray
 
-            for (i in 0..(usersData.length() - 1)) {
-                val item = usersData[i]
-                println("item"+ item)
+            println(success.get("users"))
+            var usersData = success.get("users") as JSONArray
+
+            for (i in 0..(usersData.length() - 1)) { // 이거 0부터 시작하게 다시 바꿔야됨.
+                var item = usersData[i] as JSONObject
+
+                println("item?????????????"+ item.getString("name"))
 
                 list?.add(item.toString())
             }
