@@ -251,9 +251,25 @@ router.post('/checkVideo', function(req,res){
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
               otherUser.contentList[contentListIndex].money = 0;
 
+              otherUser.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+              content.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+
               User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
                 var successUserNum = Object.keys(userList).length;
                 for(var i = 0; i < successUserNum; i++) {
+                  if(userList[i].email === otherEmail){
+                    successUserNum --;
+                    break;
+                  }
+                }
+
+                for(var i = 0; i < Object.keys(userList).length && userList[i].email !== otherEmail; i++) {
                   var contentListIndex;
                   var contentListCount = userList[i].contentList.length;
 
@@ -263,7 +279,7 @@ router.post('/checkVideo', function(req,res){
                       break;
                     }
                   }
-                  userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
+                  userList[i].contentList[contentListIndex].reward = (content.balance / successUserNum) * 0.8;
 
                   userList[i].save(function(err, savedDocument) {
                     if (err)
@@ -288,15 +304,6 @@ router.post('/checkVideo', function(req,res){
               }
 
             }
-
-            otherUser.save(function(err, savedDocument) {
-            if (err)
-              return console.error(err);
-            });
-            content.save(function(err, savedDocument) {
-              if (err)
-                return console.error(err);
-            });
           }
         });
       })

@@ -166,7 +166,7 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
   });
 });
 
-//유저가 참여중인 컨텐츠의 현재 money를 보내준다.
+//유저가 참여중인 컨텐츠의 현재 money 및 reward를 보내준다.
 router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
   // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
@@ -196,5 +196,33 @@ router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
   });
 });
 
+router.post('/getRewardCheck',  function (req,res) {
+  console.log("getRewardCheck start");
+  var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
+  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentName = req.body.contentName;
+
+  User.findOne({ email : userEmail }, function(err, user) {
+    var contentListIndex;
+    var contentListCount = user.contentList.length;
+
+    for (var i = 0; i < contentListCount; i++) {
+      if (user.contentList[i].contentName === contentName) {
+        contentListIndex = i;
+        break;
+      }
+    }
+    if(user.contentList[contentListIndex].rewardCheck === 0){
+      user.contentList[contentListIndex].money += user.contentList[contentListIndex].reward;
+      user.contentList[contentListIndex].reward = 0;
+      user.contentList[contentListIndex].rewardCheck = 1;
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+    }
+  });
+});
 
 module.exports = router ;

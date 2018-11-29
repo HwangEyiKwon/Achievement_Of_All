@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-  // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -138,7 +138,7 @@ require('./config/passport')(passport);
 //     isUploaded : 1,
 //     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
 //     money: 100000,
-//     reward: 0,
+//     reward: 40000,
 //     rewardCheck: 0
 //   }]
 // });
@@ -538,9 +538,25 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         userList[i].contentList[authenContentIndex].joinState = 4;
         userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
 
+        content.save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
+        userList[i].save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
+
         User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
           var successUserNum = Object.keys(userList).length;
           for(var i = 0; i < successUserNum; i++) {
+            if(userList[i].email === otherEmail){
+              successUserNum --;
+              break;
+            }
+          }
+
+          for(var i = 0; i < Object.keys(userList).length && userList[i].email !== otherEmail; i++) {
             var contentListIndex;
             var contentListCount = userList[i].contentList.length;
 
@@ -557,15 +573,6 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
                 return console.error(err);
             });
           }
-        });
-
-        content.save(function(err, savedDocument) {
-          if (err)
-            return console.error(err);
-        });
-        userList[i].save(function(err, savedDocument) {
-          if (err)
-            return console.error(err);
         });
 
         //푸쉬메시지 전송
