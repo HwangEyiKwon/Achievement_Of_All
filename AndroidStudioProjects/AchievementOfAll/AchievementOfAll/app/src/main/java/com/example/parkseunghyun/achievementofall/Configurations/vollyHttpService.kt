@@ -161,6 +161,20 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(userInfoRequest)
     }
 
+    // 사용자 정보 받아오기
+    fun getOtherUserInfo(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var otherInfoRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getOtherUserInfo", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(otherInfoRequest)
+    }
+
     // 찾기 정보 받아오기
     fun getSearchContentData(context: Context, success: (JSONObject)->Unit){
 
@@ -338,19 +352,6 @@ object VolleyHttpService{
 
     }
 
-    fun getOtherUserInfo(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
-        var email = jsonObject.getString("email")
-
-        var otherUserInfoRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getOtherUserInfo/$email", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
-            success(response)
-
-        }, Response.ErrorListener { error ->
-            println("수신 에러: $error")
-        }){
-        }
-        Volley.newRequestQueue(context).add(otherUserInfoRequest)
-    }
 
 }

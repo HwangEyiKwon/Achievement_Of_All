@@ -109,6 +109,30 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 check = 0
             }
+        }else if(intent.getStringExtra("who")=="other"){
+
+            authorizeButton.visibility = View.GONE
+
+            contentName = intent.getStringExtra("contentName")
+            email = intent.getStringExtra("email")
+            videoPath = intent.getStringExtra("videoPath")
+            isAuthen = intent.getIntExtra("isAuthen",-1)
+
+            var uri = "$ipAddress/getOtherUserVideo/$email/$contentName/$videoPath"
+            initializePlayer("me", uri)
+
+            if(isAuthen == 1){ // 성공
+                failButton.visibility = View.GONE
+                notYetButton.visibility = View.GONE
+
+            }else if(isAuthen == 0){ // 실패
+                successButton.visibility = View.GONE
+                notYetButton.visibility = View.GONE
+
+            }else{ // 대기
+                successButton.visibility = View.GONE
+                failButton.visibility = View.GONE
+            }
         }
 
         else if(intent.getStringExtra("who")=="me"){
