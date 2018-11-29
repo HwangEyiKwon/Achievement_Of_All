@@ -21,6 +21,8 @@ const userSchema = new Schema({
     authenticationDate: String, //최근 날짜 비디오 기준
     isUploaded: Number, // fcm 용도. 최근 날짜 비디오 기준
     money: Number, //컨텐츠 별 개인 금액
+    reward: Number, // 컨텐츠 별 이익을 본 금액
+    rewardCheck: Boolean, // reward 수령 여부 0:x 1:o
   }],
   pushToken: String,
 });

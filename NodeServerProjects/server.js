@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-  // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -76,7 +76,9 @@ require('./config/passport')(passport);
 //     authenticationDate : "2018-11-22",
 //     isUploaded : 0,
 //     calendar: [{year: "2018", month: "11", day: "13", authen: 1}, {year: "2018", month: "11", day: "16", authen: 1}, {year: "2018", month: "11", day: "19", authen: 1}],
-//     money: 100000
+//     money: 100000,
+//     reward: 0,
+//     rewardCheck: 0
 //   }]
 // });
 // var user2 = new user({
@@ -94,7 +96,9 @@ require('./config/passport')(passport);
 //     authenticationDate : "2018-11-15",
 //     isUploaded : 1,
 //     calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}],
-//     money: 100000
+//     money: 100000,
+//     reward: 0,
+//     rewardCheck: 0
 //   }]
 // });
 //
@@ -113,7 +117,9 @@ require('./config/passport')(passport);
 //     authenticationDate : "2018-11-18",
 //     isUploaded : 0,
 //     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "23", authen: 1}],
-//     money: 100000
+//     money: 100000,
+//     reward: 0,
+//     rewardCheck: 0
 //   }]
 // });
 //  var user4 = new user({
@@ -123,7 +129,18 @@ require('./config/passport')(passport);
 //   phoneNumber : "01093969408",
 //   nickName : "Man",
 //   imagePath: "JangDongIk17",
-//   contentList:[]
+//   contentList:[{
+//     contentId : 3,
+//     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
+//     contentName: "NoSmoking",
+//     joinState : 2,
+//     authenticationDate : "2018-11-21",
+//     isUploaded : 1,
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
+//     money: 100000,
+//     reward: 40000,
+//     rewardCheck: 0
+//   }]
 // });
 //  var user5 = new user({
 //   name: "HEK",
@@ -215,6 +232,17 @@ require('./config/passport')(passport);
 //   description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
 //   balance: 0
 // })
+// var content4 = new content({
+//   id: 3,
+//   name: "NoSmoking",
+//   roomNum: 4,
+//   startDate: "01/01/2018",
+//   endDate: "11/28/2018",
+//   isDone: 1,
+//   userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 1}],
+//   description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+//   balance: 0
+// })
 // content1.save(function(err, savedDocument) {
 //   if (err)
 //     return console.error(err);
@@ -230,6 +258,13 @@ require('./config/passport')(passport);
 //
 // });
 // content3.save(function(err, savedDocument) {
+//   if (err)
+//     return console.error(err);
+//   console.log(savedDocument);
+//   console.log("DB initialization");
+//
+// });
+// content4.save(function(err, savedDocument) {
 //   if (err)
 //     return console.error(err);
 //   console.log(savedDocument);
@@ -453,7 +488,8 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
             }
           }
           userList[i].contentList[contentListIndex].joinState = 2;
-          userList[i].contentList[contentListIndex].money += (balance / successUserNum) * 0.8;
+//          userList[i].contentList[contentListIndex].money += (balance / successUserNum) * 0.8;
+          userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
           userList[i].save(function(err, savedDocument) {
             if (err) console.log("save err : "+err);
           });
@@ -468,7 +504,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   });
 
   /* 모든 유저에 대해 authentication Date가 지났는데 인증 안된사람 체크 후 실패 메시지 전송 */
-  user.find({"contentList.authenticationDate" : yesterday, "contentList.isUploaded": 0}, function(err, userList){
+  user.find({"contentList.authenticationDate" : yesterday, "contentList.isUploaded": 0, "contentList.joinState" : 1}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
       var authenContentIndex;
       var contentListCount = userList[i].contentList.length;
@@ -482,6 +518,8 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           break;
         }
       }
+      var contentName = userList[i].contentList[authenContentIndex].contentName;
+      var contentId = userList[i].contentList[authenContentIndex].contentId;
 
       content.findOne({name: contentName, id: contentId}, function(err, content){
         userListCount = content.userList.length;
@@ -507,6 +545,34 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         userList[i].save(function(err, savedDocument) {
           if (err)
             return console.error(err);
+        });
+
+        User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
+          var successUserNum = Object.keys(userList).length;
+          for(var i = 0; i < successUserNum; i++) {
+            if(userList[i].email === otherEmail){
+              successUserNum --;
+              break;
+            }
+          }
+
+          for(var i = 0; i < Object.keys(userList).length && userList[i].email !== otherEmail; i++) {
+            var contentListIndex;
+            var contentListCount = userList[i].contentList.length;
+
+            for (var j = 0; j < contentListCount; j++) {
+              if (userList[i].contentList[j].contentName === contentName) {
+                contentListIndex = j;
+                break;
+              }
+            }
+            userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
+
+            userList[i].save(function(err, savedDocument) {
+              if (err)
+                return console.error(err);
+            });
+          }
         });
 
         //푸쉬메시지 전송
@@ -540,17 +606,6 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         sendPushMessage(userList[i], authenContentIndex, sendTime3, fcmMessageFormat1);
       }
     }
-  });
-
-  //컨텐츠 진행중인데, 인증 실패하거나 인증 수행 안한 사람 데이터 뽑아 처리하기 위한 코드
-  user.find({"contentList.authenticationDate": yesterday, "contentList.isUploaded" : "0", "contentList.joinState" : "1"}, function(err, userList){
-    for(var i = 0; i < Object.keys(userList).length; i++) {
-      //fail에 대한 정보를 전달해줘야 할 것임
-    }
-
-    userList[0].save(function (err) {
-      if(err) console.log(err);
-    });
   });
 
   //매일마다 인증 현황을 0으로 수정해줌
