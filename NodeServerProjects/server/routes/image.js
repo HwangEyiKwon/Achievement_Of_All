@@ -42,7 +42,7 @@ router.get('/getUserImage/:jwtToken', function(req, res){
   });
 })
 
-router.get('/getOthersImage/:email', function(req, res){
+router.get('/getOtherUserImage/:email', function(req, res){
   console.log("getOthersImage Start");
   var email = req.params.email;
 

@@ -309,7 +309,7 @@ router.post('/getUserInfo', function (req,res) {
 });
 
 router.post('/getOtherUserInfo', function (req,res) {
-  console.log("getUserInfo Start");
+  console.log("getOtherUserInfo Start");
   // console.log("get User Info: "+JSON.stringify(req.body));
   var email = req.body.email;
   // console.log(email);

@@ -251,6 +251,43 @@ router.post('/checkVideo', function(req,res){
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
               otherUser.contentList[contentListIndex].money = 0;
 
+              otherUser.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+              content.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+
+              User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
+                var successUserNum = Object.keys(userList).length;
+                for(var i = 0; i < successUserNum; i++) {
+                  if(userList[i].email === otherEmail){
+                    successUserNum --;
+                    break;
+                  }
+                }
+
+                for(var i = 0; i < Object.keys(userList).length && userList[i].email !== otherEmail; i++) {
+                  var contentListIndex;
+                  var contentListCount = userList[i].contentList.length;
+
+                  for (var j = 0; j < contentListCount; j++) {
+                    if (userList[i].contentList[j].contentName === contentName) {
+                      contentListIndex = j;
+                      break;
+                    }
+                  }
+                  userList[i].contentList[contentListIndex].reward = (content.balance / successUserNum) * 0.8;
+
+                  userList[i].save(function(err, savedDocument) {
+                    if (err)
+                      return console.error(err);
+                  });
+                }
+              });
+
               console.log("push message 문 전");
               if(otherUser.pushToken != null){
                 console.log("push message 문");
@@ -267,15 +304,6 @@ router.post('/checkVideo', function(req,res){
               }
 
             }
-
-            otherUser.save(function(err, savedDocument) {
-            if (err)
-              return console.error(err);
-            });
-            content.save(function(err, savedDocument) {
-              if (err)
-                return console.error(err);
-            });
           }
         });
       })
@@ -305,7 +333,24 @@ router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
   });
 });
 
-//타인의 비디오를 가져오는 코드
+//타 유저 홈을 들어갈 때 동영상 불러오는 루틴
+router.get('/getOtherUserVideo/:email/:contentName/:videoPath', function(req,res){
+
+  console.log("getOtherUserVideo Start");
+  var userEmail = req.params.email;
+  var contentName = req.params.contentName;
+  var videoPath = req.params.videoPath;
+
+  console.log("ddd"+userEmail+contentName+videoPath);
+
+  User.findOne({email: userEmail}, function(err, user){
+    var filename = "./server/user/"+userEmail+"/video/"+contentName+"/"+videoPath+".mp4"
+    var file = fs.createReadStream(filename, {flags: 'r'});
+    file.pipe(res);
+  });
+});
+
+//타인의 인증 비디오를 가져오는 코드
 router.get('/getOthersVideo/:email/:contentName', function(req,res){
   var userEmail = req.params.email;
   var contentName = req.params.contentName;
