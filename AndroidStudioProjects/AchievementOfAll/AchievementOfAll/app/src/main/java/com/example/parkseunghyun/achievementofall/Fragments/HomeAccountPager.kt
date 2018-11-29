@@ -204,6 +204,7 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
             val thumbnailModel = ThumbnailModel()
 
             thumbnailModel.userToken = jwtToken
+            thumbnailModel.who = "me"
             thumbnailModel.videoPath = videoList?.get(i)
             thumbnailModel.contentName = videoContentList?.get(i)
 
