@@ -251,6 +251,27 @@ router.post('/checkVideo', function(req,res){
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
               otherUser.contentList[contentListIndex].money = 0;
 
+              User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
+                var successUserNum = Object.keys(userList).length;
+                for(var i = 0; i < successUserNum; i++) {
+                  var contentListIndex;
+                  var contentListCount = userList[i].contentList.length;
+
+                  for (var j = 0; j < contentListCount; j++) {
+                    if (userList[i].contentList[j].contentName === contentName) {
+                      contentListIndex = j;
+                      break;
+                    }
+                  }
+                  userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
+
+                  userList[i].save(function(err, savedDocument) {
+                    if (err)
+                      return console.error(err);
+                  });
+                }
+              });
+
               console.log("push message 문 전");
               if(otherUser.pushToken != null){
                 console.log("push message 문");

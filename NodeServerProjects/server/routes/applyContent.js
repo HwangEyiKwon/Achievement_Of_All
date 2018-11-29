@@ -166,4 +166,35 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
   });
 });
 
+//유저가 참여중인 컨텐츠의 현재 money를 보내준다.
+router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
+  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
+  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentName = req.params.contentName;
+
+  User.findOne({ email : userEmail }, function(err, user) {
+    if (user.contentList.length == 0) {
+      res.send({success: false});
+    }
+    else {
+      var contentListCount = user.contentList.length;
+      var contentListIndex = -1;
+      for (var i = 0; i < contentListCount; i++) {
+        if (user.contentList[i].contentName === contentName) {
+          contentListIndex = i;
+          break;
+        }
+      }
+      if (contentListIndex == -1) {
+        res.send({success: false});
+      }
+      else {
+        res.send({money: user.contentList[contentListIndex].money, reward: user.contentList[contentListIndex].reward});
+      }
+    }
+  });
+});
+
+
 module.exports = router ;
