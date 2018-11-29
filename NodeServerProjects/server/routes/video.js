@@ -305,7 +305,24 @@ router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){
   });
 });
 
-//타인의 비디오를 가져오는 코드
+//타 유저 홈을 들어갈 때 동영상 불러오는 루틴
+router.get('/getOtherUserVideo/:email/:contentName/:videoPath', function(req,res){
+
+  console.log("getOtherUserVideo Start");
+  var userEmail = req.params.email;
+  var contentName = req.params.contentName;
+  var videoPath = req.params.videoPath;
+
+  console.log("ddd"+userEmail+contentName+videoPath);
+
+  User.findOne({email: userEmail}, function(err, user){
+    var filename = "./server/user/"+userEmail+"/video/"+contentName+"/"+videoPath+".mp4"
+    var file = fs.createReadStream(filename, {flags: 'r'});
+    file.pipe(res);
+  });
+});
+
+//타인의 인증 비디오를 가져오는 코드
 router.get('/getOthersVideo/:email/:contentName', function(req,res){
   var userEmail = req.params.email;
   var contentName = req.params.contentName;
