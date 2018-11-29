@@ -60,6 +60,7 @@
                             android:id="@+id/other_user_profile_image"
                             android:layout_width="120dp"
                             android:layout_height="120dp"
+                            android:layout_margin="4dp"
                             android:background="@drawable/circle2" />
 
                     </FrameLayout>

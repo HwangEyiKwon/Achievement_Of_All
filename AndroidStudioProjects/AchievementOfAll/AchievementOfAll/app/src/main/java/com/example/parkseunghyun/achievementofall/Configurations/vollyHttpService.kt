@@ -352,6 +352,40 @@ object VolleyHttpService{
 
     }
 
+    //
+    fun getContentMoney (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var token = jsonObject.getString("token")
+        var contentName = jsonObject.getString("contentName")
+
+
+        var contentMoneyRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getContentMoney/$token/$contentName",null, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(contentMoneyRequest)
+
+    }
+
+    fun rewardCheck (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+
+        var rewardCheckRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getRewardCheck",jsonObject, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(rewardCheckRequest)
+
+    }
+
 
 
 }

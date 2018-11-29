@@ -35,6 +35,7 @@
         <activity android:name=".Activities.ForgotPasswordActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".Activities.ProfileEditActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".Activities.PasswordEditActivity" android:theme="@style/AppTheme"/>
+        <activity android:name=".Activities.RewardActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".ContentsHomeActivity"/>
         <activity android:name=".OtherUserHomeActivity"/>
         <activity android:name=".ExoplayerActivity"/>

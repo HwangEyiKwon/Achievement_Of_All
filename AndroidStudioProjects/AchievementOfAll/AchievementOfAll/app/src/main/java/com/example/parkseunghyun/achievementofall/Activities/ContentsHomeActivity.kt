@@ -59,6 +59,8 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
     var contentsHomeContext: Context? = null
     val REQUEST_FOR_UPDATE_CONTENTS = 222
 
+    var viewPager: ViewPager ?= null
+
     override fun onBackPressed() {
 //        super.onBackPressed()
 
@@ -107,6 +109,11 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                 println("TEST------ 2")
                 /* TODO: 여기서 스토리를 없애는 처리를 해야된다.*/
                 getParticipatedInfo()
+            }
+            222 ->{
+                println("TEST------ 3")
+                getParticipatedInfo()
+//                viewPager.adapter.
             }
 
         }
@@ -211,11 +218,11 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                     contentDuration!!.setText(d)
                 }
             }
-            val viewPager = findViewById<ViewPager>(R.id.contents_pager_container)
+            viewPager = findViewById(R.id.contents_pager_container)
             val pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
-            viewPager.adapter = pAdapter
+            viewPager!!.adapter = pAdapter
 
-            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            viewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
                 override fun onPageScrollStateChanged(p0: Int) {
 
                 }
