@@ -247,6 +247,23 @@ router.post('/getUserInfo', function (req,res) {
   })
 });
 
+router.post('/getOtherUserInfo', function (req,res) {
+  console.log("getUserInfo Start");
+  // console.log("get User Info: "+JSON.stringify(req.body));
+  var email = req.body.email;
+  // console.log(email);
+  User.findOne({email: email}, function(err, info){
+    if(err) console.log("getUserInfo err : "+err);
+    if(info == null) {
+      console.log("사용자 아님");
+    }
+    else {
+      console.log("사용자 찾음");
+      res.send(info);
+    }
+  })
+});
+
 router.get("/pwdSendMail/:email", function(req, res, next){
   console.log("pwdSendMail Start");
   let email = req.params.email;
