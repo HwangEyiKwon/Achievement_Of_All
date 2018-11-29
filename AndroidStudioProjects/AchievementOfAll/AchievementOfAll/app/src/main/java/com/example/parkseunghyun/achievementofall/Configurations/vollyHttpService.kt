@@ -338,4 +338,19 @@ object VolleyHttpService{
 
     }
 
+    fun getOtherUserInfo(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var email = jsonObject.getString("email")
+
+        var otherUserInfoRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getOtherUserInfo/$email", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(otherUserInfoRequest)
+    }
+
 }
