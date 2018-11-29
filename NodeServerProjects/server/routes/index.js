@@ -6,6 +6,7 @@ var User = require('../models/user');
 var Content = require('../models/content');
 var App = require('../models/app');
 var jwt = require('jwt-simple'); // jwt token 사용
+var fs = require("fs");
 var mkdirp = require('mkdirp'); // directory 만드는것
 var nodemailer = require('nodemailer');
 var multiparty = require('multiparty');
@@ -134,73 +135,79 @@ router.post('/userPasswordEdit', function(req,res){
   });
 
 });
-router.post('/editUserImage', function(req,res) {
-  console.log("edit User Image start!!");
-  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-  var userEmail = decoded.userCheck;
-
-  User.findOne({email: userEmail}, function(err, user) {
-    var userName = user.name;
-    var form = new multiparty.Form();
-    form.on('field', function (name, value) {
-      console.log('normal field / name = ' + name + ' , value = ' + value);
-    });
-    form.on('part', function (part) {
-      var filename;
-      var size;
-      if (part.filename) {
-        // filename = part.filename;
-        filename = userName + '.jpg';
-        size = part.byteCount;
-      } else {
-        part.resume();
-      }
-      console.log("Write Streaming file :" + filename);
-      var writeStream = fs.createWriteStream('./server/user/' + userEmail + '/' + filename);
-      writeStream.filename = filename;
-      part.pipe(writeStream);
-      part.on('data', function (chunk) {
-        console.log(filename + ' read ' + chunk.length + 'bytes');
-      });
-      part.on('end', function () {
-        console.log(filename + ' Part read complete');
-        writeStream.end();
-      });
-    });
-    form.on('close', function (err) {
-      if (err) {
-        console.log("close err : " + err);
-        res.send({success: false});
-      }
-      else {
-        console.log("Edit Image success");
-        user.imagePath = userName;
-        user.save(function (err) {
-          if (err) {
-            console.log(err);
-            res.send({success: false});
-          } else {
-            console.log("ImagePath modi Success ");
-          }
-        });
-      }
-    });
-    // track progress
-    form.on('progress', function (byteRead, byteExpected) {
-      console.log(' Reading total  ' + byteRead + '/' + byteExpected);
-    });
-    form.parse(req);
-  });
-
-});
+// router.post('/editUserImage', function(req,res) {
+//   console.log("edit User Image start!!");
+//   // var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
+//   // var userEmail = decoded.userCheck;
+//   var decoded = jwt.decode(req.headers.token, req.app.get("jwtTokenSecret"));
+//   var userEmail = decoded.userCheck;
+//
+//   User.findOne({email: userEmail}, function(err, user) {
+//     var userName = user.name;
+//     var form = new multiparty.Form();
+//     form.on('field', function (name, value) {
+//       console.log('normal field / name = ' + name + ' , value = ' + value);
+//     });
+//     form.on('part', function (part) {
+//       var filename;
+//       var size;
+//       if (part.filename) {
+//         // filename = part.filename;
+//         filename = userName + '.jpg';
+//         size = part.byteCount;
+//       } else {
+//         part.resume();
+//       }
+//       console.log("Write Streaming file :" + filename);
+//       var writeStream = fs.createWriteStream('./server/user/' + userEmail + '/' + filename);
+//       writeStream.filename = filename;
+//       part.pipe(writeStream);
+//       part.on('data', function (chunk) {
+//         console.log(filename + ' read ' + chunk.length + 'bytes');
+//       });
+//       part.on('end', function () {
+//         console.log(filename + ' Part read complete');
+//         writeStream.end();
+//       });
+//     });
+//     form.on('close', function (err) {
+//       if (err) {
+//         console.log("close err : " + err);
+//         res.send({success: false});
+//       }
+//       else {
+//         console.log("Edit Image success");
+//         user.imagePath = userName;
+//         user.save(function (err) {
+//           if (err) {
+//             console.log(err);
+//             res.send({success: false});
+//           } else {
+//             console.log("ImagePath modi Success ");
+//           }
+//         });
+//       }
+//     });
+//     // track progress
+//     form.on('progress', function (byteRead, byteExpected) {
+//       console.log(' Reading total  ' + byteRead + '/' + byteExpected);
+//     });
+//     form.parse(req);
+//   });
+//
+// });
 //jwt token 사용
 router.post('/userInfoEdit', function(req,res){
   console.log("userInfoEdit Start");
 
-  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
+  console.log(req.headers);
+  // console.log("userInfoEdit token : "+req.headers.jwt_token);
+  // console.log("userInfoEdit number: "+req.headers.phoneNumber);
+  // console.log("userInfoEdit userName: "+req.headers.name);
+  var decoded = jwt.decode(req.headers.jwt_token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
-  var phoneNumber = req.body.phoneNumber;
-  var userName = req.body.name;
+  var phoneNumber = req.headers.phone_number;
+  var userName = req.headers.name;
 
   console.log("edit EMAIL" + userEmail);
   console.log("edit phoneNumber" + phoneNumber);
@@ -211,17 +218,71 @@ router.post('/userInfoEdit', function(req,res){
       res.send({success: false});
       console.log("userInfoEdit err")
     }else{
-      user.name = userName;
-      user.phoneNumber = phoneNumber;
-      user.save(function (err) {
-        if(err) {
-          console.log(err);
-          res.send({success: false});
-        }else{
-          console.log("userInfoEdit Success ");
-          res.send({success: true});
+      var form = new multiparty.Form();
+      form.on('field', function (name, value) {
+        console.log('normal field / name = ' + name + ' , value = ' + value);
+      });
+      form.on('part', function (part) {
+        var filename;
+        var size;
+        if (part.filename) {
+          // filename = part.filename;
+          filename = userName + '.jpg';
+          size = part.byteCount;
+        } else {
+          part.resume();
         }
-      })
+        console.log("Write Streaming file :" + filename);
+        var writeStream = fs.createWriteStream('./server/user/' + userEmail + '/' + filename);
+        writeStream.filename = filename;
+        part.pipe(writeStream);
+        part.on('data', function (chunk) {
+          // console.log(filename + ' read ' + chunk.length + 'bytes');
+        });
+        part.on('end', function () {
+          console.log(filename + ' Part read complete');
+          writeStream.end();
+        });
+      });
+      form.on('close', function (err) {
+        if (err) {
+          console.log("close err : " + err);
+          res.send({success: false});
+        }
+        else {
+          console.log("Edit Image success");
+          user.imagePath = userName;
+          user.name = userName;
+          user.phoneNumber = phoneNumber;
+          user.save(function (err) {
+            if (err) {
+              console.log(err);
+              res.send({success: false});
+            } else {
+              console.log("ImagePath modi Success ");
+              console.log("userInfoEdit Success ");
+                  res.send({success: true});
+            }
+          });
+        }
+      });
+      // track progress
+      form.on('progress', function (byteRead, byteExpected) {
+        // console.log(' Reading total  ' + byteRead + '/' + byteExpected);
+      });
+      form.parse(req);
+
+      // user.name = userName;
+      // user.phoneNumber = phoneNumber;
+      // user.save(function (err) {
+      //   if(err) {
+      //     console.log(err);
+      //     res.send({success: false});
+      //   }else{
+      //     console.log("userInfoEdit Success ");
+      //     res.send({success: true});
+      //   }
+      // })
       // res.send({success: true});
     }
   })
