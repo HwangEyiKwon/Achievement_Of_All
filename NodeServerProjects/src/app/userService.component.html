@@ -1,0 +1,169 @@
+<!--Login-->
+<div *ngIf = "state == 0" id="loginModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true" style=" position: absolute;  top: 20%;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">Login</h1>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onLogin(f)" #f="ngForm">
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   placeholder="Email"
+                   ngModel
+                   name="emailLogin"
+                   pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?">
+          </div>
+          <div class="form-group">
+            <input type="password"
+                   class="form-control input-lg"
+                   placeholder="Password"
+                   ngModel
+                   name="passwordLogin">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
+            <span class="pull-right"><a (click)="stateChange(1)" >Register</a></span><span><a (click)="stateChange(2)">Forgot PW?</a></span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="col-md-12">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Sign Up-->
+<div *ngIf = "state == 1" class="modal show" tabindex="-1" role="dialog" aria-hidden="true" style=" position: absolute; top: 20%;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">Register</h1>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmit(d)" #d="ngForm">
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   [placeholder]="defaultUser.username"
+                   [(ngModel)]="username"
+                   name="username">
+          </div>
+          <div class="form-group">
+            <p>
+              <input style="height: 15px; " type="radio"  value="male" name="gender" [ngModel]="userGender" ><label style="font-size: 15px;">Male</label>
+              &nbsp;
+              <input style="height: 15px; " type="radio"  value="female" name="gender" [ngModel]="userGender" ><label style="font-size: 15px;">Female</label>
+            </p>
+          </div>
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   [placeholder]="defaultUser.phoneNumber"
+                   [(ngModel)]="phoneNumber"
+                   name="phoneNumber">
+          </div>
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   [placeholder]="defaultUser.email"
+                   [(ngModel)] = "email"
+                   name="email"
+                   pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?">
+          </div>
+          <div class="form-group">
+            <input type="password"
+                   class="form-control input-lg"
+                   [placeholder]="defaultUser.password"
+                   [(ngModel)] = "password"
+                   name="password">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="!d.valid" >Sign Up</button>
+            <span class="pull-right"><a (click)="stateChange(0)" >Login</a></span><span><a (click)="stateChange(2)">Forgot PW?</a></span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+<!--Change Password (authentication)-->
+<div *ngIf = "state == 2" class="modal show" tabindex="-1" role="dialog" aria-hidden="true" style="position: absolute; top: 20%;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">Change Password</h1>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onChangePassword(g)" #g="ngForm">
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   placeholder = "Name"
+                   [(ngModel)]="username"
+                   name="usernameChangeEmail">
+          </div>
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   placeholder="Phone Number (010-0000-0000)"
+                   [(ngModel)]="phoneNumber"
+                   name="phoneNumberChangeEmail">
+          </div>
+          <div class="form-group">
+            <input type="text"
+                   class="form-control input-lg"
+                   placeholder="Email"
+                   [(ngModel)] = "email"
+                   name="emailChangeEmail"
+                   pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="!g.valid" >Email Authentication</button>
+            <span class="pull-right"><a (click)="stateChange(0)" >Login</a></span><span><a (click)="stateChange(1)" >Register</a></span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+<!--Change Password-->
+<div *ngIf = "state == 3" class="modal show" tabindex="-1" role="dialog" aria-hidden="true" style="position: absolute; top: 20%;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">Change Password</h1>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onChangePasswordFinish(g)" #g="ngForm">
+          <div class="form-group">
+            <input type="password"
+                   class="form-control input-lg"
+                   placeholder="New Password"
+                   ngModel
+                   name="newPassword">
+          </div>
+          <div class="form-group">
+            <input type="password"
+                   class="form-control input-lg"
+                   placeholder="New Password Check"
+                   ngModel
+                   name="newPasswordCheck">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="!g.valid" >Change Password</button>
+            <span class="pull-right"><a (click)="stateChange(0)" >Login</a></span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>

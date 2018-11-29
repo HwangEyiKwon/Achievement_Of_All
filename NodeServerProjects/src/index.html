@@ -2,29 +2,106 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>SimpleMemo</title>
+  <title>Achievement of All</title>
   <base href="/">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!--<script src="https://unpkg.com/ionicons@4.2.2/dist/ionicons.js"></script>-->
+  <!--<link rel="icon" type="image/x-icon" href="favicon.ico">-->
+  <!--<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/black-tie/jquery-ui.min.css" />-->
+  <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />-->
+  <!--<script src="/socket.io/socket.io.js"></script>-->
+  <!--<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>-->
+  <!--<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>-->
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>-->
+  <!--<script src="aws-cognito-sdk.min.js"></script>-->
+  <!--<script src="amazon-cognito-identity.min.js"></script>-->
+  <!--<script src="https://sdk.amazonaws.com/js/aws-sdk-2.20.0.min.js"></script>-->
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>-->
+  <!--<script src="https://apis.google.com/js/client:plusone.js"></script>-->
+  <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">-->
+  <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+  <!--<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">-->
+  <!--<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>-->
+  <!--&lt;!&ndash;<script src="http://wzrd.in/standalone/uuid%2Fv5@latest"></script>&ndash;&gt;-->
+  <!--<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">-->
+  <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>-->
+  <!--<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>-->
+  <!--<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>-->
+  <style>
+    .hidden { display: block; }
+    .col-md-3 h1 { margin-top: 10px; }
+    .ft {
+      position: fixed;
+      display: block;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 9999;
+    }
+    .header {
+      position: fixed;
+
+      left: 0;
+      top: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
-  <img src="https://previews.123rf.com/images/michaeldb/michaeldb1405/michaeldb140500010/28466370-%EC%82%AC%EB%9E%8C%EC%9D%B4-%EB%8D%94-%EB%82%98%EC%9D%80-%EC%B6%A9%EB%B6%84-%EB%8B%AC%EC%84%B1-%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8F%84%EB%A1%9D-%EB%A9%98%ED%86%A0-%EB%B0%8F-%ED%8F%89%EA%B0%80%EC%97%90-%EA%B0%80%EC%9E%A5-%EA%B0%9C%EC%84%A0.jpg"
-    width = "240"
-    align = "center">
-  <h1>모두의 달성 - 관리자 웹</h1>
-  <form action="/adminLogin" method="post">
-    <div>
-      <label>Username:</label>
-      <input type="text" name="username"/>
+  <!--<img src="https://previews.123rf.com/images/michaeldb/michaeldb1405/michaeldb140500010/28466370-%EC%82%AC%EB%9E%8C%EC%9D%B4-%EB%8D%94-%EB%82%98%EC%9D%80-%EC%B6%A9%EB%B6%84-%EB%8B%AC%EC%84%B1-%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8F%84%EB%A1%9D-%EB%A9%98%ED%86%A0-%EB%B0%8F-%ED%8F%89%EA%B0%80%EC%97%90-%EA%B0%80%EC%9E%A5-%EA%B0%9C%EC%84%A0.jpg"-->
+    <!--width = "240"-->
+    <!--align = "center">-->
+  <!--<h1>모두의 달성 - 관리자 웹</h1>-->
+  <!--<form action="/adminLogin" method="post">-->
+    <!--<div>-->
+      <!--<label>Username:</label>-->
+      <!--<input type="text" name="username"/>-->
+    <!--</div>-->
+    <!--<div>-->
+      <!--<label>Password:</label>-->
+      <!--<input type="password" name="password"/>-->
+    <!--</div>-->
+    <!--<div>-->
+      <!--<input type="submit" value="Login"/>-->
+    <!--</div>-->
+  <!--</form>-->
+  <header>
+    <div class="header" >
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+
+            <a class="navbar-brand" href="#">
+              <img src="./assets/AOA_logo.png"
+                   height="24" style="display: inline-block;">
+              Achievement of All
+            </a>
+          </div>
+
+        </div>
+      </nav>
     </div>
-    <div>
-      <label>Password:</label>
-      <input type="password" name="password"/>
+  </header>
+
+  <app-root style="margin-top: 3em;"></app-root>
+
+  <footer >
+    <div class="ft" id = devicegroup style="margin-top: 3em; background-color: white;">
+      <div id= "figure">
+      </div>
+      <div class="alert alert-success" id = "log" style = "margin: 0; text-align: center">
+        Copyright(C) NyangNyangPunch Team,<br>
+        All Rights Reserved<br>
+      </div>
     </div>
-    <div>
-      <input type="submit" value="Login"/>
-    </div>
-  </form>
+  </footer>
+
 </body>
 </html>
