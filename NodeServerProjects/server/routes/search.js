@@ -5,18 +5,13 @@ var Content = require('../models/content');
 
 router.get('/getSearchUserData', function (req,res) {
   console.log("getSearchUserData Start");
-  var searchData = new Array();
-  User.find(function(err, info){
-    console.log("search user data" + info);
+  User.find(function(err, userList){
+    var searchData = new Array();
 
-    var searchData = {
-      users: [],
+    for(var i = 0; i < Object.keys(userList).length; i++){
+      searchData.push({email: userList[i].email, name: userList[i].name});
     }
-
-    for(var i in info){
-      searchData.users.push(info[i].name);
-    }
-    res.send(searchData);
+    res.send({users: searchData});
   });
 });
 

@@ -134,9 +134,9 @@ router.post('/userPasswordEdit', function(req,res){
   });
 
 });
-router.get('/editUserImage/:jwtToken', function(req,res) {
+router.post('/editUserImage', function(req,res) {
   console.log("edit User Image start!!");
-  var decoded = jwt.decode(req.params.jwtToken, req.app.get("jwtTokenSecret"));
+  var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
 
   User.findOne({email: userEmail}, function(err, user) {
@@ -234,6 +234,23 @@ router.post('/getUserInfo', function (req,res) {
   var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
   // console.log("받은 jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
+  // console.log(email);
+  User.findOne({email: email}, function(err, info){
+    if(err) console.log("getUserInfo err : "+err);
+    if(info == null) {
+      console.log("사용자 아님");
+    }
+    else {
+      console.log("사용자 찾음");
+      res.send(info);
+    }
+  })
+});
+
+router.post('/getOtherUserInfo', function (req,res) {
+  console.log("getUserInfo Start");
+  // console.log("get User Info: "+JSON.stringify(req.body));
+  var email = req.body.email;
   // console.log(email);
   User.findOne({email: email}, function(err, info){
     if(err) console.log("getUserInfo err : "+err);

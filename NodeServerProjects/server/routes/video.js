@@ -244,10 +244,12 @@ router.post('/checkVideo', function(req,res){
             else{
               content.userList[userListIndex].newVideo.authen = 0;
               content.userList[userListIndex].result = 0;
+              content.balance += otherUser.contentList[contentListIndex].money;
 
               otherUser.contentList[contentListIndex].joinState = 4;
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 0;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
+              otherUser.contentList[contentListIndex].money = 0;
 
               console.log("push message 문 전");
               if(otherUser.pushToken != null){

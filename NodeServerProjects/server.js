@@ -432,6 +432,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       var contentId = contentList[i].id;
       var contentName = contentList[i].name;
       var userListCount = contentList[i].userList.length;
+      var balance = contentList[i].balance;
       for(var j = 0; j < userListCount; j ++){
         if(contentList[i].userList[j].result == 2) contentList[i].userList[j].result = 1;
       }
@@ -441,7 +442,8 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       });
 
       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
-        for(var i = 0; i < Object.keys(userList).length; i++){
+        var successUserNum = Object.keys(userList).length;
+        for(var i = 0; i < successUserNum; i++){
           var contentListCount = userList[i].contentList.length;
           var contentListIndex;
           for (var j = 0; j < contentListCount; j++) {
@@ -451,6 +453,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
             }
           }
           userList[i].contentList[contentListIndex].joinState = 2;
+          userList[i].contentList[contentListIndex].money += (balance / successUserNum) * 0.8;
           userList[i].save(function(err, savedDocument) {
             if (err) console.log("save err : "+err);
           });
@@ -491,6 +494,9 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           }
         }
         content.userList[userListIndex].result = 0;
+        content.balance += userList[i].contentList[authenContentIndex].money;
+
+        userList[i].contentList[authenContentIndex].money = 0;
         userList[i].contentList[authenContentIndex].joinState = 4;
         userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
 
