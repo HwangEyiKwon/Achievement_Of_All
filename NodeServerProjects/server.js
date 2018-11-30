@@ -68,6 +68,7 @@ require('./config/passport')(passport);
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
 //   imagePath: "ParkSeungHyun17",
+//   pushToken: "",
 //   contentList:[{
 //     contentId : 0,
 //     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}, {path: "2018-11-18", authen: 1}],
@@ -88,6 +89,7 @@ require('./config/passport')(passport);
 //   phoneNumber : "01093969408",
 //   nickName : "4.5man",
 //   imagePath: "HwangEyiKWON17",
+//   pushToken: "",
 //   contentList:[{
 //     contentId : 0,
 //     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
@@ -109,6 +111,7 @@ require('./config/passport')(passport);
 //   phoneNumber : "01093969408",
 //   nickName : "seoulUnivMan",
 //   imagePath: "ChoGeonHee17",
+//   pushToken: "",
 //   contentList:[{
 //     contentId : 0,
 //     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
@@ -129,16 +132,17 @@ require('./config/passport')(passport);
 //   phoneNumber : "01093969408",
 //   nickName : "Man",
 //   imagePath: "JangDongIk17",
+//   pushToken: "",
 //   contentList:[{
 //     contentId : 3,
 //     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
 //     contentName: "NoSmoking",
-//     joinState : 2,
-//     authenticationDate : "2018-11-21",
-//     isUploaded : 1,
-//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
+//     joinState : 1,
+//     authenticationDate : "2018-11-29",
+//     isUploaded : 0,
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "29", authen: 2}],
 //     money: 100000,
-//     reward: 40000,
+//     reward: 0,
 //     rewardCheck: 0
 //   }]
 // });
@@ -149,7 +153,19 @@ require('./config/passport')(passport);
 //   phoneNumber : "01084222446",
 //   nickName : "HandsomeMan",
 //   imagePath: "HEK",
-//   contentList:[]
+//   pushToken: "",
+//   contentList:[{
+//     contentId : 3,
+//     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
+//     contentName: "NoSmoking",
+//     joinState : 1,
+//     authenticationDate : "2018-11-25",
+//     isUploaded : 1,
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
+//     money: 100000,
+//     reward: 0,
+//     rewardCheck: 0
+//   }]
 //  });
 //
 // user1.password = user1.generateHash("123");
@@ -237,11 +253,12 @@ require('./config/passport')(passport);
 //   name: "NoSmoking",
 //   roomNum: 4,
 //   startDate: "01/01/2018",
-//   endDate: "11/28/2018",
-//   isDone: 1,
-//   userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 1}],
+//   endDate: "12/25/2018",
+//   isDone: 0,
+//   userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
+//              {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
 //   description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
-//   balance: 0
+//   balance: 100000
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
@@ -458,10 +475,11 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   }
 
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
-  var yesterday = todayYear+ "-" + todayMonth + "-" + todayDay-1;
+  var yesterday = todayYear+ "-" + todayMonth + "-" + (todayDay-1);
+  var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
 
   /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
-  content.find({"endDate" : yesterday}, function(err, contentList){
+  content.find({"endDate" : yesterdayDate}, function(err, contentList){
     console.log("contents done code in!!!!!");
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
@@ -488,16 +506,19 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
             }
           }
           userList[i].contentList[contentListIndex].joinState = 2;
-//          userList[i].contentList[contentListIndex].money += (balance / successUserNum) * 0.8;
           userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
+          console.log("name: "+userList[i].name + "reward: "+userList[i].contentList[contentListIndex].reward);
           userList[i].save(function(err, savedDocument) {
             if (err) console.log("save err : "+err);
           });
-        }
-        //푸쉬메시지 전송
-        if(userList[i].pushToken != null) {
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 0, 5, 0);
-          sendPushMessage(userList[i], contentListIndex, sendTime, fcmMessageFormat3);
+          //푸쉬메시지 전송
+          console.log("push token: " + userList[i].pushToken);
+          if(userList[i].pushToken != null) {
+            console.log("푸쉬메시지 성공 전송");
+            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
+            sendPushMessage(userList[i], contentListIndex, sendTime, fcmMessageFormat3);
+          }
+          else console.log("pushtoken is null");
         }
       });
     }
@@ -506,11 +527,14 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   /* 모든 유저에 대해 authentication Date가 지났는데 인증 안된사람 체크 후 실패 메시지 전송 */
   user.find({"contentList.authenticationDate" : yesterday, "contentList.isUploaded": 0, "contentList.joinState" : 1}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
+      console.log("name: "+userList[i].name);
       var authenContentIndex;
       var contentListCount = userList[i].contentList.length;
 
       var userListCount;
       var userListIndex;
+
+      var userEmail = userList[i].email;
 
       for(var j = 0; j < contentListCount; j++){
         if(userList[i].contentList[j].authenticationDate === yesterday){
@@ -520,70 +544,72 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       }
       var contentName = userList[i].contentList[authenContentIndex].contentName;
       var contentId = userList[i].contentList[authenContentIndex].contentId;
+      var calendarIndex = userList[i].contentList[authenContentIndex].calendar.length - 1;
+      var userMoney = userList[i].contentList[authenContentIndex].money;
+
+      userList[i].contentList[authenContentIndex].money = 0;
+      userList[i].contentList[authenContentIndex].joinState = 4;
+      userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
+
+      userList[i].save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
 
       content.findOne({name: contentName, id: contentId}, function(err, content){
+        console.log("content id: " + content.id);
         userListCount = content.userList.length;
-        var calendarIndex = userList[i].contentList[authenContentIndex].calendar.length - 1;
 
         for (var m = 0; m < userListCount; m++) {
-          if (content.userList[m].email === userList[m].email) {
+          if (content.userList[m].email === userEmail) {
             userListIndex = m;
             break;
           }
         }
         content.userList[userListIndex].result = 0;
-        content.balance += userList[i].contentList[authenContentIndex].money;
-
-        userList[i].contentList[authenContentIndex].money = 0;
-        userList[i].contentList[authenContentIndex].joinState = 4;
-        userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
+        content.balance += userMoney;
 
         content.save(function(err, savedDocument) {
           if (err)
             return console.error(err);
         });
-        userList[i].save(function(err, savedDocument) {
-          if (err)
-            return console.error(err);
-        });
 
-        User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
-          var successUserNum = Object.keys(userList).length;
+        user.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList2){
+          var balance = content.balance;
+          var successUserNum = Object.keys(userList2).length;
           for(var i = 0; i < successUserNum; i++) {
-            if(userList[i].email === otherEmail){
+            if(userList2[i].email === userEmail){
               successUserNum --;
               break;
             }
           }
 
-          for(var i = 0; i < Object.keys(userList).length && userList[i].email !== otherEmail; i++) {
+          for(var i = 0; i < Object.keys(userList2).length && userList2[i].email !== userEmail; i++) {
             var contentListIndex;
-            var contentListCount = userList[i].contentList.length;
+            var contentListCount = userList2[i].contentList.length;
 
             for (var j = 0; j < contentListCount; j++) {
-              if (userList[i].contentList[j].contentName === contentName) {
+              if (userList2[i].contentList[j].contentName === contentName) {
                 contentListIndex = j;
                 break;
               }
             }
-            userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
+            userList2[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
 
-            userList[i].save(function(err, savedDocument) {
+            userList2[i].save(function(err, savedDocument) {
               if (err)
                 return console.error(err);
             });
           }
         });
-
-        //푸쉬메시지 전송
-        if(userList[i].pushToken != null){
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 0, 5, 0);
-          sendPushMessage(userList[i], authenContentIndex, sendTime, fcmMessageFormat2);
-        }
       });
-
+      //푸쉬메시지 전송
+      if(userList[i].pushToken != null){
+        console.log("실패 푸쉬메시지 전송");
+        var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+        sendPushMessage(userList[i], authenContentIndex, sendTime, fcmMessageFormat2);
+      }
     }
-
   });
 
   /* 모든 유저에 대해 authentication Date가 오늘인지 체크해서 푸쉬메시지 전송 */
@@ -627,6 +653,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       var remainedDate = (todayDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
 
       var achievementRate = (remainedDate / totalDate) * 100;
+      if(achievementRate >= 100) achievementRate = 100;
 
       contentList[i].achievementRate = achievementRate;
       console.log("Achievement Rate =" + contentList[i].achievementRate);
@@ -650,6 +677,8 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
   }
 
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
+  var yesterday = todayYear+ "-" + todayMonth + "-" + (todayDay-1);
+  var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
 
   content.find({isDone: 0}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
@@ -657,6 +686,7 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
       var remainedDate = (todayDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
 
       var achievementRate = (remainedDate / totalDate) * 100;
+      if(achievementRate >= 100) achievementRate = 100;
 
       contentList[i].achievementRate = achievementRate;
       console.log("Achievement Rate =" + contentList[i].achievementRate);
@@ -666,6 +696,75 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
     }
   });
 });
+
+
+function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
+  console.log('6');
+  var fcm = new FCM(serverKey);
+  var client_token = user.pushToken;
+  var push_data = {
+    // 수신대상
+    to: client_token,
+    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+    notification: {
+      title: "모두의 달성",
+      body: fcmMessageFormat,
+      sound: "default",
+      // click_action: "FCM_PLUGIN_ACTIVITY",
+      click_action:"OPEN_ACTIVITY",
+      icon: "fcm_push_icon"
+    },
+    // 메시지 중요도
+    priority: "high",
+    // App 패키지 이름
+    restricted_package_name: "com.example.parkseunghyun.achievementofall",
+  };
+
+  var scheduler = schedule.scheduleJob(sendTime, function(){
+    console.log('7');
+    if(fcmMessageFormat === fcmMessageFormat1){
+      if(user.contentList[arrayIndex].isUploaded == 1 ) {
+        console.log('before user authen : ' + user.contentList[0].isUploaded);
+        user.contentList[arrayIndex].isUploaded = 0;
+        console.log('after user authen : ' + user.contentList[0].isUploaded);
+      }
+      else{
+        console.log('8');
+        fcm.send(push_data, function(err, response) {
+          if (err) {
+            console.error('Push메시지 발송에 실패했습니다.');
+            console.error(err);
+            return;
+          }
+          console.log('Push메시지가 발송되었습니다.');
+          console.log(response);
+        });
+      };
+    }
+    else if(fcmMessageFormat === fcmMessageFormat2){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('실패 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('실패 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(fcmMessageFormat === fcmMessageFormat3){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('성공 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('성공 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+  });
+}
 
 
 //푸쉬메시지 펑션
