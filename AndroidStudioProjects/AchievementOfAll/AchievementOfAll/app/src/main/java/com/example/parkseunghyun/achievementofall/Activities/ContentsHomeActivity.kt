@@ -249,6 +249,8 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             println(success)
             var others = success.getJSONArray("others")
 
+            println("TESTER___" + others)
+
             recyclerView = findViewById(R.id.recystories)
             val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
             recyclerView!!.layoutManager = layoutManager

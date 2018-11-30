@@ -12,6 +12,8 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
@@ -78,7 +80,12 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
             println(success)
 
             // 사용자 프로필 사진 갱신
-            Glide.with(this).load("${ipAddress}/getOtherUserImage/"+otherUserEmail).into(otherUserProfile)
+            Glide
+                    .with(this)
+                    .load("${ipAddress}/getOtherUserImage/"+otherUserEmail)
+                    .apply(RequestOptions().skipMemoryCache(true))
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                    .into(otherUserProfile)
 
             // 사용자 참여 컨텐츠 정보 갱신
             var contentList: JSONObject

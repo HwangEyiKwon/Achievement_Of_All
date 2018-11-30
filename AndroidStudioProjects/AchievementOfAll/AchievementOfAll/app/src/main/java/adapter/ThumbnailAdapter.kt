@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.R
@@ -46,7 +48,13 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
             // 비디오 썸네일 코드
             val requestOptions = RequestOptions()
             requestOptions.isMemoryCacheable
-            Glide.with(context).setDefaultRequestOptions(requestOptions).load("${ipAddress}/getVideo/${jwtToken}/${contentName}/${videoPath}").into(holder.thumbnailView)
+            Glide
+                    .with(context)
+                    .setDefaultRequestOptions(requestOptions)
+                    .load("${ipAddress}/getVideo/${jwtToken}/${contentName}/${videoPath}")
+                    .apply(RequestOptions().skipMemoryCache(true))
+                    .into(holder.thumbnailView)
+
             holder.videoName = videoPath
         }
         else if(who == "other"){
@@ -59,8 +67,15 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
             // 비디오 썸네일 코드
             val requestOptions = RequestOptions()
             requestOptions.isMemoryCacheable
-            Glide.with(context).setDefaultRequestOptions(requestOptions).load("${ipAddress}/getOtherUserVideo/${email}/${contentName}/${videoPath}").into(holder.thumbnailView)
+            Glide
+                    .with(context)
+                    .setDefaultRequestOptions(requestOptions)
+                    .load("${ipAddress}/getOtherUserVideo/${email}/${contentName}/${videoPath}")
+                    .apply(RequestOptions().skipMemoryCache(true))
+                    .into(holder.thumbnailView)
+
             holder.videoName = videoPath
+
         }
 
     }

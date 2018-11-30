@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.ExoplayerActivity
@@ -44,7 +46,12 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
         // 사용자 참여 컨텐츠 이미지 받아오기
         println("이미지 이름"+joinedContentsModels[position].name)
         val contentImage = joinedContentsModels[position].name
-        Glide.with(this.context).load("${ipAddress}/getContentImage/${contentImage}").into(holder.profile)
+        Glide
+                .with(this.context)
+                .load("${ipAddress}/getContentImage/${contentImage}")
+                .apply(RequestOptions().skipMemoryCache(true))
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                .into(holder.profile)
         holder.name.text = joinedContentsModels[position].name
 
     }

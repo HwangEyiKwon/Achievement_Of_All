@@ -1,29 +1,38 @@
 package com.example.parkseunghyun.achievementofall.Activities
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.text.TextUtils
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
+import com.example.parkseunghyun.achievementofall.Configurations.ResultObject
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
+import com.example.parkseunghyun.achievementofall.Interfaces.ImageUploadInterface
+import com.example.parkseunghyun.achievementofall.Interfaces.VideoSendingInterface
 import com.example.parkseunghyun.achievementofall.R
 import kotlinx.android.synthetic.main.activity_profile_edit.*
+import okhttp3.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
-import java.io.DataOutputStream
-import java.io.FileInputStream
-import java.net.HttpURLConnection
-import java.net.URL
-
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.io.IOException
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 
 class ProfileEditActivity : AppCompatActivity() {
@@ -34,6 +43,11 @@ class ProfileEditActivity : AppCompatActivity() {
 
     var name: String ?= null
     var phoneNumber: String ?= null
+    var editedPhoneNumber: String? = null
+    private val REQUEST_FOR_IMAGE_EDIT = 1
+
+    private var uri: Uri? = null
+    private var pathToStoredImage: String? = null
 
     // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
@@ -54,14 +68,20 @@ class ProfileEditActivity : AppCompatActivity() {
 
         jwtToken = loadToken()
 
-        Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(userImage)
+        Glide
+                .with(this)
+                .load("${ipAddress}/getUserImage/"+jwtToken)
+                .apply(RequestOptions().skipMemoryCache(true))
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                .into(userImage)
 
 
         println("이미지이미지")
         println(userImage)
 
         bt_edit.setOnClickListener{
-            edit()
+//            edit()
+            uploadImageToServer(pathToStoredImage!!)
         }
 
         bt_image.setOnClickListener {
@@ -69,10 +89,7 @@ class ProfileEditActivity : AppCompatActivity() {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_PICK
-            startActivityForResult(intent, 1)
-
-            println("이미지이미지2")
-            println(userImage)
+            startActivityForResult(intent, REQUEST_FOR_IMAGE_EDIT)
 
         }
         goPasswordEdit.setOnClickListener {
@@ -85,168 +102,109 @@ class ProfileEditActivity : AppCompatActivity() {
 
     }
 
+
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         // Check which request we're responding to
-        if (requestCode == 1) {
-            // Make sure the request was successful
-
-                try {
-                    // 선택한 이미지에서 비트맵 생성
-                    val `in` = contentResolver.openInputStream(data.data!!)
-                    println(`in`)
-
-                    val img = BitmapFactory.decodeStream(`in`)
-                    `in`!!.close()
-                    // 이미지 표시
-                    println("개다")
-                    println(data.data!!)
-
-                    userImage!!.setImageBitmap(img)
+        println("ERROR CHECK__ " + resultCode)
 
 
-                    val urlString = "${ipAddress}/editUserImage/$jwtToken"
+        if ( resultCode == Activity.RESULT_OK){
+            when(requestCode) {
+                REQUEST_FOR_IMAGE_EDIT -> {
+                    uri = data?.data
+                    pathToStoredImage = getRealPathFromURIPath(uri!!, this)
+                    userImage!!.setImageURI(uri)
+                }
+            }
+        }else if ( resultCode == Activity.RESULT_CANCELED){
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
 
-//                    val proj = arrayOf(MediaStore.Images.Media.DATA)
-//
-//                    val cursor = getContentResolver().query(data.data!!, proj, null, null, null);
-//                    val index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//
-//                    cursor.moveToFirst();
-//                    var path = cursor.getString(index);
-//                    var absolutePath = path.substring(5);
+    }
 
-//                    val proj = arrayOf(MediaStore.Images.Media.DATA)
-//                    val cursor = contentResolver.query(data.data!!, proj, null, null, null)
-//                    var column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//                    println(column_index)
-//                    cursor!!.moveToFirst()
-//                    val absolutePath = cursor.getString(column_index)
+    private fun uploadImageToServer(pathToVideoFile: String) {
+        val videoFile = File(pathToVideoFile)
+        val videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile)
+        val vFile = MultipartBody.Part.createFormData("video", videoFile.name, videoBody)
 
-//                    cursor.close()
+        name = edit_nickname.text.toString()
 
-                    println("앱솔" )
-//                    println(getRealPathFromURI(data.data!!))
-                    println(getRealPathFromURIPath( data.data!!,this))
+        // TODO: 인코딩해서 보내야되네 싀벌...
+        var name_encoded = URLEncoder.encode(name, "utf-8")
+        name_encoded = URLDecoder.decode(name_encoded, "utf-8")
+        println("한글테스트 " + name_encoded)
+        editedPhoneNumber = edit_phone_number.text.toString()
 
-                    var absolutePath = getRealPathFromURIPath( data.data!!,this)
+        val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(object: Interceptor {
+            @Throws(IOException::class)
+            override fun intercept(chain: Interceptor.Chain?): okhttp3.Response {
+                val original = chain!!.request()
+                val request = original.newBuilder()
+                        .header("jwt_token", jwtToken)
+                        .header("name", name_encoded)
+                        .header("phone_number", editedPhoneNumber.toString())
+                        .method(original.method(), original.body())
+                        .build()
 
-                    DoFileUpload(urlString, absolutePath)
+                println("TESTERCHO---" + jwtToken + "_______" + name + "_______" + editedPhoneNumber.toString())
+                return chain!!.proceed(request)
+            }
+        })
 
+        val client = httpClient.build()
+        val retrofit = Retrofit.Builder()
+                .baseUrl(ipAddress)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client) // >>>>>>
+                .build()
+        val vInterface = retrofit.create(ImageUploadInterface::class.java)
+        val serverCom = vInterface.uploadImageToServer(vFile)
 
-                } catch (e: Exception) {
-                    e.printStackTrace()
+        serverCom.enqueue(object : Callback<ResultObject> {
+            override fun onResponse(call: Call<ResultObject>, response: Response<ResultObject>) {
+                val result = response.body()
+
+                if (!TextUtils.isEmpty(result.success)) {
+                    Toast.makeText(applicationContext, "이미지 업로드 완료", Toast.LENGTH_SHORT).show()
+                    finish() //여기다가 두는것이 핵심
+                }
+                else{
                 }
 
-
-        }
+            }
+            override fun onFailure(call: Call<ResultObject>, t: Throwable) {
+                Toast.makeText(applicationContext, "이미지 업로드 실패", Toast.LENGTH_SHORT).show()
+                t.printStackTrace()
+            }
+        })
     }
 
 
-    private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String {
+
+
+
+    private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String? {
         val cursor = activity.contentResolver.query(contentURI, null, null, null, null)
         if (cursor == null) {
+
             return contentURI.path
+
         } else {
+
             cursor.moveToFirst()
             val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
             return cursor.getString(idx)
+
         }
     }
-    fun DoFileUpload(apiUrl: String, absolutePath: String) {
-        println("개다2")
-        HttpFileUpload(apiUrl, "", absolutePath);
-    }
-
-    var lineEnd = "\r\n";
-    var twoHyphens = "--";
-    var boundary = "*****";
-
-    fun HttpFileUpload(urlString: String, params: String, fileName: String ) {
-
-            println("개다3")
-            var mFileInputStream = FileInputStream(fileName);
-            var connectUrl = URL(urlString);
-            Log.d("Test", "mFileInputStream  is " + mFileInputStream);
-            println("개다4")
-            // open connection
-            var conn = connectUrl.openConnection() as HttpURLConnection;
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            println("개다5")
 
 
-            // write data
-            var dos = DataOutputStream(conn.outputStream);
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + fileName+"\"" + lineEnd);
-            dos.writeBytes(lineEnd);
 
-            var bytesAvailable = mFileInputStream.available();
-            var maxBufferSize = 1024;
-            var bufferSize = Math.min(bytesAvailable, maxBufferSize);
-
-            var buffer = byteArrayOf();
-            var bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
-
-            Log.d("Test", "image byte is " + bytesRead);
-
-            // read image
-            println("개다6")
-            while (bytesRead > 0) {
-                dos.write(buffer, 0, bufferSize);
-                bytesAvailable = mFileInputStream.available();
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
-            }
-
-            println("개다7")
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-            // close streams
-            Log.e("Test" , "File is written");
-            mFileInputStream.close();
-            dos.flush(); // finish upload...
-            println("개다8")
-            // get response
-//            var ch = 0;
-//            var i = conn.getInputStream();
-//            var b = StringBuffer();
-//            while( ( ch = i.read() ) != -1 ){
-//                b.append( (char)ch );
-//            }
-//            var s= b.toString();
-//            Log.e("Test", "result = " + s);
-//            mEdityEntry.setText(s);
-            dos.close();
-
-
-    }
-
-
-    private fun edit(){
-
-        val name = edit_nickname.text.toString()
-        val phoneNumber = edit_phone_number.text.toString()
-        val token = jwtToken
-
-        val jsonObject = JSONObject()
-
-        jsonObject.put("name", name)
-        jsonObject.put("phoneNumber", phoneNumber)
-        jsonObject.put("token", token)
-
-       VolleyHttpService.edit(this, jsonObject){success ->
-
-           Toast.makeText(this, "수정 완료.", Toast.LENGTH_LONG).show()
-           finish()
-
-       }
-    }
     private fun loadToken(): String{
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 

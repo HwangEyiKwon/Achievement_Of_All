@@ -6,7 +6,7 @@
     android:layout_height="400dp"
     android:layout_gravity="center"
     android:background="@drawable/round_background"
-    tools:context="LoginActivity">
+    tools:context=".Activities.LoginActivity">
 
     <EditText
         android:id="@+id/send_email"

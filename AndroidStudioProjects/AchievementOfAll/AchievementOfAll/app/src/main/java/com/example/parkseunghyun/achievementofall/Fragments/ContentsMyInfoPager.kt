@@ -191,6 +191,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
             when (requestCode){
                 REQUEST_VIDEO_CAPTURE -> {
+
                     uri = data?.data
                     pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
                     uploadVideoToServer(pathToStoredVideo!!)

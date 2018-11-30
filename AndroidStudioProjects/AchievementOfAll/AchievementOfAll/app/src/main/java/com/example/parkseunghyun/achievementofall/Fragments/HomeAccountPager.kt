@@ -18,6 +18,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Activities.ProfileEditActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
@@ -102,8 +104,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         editButton!!.setOnClickListener {
             println("editedit")
-//            homeAccountPagerContext!!.startActivity<ProfileEditActivity>()
-
 
             val goToEditPage = Intent(homeAccountPagerContext, ProfileEditActivity::class.java)
 
@@ -113,23 +113,9 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
             val contextToActivity = homeAccountPagerContext as Activity
             contextToActivity.startActivityForResult(goToEditPage, REQUEST_FROM_EDIT)
 
-//            val goToContents = Intent(context, ContentsHomeActivity::class.java)
-//            contextToActivity.startActivityForResult(goToContents, REQUEST_FROM_SEARCH)
-
-//                context.startActivity<ContentsHomeActivity>(
-//                        "contentName" to  list[position]
-//                )
-
-
-
         }
 
         return view_
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
     }
 
     // 사용자 페이지 정보 Setting 함수
@@ -145,8 +131,16 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
             name!!.setText(success.getString("name"))
             phoneNumber!!.setText(success.getString("phoneNumber"))
 
+
             // 사용자 프로필 사진 갱신
-            Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(profile)
+            Glide
+                    .with(this)
+                    .load("${ipAddress}/getUserImage/"+jwtToken)
+                    .apply(RequestOptions().skipMemoryCache(true))
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                    .into(profile)
+
+            println("너 갱신하니?")
 
             // 사용자 참여 컨텐츠 정보 갱신
             var contentList: JSONObject
@@ -187,7 +181,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         joinedContentsView!!.adapter = joinedContentsAdapter
 
     }
-
 
     // 사용자 비디오 목록 View 생성 함수
     private fun generateVideoCollection() {

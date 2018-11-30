@@ -157,7 +157,6 @@ class HomeActivity : AppCompatActivity() {
             viewPager?.adapter = homePagerAdapter
             viewPager!!.currentItem = homeTab!!.selectedTabPosition
 
-
         }
 
     }
@@ -207,7 +206,8 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        println("TEST---- HomeActivity로 오나?" + requestCode)
+        println("TEST---- HomeActivity로 오나?" + resultCode)
+
 
 
         when (requestCode) {
@@ -224,6 +224,7 @@ class HomeActivity : AppCompatActivity() {
                 println("TEST----- EDIT??")
                 generateTabLayout(REQUEST_UPDATE)
             }
+
 
         }
 

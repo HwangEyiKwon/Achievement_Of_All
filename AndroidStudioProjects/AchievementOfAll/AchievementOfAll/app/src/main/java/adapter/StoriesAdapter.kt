@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.ExoplayerActivity
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
@@ -36,10 +38,11 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         var email = storiesModels[position].email
-        Glide.with(this.context).load("${ipAddress}/getOthersImage/$email").into(holder.profile)
-//        holder.profile.setImageResource(storiesModels[position].profile!!)
+        Glide
+                .with(this.context)
+                .load("${ipAddress}/getOthersImage/$email")
+                .into(holder.profile)
         holder.name.text = storiesModels[position].name
-//        Glide.with(this).load("${ipAddress}/getUserImage/"+jwtToken).into(profile)
 
     }
 
@@ -79,12 +82,6 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
             val contextToActivity = context as Activity
 
             contextToActivity.startActivityForResult(goToExoPlayer, 101)
-
-//            context.startActivity<ExoplayerActivity>(
-//                    "email" to email,
-//                    "contentName" to contentName,
-//                    "who" to "others"
-//            )e
         }
     }
 

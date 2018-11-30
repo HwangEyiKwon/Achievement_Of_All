@@ -35,7 +35,6 @@
         android:hint="Name"
         android:inputType="textPersonName"
         android:textColorHint="@color/icongrey"
-        app:layout_constraintBottom_toTopOf="@+id/text_password2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +53,6 @@
         android:hint="Phone Number"
         android:inputType="phone"
         android:textColorHint="@color/icongrey"
-        app:layout_constraintBottom_toTopOf="@+id/text_password2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,44 +77,6 @@
         app:layout_constraintTop_toBottomOf="@+id/text_password"
         app:layout_constraintVertical_bias="0.807" />
 
-    <!--<TextView-->
-    <!--android:id="@+id/goAppInfo"-->
-    <!--android:layout_width="60dp"-->
-    <!--android:layout_height="19dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:layout_marginEnd="36dp"-->
-    <!--android:layout_marginStart="308dp"-->
-    <!--android:clickable="true"-->
-    <!--android:text="앱 정보"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/goPassword"-->
-    <!--android:layout_width="100dp"-->
-    <!--android:layout_height="19dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:layout_marginEnd="96dp"-->
-    <!--android:layout_marginStart="160dp"-->
-    <!--android:clickable="true"-->
-    <!--android:text="비밀번호 찾기"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toStartOf="@+id/goAppInfo"-->
-    <!--app:layout_constraintHorizontal_bias="0.105"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/goLogin"-->
-    <!--android:layout_width="52dp"-->
-    <!--android:layout_height="19dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:layout_marginStart="36dp"-->
-    <!--android:clickable="true"-->
-    <!--android:text="로그인"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -132,19 +92,25 @@
 
     <Button
         android:id="@+id/bt_image"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="152dp"
-        android:text="이미지 업로드"
-        app:layout_constraintTop_toBottomOf="@+id/edit_phone_number"
-        tools:layout_editor_absoluteX="58dp" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round2"
+        android:text="이미지 선택"
+        android:textColor="@color/colorPrimaryDark"
+        android:fontFamily="@font/font5"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_phone_number" />
 
     <ImageView
         android:id="@+id/userImage"
-        android:layout_width="73dp"
-        android:layout_height="123dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:scaleType="fitCenter"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_phone_number"
         app:srcCompat="@drawable/barackobama" />
