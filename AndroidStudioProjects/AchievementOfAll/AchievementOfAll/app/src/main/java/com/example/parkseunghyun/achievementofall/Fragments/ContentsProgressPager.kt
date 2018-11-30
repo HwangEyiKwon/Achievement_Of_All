@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Activities.RewardActivity
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
@@ -33,6 +34,9 @@ class ContentsProgressPager : Fragment() {
 
     private var reward: TextView?= null
     private var money: TextView?= null
+
+    private var rewardMoney: Int ?= null
+    private var currentMoney: Int ?= null
 
     private val REWARD_CODE = 222
 
@@ -70,6 +74,7 @@ class ContentsProgressPager : Fragment() {
             else->{
 
                 rewardButton!!.isEnabled = false
+                rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
 
             }
         }
@@ -79,14 +84,35 @@ class ContentsProgressPager : Fragment() {
 
         rewardButton!!.setOnClickListener {
 
-            val goToReward = Intent(context, RewardActivity::class.java)
-            goToReward.putExtra("token", jwtToken)
-            goToReward.putExtra("contentName", contentName)
-            val contextToActivity = context as Activity
-            contextToActivity.startActivityForResult(goToReward, REWARD_CODE)
+            rewardCheck ()
         }
 
         return view_
+    }
+    fun rewardCheck (){
+
+        val jsonObject = JSONObject()
+        jsonObject.put("token", jwtToken)
+        jsonObject.put("contentName", contentName)
+
+        VolleyHttpService.rewardCheck(this.context, jsonObject) { success ->
+
+            println(success)
+            if(success.getBoolean("success")){
+
+                val goToReward = Intent(context, RewardActivity::class.java)
+                goToReward.putExtra("token", jwtToken)
+                goToReward.putExtra("contentName", contentName)
+                goToReward.putExtra("rewardMoney", rewardMoney)
+                goToReward.putExtra("currentMoney", currentMoney)
+
+                val contextToActivity = context as Activity
+                contextToActivity.startActivityForResult(goToReward, REWARD_CODE)
+
+            }else{
+                Toast.makeText(this.context,"이미 보상을 받으셨습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
     private fun getCurrentMoney(){
 
@@ -101,6 +127,8 @@ class ContentsProgressPager : Fragment() {
 
             reward!!.text = success.getInt("reward").toString()
             money!!.text = success.getInt("money").toString()
+            rewardMoney = success.getInt("reward")
+            currentMoney = success.getInt("money")
 
         }
 
@@ -126,7 +154,7 @@ class ContentsProgressPager : Fragment() {
             println("TESTTEST: " + rate)
 
             if(joinState == 0){
-                achievementRate!!.setText("목표에 달성하셨습니다!! 축하드립니다.!!")
+                achievementRate!!.setText("컨텐츠 시작 전입니다...........")
                 progress.visibility = View.VISIBLE
                 progress.progress = 0
             }
