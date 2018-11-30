@@ -65,17 +65,12 @@ class ContentsProgressPager : Fragment() {
 
 
         when(joinState){
-
             2 -> {
-
                 rewardButton!!.isEnabled = true
-
             }
             else->{
-
                 rewardButton!!.isEnabled = false
                 rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
-
             }
         }
 
@@ -83,7 +78,6 @@ class ContentsProgressPager : Fragment() {
         getCurrentMoney()
 
         rewardButton!!.setOnClickListener {
-
             rewardCheck ()
         }
 
@@ -100,14 +94,18 @@ class ContentsProgressPager : Fragment() {
             println(success)
             if(success.getBoolean("success")){
 
-                val goToReward = Intent(context, RewardActivity::class.java)
-                goToReward.putExtra("token", jwtToken)
-                goToReward.putExtra("contentName", contentName)
-                goToReward.putExtra("rewardMoney", rewardMoney)
-                goToReward.putExtra("currentMoney", currentMoney)
+                if(joinState == 3){
+                    
+                }else{
+                    val goToReward = Intent(context, RewardActivity::class.java)
+                    goToReward.putExtra("token", jwtToken)
+                    goToReward.putExtra("contentName", contentName)
+                    goToReward.putExtra("rewardMoney", rewardMoney)
+                    goToReward.putExtra("currentMoney", currentMoney)
 
-                val contextToActivity = context as Activity
-                contextToActivity.startActivityForResult(goToReward, REWARD_CODE)
+                    val contextToActivity = context as Activity
+                    contextToActivity.startActivityForResult(goToReward, REWARD_CODE)
+                }
 
             }else{
                 Toast.makeText(this.context,"이미 보상을 받으셨습니다.", Toast.LENGTH_SHORT).show();
