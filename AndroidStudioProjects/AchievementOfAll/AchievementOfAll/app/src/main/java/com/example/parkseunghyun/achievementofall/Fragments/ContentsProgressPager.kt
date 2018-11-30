@@ -95,7 +95,7 @@ class ContentsProgressPager : Fragment() {
             if(success.getBoolean("success")){
 
                 if(joinState == 3){
-                    
+
                 }else{
                     val goToReward = Intent(context, RewardActivity::class.java)
                     goToReward.putExtra("token", jwtToken)
@@ -123,10 +123,14 @@ class ContentsProgressPager : Fragment() {
 
             println(success)
 
-            reward!!.text = success.getInt("reward").toString()
-            money!!.text = success.getInt("money").toString()
-            rewardMoney = success.getInt("reward")
-            currentMoney = success.getInt("money")
+            if(joinState == 3){
+
+            }else{
+                reward!!.text = success.getInt("reward").toString()
+                money!!.text = success.getInt("money").toString()
+                rewardMoney = success.getInt("reward")
+                currentMoney = success.getInt("money")
+            }
 
         }
 
