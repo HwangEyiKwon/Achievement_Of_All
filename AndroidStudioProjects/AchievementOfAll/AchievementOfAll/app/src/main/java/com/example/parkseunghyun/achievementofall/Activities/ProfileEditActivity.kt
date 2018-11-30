@@ -1,5 +1,6 @@
 package com.example.parkseunghyun.achievementofall.Activities
 
+import android.Manifest
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
@@ -26,6 +27,7 @@ import okhttp3.*
 import org.jetbrains.anko.noHistory
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
+import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,7 +39,7 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 
 
-class ProfileEditActivity : AppCompatActivity() {
+class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     // jwt-token
     var jwtToken: String?= null
@@ -55,6 +57,9 @@ class ProfileEditActivity : AppCompatActivity() {
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
+    private val READ_REQUEST_CODE = 200
+    private var readImageIntent: Intent? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +74,10 @@ class ProfileEditActivity : AppCompatActivity() {
         edit_phone_number.setText(phoneNumber)
 
         jwtToken = loadToken()
+
+        readImageIntent = Intent()
+        readImageIntent!!.type = "image/*"
+        readImageIntent!!.action = Intent.ACTION_PICK
 
         Glide
                 .with(this)
@@ -107,11 +116,18 @@ class ProfileEditActivity : AppCompatActivity() {
 
         bt_image.setOnClickListener {
 
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_PICK
-            startActivityForResult(intent, REQUEST_FOR_IMAGE_EDIT)
+            if (EasyPermissions.hasPermissions(this, android.Manifest.permission.CAMERA)) {
+                println("권한 있니? 응 ")
+                startActivityForResult(readImageIntent, REQUEST_FOR_IMAGE_EDIT)
+            } else {
+                println("권한 없니? 요청하러감 ")
+                EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
 
+
+
+
+//            startActivity(intent)
         }
         goPasswordEdit.setOnClickListener {
             startActivity<PasswordEditActivity>(
@@ -120,7 +136,6 @@ class ProfileEditActivity : AppCompatActivity() {
             )
             finish()
         }
-
     }
 
     // 로그인
@@ -143,10 +158,10 @@ class ProfileEditActivity : AppCompatActivity() {
         println("TOKEN_TESTING:" + name + "----" +  editedPhoneNumber + "----" + jwtToken)
 
         VolleyHttpService.editProfileWithoutImage(this, jsonObject) { success ->
-            if (success.get("success") == true) { // 로그인 성공
+            if (success.get("success") == true) { //  성공
                 Toast.makeText(this, "수정 성공", Toast.LENGTH_LONG).show()
                 finish()
-            } else { // 로그인 실패
+            } else { //  실패
                 Toast.makeText(this, "수정 실패", Toast.LENGTH_LONG).show()
             }
         }
@@ -154,14 +169,16 @@ class ProfileEditActivity : AppCompatActivity() {
 
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // Check which request we're responding to
-        println("ERROR CHECK__ " + resultCode)
+        if(data == null) println("ERROR_TEST___FIND")
+        println("ERROR CHECKING " + resultCode)
 
-        if ( resultCode == Activity.RESULT_OK ) {
+        if ( resultCode == -1 ) {
             when(requestCode) {
                 REQUEST_FOR_IMAGE_EDIT -> {
-                    uri = data.data
+                    println("ERROR CHECKING????? ")
+                    uri = data!!.data
                     pathToStoredImage = getRealPathFromURIPath(uri!!, this)
                     userImage!!.setImageURI(uri)
                 }
@@ -169,7 +186,6 @@ class ProfileEditActivity : AppCompatActivity() {
         }else if ( resultCode == Activity.RESULT_CANCELED ) {
             return
         }
-        super.onActivityResult(requestCode, resultCode, data)
 
     }
 
@@ -199,8 +215,8 @@ class ProfileEditActivity : AppCompatActivity() {
                         .method(original.method(), original.body())
                         .build()
 
-                println("TESTERCHO---" + jwtToken + "_______" + name + "_______" + editedPhoneNumber.toString())
-                return chain.proceed(request)
+                println("TESTERCHO---" + jwtToken + "_______" + name + "_______" + editedPhoneNumber.toString() + "_________" + pathToVideoFile)
+                return chain!!.proceed(request)
             }
         })
 
@@ -232,8 +248,12 @@ class ProfileEditActivity : AppCompatActivity() {
         })
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
 
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
 
+    }
 
 
     private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String? {
@@ -258,4 +278,20 @@ class ProfileEditActivity : AppCompatActivity() {
 
         return auto.getString("token", "")
     }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>?) {
+        println("권한 그랜트로 왓니? 응 ")
+        when (requestCode) {
+            READ_REQUEST_CODE -> {
+                println("읽기 권한 들어왓니? 응 ")
+                startActivityForResult(readImageIntent, REQUEST_FOR_IMAGE_EDIT)
+            }
+        }
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>?) {
+
+    }
+
+
 }

@@ -40,10 +40,11 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
         var email = storiesModels[position].email
         Glide
                 .with(this.context)
-                .load("${ipAddress}/getOthersImage/$email")
+                .load("${ipAddress}/getOtherUserImage/$email")
                 .apply(RequestOptions().skipMemoryCache(true))
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                 .into(holder.profile)
+
         holder.name.text = storiesModels[position].name
         println("STORY TEST: 서버로부터 받은 name은? ---- " + holder.name.text)
     }

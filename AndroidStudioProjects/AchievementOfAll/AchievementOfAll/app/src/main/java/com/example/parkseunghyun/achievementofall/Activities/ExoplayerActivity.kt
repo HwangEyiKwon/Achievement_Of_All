@@ -162,9 +162,9 @@ class ExoplayerActivity : AppCompatActivity() {
 
         }
         authorizeButton.setOnClickListener{
-
             checkVideo()
-            this.finish()
+            player!!.stop() // 이게 꺼도 소리나는걸 방지.
+            finish()
         }
 
     }
