@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
@@ -102,7 +102,7 @@ require('./config/passport')(passport);
 //   }]
 // });
 //
-//  var user3 = new user({
+// var user3 = new user({
 //   name: "ChoGeonHee17",
 //   email: "cgh17@gmail.com",
 //   // password : user.generateHash("123"),
@@ -111,7 +111,7 @@ require('./config/passport')(passport);
 //   imagePath: "ChoGeonHee17",
 //   contentList:[{
 //     contentId : 0,
-//     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
+//     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1},{path: "2018-11-22", authen: 1},{path: "2018-11-26", authen: 0}],
 //     contentName: "NoSmoking",
 //     joinState : 1,
 //     authenticationDate : "2018-11-18",
@@ -122,7 +122,7 @@ require('./config/passport')(passport);
 //     rewardCheck: 0
 //   }]
 // });
-//  var user4 = new user({
+// var user4 = new user({
 //   name: "JangDongIk17",
 //   email: "jdi17@gmail.com",
 //   // password : user.generateHash("123"),
@@ -134,7 +134,7 @@ require('./config/passport')(passport);
 //     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
 //     contentName: "NoSmoking",
 //     joinState : 2,
-//     authenticationDate : "2018-11-21",
+//     authenticationDate : "2018-11-30",
 //     isUploaded : 1,
 //     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
 //     money: 100000,
@@ -142,7 +142,7 @@ require('./config/passport')(passport);
 //     rewardCheck: 0
 //   }]
 // });
-//  var user5 = new user({
+// var user5 = new user({
 //   name: "HEK",
 //   email: "hwangeyikwon@gmail.com",
 //   // password : user.generateHash("123"),
@@ -150,7 +150,7 @@ require('./config/passport')(passport);
 //   nickName : "HandsomeMan",
 //   imagePath: "HEK",
 //   contentList:[]
-//  });
+// });
 //
 // user1.password = user1.generateHash("123");
 // user1.save(function(err, savedDocument) {
@@ -387,6 +387,38 @@ user.findOneAndUpdate(
 //   console.log("date : "+threeDaysAgo);
 // } 얘를 나중에 authen 0 에서 1 로 바꾸는 애한테 끼워넣으면서 date 업데이트 해주면 됨.
 
+
+
+var fcm = new FCM(serverKey);
+var client_token ='frQc05beiQg:APA91bHNXrO-G8Oh5VLpinlp4C3VZX-B0uC607ER0M3J4XIl5d_1u0TMGA0IFECwXik6RpnI7AMuDOX2Fecn5D_JctYuJ70-OTPEB0yRkHDNY3lMNb6_W_q8qfPO8fyPQxCUwYYsRGvl';
+var push_data = {
+  // 수신대상
+  to: client_token,
+  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+  notification: {
+    title: "모두의 달성",
+    body: "앙 승현띠~~",
+    sound: "default",
+    // click_action: "FCM_PLUGIN_ACTIVITY",
+    click_action:"OPEN_ACTIVITY",
+    icon: "fcm_push_icon"
+  },
+  // 메시지 중요도
+  priority: "high",
+  // App 패키지 이름
+  restricted_package_name: "com.example.parkseunghyun.achievementofall",
+};
+
+fcm.send(push_data, function(err, response) {
+  if (err) {
+    console.error('실패 Push메시지 발송에 실패했습니다.');
+    console.error(err);
+    return;
+  }
+  console.log('실패 Push메시지가 발송되었습니다.');
+  console.log(response);
+});
+
 app.post('/sendToken', function(req, res) {
   console.log("sendToken Start");
   console.log(req.body.fcmToken);
@@ -434,9 +466,9 @@ app.post('/sendToken', function(req, res) {
       if(user.contentList[authenContentIndex].isUploaded != 1) {
         console.log('2: if moon');
 
-        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
-        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
-        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
+        var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 53, 0);
+        var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 54, 0);
+        var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 20, 55, 0);
         sendPushMessage(user, authenContentIndex, sendTime1, fcmMessageFormat1);
         sendPushMessage(user, authenContentIndex, sendTime2, fcmMessageFormat1);
         sendPushMessage(user, authenContentIndex, sendTime3, fcmMessageFormat1);
