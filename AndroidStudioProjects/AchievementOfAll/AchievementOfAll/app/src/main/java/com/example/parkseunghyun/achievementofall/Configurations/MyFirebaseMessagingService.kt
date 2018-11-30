@@ -5,10 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-
 import com.example.parkseunghyun.achievementofall.Activities.AppStartActivity
 import com.example.parkseunghyun.achievementofall.R
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -44,16 +42,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * @param messageBody FCM message body received.
      */
     private fun sendNotification(messageBody: String?) {
+
+        println("들어옴.....")
+
         val intent = Intent(this, AppStartActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT)
 
+        println(messageBody)
+
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("FCM로 부터 메세지가 왔습니다.")
-                .setContentText(messageBody)
+                .setContentText("들어온 내용"+messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)

@@ -30,7 +30,7 @@ router.get('/getUserImage/:jwtToken', function(req, res){
     }
     else{
       console.log("user.imagePath =" + user.imagePath);
-      if(user.imagePath == null || user.imagePath != user.name){
+      if(user.imagePath == null ){
         var filename = './server/user/profile.png'; //기본 이미지
       }
       else{
@@ -53,7 +53,7 @@ router.get('/getOtherUserImage/:email', function(req, res){
     }
     else{
       console.log("user.imagePath =" + user.imagePath);
-      if(user.imagePath == null || user.imagePath != user.name){
+      if(user.imagePath == null ){
         var filename = './server/user/profile.png'; //기본 이미지
       }
       else{

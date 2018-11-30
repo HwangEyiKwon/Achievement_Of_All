@@ -29,6 +29,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
         <activity android:name=".Activities.LoginActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".Activities.HomeActivity" />
         <activity android:name=".Activities.SignupActivity" android:theme="@style/AppTheme"/>
