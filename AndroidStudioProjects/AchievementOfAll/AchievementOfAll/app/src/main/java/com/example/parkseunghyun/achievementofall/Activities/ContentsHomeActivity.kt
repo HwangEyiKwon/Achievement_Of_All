@@ -260,10 +260,10 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             for(i in 0..(others.length()-1)){
                 val storiesModel = StoriesModel()
                 var other = others[i] as JSONObject
-                println(other)
                 storiesModel.email = other.getString("email")
                 storiesModel.name = other.getString("name")
                 storiesModel.contentName = content
+                println("STORY TEST: 스토리 뷰 생성할때 서버로부터 받는 email 및 name? ----" + storiesModel.email + " 그리고 " + storiesModel.name + " 컨텐츠는 " + storiesModel.contentName)
                 othersArrayList!!.add(storiesModel)
             }
 

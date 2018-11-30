@@ -387,5 +387,17 @@ object VolleyHttpService{
     }
 
 
+    fun editProfileWithoutImage (context: Context, jsonObject: JSONObject,success: (JSONObject) -> Unit){
+
+        var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/editProfileWithoutImage",jsonObject, Response.Listener{ response ->
+            println("서버 수신 editProfileWithoutImage: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러 editProfileWithoutImage: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(editRequest)
+    }
 
 }
