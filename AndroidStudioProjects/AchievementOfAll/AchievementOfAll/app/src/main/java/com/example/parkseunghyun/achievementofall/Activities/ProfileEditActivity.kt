@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
+import com.example.parkseunghyun.achievementofall.Configurations.MyFirebaseInstanceIDService
 import com.example.parkseunghyun.achievementofall.Configurations.ResultObject
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.ImageUploadInterface
@@ -22,6 +23,7 @@ import com.example.parkseunghyun.achievementofall.Interfaces.VideoSendingInterfa
 import com.example.parkseunghyun.achievementofall.R
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 import okhttp3.*
+import org.jetbrains.anko.noHistory
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 import retrofit2.Call
@@ -75,13 +77,32 @@ class ProfileEditActivity : AppCompatActivity() {
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                 .into(userImage)
 
-
         println("이미지이미지")
         println(userImage)
 
         bt_edit.setOnClickListener{
 //            edit()
-            uploadImageToServer(pathToStoredImage!!)
+            println("TESTERCHOCHO" + pathToStoredImage)
+
+            if(edit_nickname.text.toString() == ""){
+                Toast.makeText(this, "이름을 적어주세요", Toast.LENGTH_LONG).show()
+
+            }
+            else if(edit_phone_number.text.toString() == ""){
+                Toast.makeText(this, "번호를 적어주세요", Toast.LENGTH_LONG).show()
+            }
+            else{
+                if(pathToStoredImage == null) {
+                    println("TESTERCHOCHO ---- 이미지 없이 보냄" )
+                    editProfileWithoutImage()
+                } else {
+                    println("TESTERCHOCHO ---- 이미지 함께 보냄" )
+                    uploadImageToServer(pathToStoredImage!!)
+                }
+            }
+
+
+
         }
 
         bt_image.setOnClickListener {
@@ -102,7 +123,34 @@ class ProfileEditActivity : AppCompatActivity() {
 
     }
 
+    // 로그인
+    private fun editProfileWithoutImage (){
 
+        name = edit_nickname.text.toString()
+
+        // TODO: 인코딩해서 보내야되네 싀벌...
+        var name_encoded = URLEncoder.encode(name, "utf-8")
+//        name_encoded = URLDecoder.decode(name_encoded, "utf-8")
+//        println("한글테스트 " + name_encoded)
+        editedPhoneNumber = edit_phone_number.text.toString()
+
+
+        val jsonObject = JSONObject()
+        jsonObject.put("name", name)
+        jsonObject.put("phone_number", editedPhoneNumber)
+        jsonObject.put("jwt_token", jwtToken)
+
+        println("TOKEN_TESTING:" + name + "----" +  editedPhoneNumber + "----" + jwtToken)
+
+        VolleyHttpService.editProfileWithoutImage(this, jsonObject) { success ->
+            if (success.get("success") == true) { // 로그인 성공
+                Toast.makeText(this, "수정 성공", Toast.LENGTH_LONG).show()
+                finish()
+            } else { // 로그인 실패
+                Toast.makeText(this, "수정 실패", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
 
 
@@ -110,16 +158,15 @@ class ProfileEditActivity : AppCompatActivity() {
         // Check which request we're responding to
         println("ERROR CHECK__ " + resultCode)
 
-
-        if ( resultCode == Activity.RESULT_OK){
+        if ( resultCode == Activity.RESULT_OK ) {
             when(requestCode) {
                 REQUEST_FOR_IMAGE_EDIT -> {
-                    uri = data?.data
+                    uri = data.data
                     pathToStoredImage = getRealPathFromURIPath(uri!!, this)
                     userImage!!.setImageURI(uri)
                 }
             }
-        }else if ( resultCode == Activity.RESULT_CANCELED){
+        }else if ( resultCode == Activity.RESULT_CANCELED ) {
             return
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -127,6 +174,7 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
     private fun uploadImageToServer(pathToVideoFile: String) {
+
         val videoFile = File(pathToVideoFile)
         val videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile)
         val vFile = MultipartBody.Part.createFormData("video", videoFile.name, videoBody)
@@ -135,7 +183,7 @@ class ProfileEditActivity : AppCompatActivity() {
 
         // TODO: 인코딩해서 보내야되네 싀벌...
         var name_encoded = URLEncoder.encode(name, "utf-8")
-        name_encoded = URLDecoder.decode(name_encoded, "utf-8")
+//        name_encoded = URLDecoder.decode(name_encoded, "utf-8")
         println("한글테스트 " + name_encoded)
         editedPhoneNumber = edit_phone_number.text.toString()
 
@@ -152,7 +200,7 @@ class ProfileEditActivity : AppCompatActivity() {
                         .build()
 
                 println("TESTERCHO---" + jwtToken + "_______" + name + "_______" + editedPhoneNumber.toString())
-                return chain!!.proceed(request)
+                return chain.proceed(request)
             }
         })
 

@@ -213,15 +213,18 @@ router.post('/getRewardCheck',  function (req,res) {
         break;
       }
     }
-    if(user.contentList[contentListIndex].rewardCheck === 0){
+    console.log("reward check = " + user.contentList[contentListIndex].rewardCheck);
+    if(user.contentList[contentListIndex].rewardCheck === false){
       user.contentList[contentListIndex].money += user.contentList[contentListIndex].reward;
       user.contentList[contentListIndex].reward = 0;
-      user.contentList[contentListIndex].rewardCheck = 1;
+      user.contentList[contentListIndex].rewardCheck = true;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
       });
+      res.send({success:true});
     }
+    else res.send({success:false});
   });
 });
 

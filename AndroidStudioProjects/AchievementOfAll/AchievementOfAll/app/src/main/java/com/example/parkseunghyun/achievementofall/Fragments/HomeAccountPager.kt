@@ -107,7 +107,7 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
             val goToEditPage = Intent(homeAccountPagerContext, ProfileEditActivity::class.java)
 
-            goToEditPage.putExtra("name",name!!.text)
+            goToEditPage.putExtra("name", name!!.text)
             goToEditPage.putExtra("phoneNumber",phoneNumber!!.text)
 
             val contextToActivity = homeAccountPagerContext as Activity
