@@ -11,7 +11,6 @@ var mkdirp = require('mkdirp'); // directory 만드는것
 var nodemailer = require('nodemailer');
 var multiparty = require('multiparty');
 
-
 router.post('/jwtCheck', function(req, res){
   console.log("jwtCheck Start");
   // console.log("jwtCheck jwt토큰 "+ req.body.token);
@@ -86,16 +85,6 @@ router.post('/signup', function (req, res, next) {
         if(err) console.log("create dir user err : "+err);
         else console.log("create dir ./user/" +userEmail );
       }); //server폴더 아래 /user/useremail/video 폴더가 생김.
-
-      //아래 코드는 두 폴더를 만들어버리는 코드.
-      // mkdirp('./server/user/'+pathName+'/video/Diet', function (err) {
-      //   if(err) console.log(err);
-      //   else console.log("create dir ./user/" +pathName );
-      // });
-      // mkdirp('./server/user/'+pathName+'/video/NoSmoking', function (err) {
-      //   if(err) console.log(err);
-      //   else console.log("create dir ./user/" +pathName );
-      // });
     }
     else res.send({success: false});
   })(req,res,next);
@@ -197,23 +186,109 @@ router.post('/userPasswordEdit', function(req,res){
 //
 // });
 //jwt token 사용
+router.post('/editProfileWithoutImage', function(req,res){
+  console.log("editProfileWithoutImage Start");
+
+  var decoded = jwt.decode(req.body.jwt_token, req.app.get("jwtTokenSecret"));
+  var userEmail = decoded.userCheck;
+  var phoneNumber = req.body.phone_number;
+  var userName = decodeURIComponent(req.body.name);
+
+  console.log("editwithout EMAIL " + userEmail);
+  console.log("editwithout phoneNumber " + phoneNumber);
+  console.log("editwithout name " + userName);
+
+  User.findOne({email: userEmail}, function(err, user){
+    var contentListCount = user.contentList.length;
+    var contentName ;
+    var contentId;
+    if(contentListCount == null){
+      console.log("editProfileWithoutImage Nocontent")
+    }
+    else {
+      for (var i = 0; i < contentListCount; i++) {
+        contentName = user.contentList[i].contentName;
+        contentId = user.contentList[i].contentId;
+        Content.findOne({name: contentName, id: contentId}, function (err, content) {
+          var userListCount = content.userList.length;
+          for (var i = 0; i < userListCount; i++) {
+            if (content.userList[i].email === userEmail) {
+              content.userList[i].name = userName;
+              break;
+              }
+            }
+            content.save(function (err) {
+              if(err){
+                console.log("err");
+              }
+              else{
+                console.log("editProfileWithoutImage content Save");
+              }
+            })
+          });
+        }
+      }
+    if(err){
+      res.send({success: false});
+      console.log("editProfileWithoutImage err")
+    }else{
+          user.name = userName;
+          user.phoneNumber = phoneNumber;
+          user.save(function (err) {
+            if (err) {
+              console.log(err);
+              res.send({success: false});
+            } else {
+              console.log("editProfileWithoutImage Success ");
+                  res.send({success: true});
+            }
+          });
+        }
+      });
+});
+
 router.post('/userInfoEdit', function(req,res){
   console.log("userInfoEdit Start");
 
-  console.log(req.headers);
-  // console.log("userInfoEdit token : "+req.headers.jwt_token);
-  // console.log("userInfoEdit number: "+req.headers.phoneNumber);
-  // console.log("userInfoEdit userName: "+req.headers.name);
   var decoded = jwt.decode(req.headers.jwt_token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
   var phoneNumber = req.headers.phone_number;
-  var userName = req.headers.name;
+  var userName = decodeURIComponent(req.headers.name);
 
   console.log("edit EMAIL" + userEmail);
   console.log("edit phoneNumber" + phoneNumber);
   console.log("edit name" + userName);
 
   User.findOne({email: userEmail}, function(err, user){
+    var contentListCount = user.contentList.length;
+    var contentName ;
+    var contentId;
+    if(contentListCount == null){
+      console.log("editProfileWithoutImage Nocontent")
+    }
+    else{
+      for (var i = 0; i < contentListCount; i++) {
+        contentName = user.contentList[i].contentName;
+        contentId = user.contentList[i].contentId;
+        Content.findOne({name: contentName, id: contentId}, function (err, content) {
+          var userListCount = content.userList.length;
+          for (var i = 0; i < userListCount; i++) {
+            if (content.userList[i].email === userEmail) {
+              content.userList[i].name = userName;
+              break;
+            }
+          }
+          content.save(function (err) {
+            if(err){
+              console.log("err");
+            }
+            else{
+              console.log("userInfoEdit content Save");
+            }
+          })
+        });
+      }
+    }
     if(err){
       res.send({success: false});
       console.log("userInfoEdit err")
@@ -261,7 +336,7 @@ router.post('/userInfoEdit', function(req,res){
             } else {
               console.log("ImagePath modi Success ");
               console.log("userInfoEdit Success ");
-                  res.send({success: true});
+              res.send({success: true});
             }
           });
         }
@@ -287,6 +362,7 @@ router.post('/userInfoEdit', function(req,res){
     }
   })
 });
+
 
 router.post('/getUserInfo', function (req,res) {
   console.log("getUserInfo Start");
