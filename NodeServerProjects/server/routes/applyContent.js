@@ -73,7 +73,7 @@ router.post('/contentJoinComplete',  function (req,res) {
           //user의 content List에 해당 content 정보들 추가
           if(contentName === "NoSmoking"){
             User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
-                  authenticationDate: date, joinState: 0, money: 100000}]}},function(err, doc){
+                  authenticationDate: date, joinState: 0, money: 100000, reward: 0, rewardCheck: false}]}},function(err, doc){
               if(err){
                 console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
               }

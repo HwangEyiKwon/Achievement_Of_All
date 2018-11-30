@@ -137,12 +137,12 @@ require('./config/passport')(passport);
 //     contentId : 3,
 //     videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
 //     contentName: "NoSmoking",
-//     joinState : 1,
+//     joinState : 2,
 //     authenticationDate : "2018-11-29",
-//     isUploaded : 0,
-//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "29", authen: 2}],
+//     isUploaded : 1,
+//     calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "29", authen: 1}],
 //     money: 100000,
-//     reward: 0,
+//     reward: 50000,
 //     rewardCheck: 0
 //   }]
 // });
@@ -253,12 +253,12 @@ require('./config/passport')(passport);
 //   name: "NoSmoking",
 //   roomNum: 4,
 //   startDate: "01/01/2018",
-//   endDate: "12/25/2018",
-//   isDone: 0,
+//   endDate: "11/25/2018",
+//   isDone: 1,
 //   userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
 //              {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
 //   description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
-//   balance: 100000
+//   balance: 0
 // })
 // content1.save(function(err, savedDocument) {
 //   if (err)
