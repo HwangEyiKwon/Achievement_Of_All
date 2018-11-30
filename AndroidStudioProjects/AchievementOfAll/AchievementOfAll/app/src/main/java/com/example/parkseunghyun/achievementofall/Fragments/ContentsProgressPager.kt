@@ -166,7 +166,7 @@ class ContentsProgressPager : Fragment() {
                 progress.progress = 100
 
             }else if(rate == -1){
-                achievementRate!!.setText("에러")
+                achievementRate!!.setText("미참가 중입니다...........")
             }else{
                 achievementRate!!.setText(rate.toString())
                 progress.visibility = View.VISIBLE
