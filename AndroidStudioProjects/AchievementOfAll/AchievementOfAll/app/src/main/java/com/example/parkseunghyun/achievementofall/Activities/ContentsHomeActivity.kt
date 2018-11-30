@@ -239,6 +239,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
         }
     }
+
     private fun getOthers(){
 
         val jsonObject = JSONObject()
@@ -272,6 +273,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
         }
     }
+
     private fun contentJoin(){
 
         val jsonObject = JSONObject()
@@ -296,7 +298,6 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             super.onResume()
         }
     }
-
 
     private fun availableDaySetting(datePickerDialog: DatePickerDialog, startDates: JSONObject) {
         /*
