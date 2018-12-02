@@ -502,4 +502,38 @@ router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
   });
 });
 
+// WEB 관리자 페이지 용
+
+router.post('/managerlogin', function(req, res, next) {
+  passport.authenticate('login-manager', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.json({access:false}); } // 로그인 실패
+
+    // 로그인 성공 시 세션에 사용자 이메일 저장
+    sess = req.session;
+    sess.userCheck = req.body.email;
+
+    return res.json({access:true}); // 로그인 성공
+  })(req, res, next);
+});
+
+router.post('/managerSignUp', function (req, res, next) {
+  console.log("signup Start");
+  passport.authenticate('signup-manager', function (err, user, info) {
+    // console.log(user+"s");
+    console.log("signUPPPPPPPP");
+    if(err) console.log("signup err : "+err);
+
+    if(user) {
+      res.send({success: true});
+      var userEmail = req.body.email;
+      mkdirp('./server/user/'+userEmail+'/video', function (err) {
+        if(err) console.log("create dir user err : "+err);
+        else console.log("create dir ./user/" +userEmail );
+      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+    }
+    else res.send({success: false});
+  })(req,res,next);
+});
+
 module.exports = router;

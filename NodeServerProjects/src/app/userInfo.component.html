@@ -1,0 +1,212 @@
+
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<!--userInfo-->
+<div class="container" *ngIf="state == 0">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+      <div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src= "http://{{imagePath}}/getImage/{{userImage}}" class="img-circle img-responsive" style ="width: 150px;
+  border:3px solid black;
+  height: 150px;
+  position: relative;
+  display: block;" > </div>
+
+            <div class=" col-md-9 col-lg-9 ">
+
+              <table class="table table-user-information">
+                <tbody>
+                <tr>
+                    <td>Authority</td>
+                    <td>{{userAuthority}}</td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>{{userName}}</td>
+                </tr>
+                <tr>
+                    <td>Gender</td>
+                    <td>{{userGender}}</td>
+                </tr>
+                <tr>
+                    <td>Group</td>
+                    <td>{{groupName}}</td>
+                </tr>
+                <tr>
+                    <td>Device</td>
+                    <td>{{deviceID}}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><a href="mailto:{{userEmail}}">{{userEmail}}</a></td>
+                </tr>
+                <tr>
+                    <td>Phone Number</td>
+                    <td>{{userPhoneNumber}}</td>
+                </tr>
+                </tbody>
+              </table>
+              <a (click)="openEdit()" class="btn btn-primary">Edit</a>
+                &nbsp;
+              <a (click)="openChangePassword()" class="btn btn-primary">Change PW</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Edit UserInfo-->
+<div class="container" *ngIf = "state == 1">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+            <div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3 col-lg-3 " align="center">
+                            <img alt="User Pic" src= "http://{{imagePath}}/getImage/{{userImage}}" class="img-circle img-responsive" style ="width: 150px;
+  border:3px solid black;
+  height: 150px;
+  position: relative;
+  display: block;" >
+                            <input id="photo" type="file" />
+                        </div>
+                        <form (ngSubmit)="saveEdit(g)" #g="ngForm">
+                        <div class=" col-md-9 col-lg-9 ">
+                            <table class="table table-user-information">
+                                <tbody>
+                                <tr>
+                                    <td>Authority</td>
+                                    <td>{{userAuthority}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>
+                                        <!--<div class="form-group">-->
+                                        <input type="text"
+                                               style="height: 10px; font-size: 10px"
+                                               class="form-control input-lg"
+                                               [(ngModel)]="userName"
+                                               name="userName">
+                                        <!--</div>-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Gender</td>
+                                    <td>
+                                        <!--<div class="form-group">-->
+                                        <p>
+                                            <input style="height: 10px; font-size: 10px" type="radio"  value="male" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Male</label>
+                                            &nbsp;&nbsp;
+                                            <input style="height: 10px; font-size: 10px" type="radio"  value="female" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Female</label>
+                                            &nbsp;
+                                            <input style="height: 10px; font-size: 10px " type="radio"  value="rather not say" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Rather not say</label>
+                                            &nbsp;
+                                            <input style="height: 10px; font-size: 10px" type="radio"  value="custom" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Custom</label>
+                                        </p>
+                                        <!--</div>-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Group</td>
+                                    <td>{{groupName}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Device</td>
+                                    <td>{{deviceID}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>{{userEmail}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Phone Number</td>
+                                    <td>
+                                            <input type="text"
+                                                   style="height: 10px; font-size: 10px"
+                                                   class="form-control input-lg"
+                                                   [(ngModel)]="userPhoneNumber"
+                                                   name="userPhoneNumber">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary" [disabled]="!g.valid" >Save</button>
+                                &nbsp;
+                                <a (click)="cancel()" class="btn btn-primary">Cancel</a>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Change Password-->
+<div class="container" *ngIf = "state == 2">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+            <div>
+                <div class="panel-body">
+                    <div class="row">
+
+
+                        <form (ngSubmit)="changePassword(g)" #g="ngForm">
+                            <div class=" col-md-9 col-lg-9 ">
+                                <table class="table table-user-information" style = "position: relative; left: 10%;">
+                                    <tbody>
+
+                                    <tr>
+                                        <td>현재 비밀번호</td>
+                                        <td>
+                                            <input type="password"
+                                                   style="height:10px; font-size: 10px"
+                                                   class="form-control input-lg"
+                                                   ngModel
+                                                   name="currentPassword">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>새 비밀번호</td>
+                                        <td>
+                                            <input type="password"
+                                                   style="height:10px; font-size: 10px"
+                                                   class="form-control input-lg"
+                                                   ngModel
+                                                   name="newPassword">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>새 비밀번호 확인</td>
+                                        <td>
+                                            <input type="password"
+                                                   style="height:10px; font-size: 10px"
+                                                   class="form-control input-lg"
+                                                   ngModel
+                                                   name="newPasswordCheck">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary" [disabled]="!g.valid" >Save</button>
+                                    &nbsp;
+                                    <a (click)="cancel()" class="btn btn-primary">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

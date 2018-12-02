@@ -361,6 +361,7 @@ app.use('/', calendar);
 app.use('/', applyContent);
 
 app.set('jwtTokenSecret', "afafaffffff");
+app.set('managerKey', "3Ke34Meg9ek");
 
 app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/simple-memo/index.html')); });
 //여기 아래

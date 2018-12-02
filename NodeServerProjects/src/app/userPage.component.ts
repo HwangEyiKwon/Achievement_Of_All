@@ -7,14 +7,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpService} from './http-service';
 import {Router} from '@angular/router';
 import {DataService} from './data.service';
-import * as myGlobals from '../../../../../../4-1/CapD/Capstone_Design/Capstone_Team4/NodeServerProjects/src/app/global.service'; // 글로벌 변수를 주입하기 위한 서비스
+import * as myGlobals from './global.service'; // 글로벌 변수를 주입하기 위한 서비스
 
 @Component({
   selector: 'app-user-page',
   templateUrl: './userPage.component.html',
   styleUrls: ['./userPage.component.css']
 })
-export class UserPageComponent implements OnInit,OnDestroy {
+export class UserPageComponent implements OnInit, OnDestroy {
 
   imagePath = myGlobals.imagePath; // 이미지 경로
   menuState: string = 'out';
@@ -104,7 +104,7 @@ export class UserPageComponent implements OnInit,OnDestroy {
     this.userInfo.userName = name;
     this.userInfo.userAuthority = authority;
     this.userInfo.groupName = groupName;
-      this.userInfo.deviceID = deviceID;
+    this.userInfo.deviceID = deviceID;
     this.userInfo.userGender = userGender;
     this.userInfo.userPhoneNumber = userPhoneNumber;
     this.userInfo.userImage = userImage;

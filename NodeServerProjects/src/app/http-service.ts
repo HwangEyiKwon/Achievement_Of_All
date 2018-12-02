@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Http, RequestOptions, ResponseContentType } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx;
 
 @Injectable()
 export class HttpService {
@@ -15,7 +15,7 @@ export class HttpService {
   constructor(private http: HttpClient,
               private http2: Http) {}
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // 컴포넌트 공통으로 사용되는 함수
   sessionCheck() {
       // request에 담긴 session을 통해 서버에게 세션 체크를 요청
@@ -38,17 +38,17 @@ export class HttpService {
           .map(res => res.blob())
 
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // userService 에서 사용되는 함수
   userLogin(userEmail: string, userPassword: string) {
     // 사용자 로그인
     // 로그인과 동시에 세션을 등록
-    return this.http.post('/userLogin', {
-      userEmail: userEmail,
-      userPassword: userPassword
+    return this.http.post('/managerLogin', {
+      email: userEmail,
+      password: userPassword
     });
   }
   userLogout() {
@@ -56,14 +56,14 @@ export class HttpService {
     // 로그아웃과 동시에 세션 파괴
     return this.http.get('/userLogout');
   }
-  userSignUp(userName: string, userPhoneNumber: string, userPassword: string, userEmail: string, userGender: string ) {
+  userSignUp(userName: string, userPhoneNumber: string, userPassword: string, userEmail: string, managerKey: string ) {
     // 사용자 등록 (회원 가입)
-    return this.http.post('/userSignUp', {
-      userName: userName,
-      userEmail: userEmail,
-        userPassword: userPassword,
-      userGender: userGender,
-      userPhoneNumber: userPhoneNumber
+    return this.http.post('/managerSignUp', {
+      name: userName,
+      email: userEmail,
+      password: userPassword,
+      managerKey: managerKey,
+      phoneNumber: userPhoneNumber
     });
   }
   changePassword(userName: string, userPhoneNumber: string,  userEmail: string){
@@ -80,19 +80,19 @@ export class HttpService {
           newPassword: newPassword
       });
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // userPage에서 사용되는 함수
   getUserInfo() {
       // 사용자 페이지에 사용자 정보 로드
       return this.http.get('/getUserInfo');
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // userInfo에서 사용되는 함수
   changeUserInfo(userName: string, userEmail: string, userGender: string, userPhoneNumber: string, userImagePath: Object) { // 사용자 페이지(사용자 관리) 사용자들 정보 로드
       return this.http.post('/changeUserInfo',{
@@ -110,10 +110,10 @@ export class HttpService {
           newPasswordCheck: newPasswordCheck
       });
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // userManage에서 사용되는 함수
   getUsersInfo() {
       // 사용자 페이지(사용자 관리) 사용자들 정보 로드
@@ -138,10 +138,10 @@ export class HttpService {
           userNewInfo
       });
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // groupManage에서 사용되는 함수
   deleteGroupInfo(groupName: string){
       // 사용자 페이지(그룹 관리) 그룹 정보 삭제
@@ -161,10 +161,10 @@ export class HttpService {
           groupNewInfo
       });
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // deviceManage에서 사용되는 함수
 
   getDevicesInfo() {
@@ -191,10 +191,10 @@ export class HttpService {
           deviceNewInfo
       });
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // deviceInfo에서 사용되는 함수
 
   getAllGroupNameImage() { // Group 정보 (Admin 전용)
@@ -228,14 +228,14 @@ export class HttpService {
   getManualKey(id){ // Manual Key 갱신
       return this.http.get('/getManualKey/' + id);
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   // Farm에서 사용되는 함수
   getFarmData(){
       // Farm 측정 값들 볼러오는 함수
     return this.http.get('/getFarmData');
   }
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
 }
