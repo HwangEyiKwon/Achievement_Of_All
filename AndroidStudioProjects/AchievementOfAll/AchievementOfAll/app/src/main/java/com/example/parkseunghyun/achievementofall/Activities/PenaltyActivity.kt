@@ -2,11 +2,10 @@ package com.example.parkseunghyun.achievementofall.Activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
 import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.R
 
-class RewardActivity : AppCompatActivity() {
+class PenaltyActivity : AppCompatActivity() {
 
     var jwtToken: String ?= null
     var contentName: String ?= null
@@ -14,8 +13,6 @@ class RewardActivity : AppCompatActivity() {
     var currentMoney: TextView ?= null
     var rewardMoney: TextView ?= null
     var finalMoney: TextView ?= null
-
-    var rewardConfirmButton: Button?= null
 
     var cm: Int ?= null
     var rm: Int ?= null
@@ -31,8 +28,6 @@ class RewardActivity : AppCompatActivity() {
         rewardMoney = findViewById(R.id.final_reward)
         finalMoney = findViewById(R.id.final_money)
 
-        rewardConfirmButton = findViewById(R.id.reward_confirm_button)
-
         cm = intent.getIntExtra("currentMoney",0)
         rm = intent.getIntExtra("rewardMoney",0)
         fm = cm!!+rm!!
@@ -41,9 +36,6 @@ class RewardActivity : AppCompatActivity() {
         rewardMoney!!.text = rm.toString()
         finalMoney!!.text = fm.toString()
 
-        rewardConfirmButton!!.setOnClickListener {
-            finish()
-        }
 
     }
 

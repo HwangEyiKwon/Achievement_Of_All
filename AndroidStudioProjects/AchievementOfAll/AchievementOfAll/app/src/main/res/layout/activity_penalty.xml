@@ -7,21 +7,17 @@
     android:layout_gravity="center"
 
     android:background="@drawable/round_background"
-    tools:context=".Activities.RewardActivity">
+    tools:context=".Activities.PenaltyActivity">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="64dp"
         android:fontFamily="@font/font5"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_gravity="center"
-        android:text="보상 확인"
+        android:text="패널티 확인"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +38,7 @@
             android:layout_width="226dp"
             android:layout_height="269dp"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/ic_reward"
+            app:srcCompat="@drawable/ic_penalty"
             tools:layout_editor_absoluteX="37dp"
             tools:layout_editor_absoluteY="94dp" />
 
@@ -143,26 +139,8 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/reward_confirm_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round2"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:fontFamily="@font/font5"
-            android:text="보상 확인"
-            android:textColor="@color/colorPrimaryDark" />
-
-
 
 
     </LinearLayout>
-
-
-</LinearLayout>
-
 
 </android.support.constraint.ConstraintLayout>

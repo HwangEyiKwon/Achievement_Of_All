@@ -98,6 +98,13 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var fab2: TextView? = null
     private var fabText: LinearLayout? = null
 
+    var nextYear: Int ? = null
+    var nextMonth: Int ? = null
+    var nextDay: Int ? = null
+
+    var y: Int ? = null
+    var m: Int ? = null
+    var d: Int ? = null
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -324,8 +331,9 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         if(joinState == 3) {
 //            calendar!!.visibility = View.GONE
-        } else
+        } else {
             calendar!!.visibility = View.VISIBLE
+        }
 
         calendar!!.setHeaderTextAppearance(R.color.abc_background_cache_hint_selector_material_dark)
         calendar!!.state().edit()
@@ -347,69 +355,36 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         val sDate = mutableListOf<CalendarDay>()
         val eDate = mutableListOf<CalendarDay>()
 
-        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
+        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1, startDate!!.getInt("day")))
         eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
 
         val loopCount = jsonArray.length() - 1
 
+        println("데이터 주냐?"+ loopCount)
+
+        if(loopCount == -1){
+            nextYear = startDate!!.getInt("year")
+            nextMonth = startDate!!.getInt("month") - 1
+            nextDay = startDate!!.getInt("day")
+        }
 
         for (i in 0..loopCount) {
 
-            var y = jsonArray.getJSONObject(i).getString("year").toInt()
-            var m = jsonArray.getJSONObject(i).getString("month").toInt()-1
-            var d = jsonArray.getJSONObject(i).getString("day").toInt()
+            y = jsonArray.getJSONObject(i).getString("year").toInt()
+            m = jsonArray.getJSONObject(i).getString("month").toInt()-1
+            d = jsonArray.getJSONObject(i).getString("day").toInt()
 
-            var day = CalendarDay.from(y, m, d)
+            var day = CalendarDay.from(y!!, m!!, d!!)
 
             if( i == loopCount ) {
                 println("i는 무엇인가"+ i)
                 // y, m, d + 3일 + 자정
-                println("TESTINGING----" + y + "년" + ( m + 1 ) + "월" + ( d + 3 ) + "일")
+                println("TESTINGING----" + y + "년" + ( m!! + 1 ) + "월" + ( d!! + 3 ) + "일")
 
-                var nextYear = y
-                var nextMonth = m
-                var nextDay = d + 3
-
-
-                tt = object : TimerTask() {
-                    override fun run() {
-
-                        val calendarCurrent = Calendar.getInstance()
-                        var calendarNext = Calendar.getInstance()
-
-                        calendarNext.set(nextYear, nextMonth, nextDay + 1, 0, 0)
-
-                        var diffInSecondUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
-                        var diffInMinuteUnit = diffInSecondUnit / 60
-                        println("TESTING 남은 시간은 ---- " + diffInMinuteUnit + "분::::")
-
-//                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
-//                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
-//                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
-
-                        diffOfDay = ((diffInSecondUnit / (60 * 60 * 24))) // 일 계산
-                        diffOfHour = ((diffInSecondUnit - (diffOfDay!!*60*60*24)) / (60*60))   // 시간 계산
-                        diffOfMinute = ((diffInSecondUnit - diffOfDay!!*60*60*24 - diffOfHour!!*3600)/60)  // 분 계산
-
-                        println("TESTING 현재 시간은: "+ calendarCurrent.get(Calendar.DAY_OF_MONTH) + "일" + calendarCurrent.get(Calendar.HOUR_OF_DAY) + "분" + calendarCurrent.get(Calendar.MINUTE) + "분")
-                        println("TESTING 다음 인증은 언제 직전까지?: "+ calendarNext.get(Calendar.DAY_OF_MONTH) + "일" + calendarNext.get(Calendar.HOUR_OF_DAY) + "분" + calendarNext.get(Calendar.MINUTE) + "분")
-                        println("TESTING 남은 시간은 ---- " + diffInSecondUnit + "초::::" + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
-
-                        val diffUpdateMsg = diffUpdateThreadHandler.obtainMessage()
-                        diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
-
-                    }
-                }
-
-                // 타이머 재생성 방지 (타 액티비티 수행 후 재생성 등)
-                if(timer == null){
-                    println("TESTING --- HOW MANY TIMER MADE")
-                    timer = Timer()
-                    timer!!.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
-                }
-
+                nextYear = y
+                nextMonth = m
+                nextDay = d!! + 3
             }
-
 
             println(jsonArray.getJSONObject(i))
             if(jsonArray.getJSONObject(i).getInt("authen")==1){// success
@@ -422,7 +397,43 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 notYetDates.add(day)
             }
 
-//            calendar2.add(Calendar.DATE, 5) // 5가 뭐지?
+        }
+
+        tt = object : TimerTask() {
+            override fun run() {
+
+                val calendarCurrent = Calendar.getInstance()
+                var calendarNext = Calendar.getInstance()
+
+                calendarNext.set(nextYear!!, nextMonth!!, nextDay!! + 1, 0, 0)
+
+                var diffInSecondUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
+                var diffInMinuteUnit = diffInSecondUnit / 60
+                println("TESTING 남은 시간은 ---- " + diffInMinuteUnit + "분::::")
+
+//                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
+//                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
+//                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
+
+                diffOfDay = ((diffInSecondUnit / (60 * 60 * 24))) // 일 계산
+                diffOfHour = ((diffInSecondUnit - (diffOfDay!!*60*60*24)) / (60*60))   // 시간 계산
+                diffOfMinute = ((diffInSecondUnit - diffOfDay!!*60*60*24 - diffOfHour!!*3600)/60)  // 분 계산
+
+                println("TESTING 현재 시간은: "+ calendarCurrent.get(Calendar.DAY_OF_MONTH) + "일" + calendarCurrent.get(Calendar.HOUR_OF_DAY) + "분" + calendarCurrent.get(Calendar.MINUTE) + "분")
+                println("TESTING 다음 인증은 언제 직전까지?: "+ calendarNext.get(Calendar.DAY_OF_MONTH) + "일" + calendarNext.get(Calendar.HOUR_OF_DAY) + "분" + calendarNext.get(Calendar.MINUTE) + "분")
+                println("TESTING 남은 시간은 ---- " + diffInSecondUnit + "초::::" + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
+
+                val diffUpdateMsg = diffUpdateThreadHandler.obtainMessage()
+                diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
+
+            }
+        }
+
+        // 타이머 재생성 방지 (타 액티비티 수행 후 재생성 등)
+        if(timer == null){
+            println("TESTING --- HOW MANY TIMER MADE")
+            timer = Timer()
+            timer!!.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
         }
 
 
