@@ -122,7 +122,6 @@ router.post('/userPasswordEdit', function(req,res){
       // res.send({success: true});
     }
   });
-
 });
 // router.post('/editUserImage', function(req,res) {
 //   console.log("edit User Image start!!");
@@ -202,7 +201,7 @@ router.post('/editProfileWithoutImage', function(req,res){
     var contentListCount = user.contentList.length;
     var contentName ;
     var contentId;
-    if(contentListCount == null){
+    if(contentListCount == 0){
       console.log("editProfileWithoutImage Nocontent")
     }
     else {
@@ -263,8 +262,8 @@ router.post('/userInfoEdit', function(req,res){
     var contentListCount = user.contentList.length;
     var contentName ;
     var contentId;
-    if(contentListCount == null){
-      console.log("editProfileWithoutImage Nocontent")
+    if(contentListCount == 0){
+      console.log("userInfoEdit Nocontent")
     }
     else{
       for (var i = 0; i < contentListCount; i++) {
