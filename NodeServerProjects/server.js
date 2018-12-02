@@ -30,7 +30,7 @@ var mkdirp = require('mkdirp'); // directory 만드는것
 var fs = require("fs");
 
 var fcmMessageFormat1 = "목표 달성을 인증하셔야 합니다."
-var fcmMessageFormat2 = "목표 달성에 실패하셨습니다!"
+var fcmMessageFormat2 = "-목표 달성에 실패하셨습니다!"
 var fcmMessageFormat3 = "목표 달성에 성공하셨습니다!"
 
 
@@ -349,6 +349,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       if(userList[i].pushToken != null){
         console.log("실패 푸쉬메시지 전송");
         var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+        fcmMessageFormat2 = contentName + fcmMessageFormat2
         sendPushMessage(userList[i], authenContentIndex, sendTime, fcmMessageFormat2);
       }
     }
@@ -492,17 +493,6 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
         });
       };
     }
-    else if(fcmMessageFormat === fcmMessageFormat2){
-      fcm.send(push_data, function(err, response) {
-        if (err) {
-          console.error('실패 Push메시지 발송에 실패했습니다.');
-          console.error(err);
-          return;
-        }
-        console.log('실패 Push메시지가 발송되었습니다.');
-        console.log(response);
-      });
-    }
     else if(fcmMessageFormat === fcmMessageFormat3){
       fcm.send(push_data, function(err, response) {
         if (err) {
@@ -514,9 +504,19 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
         console.log(response);
       });
     }
+    else{
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('실패 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('실패 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
   });
 }
-
 
 //푸쉬메시지 펑션
 exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat) {

@@ -301,7 +301,7 @@ router.post('/checkVideo', function(req,res){
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
 
-                var fcmMessageFormat = "목표 달성에 실패하셨습니다!"
+                var fcmMessageFormat = contentName + "-목표 달성에 실패하셨습니다!"
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
                 fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, fcmMessageFormat);
               }
