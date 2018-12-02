@@ -438,10 +438,12 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
     }
   });
 
+});
+var scheduler = schedule.scheduleJob('50 * * * * *', function() {
   dbDelete();
 });
 
-var scheduler = schedule.scheduleJob('10 * * * * *', function() {
+var scheduler = schedule.scheduleJob('55 * * * * *', function() {
   dbInit();
 });
 
@@ -802,7 +804,7 @@ function dbInit(){
     name: "NoSmoking",
     roomNum: 4,
     startDate: "01/01/2018",
-    endDate: "12/02/2018",
+    endDate: "12/05/2018",
     isDone: 0,
     userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
                {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],

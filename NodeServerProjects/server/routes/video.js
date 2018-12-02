@@ -121,7 +121,10 @@ router.post('/sendVideo', function(req, res, next){
             }
             var date = year+ "-" + month + "-" + day;
 
-            user.contentList[contentListIndex].authenticationDate = date;
+            var threeDaysAfterDate = new Date(year,(month-1),day);
+            if(content.endDate < threeDaysAfterDate){
+              user.contentList[contentListIndex].authenticationDate = date;
+            }
             user.contentList[contentListIndex].isUploaded = 1;
             console.log("authenticate date and is uploaded update");
 
