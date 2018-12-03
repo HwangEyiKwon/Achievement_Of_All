@@ -252,6 +252,7 @@ router.post('/checkVideo', function(req,res){
               otherUser.contentList[contentListIndex].joinState = 4;
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 0;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
+              otherUser.contentList[contentListIndex].penalty = otherUser.contentList[contentListIndex].money;
               otherUser.contentList[contentListIndex].money = 0;
 
               otherUser.save(function(err, savedDocument) {

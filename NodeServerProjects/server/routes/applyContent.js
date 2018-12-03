@@ -172,25 +172,27 @@ router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
   // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
+  var contentListIndex = -1;
 
   User.findOne({ email : userEmail }, function(err, user) {
     if (user.contentList.length == 0) {
-      res.send({success: false});
+      res.send({success: "false1"});
     }
     else {
       var contentListCount = user.contentList.length;
-      var contentListIndex = -1;
+      var indexFlag = 0;
       for (var i = 0; i < contentListCount; i++) {
-        if (user.contentList[i].contentName === contentName) {
+        if (user.contentList[i].contentName == contentName) {
           contentListIndex = i;
-          break;
+          indexFlag = 1;
+        }
+        if(contentListIndex != -1 && indexFlag == 1){
+          res.send({money: user.contentList[contentListIndex].money, reward: user.contentList[contentListIndex].reward, penalty: user.contentList[contentListIndex].penalty});
         }
       }
-      if (contentListIndex == -1) {
-        res.send({success: false});
-      }
-      else {
-        res.send({money: user.contentList[contentListIndex].money, reward: user.contentList[contentListIndex].reward});
+      console.log("content list index: "+contentListIndex);
+      if (contentListIndex == -1 && indexFlag != 1) {
+         res.send({success: false});
       }
     }
   });

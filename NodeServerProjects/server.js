@@ -289,6 +289,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       var calendarIndex = userList[i].contentList[authenContentIndex].calendar.length - 1;
       var userMoney = userList[i].contentList[authenContentIndex].money;
 
+      userList[i].contentList[authenContentIndex].penalty = userList[i].contentList[authenContentIndex].money;
       userList[i].contentList[authenContentIndex].money = 0;
       userList[i].contentList[authenContentIndex].joinState = 4;
       userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
@@ -446,6 +447,95 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
 // var scheduler = schedule.scheduleJob('55 * * * * *', function() {
 //   dbInit();
 // });
+
+var fcm = new FCM(serverKey);
+var client_token ='e6DwPZB5vVc:APA91bEx98_N-CW-EeC-cATxRviqjQs6Uhi62Vz3KeMRYZkY8aYL_bfqmQ8SBAE4eE9QuxPFK1xTxycx2uRQz1zxKwNRdFrWVnUmf2MsFNoHe_bXioir5qfdu4xkWRTCTtItflm8e80h';
+var push_data = {
+  // 수신대상
+  to: client_token,
+  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+  data: {
+    title: titleAuthen,
+    body: "NoSmoking",
+    // sound: "default",
+    // click_action: "FCM_PLUGIN_ACTIVITY",
+    // click_action:"OPEN_ACTIVITY",
+    // icon: "fcm_push_icon"
+  },
+  // 메시지 중요도
+  priority: "high",
+  // App 패키지 이름
+  restricted_package_name: "com.example.parkseunghyun.achievementofall",
+};
+var push_data1 = {
+  // 수신대상
+  to: client_token,
+  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+  data: {
+    title: titleFail,
+    body: "NoSmoking",
+    // sound: "default",
+    // click_action: "FCM_PLUGIN_ACTIVITY",
+    // click_action:"OPEN_ACTIVITY",
+    // icon: "fcm_push_icon"
+  },
+  // 메시지 중요도
+  priority: "high",
+  // App 패키지 이름
+  restricted_package_name: "com.example.parkseunghyun.achievementofall",
+};
+var push_data2 = {
+  // 수신대상
+  to: client_token,
+  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+  data: {
+    title: titleSuccess,
+    body: "NoSmoking",
+    // sound: "default",
+    // click_action: "FCM_PLUGIN_ACTIVITY",
+    // click_action:"OPEN_ACTIVITY",
+    // icon: "fcm_push_icon"
+  },
+  // 메시지 중요도
+  priority: "high",
+  // App 패키지 이름
+  restricted_package_name: "com.example.parkseunghyun.achievementofall",
+};
+
+// var scheduler = schedule.scheduleJob('00 * * * * *', function() {
+//   fcm.send(push_data, function(err, response) {
+//     if (err) {
+//       console.error('실패 Push메시지 발송에 실패했습니다.');
+//       console.error(err);
+//       return;
+//     }
+//     console.log('인증 Push메시지가 발송되었습니다.');
+//     console.log(response);
+//   });
+// });
+var scheduler = schedule.scheduleJob('20 * * * * *', function() {
+  fcm.send(push_data1, function(err, response) {
+    if (err) {
+      console.error('실패 Push메시지 발송에 실패했습니다.');
+      console.error(err);
+      return;
+    }
+    console.log('실패 Push메시지가 발송되었습니다.');
+    console.log(response);
+  });
+});
+// var scheduler = schedule.scheduleJob('40 * * * * *', function() {
+//   fcm.send(push_data2, function(err, response) {
+//     if (err) {
+//       console.error('실패 Push메시지 발송에 실패했습니다.');
+//       console.error(err);
+//       return;
+//     }
+//     console.log('성공 Push메시지가 발송되었습니다.');
+//     console.log(response);
+//   });
+// });
+
 
 
 
@@ -637,13 +727,14 @@ function dbInit(){
       contentId : 0,
       videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
       contentName: "NoSmoking",
-      joinState : 1,
-      authenticationDate : "2018-11-18",
+      joinState : 4,
+      authenticationDate : "2018-11-24",
       isUploaded : 0,
-      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "23", authen: 1}],
-      money: 100000,
+      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 0}],
+      money: 0,
       reward: 0,
-      rewardCheck: 0
+      rewardCheck: 0,
+      penalty: 100000
     }]
   });
    var user4 = new user({
@@ -766,7 +857,7 @@ function dbInit(){
     userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
       {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
       {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0}]}, result: 2}],
-    description: "금연 컨텐츠입니다. \n 18년11월1일부터 18년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트: http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
   var content2 = new content({
@@ -776,7 +867,7 @@ function dbInit(){
     endDate: "11/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n 19년1월1일부터 19년11월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+    description: "금연 컨텐츠입니다. \n  니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트: http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
   var content3 = new content({
@@ -786,7 +877,7 @@ function dbInit(){
     endDate: "12/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트: http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
   var content4 = new content({
