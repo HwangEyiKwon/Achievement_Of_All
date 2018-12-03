@@ -57,7 +57,7 @@ export class UserServiceComponent implements OnInit , OnDestroy {
     // 회원가입 버튼을 누를 경우
 
     // 빈칸을 모두 입력하지 않을 경우 알람을 띄움.
-    if (form.value.username == undefined || form.value.phoneNumber == undefined || form.value.password == undefined || form.value.email == undefined || form.value.managerKey == undefinded){
+    if (form.value.username == undefined || form.value.phoneNumber == undefined || form.value.password == undefined || form.value.email == undefined || form.value.managerKey == undefined){
       alert('빈칸을 모두 입력해주세요.');
     } else {
       // 빈칸이 모두 입력되고 회원가입 버튼을 누른 경우
@@ -68,7 +68,7 @@ export class UserServiceComponent implements OnInit , OnDestroy {
 
         // 성공할 경우
         if (JSON.parse(JSON.stringify(result)).success === true ) {
-          alert('가입에 성공하셨습니다. Email인증을 해주십시오.');
+          alert('가입에 성공하셨습니다.');
 
           // 로그인 창으로 보내주고
           // 회원가입 창의 칸들을 모두 비운다.
@@ -81,16 +81,19 @@ export class UserServiceComponent implements OnInit , OnDestroy {
 
         } else {
           //
-          if (JSON.parse(JSON.stringify(result)).status === true) {
+          if (JSON.parse(JSON.stringify(result)).why == 0) {
             alert('존재하는 계정입니다.');
-          } else {
-            alert('인증이 필요한 계정입니다.');
+          } else if(JSON.parse(JSON.stringify(result)).why == 1) {
+            alert('Manager Key가 틀렸습니다.');
+          }else{
+            alert('서버 상태가 좋지 않습니다. 다시 시도해주세요.');
           }
 
         }
       });
     }
   }
+
   onLogin(form: NgForm) {
     // Login
     // 로그인 버튼을 누를 경우
@@ -110,12 +113,21 @@ export class UserServiceComponent implements OnInit , OnDestroy {
           this.router.navigate(['/main/userInfo']);
         }
         else {
-          // 로그인 정보가 틀릴 경우
-          alert('유효하지 않는 계정입니다.');
+          if(JSON.parse(JSON.stringify(result)).why === 0){
+            // 로그인 정보가 틀릴 경우
+            alert('유효하지 않는 계정입니다.');
+          }else if(JSON.parse(JSON.stringify(result)).why === 1){
+            // 로그인 정보가 틀릴 경우
+            alert('Password가 틀립니다.');
+          }else if(JSON.parse(JSON.stringify(result)).why === 2){
+            // 로그인 정보가 틀릴 경우
+            alert('권한이 없습니다.');
+          }
         }
       });
     }
   }
+
   onChangePassword(form: NgForm) {
     // Change Password
     // 비밀번호 변경을 위한 이메일 인증 버튼을 누를 경우
@@ -129,18 +141,21 @@ export class UserServiceComponent implements OnInit , OnDestroy {
       // 서버 측에서는 보낸 정보들을 통해 비밀번호 정보 등을 체크하고 성공 여부를 다시 클라이언트에 날림. (성공시 데이터베이스에 정보 적용)
       this.httpService.changePassword(form.value.emailChangeEmail).subscribe(result => {
         // 유효한 이메일로 메일을 발송할 경우
-        if(JSON.parse(JSON.stringify(result)).access === true){
+        if(JSON.parse(JSON.stringify(result)).success === true){
           alert('인증 메일을 발송했습니다.');
           this.state = 0;
         }
         else{
-          // 이메일이 유효하지 않을 경우
-          alert('유효하지 않는 계정입니다.');
+
+          if(JSON.parse(JSON.stringify(result)).why === 0){
+            alert('등록되지 않은 이메일입니다.');
+          }else if(JSON.parse(JSON.stringify(result)).why === 1){
+            alert('유효하지 않은 이메일입니다.');
+          }
         }
       });
     }
   }
-
 
   // 창 상태 변경 함수
   stateChange(n: number) {
@@ -154,7 +169,7 @@ export class UserServiceComponent implements OnInit , OnDestroy {
   }
   // NgOnDestroy
   // 컴포넌트가 파괴될 때 작동하는 부분
-  ngOnDestroy(){
+  ngOnDestroy() {
     // 위에서 HTTP 통신을 위한 Observer가 Subscribe 중이므로 Unsubscribe를 해준다.
     // 사실 unsubscribe는 필요에 따라해주면된다.
     this.myObserver.unsubscribe();

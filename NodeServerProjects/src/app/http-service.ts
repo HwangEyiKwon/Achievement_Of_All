@@ -7,7 +7,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Http, RequestOptions, ResponseContentType } from '@angular/http';
-import { Observable } from 'rxjs/Rx;
+import { Observable } from 'rxjs/Rx';
 
 @Injectable()
 export class HttpService {
@@ -29,13 +29,13 @@ export class HttpService {
       // 이미지 업로드를 하기 위한 함수
       return this.http.post('/photo',{
           formData: formData
-      })
+      });
   }
-  downloadFile(bt,id): Observable<Blob> {
+  downloadFile(bt, id): Observable<Blob> {
       // 파일 (엑셀) 다운로드 관련 함수
       let options = new RequestOptions({responseType: ResponseContentType.Blob });
-      return this.http2.get( 'downloadCertification/'+bt + '/'+ id, options)
-          .map(res => res.blob())
+      return this.http2.get( 'downloadCertification/' + bt + '/' + id, options)
+          .map(res => res.blob());
 
   }
   // ------------------------------------------------------------------------
@@ -54,7 +54,7 @@ export class HttpService {
   userLogout() {
     // 사용자 로그아웃
     // 로그아웃과 동시에 세션 파괴
-    return this.http.get('/userLogout');
+    return this.http.get('/managerLogout');
   }
   userSignUp(userName: string, userPhoneNumber: string, userPassword: string, userEmail: string, managerKey: string ) {
     // 사용자 등록 (회원 가입)
@@ -66,20 +66,13 @@ export class HttpService {
       phoneNumber: userPhoneNumber
     });
   }
-  changePassword(userName: string, userPhoneNumber: string,  userEmail: string){
+  changePassword(userEmail: string) {
       // 비밀번호 찾기를 위한 이메일 인증
-      return this.http.post('/changePassword', {
-          userName: userName,
-          userPhoneNumber: userPhoneNumber,
-          userEmail: userEmail,
-      });
+      return this.http.get('/pwdSendMail/' + userEmail);
   }
-  changePasswordFinish(newPassword: string){
-      // 실제 비밀번호 변경
-      return this.http.post('/changePasswordFinish', {
-          newPassword: newPassword
-      });
-  }
+
+
+
   // ------------------------------------------------------------------------
 
 
@@ -87,24 +80,23 @@ export class HttpService {
   // userPage에서 사용되는 함수
   getUserInfo() {
       // 사용자 페이지에 사용자 정보 로드
-      return this.http.get('/getUserInfo');
+      return this.http.get('/getManagerInfo');
   }
   // ------------------------------------------------------------------------
 
 
   // ------------------------------------------------------------------------
   // userInfo에서 사용되는 함수
-  changeUserInfo(userName: string, userEmail: string, userGender: string, userPhoneNumber: string, userImagePath: Object) { // 사용자 페이지(사용자 관리) 사용자들 정보 로드
-      return this.http.post('/changeUserInfo',{
-          userName: userName,
-          userEmail: userEmail,
-          userGender: userGender,
-          userPhoneNumber: userPhoneNumber,
-          userImagePath: userImagePath
+  changeUserInfo(name: string, email: string, phoneNumber: string, imagePath: Object) { // 사용자 페이지(사용자 관리) 사용자들 정보 로드
+      return this.http.post('/managerInfoEdit', {
+          name: name,
+          email: email,
+          phoneNumber: phoneNumber,
+          imagePath: imagePath
       });
   }
   changeUserPassword(currentPassword: string, newPassword: string,  newPasswordCheck: string){
-      return this.http.post('/changeUserPassword', {
+      return this.http.post('/managerPasswordEdit', {
           currentPassword: currentPassword,
           newPassword: newPassword,
           newPasswordCheck: newPasswordCheck
@@ -112,24 +104,24 @@ export class HttpService {
   }
   // ------------------------------------------------------------------------
 
-
   // ------------------------------------------------------------------------
   // userManage에서 사용되는 함수
   getUsersInfo() {
       // 사용자 페이지(사용자 관리) 사용자들 정보 로드
-    return this.http.get('/getUsersInfo');
+    return this.http.get('/getManagersInfo');
   }
+
   deleteUserInfo(userName: string, userEmail: string){
       // 사용자 페이지 (사용자 관리) 사용자 정보 제거
-      return this.http.post('/deleteUserInfo',{
-          userName: userName,
-          userEmail: userEmail,
+      return this.http.post('/deleteManagerInfo',{
+          name: userName,
+          email: userEmail,
       });
   }
   updateUserInfo(userInfo: Object, userNewInfo: Object){
       // 사용자 페이지 (사용자 관리) 사용자 정보 수정
-      return this.http.post('/updateUserInfo',{
-          userInfo,userNewInfo
+      return this.http.post('/updateManagerInfo', {
+          userInfo, userNewInfo
       });
   }
   addUserInfo(userNewInfo: Object){
@@ -167,10 +159,18 @@ export class HttpService {
   // ------------------------------------------------------------------------
   // deviceManage에서 사용되는 함수
 
-  getDevicesInfo() {
+  getContentsInfo() {
       // 사용자 페이지(디바이스 관리, 그룹 관리) 디바이스 정보 로드
-      return this.http.get('/getDevicesInfo');
+      return this.http.get('/getContentsInfo');
   }
+
+
+
+
+
+
+
+
   deleteDeviceInfo(topicName: string, deviceID: string, group: string){
       // 사용자 페이지 (디바이스 관리)  제거
       return this.http.post('/deleteDeviceInfo',{

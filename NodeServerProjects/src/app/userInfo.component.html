@@ -11,7 +11,7 @@
       <div>
         <div class="panel-body">
           <div class="row">
-            <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src= "http://{{imagePath}}/getImage/{{userImage}}" class="img-circle img-responsive" style ="width: 150px;
+            <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src= "{{imagePath}}/getManagerImage/{{email}}" class="img-circle img-responsive" style ="width: 150px;
   border:3px solid black;
   height: 150px;
   position: relative;
@@ -23,31 +23,19 @@
                 <tbody>
                 <tr>
                     <td>Authority</td>
-                    <td>{{userAuthority}}</td>
+                    <td>{{authority}}</td>
                 </tr>
                 <tr>
                     <td>Name</td>
-                    <td>{{userName}}</td>
-                </tr>
-                <tr>
-                    <td>Gender</td>
-                    <td>{{userGender}}</td>
-                </tr>
-                <tr>
-                    <td>Group</td>
-                    <td>{{groupName}}</td>
-                </tr>
-                <tr>
-                    <td>Device</td>
-                    <td>{{deviceID}}</td>
+                    <td>{{name}}</td>
                 </tr>
                 <tr>
                     <td>Email</td>
-                    <td><a href="mailto:{{userEmail}}">{{userEmail}}</a></td>
+                    <td><a href="mailto:{{email}}">{{email}}</a></td>
                 </tr>
                 <tr>
                     <td>Phone Number</td>
-                    <td>{{userPhoneNumber}}</td>
+                    <td>{{phoneNumber}}</td>
                 </tr>
                 </tbody>
               </table>
@@ -70,7 +58,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-3 col-lg-3 " align="center">
-                            <img alt="User Pic" src= "http://{{imagePath}}/getImage/{{userImage}}" class="img-circle img-responsive" style ="width: 150px;
+                            <img alt="User Pic" src= "{{imagePath}}/getManagerImage/{{email}}" class="img-circle img-responsive" style ="width: 150px;
   border:3px solid black;
   height: 150px;
   position: relative;
@@ -83,7 +71,7 @@
                                 <tbody>
                                 <tr>
                                     <td>Authority</td>
-                                    <td>{{userAuthority}}</td>
+                                    <td>{{authority}}</td>
                                 </tr>
                                 <tr>
                                     <td>Name</td>
@@ -92,38 +80,14 @@
                                         <input type="text"
                                                style="height: 10px; font-size: 10px"
                                                class="form-control input-lg"
-                                               [(ngModel)]="userName"
-                                               name="userName">
+                                               [(ngModel)]="name"
+                                               name="name">
                                         <!--</div>-->
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td>Gender</td>
-                                    <td>
-                                        <!--<div class="form-group">-->
-                                        <p>
-                                            <input style="height: 10px; font-size: 10px" type="radio"  value="male" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Male</label>
-                                            &nbsp;&nbsp;
-                                            <input style="height: 10px; font-size: 10px" type="radio"  value="female" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Female</label>
-                                            &nbsp;
-                                            <input style="height: 10px; font-size: 10px " type="radio"  value="rather not say" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Rather not say</label>
-                                            &nbsp;
-                                            <input style="height: 10px; font-size: 10px" type="radio"  value="custom" name="gender" [ngModel]="userGender" ><label style="font-size: 10px;">Custom</label>
-                                        </p>
-                                        <!--</div>-->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Group</td>
-                                    <td>{{groupName}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Device</td>
-                                    <td>{{deviceID}}</td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
-                                    <td>{{userEmail}}</td>
+                                    <td>{{email}}</td>
                                 </tr>
                                 <tr>
                                     <td>Phone Number</td>
@@ -131,8 +95,8 @@
                                             <input type="text"
                                                    style="height: 10px; font-size: 10px"
                                                    class="form-control input-lg"
-                                                   [(ngModel)]="userPhoneNumber"
-                                                   name="userPhoneNumber">
+                                                   [(ngModel)]="phoneNumber"
+                                                   name="phoneNumber">
                                     </td>
                                 </tr>
                                 </tbody>

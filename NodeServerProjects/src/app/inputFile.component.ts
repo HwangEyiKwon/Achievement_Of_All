@@ -61,10 +61,10 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
             if (res.hasOwnProperty('option') && res.option === 'image') {
                 // perform your other action from here
                     // 사용자가 수정/생성 버튼을 누를 경우
-
                     // 이미지 변화가 있을 경우
                     if(this.changeState == true){
                         // 이미지를 업로드한다.
+
                         this.upload().then(response => {
                             this.rightValueChange(response);
 
@@ -77,17 +77,14 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
 
                     }else {
                         // 정보를 생성했는데 이미지를 업로드 하지 않은 경우 Default 사진을 준다.
-                        if(this.cell.newValue ==  ""){
-                            if(res.from == 'device'){
-                                this.rightValueChange('deviceDefault.png');
-                            }else if(res.from == 'user'){
-                                this.rightValueChange('userDefault.png');
-                            }else if(res.from == 'group'){
-                                this.rightValueChange('groupDefault.png');
-                            }
-                            console.log("default Image");
+                      var response = null;
+
+                      if(this.cell.newValue ==  ""){
+
+                        }else{
+                          response = this.cell.newValue;
                         }
-                        var response = this.cell.newValue;
+
 
                         // 부모 컴포넌트인 관리자 컴포넌트에 해당 이미지 파일이름을 전달한다.
                         // 이는 관리자 컴포넌트에서 직접 데이터베이스에 저장 요청을 하는 http 함수가 있기 때문이다.

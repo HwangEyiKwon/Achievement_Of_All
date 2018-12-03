@@ -17,19 +17,12 @@ import * as myGlobals from './global.service';
 })
 export class UserInfoComponent implements OnInit {
 
-  imagePath = myGlobals.imagePath; // 이미지 경로
-
   state: number; // 사용자 정보 제공 = 0, 수정 기능 = 1, 비밀번호 변경 = 2
 
-  userEmail: string; // 사용자 이메일
-  userName: string; // 사용자 이름
-  userAuthority: string; // 사용자 권한
-  groupName: string; // 그룹
-  deviceID: string;
-  userGender: string; // 사용자 성별
-  userPhoneNumber: string; // 사용자 전화번호
-  userImage: string; // 사용자 이미지
-
+  email: string; // 사용자 이메일
+  name: string; // 사용자 이름
+  authority: string; // 사용자 권한
+  phoneNumber: string; // 사용자 전화번호
 
   // 사용자 정보 페이지에는 사용자 정보를 수정하는 기능이 있다
   // 그 중 사용자가 이미지를 수정하면 이미지를 서버에 업로드할 수 있도록 해주는 부분이다
@@ -48,16 +41,11 @@ export class UserInfoComponent implements OnInit {
     // 부모 컴포넌트인 userPage.component에서 보낸 사용자 정보들을 불러오는 값
     // 컴포넌트 사이에서 데이터 교환은 여러 방식이 있는데 이는 그 중 하나의 방법임. (Data.service 참고)
     this.dataService.currentMessage.subscribe(userInfo => {
-      this.userEmail = JSON.parse(JSON.stringify(userInfo)).userEmail;
-      this.userName = JSON.parse(JSON.stringify(userInfo)).userName;
-      this.userAuthority = JSON.parse(JSON.stringify(userInfo)).userAuthority;
-      this.groupName = JSON.parse(JSON.stringify(userInfo)).groupName;
-      this.deviceID = JSON.parse(JSON.stringify(userInfo)).deviceID;
-      this.userGender = JSON.parse(JSON.stringify(userInfo)).userGender;
-      this.userPhoneNumber = JSON.parse(JSON.stringify(userInfo)).userPhoneNumber;
-      this.userImage = JSON.parse(JSON.stringify(userInfo)).userImage;
+      this.email = JSON.parse(JSON.stringify(userInfo)).email;
+      this.name = JSON.parse(JSON.stringify(userInfo)).name;
+      this.authority = JSON.parse(JSON.stringify(userInfo)).authority;
+      this.phoneNumber = JSON.parse(JSON.stringify(userInfo)).phoneNumber;
     });
-
 
     //override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
     this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
@@ -127,12 +115,15 @@ export class UserInfoComponent implements OnInit {
     this.upload().then( response =>{
       //upload()를 우선 호출 후 upload 내부 모든 비동기 함수가 끝나면 이어서 아래 코드 진행
       var userImagePath = response;
+
+      console.log("dafadsfasdf"+ userImagePath);
+
       // HTTP 통신으로 서버에 수정하려는 정보들을 전달 (성공시 데이터베이스에 적용)
-      this.httpService.changeUserInfo(form.value.userName, this.userEmail, form.value.gender, form.value.userPhoneNumber,userImagePath).subscribe(
+      this.httpService.changeUserInfo(form.value.name, this.email, form.value.phoneNumber, userImagePath).subscribe(
         result =>{
           // 사용자 정보 수정 완료
           if(JSON.parse(JSON.stringify(result)).success === true ){
-            this.state=0;
+            this.state = 0;
             // 수정이 완료되면 부모 컴포넌트를 다시 호출하여 수정된 사용자 정보를 가져오도록 함.
             this.parent.ngOnInit();
 
@@ -153,13 +144,15 @@ export class UserInfoComponent implements OnInit {
         this.httpService.changeUserPassword(form.value.currentPassword, form.value.newPassword, form.value.newPasswordCheck).subscribe(
           result =>{
             // 비밀번호 수정 완료
-            if(JSON.parse(JSON.stringify(result)).success === true ){
+            if(JSON.parse(JSON.stringify(result)).success == 1 ){
               this.state=0;
               // 수정이 완료되면 부모 컴포넌트를 다시 호출하여 수정된 사용자 정보를 가져오도록 함.
               this.parent.ngOnInit();
               alert("비밀번호가 수정되었습니다.");
-            }else{
-              alert("비밀번호가 틀립니다.")
+            }else if(JSON.parse(JSON.stringify(result)).success == 0){
+              alert("비밀번호가 틀립니다.");
+            }else {
+              alert("오류");
             }
 
           }

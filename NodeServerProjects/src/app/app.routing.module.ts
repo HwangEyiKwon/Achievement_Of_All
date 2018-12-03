@@ -10,7 +10,7 @@ import { UserPageComponent } from './userPage.component';
 
 import { UserInfoComponent } from './userInfo.component';
 import { UserManageComponent } from './userManage.component';
-// import { ContentManageComponent } from './contentManage.component';
+import { ContentManageComponent } from './contentManage.component';
 
 const routes: Routes = [ // Route 지정
 
@@ -18,8 +18,10 @@ const routes: Routes = [ // Route 지정
   { path: 'login', component: UserServiceComponent}, // 로그인 페이지
   { path: 'main', component: UserPageComponent, // 로그인을 마치면 main 페이지
     children: [
+      { path: '', redirectTo: 'userInfo', pathMatch: 'full'},
       { path: 'userInfo', component: UserInfoComponent}, // 사용자 정보
-      { path: 'userManange', component: UserManageComponent} ]// 사용자 관리
+      { path: 'userManage', component: UserManageComponent}, // 사용자 관리
+      { path: 'contentManage', component: ContentManageComponent} ]// 컨텐츠 관리
       // { path: 'contentManange', component: ContentManageComponent}] // 컨텐츠 관리
   },
   {path: '**', redirectTo: 'login'}

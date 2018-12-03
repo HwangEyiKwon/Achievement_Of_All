@@ -34,113 +34,81 @@ export class UserManageComponent implements OnInit, OnDestroy {
         private dataService: DataService
     ) {}
 
-    getGroupName() { // Group들의 이름,사진 불러오기
-        this.httpService.getAllGroupNameImage().subscribe(result => {
+    setTable() { // Group들의 이름,사진 불러오기
 
-            // 접근 권한 확인
-            if(JSON.parse(JSON.stringify(result)).error==true){
-                // 권한이 없는 경우 에러 페이지 이
-                this.router.navigate(['/error']);
-            }else{
 
-                this.groupList.push({title:'all', value:'all'});
-                for(var i in result){
-                    this.groupList.push({title: result[i].groupName,value: result[i].groupName});
+          this.settings = {
+            pager : {
+              display : true,
+              perPage:10
+            },
+            add:{
+              addButtonContent: '<i class="fa fa-plus"></i>',
+              createButtonContent: '<i class="fa fa-check"></i>&nbsp&nbsp',
+              cancelButtonContent: '<i class="fa fa-times"></i>',
+              confirmCreate: true
+            },
+            edit: {
+              editButtonContent: '<i class="fa fa-pencil"></i>&nbsp&nbsp',
+              saveButtonContent: '<i class="fa fa-check"></i>&nbsp&nbsp',
+              cancelButtonContent: '<i class="fa fa-times"></i>',
+              // mode: 'external'
+              confirmSave: true,
+            },
+            delete: {
+              deleteButtonContent: '<i class="fa fa-trash" aria-hidden="true"></i>',
+              confirmDelete: true
+            },
+            columns: {
+              email: {
+                title: 'Email',
+                width: '12%',
+                editable:false
+              },
+              name: {
+                title: 'Name'
+              },
+              authority: {
+                title: 'Authority',
+                editor:{
+                  type: 'list',
+                  config: {
+                    list: [{title: 'user', value: 'user'}, {title: 'manager', value: 'manager'}]
+                  }
                 }
-                // 스마트 테이블 세팅
-                // groupList 설정을 위해 getGroupName()에서 설정한다.
-                this.settings = {
-                    pager : {
-                        display : true,
-                        perPage:10
-                    },
-                    add:{
-                        addButtonContent: '<i class="fa fa-plus"></i>',
-                        createButtonContent: '<i class="fa fa-check"></i>&nbsp&nbsp',
-                        cancelButtonContent: '<i class="fa fa-times"></i>',
-                        confirmCreate: true
-                    },
-                    edit: {
-                        editButtonContent: '<i class="fa fa-pencil"></i>&nbsp&nbsp',
-                        saveButtonContent: '<i class="fa fa-check"></i>&nbsp&nbsp',
-                        cancelButtonContent: '<i class="fa fa-times"></i>',
-                        // mode: 'external'
-                        confirmSave: true,
-                    },
-                    delete: {
-                        deleteButtonContent: '<i class="fa fa-trash" aria-hidden="true"></i>',
-                        confirmDelete: true
-                    },
-                    columns: {
-                        email: {
-                            title: 'Email',
-                            width: '12%',
-                            editable:false
-                        },
-                        name: {
-                            title: 'Name'
-                        },
-                        authority: {
-                            title: 'Authority',
-                            editor:{
-                                type: 'list',
-                                config: {
-                                    list: [{title: 'user', value: 'user'}, {title: 'groupMaster', value: 'groupMaster'},{title: 'master', value: 'master'}]
-                                }
-                            }
-                        },
-                        groupName: {
-                            title: 'Group',
-                            editor:{
-                                type: 'list',
-                                config: {
-                                    list: this.groupList
-                                }
-                            }
-                        },
-                        deviceID: {
-                            title: 'Device'
-                        },
-                        password:{
-                            title: 'Password',
-                            width: '25%'
-                        },
-                        gender:{
-                            title: 'Gender',
-                            editor:{
-                                type: 'list',
-                                config: {
-                                    list: [{title: 'male', value: 'male'}, {title: 'female', value: 'female'}, {title: 'rather not say', value: 'rather not say'},{title: 'custom', value: 'custom'}]
-                                }
-                            }
-                        },
-                        phoneNumber:{
-                            title: 'PhoneNumber',
-                            width: '10%'
-                        },
-                        image:{
-                            title: 'Image',
-                            width: '20%',
-                            type: 'text',
-                            // 이미지 수정을 위한 부분
-                            // 수정 버튼을 누를 시 InputFileComponent를 호출함.
-                            editor: {
-                                type: 'custom',
-                                component: InputFileComponent,
-                                mode: 'external'
-                            }
-                        }
-                    },
-                    attr: {
-                        class: 'table table-responsive'
-                    },
+              },
 
-                };
-            }
-        });
+              password:{
+                title: 'Password',
+                width: '25%'
+              },
+
+              phoneNumber:{
+                title: 'PhoneNumber',
+                width: '10%'
+              },
+              image:{
+                title: 'Image',
+                width: '20%',
+                type: 'text',
+                // 이미지 수정을 위한 부분
+                // 수정 버튼을 누를 시 InputFileComponent를 호출함.
+                editor: {
+                  type: 'custom',
+                  component: InputFileComponent,
+                  mode: 'external'
+                }
+              }
+            },
+            attr: {
+              class: 'table table-responsive'
+            },
+
+          };
     }
-    ngOnInit() {
 
+    ngOnInit() {
+        console.log("아니 왜안되???????????")
         // Authority Check
         // 관리자 페이지는 권한이 마스터인 사용자만 가능
         // HTTP 통신을 통해 관리자 체크를 해야함.
@@ -156,7 +124,8 @@ export class UserManageComponent implements OnInit, OnDestroy {
                 this.httpService.sessionCheck().subscribe(result => {
                     if(JSON.parse(JSON.stringify(result)).userSess !== undefined ){
                         console.log("Session: " + JSON.stringify(result));
-                        this.getGroupName();
+
+                        this.setTable();
                         this.updateTable();
                     }
                     else {
@@ -176,20 +145,20 @@ export class UserManageComponent implements OnInit, OnDestroy {
     }
     // Table Update
     updateTable(){
-        return new Promise ((resolve,reject)=>{
+        return new Promise ((resolve,reject) => {
             this.usersInfo = [];
+          console.log("아니 왜안되?");
             this.httpService.getUsersInfo().subscribe(result => {
+
                 for ( const u of JSON.parse(JSON.stringify(result))) {
+                    console.log(u);
                     this.usersInfo.push({
-                        email: u.userEmail,
-                        name: u.userName,
-                        authority: u.userAuthority,
-                        groupName: u.groupName,
-                        deviceID: u.deviceID,
-                        password: u.userPassword,
-                        gender: u.userGender,
-                        phoneNumber: u.userPhoneNumber,
-                        image: u.userImage
+                        email: u.email,
+                        name: u.name,
+                        authority: u.authority,
+                        password: u.password,
+                        phoneNumber: u.phoneNumber,
+                        image: u.imagePath
                     });
                 }
                 this.source = new LocalDataSource(this.usersInfo);
@@ -200,7 +169,7 @@ export class UserManageComponent implements OnInit, OnDestroy {
                 this.parent.ngOnInit();
                 resolve();
             });
-        })
+        });
     }
     // Delete Info
     // 정보 삭제
@@ -225,6 +194,7 @@ export class UserManageComponent implements OnInit, OnDestroy {
 
             // InputFile.component와 통신
             this.subscription = this.dataService.notifyObservable$_parent.subscribe((res) => {
+
                 if (res.hasOwnProperty('option') && res.option === 'image') {
                     event.newData.image = res.value;
                     // 수정된 정보를 저장

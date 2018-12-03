@@ -17,10 +17,10 @@ import {UserServiceComponent} from './userService.component';
 import {UserPageComponent} from './userPage.component';
 import {UserInfoComponent} from './userInfo.component';
 import {UserManageComponent} from './userManage.component';
-
 import { InputFileComponent } from './inputFile.component'; // for Image Upload
+import { ErrorComponent } from './error.component'; // Error Page
 
-// import {ConentManageComponent} from './contentManage.component';
+import {ContentManageComponent} from './contentManage.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +29,8 @@ import { InputFileComponent } from './inputFile.component'; // for Image Upload
     UserPageComponent,
     UserInfoComponent,
     UserManageComponent,
+    ContentManageComponent,
+    ErrorComponent,
     InputFileComponent
   ],
   imports: [
@@ -38,12 +40,15 @@ import { InputFileComponent } from './inputFile.component'; // for Image Upload
     FormsModule,
     HttpModule,
     Ng2SmartTableModule,
-    ImageUploadModule
+    ImageUploadModule.forRoot(),
   ],
   providers: [
     HttpService,
     DataService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    InputFileComponent
+  ]
 })
 export class AppModule { }
