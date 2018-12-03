@@ -157,7 +157,7 @@ export class HttpService {
 
 
   // ------------------------------------------------------------------------
-  // deviceManage에서 사용되는 함수
+  // contentManage에서 사용되는 함수
 
   getContentsInfo() {
       // 사용자 페이지(디바이스 관리, 그룹 관리) 디바이스 정보 로드
@@ -194,48 +194,13 @@ export class HttpService {
   // ------------------------------------------------------------------------
 
 
-  // ------------------------------------------------------------------------
-  // deviceInfo에서 사용되는 함수
-
-  getAllGroupNameImage() { // Group 정보 (Admin 전용)
-    return this.http.get('/getAllGroupNameImage');
-  }
-  getAllDevicesData(groupName) { // Group 내 Device 정보 (groupAdmin,Admin 전용)
-    console.log('GroupName: ' + groupName);
-    return this.http.get('/getAllDevicesData/' + groupName);
-  }
-  getAllDeviceData(id) { // 모든 Device 정보
-    console.log('DeviceID: ' + id);
-    return this.http.get('/getAllDeviceData/' + id);
-  }
-
-  getDeviceInfo(id){ // Device 정보
-    return this.http.get('/getDeviceInfo/' + id);
-  }
-
-  getMacAddress(){ // MacAddress 요청
-      return this.http.get('/getMacAddress');
-  }
-
-  updateDevicePlugStatus(id, e){ // Device plug 상태 변경
-    return this.http.post('/updateDevicePlugStatus/' + id, {
-      e
-    });
-  }
-  reload(id){ // reload 버튼
-    return this.http.get('/reload/'+id);
-  }
-  getManualKey(id){ // Manual Key 갱신
-      return this.http.get('/getManualKey/' + id);
-  }
-  // ------------------------------------------------------------------------
-
 
   // ------------------------------------------------------------------------
-  // Farm에서 사용되는 함수
-  getFarmData(){
+  // About에서 사용되는 함수
+
+  getAppInfo(){
       // Farm 측정 값들 볼러오는 함수
-    return this.http.get('/getFarmData');
+    return this.http.get('/getAppInfo');
   }
   // ------------------------------------------------------------------------
 }

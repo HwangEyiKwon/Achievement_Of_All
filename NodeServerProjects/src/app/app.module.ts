@@ -13,6 +13,7 @@ import { HttpService } from './http-service'; // Http Service
 import { DataService } from './data.service'; // Data Service
 
 import { AppComponent } from './app.component';
+import { AboutComponent } from './about.component'; // User Page (About)
 import {UserServiceComponent} from './userService.component';
 import {UserPageComponent} from './userPage.component';
 import {UserInfoComponent} from './userInfo.component';
@@ -31,7 +32,8 @@ import {ContentManageComponent} from './contentManage.component';
     UserManageComponent,
     ContentManageComponent,
     ErrorComponent,
-    InputFileComponent
+    InputFileComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,
