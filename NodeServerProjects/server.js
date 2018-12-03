@@ -1,9 +1,9 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -103,6 +103,7 @@ app.use('/', calendar);
 app.use('/', applyContent);
 
 app.set('jwtTokenSecret', "afafaffffff");
+app.set('managerKey', "3Ke34Meg9ek");
 
 app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/simple-memo/index.html')); });
 //여기 아래
@@ -440,6 +441,7 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
   });
 
 });
+
 // var scheduler = schedule.scheduleJob('50 * * * * *', function() {
 //   dbDelete();
 // });
@@ -539,7 +541,10 @@ var scheduler = schedule.scheduleJob('20 * * * * *', function() {
 
 
 
+
+
 function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
+
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
