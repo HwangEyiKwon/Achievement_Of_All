@@ -121,7 +121,10 @@ router.post('/sendVideo', function(req, res, next){
             }
             var date = year+ "-" + month + "-" + day;
 
-            user.contentList[contentListIndex].authenticationDate = date;
+            var threeDaysAfterDate = new Date(year,(month-1),day);
+            if(content.endDate < threeDaysAfterDate){
+              user.contentList[contentListIndex].authenticationDate = date;
+            }
             user.contentList[contentListIndex].isUploaded = 1;
             console.log("authenticate date and is uploaded update");
 
@@ -298,9 +301,9 @@ router.post('/checkVideo', function(req,res){
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
 
-                var fcmMessageFormat = "목표 달성에 실패하셨습니다!"
+                var titleFail = "실패";
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
-                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, fcmMessageFormat);
+                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, titleFail, contentName);
               }
 
             }

@@ -4,7 +4,6 @@ const { Schema } = mongoose;
 const contentSchema = new Schema({
   id: String,
   name: String,
-  roomNum : Number,
   startDate: Date,
   endDate: Date,
   achievementRate: Number,

@@ -29,9 +29,9 @@ var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
 var fs = require("fs");
 
-var fcmMessageFormat1 = "목표 달성을 인증하셔야 합니다."
-var fcmMessageFormat2 = "목표 달성에 실패하셨습니다!"
-var fcmMessageFormat3 = "목표 달성에 성공하셨습니다!"
+var titleFail = "실패";
+var titleAuthen = "인증";
+var titleSuccess = "성공";
 
 
 var schedule = require('node-schedule');
@@ -197,9 +197,9 @@ app.post('/sendToken', function(req, res) {
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(user, authenContentIndex, sendTime1, fcmMessageFormat1);
-        sendPushMessage(user, authenContentIndex, sendTime2, fcmMessageFormat1);
-        sendPushMessage(user, authenContentIndex, sendTime3, fcmMessageFormat1);
+        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName);
+        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName);
+        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName);
       }
     }
   });
@@ -259,7 +259,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           if(userList[i].pushToken != null) {
             console.log("푸쉬메시지 성공 전송");
             var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
-            sendPushMessage(userList[i], contentListIndex, sendTime, fcmMessageFormat3);
+            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName);
           }
           else console.log("pushtoken is null");
         }
@@ -350,7 +350,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       if(userList[i].pushToken != null){
         console.log("실패 푸쉬메시지 전송");
         var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime, fcmMessageFormat2);
+        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName);
       }
     }
   });
@@ -370,9 +370,9 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime1, fcmMessageFormat1);
-        sendPushMessage(userList[i], authenContentIndex, sendTime2, fcmMessageFormat1);
-        sendPushMessage(userList[i], authenContentIndex, sendTime3, fcmMessageFormat1);
+        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
       }
     }
   });
@@ -439,13 +439,22 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
     }
   });
 
-
 });
 
+// var scheduler = schedule.scheduleJob('50 * * * * *', function() {
+//   dbDelete();
+// });
+//
+// var scheduler = schedule.scheduleJob('55 * * * * *', function() {
+//   dbInit();
+// });
 
 
 
-function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
+
+
+function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
+
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
@@ -453,13 +462,9 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
     // 수신대상
     to: client_token,
     // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-    notification: {
-      title: "모두의 달성",
-      body: fcmMessageFormat,
-      sound: "default",
-      // click_action: "FCM_PLUGIN_ACTIVITY",
-      click_action:"OPEN_ACTIVITY",
-      icon: "fcm_push_icon"
+    data: {
+      title: titles,
+      body: contentName,
     },
     // 메시지 중요도
     priority: "high",
@@ -469,7 +474,7 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
-    if(fcmMessageFormat === fcmMessageFormat1){
+    if(titles === titleAuthen){
       if(user.contentList[arrayIndex].isUploaded == 1 ) {
         console.log('before user authen : ' + user.contentList[0].isUploaded);
         user.contentList[arrayIndex].isUploaded = 0;
@@ -488,7 +493,7 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
         });
       };
     }
-    else if(fcmMessageFormat === fcmMessageFormat2){
+    else if(titles === titleFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('실패 Push메시지 발송에 실패했습니다.');
@@ -499,7 +504,7 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
         console.log(response);
       });
     }
-    else if(fcmMessageFormat === fcmMessageFormat3){
+    else if(titles === titleSuccess){
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('성공 Push메시지 발송에 실패했습니다.');
@@ -513,9 +518,8 @@ function sendPushMessage(user, arrayIndex, sendTime, fcmMessageFormat) {
   });
 }
 
-
 //푸쉬메시지 펑션
-exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat) {
+exports.sendPushMessage = function(user, arrayIndex, sendTime, titles, contentName) {
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
@@ -523,13 +527,9 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat)
     // 수신대상
     to: client_token,
     // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-    notification: {
-      title: "모두의 달성",
-      body: fcmMessageFormat,
-      sound: "default",
-      // click_action: "FCM_PLUGIN_ACTIVITY",
-      click_action:"OPEN_ACTIVITY",
-      icon: "fcm_push_icon"
+    data: {
+      title: titles,
+      body: contentName,
     },
     // 메시지 중요도
     priority: "high",
@@ -539,7 +539,7 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat)
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
-    if(fcmMessageFormat === fcmMessageFormat1){
+    if(titles === titleAuthen){
       if(user.contentList[arrayIndex].isUploaded == 1 ) {
         console.log('before user authen : ' + user.contentList[0].isUploaded);
         user.contentList[arrayIndex].isUploaded = 0;
@@ -558,7 +558,7 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat)
         });
       };
     }
-    else if(fcmMessageFormat === fcmMessageFormat2){
+    else if(titles === titleFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('실패 Push메시지 발송에 실패했습니다.');
@@ -569,7 +569,7 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, fcmMessageFormat)
         console.log(response);
       });
     }
-    else if(fcmMessageFormat === fcmMessageFormat3){
+    else if(titles === titleSuccess){
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('성공 Push메시지 발송에 실패했습니다.');
@@ -787,7 +787,6 @@ function dbInit(){
   var content3 = new content({
     id: 2,
     name: "NoSmoking",
-    roomNum: 3,
     startDate: "01/08/2019",
     endDate: "12/30/2019",
     isDone: 2,
@@ -798,9 +797,8 @@ function dbInit(){
   var content4 = new content({
     id: 3,
     name: "NoSmoking",
-    roomNum: 4,
     startDate: "01/01/2018",
-    endDate: "12/02/2018",
+    endDate: "12/05/2018",
     isDone: 0,
     userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
                {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
