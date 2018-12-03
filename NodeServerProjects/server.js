@@ -782,7 +782,6 @@ function dbInit(){
   var content3 = new content({
     id: 2,
     name: "NoSmoking",
-    roomNum: 3,
     startDate: "01/08/2019",
     endDate: "12/30/2019",
     isDone: 2,
@@ -793,7 +792,6 @@ function dbInit(){
   var content4 = new content({
     id: 3,
     name: "NoSmoking",
-    roomNum: 4,
     startDate: "01/01/2018",
     endDate: "12/05/2018",
     isDone: 0,
