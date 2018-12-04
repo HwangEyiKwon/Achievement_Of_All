@@ -143,6 +143,19 @@ router.get('/getContentsInfo', function(req, res) {
     });
   }
 });
+
+router.get('/reportUserList/:jwtToken/:contentName', function (req,res) {
+  console.log("reportUserList Start!!!");
+  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
+  // console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+
+  var contentName = req.params.contentName;
+
+
+
+
+});
 // -----------------------------------------------------
 module.exports = router ;
 

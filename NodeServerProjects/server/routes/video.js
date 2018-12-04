@@ -158,6 +158,7 @@ router.post('/checkVideo', function(req,res){
   var contentName = req.body.contentName; // 컨텐츠 이름
   var otherEmail = req.body.email; // 상대방 메일
   var authenInfo = req.body.authenInfo; // 인증
+  var authenUser;
   console.log(jwtToken+contentName+otherEmail+authenInfo+"ㅇㅇ");
 
   // console.log("video jwt토큰 "+ req.params.jwtToken);
@@ -302,9 +303,9 @@ router.post('/checkVideo', function(req,res){
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
 
-                var titleFail = "실패";
+                var titleFailVideo = "실패";
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
-                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, titleFail, contentName);
+                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, titleFailVideo, contentName, authenUser);
               }
 
             }

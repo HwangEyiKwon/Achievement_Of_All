@@ -2,8 +2,8 @@
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-// mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
@@ -197,9 +197,9 @@ app.post('/sendToken', function(req, res) {
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName);
-        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName);
-        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName);
+        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName, null);
+        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName, null);
+        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName, null);
       }
     }
   });
@@ -259,7 +259,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           if(userList[i].pushToken != null) {
             console.log("푸쉬메시지 성공 전송");
             var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
-            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName);
+            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName, null);
           }
           else console.log("pushtoken is null");
         }
@@ -351,7 +351,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       if(userList[i].pushToken != null){
         console.log("실패 푸쉬메시지 전송");
         var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName, null);
       }
     }
   });
@@ -371,9 +371,9 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
-        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
-        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName,null);
+        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName,null);
+        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName,null);
       }
     }
   });
@@ -543,24 +543,43 @@ var scheduler = schedule.scheduleJob('20 * * * * *', function() {
 
 
 
-function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
+function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUser) {
 
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  var push_data = {
-    // 수신대상
-    to: client_token,
-    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-    data: {
-      title: titles,
-      body: contentName,
-    },
-    // 메시지 중요도
-    priority: "high",
-    // App 패키지 이름
-    restricted_package_name: "com.example.parkseunghyun.achievementofall",
-  };
+  if(titles == 'titleFailVideo')
+  {
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+        user: fasf,
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
+  else {
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
@@ -656,6 +675,17 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, titles, contentNa
           return;
         }
         console.log('실패 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleFailVideo){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('실패Video Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('실패Video Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
@@ -862,7 +892,7 @@ function dbInit(){
     userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
       {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
       {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0}]}, result: 2}],
-    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트: http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
   var content2 = new content({
@@ -872,7 +902,7 @@ function dbInit(){
     endDate: "11/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n  니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트: http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n  니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
   var content3 = new content({
@@ -882,7 +912,7 @@ function dbInit(){
     endDate: "12/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트: http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
   var content4 = new content({
