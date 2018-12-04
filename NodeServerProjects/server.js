@@ -58,12 +58,8 @@ var appInfoSchema = require('./server/models/app');
 
 require('./config/passport')(passport);
 
-<<<<<<< HEAD
-//db 초기화
-=======
 // //db 초기화
->>>>>>> a148ff780b31bc065571e6a584efce21e8fbc6a3
-dbInit();
+// dbInit();
 // //db 삭제
 // dbDelete();
 
@@ -548,7 +544,6 @@ var push_data2 = {
 
 
 
-<<<<<<< HEAD
 function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUserArray, checkReasonArray) {
   console.log("내부 push!!");
   console.log('6');
@@ -587,26 +582,6 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
       restricted_package_name: "com.example.parkseunghyun.achievementofall",
     };
   }
-=======
-function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
-
-  console.log('6');
-  var fcm = new FCM(serverKey);
-  var client_token = user.pushToken;
-  var push_data = {
-    // 수신대상
-    to: client_token,
-    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-    data: {
-      title: titles,
-      body: contentName,
-    },
-    // 메시지 중요도
-    priority: "high",
-    // App 패키지 이름
-    restricted_package_name: "com.example.parkseunghyun.achievementofall",
-  };
->>>>>>> a148ff780b31bc065571e6a584efce21e8fbc6a3
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
@@ -740,7 +715,6 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
       });
     }
     else if(titles === titleSuccess){
-<<<<<<< HEAD
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('성공 Push메시지 발송에 실패했습니다.');
@@ -753,8 +727,6 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
     }
     else if(titles === titleVideoFail){
       console.log("몇번 찍히냐?");
-=======
->>>>>>> a148ff780b31bc065571e6a584efce21e8fbc6a3
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('인증 실패 Push메시지 발송에 실패했습니다.1');

@@ -158,12 +158,9 @@ router.post('/checkVideo', function(req,res){
   var contentName = req.body.contentName; // 컨텐츠 이름
   var otherEmail = req.body.email; // 상대방 메일
   var authenInfo = req.body.authenInfo; // 인증
-<<<<<<< HEAD
   var checkReason = req.body.checkReason; // 실패 체크한 이유
   var failAuthenUserArray = new Array();
   var checkReasonArray = new Array();
-=======
->>>>>>> a148ff780b31bc065571e6a584efce21e8fbc6a3
   console.log(jwtToken+contentName+otherEmail+authenInfo+"ㅇㅇ");
 
   // console.log("video jwt토큰 "+ req.params.jwtToken);
@@ -278,16 +275,9 @@ router.post('/checkVideo', function(req,res){
                 var todayYear = todayDate.getFullYear();
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
-
-<<<<<<< HEAD
                 var titleFailVideo = "비디오실패";
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
                 fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleFailVideo, contentName, failAuthenUserArray, checkReasonArray);
-=======
-                var titleFail = "실패";
-                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
-                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, titleFail, contentName);
->>>>>>> a148ff780b31bc065571e6a584efce21e8fbc6a3
               }
             }
           }
