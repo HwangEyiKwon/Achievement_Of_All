@@ -34,6 +34,25 @@ public class EventDecorator implements DayViewDecorator {
             drawable = context.getResources().getDrawable(R.drawable.ic_icons_end);
         }
 
+
+//        if(which.equals("success")){
+//            drawable = context.getResources().getDrawable(R.drawable.ic_icons_check);
+//        }
+//        if(which.equals("fail")){
+//            drawable = context.getResources().getDrawable(R.drawable.ic_icons_wrong);
+//        }
+//        if(which.equals("notYet")){
+//            drawable = context.getResources().getDrawable(R.drawable.ic_icons_notyet);
+//        }
+//        if(which.equals("startDate")){
+//            drawable = context.getResources().getDrawable(R.drawable.ic_icons_start);
+//        }
+//        else if(which.equals("endDate")){
+//            drawable = context.getResources().getDrawable(R.drawable.ic_icons_end);
+//        }
+
+
+
         this.color = color;
         this.dates = new HashSet<>(dates);
     }

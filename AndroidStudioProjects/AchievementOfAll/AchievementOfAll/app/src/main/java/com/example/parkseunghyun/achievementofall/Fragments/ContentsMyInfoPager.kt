@@ -6,6 +6,7 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -37,6 +38,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
+import kotlinx.android.synthetic.main.fragment_contents_myinfo.*
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -81,6 +83,13 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var remainingHours:TextView?=null
     private var remainingMinutes:TextView?=null
 
+    private var remainingDaysText:TextView?=null
+    private var remainingHoursText:TextView?=null
+    private var remainingMinutesText:TextView?=null
+
+    private var contents_over_msg:TextView?= null
+    private var contents_not_joined:TextView? = null
+
     private var diffOfDay: Long?= null
     private var diffOfHour: Long?= null
     private var diffOfMinute: Long?= null
@@ -114,6 +123,14 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         remainingDays = mView?.findViewById(R.id.remaining_days)
         remainingHours = mView?.findViewById(R.id.remaining_hours)
         remainingMinutes = mView?.findViewById(R.id.remaining_minutes)
+
+        remainingDaysText = mView?.findViewById(R.id.remaining_days_text)
+        remainingHoursText = mView?.findViewById(R.id.remaining_hours_text)
+        remainingMinutesText = mView?.findViewById(R.id.remaining_minutes_text)
+
+        contents_over_msg = mView?.findViewById(R.id.contents_over_msg)
+        contents_not_joined = mView?.findViewById(R.id.contents_not_joined)
+
         fab = mView?.findViewById(R.id.fab)
 //        fab1 = mView?.findViewById(R.id.fab1)
 //        fab2 = mView?.findViewById(R.id.fab2)
@@ -338,10 +355,10 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         calendar!!.setHeaderTextAppearance(R.color.abc_background_cache_hint_selector_material_dark)
         calendar!!.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1,startDate!!.getInt("day")))
-                .setMaximumDate(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
+                .setMinimumDate(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1, startDate!!.getInt("day")))
+                .setMaximumDate(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1, endDate!!.getInt("day")))
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
-                .commit();
+                .commit()
 
         calendar!!.addDecorators(
                 SundayDecorator(),
@@ -355,8 +372,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         val sDate = mutableListOf<CalendarDay>()
         val eDate = mutableListOf<CalendarDay>()
 
-        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month")-1, startDate!!.getInt("day")))
-        eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month")-1,endDate!!.getInt("day")))
+        sDate.add(CalendarDay.from(startDate!!.getInt("year"),startDate!!.getInt("month") -1, startDate!!.getInt("day")))
+        eDate.add(CalendarDay.from(endDate!!.getInt("year"),endDate!!.getInt("month") -1, endDate!!.getInt("day")))
 
         val loopCount = jsonArray.length() - 1
 
@@ -371,7 +388,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         for (i in 0..loopCount) {
 
             y = jsonArray.getJSONObject(i).getString("year").toInt()
-            m = jsonArray.getJSONObject(i).getString("month").toInt()-1
+            m = jsonArray.getJSONObject(i).getString("month").toInt() - 1 // 서버에서 1~ 12로 주는데 여기서 0~11로... 일단 서버에서 11 준거로.
             d = jsonArray.getJSONObject(i).getString("day").toInt()
 
             var day = CalendarDay.from(y!!, m!!, d!!)
@@ -381,10 +398,13 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 // y, m, d + 3일 + 자정
                 println("TESTINGING----" + y + "년" + ( m!! + 1 ) + "월" + ( d!! + 3 ) + "일")
 
+
+
                 nextYear = y
-                nextMonth = m
+                nextMonth = m // 0~11
                 nextDay = d!! + 3
             }
+
 
             println(jsonArray.getJSONObject(i))
             if(jsonArray.getJSONObject(i).getInt("authen")==1){// success
@@ -405,26 +425,50 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 val calendarCurrent = Calendar.getInstance()
                 var calendarNext = Calendar.getInstance()
 
-                calendarNext.set(nextYear!!, nextMonth!!, nextDay!! + 1, 0, 0)
+                // nextMonth가 0~11
+
+                calendarNext.set(nextYear!!, nextMonth!! , nextDay!! + 1, 0, 0)
 
                 var diffInSecondUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
                 var diffInMinuteUnit = diffInSecondUnit / 60
+
                 println("TESTING 남은 시간은 ---- " + diffInMinuteUnit + "분::::")
+                println("TESTTTTT 다음 인증 월 " + calendarNext.get(Calendar.MONTH) + " "+calendarCurrent.get(Calendar.MONTH))
 
 //                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
 //                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
 //                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
 
-                diffOfDay = ((diffInSecondUnit / (60 * 60 * 24))) // 일 계산
-                diffOfHour = ((diffInSecondUnit - (diffOfDay!!*60*60*24)) / (60*60))   // 시간 계산
-                diffOfMinute = ((diffInSecondUnit - diffOfDay!!*60*60*24 - diffOfHour!!*3600)/60)  // 분 계산
+                println("TESTBLACK: 조인 스테이트 " + joinState)
+                if(joinState == 3){
+                    val notJoinedUpdateMsg = notJoinedThreadHandler.obtainMessage()
+                    notJoinedThreadHandler.sendMessage(notJoinedUpdateMsg)
+                    println("TESTBLACK: 미참가중")
+                }
+                // 다음인증일이 EndDate를 넘었다면? (마지막 인증까지 완료가 된거야)
+                else if(calendarNext.get(Calendar.YEAR)!! >= endDate!!.getInt("year") && calendarNext.get(Calendar.MONTH) >= (endDate!!.getInt("month") -1) && calendarNext.get(Calendar.DAY_OF_MONTH) > endDate!!.getInt("day")){
+
+                    val doneUpdateMsg = doneUpdateThreadHandler.obtainMessage()
+                    doneUpdateThreadHandler.sendMessage(doneUpdateMsg)
+                    println("TESTBLACK: 마지막 인증까지 완료")
+
+                }
+                else{
+
+                    diffOfDay = ((diffInSecondUnit / (60 * 60 * 24))) // 일 계산
+                    diffOfHour = ((diffInSecondUnit - (diffOfDay!!*60*60*24)) / (60*60))   // 시간 계산
+                    diffOfMinute = ((diffInSecondUnit - diffOfDay!!*60*60*24 - diffOfHour!!*3600)/60)  // 분 계산
+                    val diffUpdateMsg = diffUpdateThreadHandler.obtainMessage()
+                    diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
+
+                }
 
                 println("TESTING 현재 시간은: "+ calendarCurrent.get(Calendar.DAY_OF_MONTH) + "일" + calendarCurrent.get(Calendar.HOUR_OF_DAY) + "분" + calendarCurrent.get(Calendar.MINUTE) + "분")
                 println("TESTING 다음 인증은 언제 직전까지?: "+ calendarNext.get(Calendar.DAY_OF_MONTH) + "일" + calendarNext.get(Calendar.HOUR_OF_DAY) + "분" + calendarNext.get(Calendar.MINUTE) + "분")
                 println("TESTING 남은 시간은 ---- " + diffInSecondUnit + "초::::" + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
+                println("TESTING 컨텐츠 종료일 ---- " + endDate!!.getInt("year") + "년:::" + (endDate!!.getInt("month")) + "월" + endDate!!.getInt("day") +"일")
 
-                val diffUpdateMsg = diffUpdateThreadHandler.obtainMessage()
-                diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
+
 
             }
         }
@@ -461,5 +505,51 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         }
     }
+
+    val doneUpdateThreadHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+
+            diffOfDay = 0 // 일 계산
+            diffOfHour = 0   // 시간 계산
+            diffOfMinute = 0  // 분 계산
+
+            remainingDays!!.visibility = View.GONE
+            remainingDaysText!!.visibility = View.GONE
+            remainingHours!!.visibility = View.GONE
+            remainingHoursText!!.visibility = View.GONE
+            remainingMinutes!!.visibility = View.GONE
+            remainingMinutesText!!.visibility = View.GONE
+
+            contents_over_msg!!.visibility = View.VISIBLE
+
+            goToVideoButton!!.isEnabled = false
+            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
+
+        }
+    }
+
+    val notJoinedThreadHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+
+            diffOfDay = 0 // 일 계산
+            diffOfHour = 0   // 시간 계산
+            diffOfMinute = 0  // 분 계산
+
+            remainingDays!!.visibility = View.GONE
+            remainingDaysText!!.visibility = View.GONE
+            remainingHours!!.visibility = View.GONE
+            remainingHoursText!!.visibility = View.GONE
+            remainingMinutes!!.visibility = View.GONE
+            remainingMinutesText!!.visibility = View.GONE
+
+            contents_not_joined!!.visibility = View.VISIBLE
+
+            goToVideoButton!!.isEnabled = false
+            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
+
+        }
+    }
+
+
 }
 

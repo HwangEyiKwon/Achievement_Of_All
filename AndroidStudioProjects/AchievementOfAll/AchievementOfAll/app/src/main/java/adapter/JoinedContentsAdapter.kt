@@ -46,6 +46,8 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
         // 사용자 참여 컨텐츠 이미지 받아오기
         println("이미지 이름"+joinedContentsModels[position].name)
         val contentImage = joinedContentsModels[position].name
+
+
         Glide
                 .with(this.context)
                 .load("${ipAddress}/getContentImage/${contentImage}")

@@ -4,8 +4,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
@@ -35,6 +37,8 @@ class ExoplayerActivity : AppCompatActivity() {
     private var isAuthen: Int?= null
 
     private var check: Int? = null
+    private var checkReasonBox: EditText ? = null
+    private var checkReason: String? = null
     private var time: Long = 0
     private var player:SimpleExoPlayer? = null
 
@@ -65,6 +69,7 @@ class ExoplayerActivity : AppCompatActivity() {
         val successButton = findViewById(R.id.success) as ImageView
         val failButton = findViewById(R.id.fail) as ImageView
         val notYetButton = findViewById(R.id.notYet) as ImageView
+        checkReasonBox = findViewById(R.id.checkReason)
 
         val authorizeButton = findViewById(R.id.authorize_button) as Button
         authorizeButton.isEnabled = false
@@ -90,6 +95,8 @@ class ExoplayerActivity : AppCompatActivity() {
                 successButton.requestLayout()
                 failButton.requestLayout()
 
+                checkReasonBox!!.visibility = View.GONE
+
                 authorizeButton.isEnabled = true
 
                 check = 1
@@ -104,6 +111,11 @@ class ExoplayerActivity : AppCompatActivity() {
                 failButton.layoutParams.width = 100
                 successButton.requestLayout()
                 failButton.requestLayout()
+
+                checkReasonBox!!.visibility = View.VISIBLE
+                checkReasonBox!!.setMovementMethod(ScrollingMovementMethod())
+
+                Toast.makeText(this, "실패 사유를 적어주세요.", Toast.LENGTH_SHORT).show()
 
                 authorizeButton.isEnabled = true
 
@@ -162,9 +174,25 @@ class ExoplayerActivity : AppCompatActivity() {
 
         }
         authorizeButton.setOnClickListener{
-            checkVideo()
-            player!!.stop() // 이게 꺼도 소리나는걸 방지.
-            finish()
+
+            if(check == 0){ // X 클릭 시
+                if (checkReasonBox!!.text.toString().replace(" ","").equals("")) {
+                    Toast.makeText(this, "사유를 적어주셔야 합니다.", Toast.LENGTH_LONG).show()
+                }
+                else { // 사유까지 적고난 뒤
+                    checkReason = checkReasonBox!!.text.toString()
+                    checkVideo()
+                    player!!.stop() // 이게 꺼도 소리나는걸 방지.
+                    finish()
+                }
+            }
+            else if (check == 1){ // O 클릭 시
+                checkReason = ""
+                checkVideo()
+                player!!.stop() // 이게 꺼도 소리나는걸 방지.
+                finish()
+            }
+
         }
 
     }
@@ -209,9 +237,13 @@ class ExoplayerActivity : AppCompatActivity() {
     }
     private fun checkVideo(){
 
+
+
+
         val jsonObject = JSONObject()
 
         jsonObject.put("authenInfo", check)
+        jsonObject.put("checkReason", checkReason)
         jsonObject.put("contentName",contentName)
         jsonObject.put("token",token)
         jsonObject.put("email",email)

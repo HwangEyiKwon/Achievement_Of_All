@@ -79,12 +79,17 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
         readImageIntent!!.type = "image/*"
         readImageIntent!!.action = Intent.ACTION_PICK
 
+        val requestOptions = RequestOptions()
+        requestOptions.placeholder(R.drawable.ic_icons_person_black)
+
         Glide
                 .with(this)
+                .setDefaultRequestOptions(requestOptions)
                 .load("${ipAddress}/getUserImage/"+jwtToken)
                 .apply(RequestOptions().skipMemoryCache(true))
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                 .into(userImage)
+
 
         println("이미지이미지")
         println(userImage)

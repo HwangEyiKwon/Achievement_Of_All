@@ -24,6 +24,8 @@ android {
 }
 
 dependencies {
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
+
     implementation 'com.beust:klaxon:3.0.1'
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.makeramen:roundedimageview:2.3.0'

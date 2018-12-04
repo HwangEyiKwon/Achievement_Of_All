@@ -12,9 +12,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:layout_marginTop="20dp"
-
+        android:layout_marginBottom="30dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -55,6 +54,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:orientation="vertical">
 
             <TextView
@@ -68,7 +68,7 @@
                 android:id="@+id/calendarView"
 
                 android:layout_width="250dp"
-                android:layout_height="220dp"
+                android:layout_height="230dp"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/colorPrimaryDark"
                 app:mcv_selectionColor="#a9dbf0cb"
@@ -254,6 +254,7 @@
                     android:fontFamily="@font/font5"
                     android:textColor="@color/colorPrimaryDark"/>
                 <TextView
+                    android:id="@+id/remaining_days_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark"
@@ -266,6 +267,7 @@
                     android:fontFamily="@font/font5"
                     android:textColor="@color/colorPrimaryDark"/>
                 <TextView
+                    android:id="@+id/remaining_hours_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark"
@@ -278,11 +280,34 @@
                     android:fontFamily="@font/font5"
                     android:textColor="@color/colorPrimaryDark"/>
                 <TextView
+                    android:id="@+id/remaining_minutes_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark"
                     android:fontFamily="@font/font5"
                     android:text=" 분  " />
+
+                <TextView
+                    android:id="@+id/contents_over_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/font5"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    android:text="마지막 인증까지 완료하셨습니다."/>
+
+                <TextView
+                    android:id="@+id/contents_not_joined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/font5"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    android:text="컨텐츠 참여 전입니다."/>
 
             </LinearLayout>
 
@@ -291,6 +316,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 android:layout_marginTop="10dp">
                 <Button
                     android:id="@+id/go_to_video_button"

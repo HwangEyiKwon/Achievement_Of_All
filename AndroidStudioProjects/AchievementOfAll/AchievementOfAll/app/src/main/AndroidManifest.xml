@@ -24,9 +24,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="OPEN_ACTIVITY"/>
-
-                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -40,7 +39,9 @@
         <activity android:name=".ContentsHomeActivity"/>
         <activity android:name=".OtherUserHomeActivity"/>
         <activity android:name=".ExoplayerActivity"/>
+        <activity android:name=".Activities.PenaltyActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".ConfirmJoinActivity" android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.ReportActivity" android:theme="@style/AppTheme" />
 
         <service
             android:name=".Configurations.MyFirebaseMessagingService">

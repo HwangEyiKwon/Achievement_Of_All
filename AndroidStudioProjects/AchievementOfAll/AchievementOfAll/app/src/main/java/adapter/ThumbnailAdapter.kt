@@ -46,11 +46,12 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
             // 비디오 썸네일 코드
             val requestOptions = RequestOptions()
             requestOptions.isMemoryCacheable
+
             Glide
                     .with(context)
                     .setDefaultRequestOptions(requestOptions)
+
                     .load("${ipAddress}/getVideo/${jwtToken}/${contentName}/${videoPath}")
-                    .apply(RequestOptions().skipMemoryCache(true))
                     .into(holder.thumbnailView)
 
             holder.videoName = videoPath
@@ -64,7 +65,7 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
 
             // 비디오 썸네일 코드
             val requestOptions = RequestOptions()
-            requestOptions.isMemoryCacheable
+
             Glide
                     .with(context)
                     .setDefaultRequestOptions(requestOptions)

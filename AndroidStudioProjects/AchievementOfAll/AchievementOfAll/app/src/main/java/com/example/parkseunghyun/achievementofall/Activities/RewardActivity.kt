@@ -28,14 +28,14 @@ class RewardActivity : AppCompatActivity() {
 
 
         currentMoney = findViewById(R.id.current_money)
-        rewardMoney = findViewById(R.id.final_reward)
+        rewardMoney = findViewById(R.id.final_penalty)
         finalMoney = findViewById(R.id.final_money)
 
         rewardConfirmButton = findViewById(R.id.reward_confirm_button)
 
         cm = intent.getIntExtra("currentMoney",0)
-        rm = intent.getIntExtra("rewardMoney",0)
-        fm = cm!!+rm!!
+        rm = intent.getIntExtra("penaltyMoney",0)
+        fm = cm!! + rm!!
 
         currentMoney!!.text = cm.toString()
         rewardMoney!!.text = rm.toString()

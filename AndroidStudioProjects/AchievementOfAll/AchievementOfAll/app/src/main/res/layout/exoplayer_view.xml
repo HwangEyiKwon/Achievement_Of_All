@@ -47,6 +47,26 @@
 
         </LinearLayout>
 
+        <EditText
+            android:id="@+id/checkReason"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="실패 사유를 적어주세요"
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/icongrey"
+            android:fontFamily="@font/font5"
+            android:textAlignment="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:visibility="gone"
+            android:scrollbars="vertical"
+            android:background="@drawable/round4"
+            android:layout_marginTop="100dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"/>
+
         <Button
             android:id="@+id/authorize_button"
             android:layout_width="wrap_content"

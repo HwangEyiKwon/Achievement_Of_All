@@ -12,7 +12,9 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
+import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 
@@ -81,6 +83,46 @@ class HomeActivity : AppCompatActivity() {
 
         // Code for TabLayout
         generateTabLayout(REQUEST_FIRST_CREATE)
+
+        var ownIntent:Intent = intent
+        var tmpContentName = ownIntent.getStringExtra("contentName")
+
+        if(ownIntent.getStringExtra("fcm_category") == null || ownIntent.getStringExtra("contentName") == null){
+            // 아무것도 안해도 됨
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 실패 알림")){
+            // TODO 여기에 ContentHomeActivity 들어가야됨.
+            val intent = Intent(this, ContentsHomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.putExtra("fcm_category", "목표 달성 실패 알림")
+            intent.putExtra("contentName", tmpContentName)
+            startActivity(intent)
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("인증 시간이 얼마 남지 않았어요!")){
+            val intent = Intent(this, ContentsHomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.putExtra("fcm_category", "인증 시간이 얼마 남지 않았어요!")
+            intent.putExtra("contentName", tmpContentName)
+            startActivity(intent)
+
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 성공 알림")){
+            val intent = Intent(this, ContentsHomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.putExtra("fcm_category", "목표 달성 성공 알림")
+            intent.putExtra("contentName", tmpContentName)
+            startActivity(intent)
+
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("과반수의 반대로 인증에 실패하셨습니다")){
+            val intent = Intent(this, ContentsHomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.putExtra("fcm_category", "과반수의 반대로 인증에 실패하셨습니다")
+            intent.putExtra("contentName", tmpContentName)
+            intent.putExtra("rejectUserArray", ownIntent.getStringExtra("rejectUserArray"))
+            intent.putExtra("rejectReasonArray", ownIntent.getStringExtra("rejectReasonArray"))
+            startActivity(intent)
+        }
 
     }
 

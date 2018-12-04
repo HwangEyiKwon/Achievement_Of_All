@@ -3,12 +3,10 @@ package com.example.parkseunghyun.achievementofall
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.DatePicker
-import android.widget.TextView
+import android.widget.*
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import org.json.JSONObject
+import org.w3c.dom.Text
 import java.util.*
 
 
@@ -24,6 +22,7 @@ class ConfirmJoinActivity : AppCompatActivity() {
     var selectedDayOfMonth: Int? = null
 
     var areYouAgreeToJoin: CheckBox? = null
+    var ruleView: TextView? = null
 
     var content: String?= null
     var jwtToken: String ?= null
@@ -33,6 +32,7 @@ class ConfirmJoinActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_confirming_join)
 
+        ruleView = findViewById(R.id.id_content_rule)
 
         val confirmJoinButton = findViewById(R.id.confirm_join_button) as Button
         confirmJoinButton.isEnabled = false
@@ -56,13 +56,29 @@ class ConfirmJoinActivity : AppCompatActivity() {
         content = intent.extras.getString("contentName")
         jwtToken = intent.extras.getString("token")
 
-        val jsonObject = JSONObject()
+        var jsonObject = JSONObject()
+        jsonObject.put("contentName", content)
+        jsonObject.put("startYear", selectedMonthOfYear.toString())
+        jsonObject.put("startMonth", selectedDayOfMonth.toString())
+        jsonObject.put("startDay",selectedYear.toString())
+
+
+
+        VolleyHttpService.getContentRule(this, jsonObject) { success ->
+            println("TEST - BLACK " + success)
+            if (success.get("success") == true) { //  성공
+                ruleView!!.text = success.getString("description")
+            } else { //  실패
+                println("룰 받아오기 실패")
+            }
+        }
+
+        jsonObject = JSONObject()
         jsonObject.put("contentName", content)
         jsonObject.put("token", jwtToken)
         jsonObject.put("year", selectedYear!!)
         jsonObject.put("month", selectedMonthOfYear!!)
         jsonObject.put("day", selectedDayOfMonth!!)
-
 
 
 
@@ -94,15 +110,6 @@ class ConfirmJoinActivity : AppCompatActivity() {
             }else{
                 println("????")
             }
-
-
-
-
-//            var activity: ContentsHomeActivity ?= null
-//            var ca = activity!!.getInstatnce()
-//            ca.finish()
-//            finish()
-
 
         }
 

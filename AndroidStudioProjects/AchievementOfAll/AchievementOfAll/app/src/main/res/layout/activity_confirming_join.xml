@@ -47,6 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="참가 규칙 솰라솰라"
+        android:autoLink="web"
         android:textAlignment="center" />
 
     <ImageView

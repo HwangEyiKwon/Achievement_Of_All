@@ -38,7 +38,7 @@ class ContentsProgressPager : Fragment() {
     private var rewardMoney: Int ?= null
     private var currentMoney: Int ?= null
 
-    private val REWARD_CODE = 222
+    private val REWARD_CODE = 88
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -83,6 +83,9 @@ class ContentsProgressPager : Fragment() {
 
         return view_
     }
+
+
+
     fun rewardCheck (){
 
         val jsonObject = JSONObject()
@@ -100,7 +103,7 @@ class ContentsProgressPager : Fragment() {
                     val goToReward = Intent(context, RewardActivity::class.java)
                     goToReward.putExtra("token", jwtToken)
                     goToReward.putExtra("contentName", contentName)
-                    goToReward.putExtra("rewardMoney", rewardMoney)
+                    goToReward.putExtra("penaltyMoney", rewardMoney)
                     goToReward.putExtra("currentMoney", currentMoney)
 
                     val contextToActivity = context as Activity
@@ -112,6 +115,20 @@ class ContentsProgressPager : Fragment() {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        println("TEST KAPPA 너냐? ")
+
+
+        for (fragment in fragmentManager.fragments) {
+            if (fragment != null) {
+                fragment!!.onActivityResult(requestCode, resultCode, data)
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+
+    }
+
     private fun getCurrentMoney(){
 
         val jsonObject = JSONObject()
@@ -133,8 +150,8 @@ class ContentsProgressPager : Fragment() {
             }
 
         }
-
     }
+
     private fun getAchievementRate(){
 
         val jsonObject = JSONObject()

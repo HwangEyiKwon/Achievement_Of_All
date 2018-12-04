@@ -400,4 +400,56 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(editRequest)
     }
 
+
+    fun getContentRule (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var contentName = jsonObject.getString("contentName")
+        var startYear = jsonObject.getString("startYear")
+        var startMonth = jsonObject.getString("startMonth")
+        var startDay = jsonObject.getString("startDay")
+
+        var getContentRuleRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getContentRule/$contentName/$startYear/$startMonth/$startDay",null, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(getContentRuleRequest)
+
+    }
+
+    fun failReport (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var token = jsonObject.getString("token")
+        var contentName = jsonObject.getString("contentName")
+        var reportReason = jsonObject.getString("reportReason")
+
+        var failReportRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/reportUserList/$token/$contentName/$reportReason",jsonObject, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(failReportRequest)
+
+    }
+
+    fun failAccept (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var failAcceptRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getFailureCheck",jsonObject, Response.Listener{ response ->
+            println("서버 수신 others: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+        }
+        Volley.newRequestQueue(context).add(failAcceptRequest)
+
+    }
+
 }

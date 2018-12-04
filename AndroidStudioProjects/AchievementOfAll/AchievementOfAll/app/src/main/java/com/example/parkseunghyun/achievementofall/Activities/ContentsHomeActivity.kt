@@ -4,6 +4,7 @@ package com.example.parkseunghyun.achievementofall
 
 //import adapter.StoriesAdapter
 //import model.StoriesModel
+import adapter.ContentsPagerAdapter
 import adapter.StoriesAdapter
 import android.content.Context
 import android.content.Intent
@@ -18,6 +19,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.example.parkseunghyun.achievementofall.Activities.PenaltyActivity
+import com.example.parkseunghyun.achievementofall.Activities.ReportActivity
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
@@ -38,6 +41,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
     private var text_joinedORnot: TextView? = null
     private var remainingTime: TextView? = null
     private var contentJoinButton: Button? = null
+    private var pAdapter: ContentsPagerAdapter? = null
 
     // 사용자의 jwt-token
     var jwtToken: String ?= null
@@ -48,8 +52,10 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
     var content: String ?= null
     var joinState: Int ?= null
-    var contentId: String ?= null
+    var tmpRequestCode: Int ?= null
 
+    var cm: Int ?= null
+    var rm: Int ?= null
 
     var selectedYear: Int? = null
     var selectedMonthOfYear: Int? = null
@@ -58,6 +64,8 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
     var contentsHomeContext: Context? = null
     val REQUEST_FOR_UPDATE_CONTENTS = 222
+
+    var IS_FCM_FLAG = 0
 
     var viewPager: ViewPager ?= null
 
@@ -99,21 +107,27 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        println("TEST KAPPA 들어왓니 " + requestCode)
+
+        tmpRequestCode = requestCode
         when (requestCode) {
+
             REQUEST_FOR_UPDATE_CONTENTS -> {
                 println("TEST------ 1")
                 getParticipatedInfo()
                 /* */
             }
+
             101 -> {
                 println("TEST------ 2")
                 /* TODO: 여기서 스토리를 없애는 처리를 해야된다.*/
                 getParticipatedInfo()
             }
-            222 ->{
-                println("TEST------ 3")
+
+            88 -> {
+                println("TEST KAPPA 왜 일로안와 ")
                 getParticipatedInfo()
-//                viewPager.adapter.
+
             }
 
         }
@@ -124,6 +138,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         super.onRestart()
         println("RESTART contentHOME")
     }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,6 +161,15 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             contentName!!.setText(content)
         }
 
+        var ownIntent:Intent = intent
+
+        if(ownIntent.getStringExtra("fcm_category") != null){
+            if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 실패 알림") || ownIntent.getStringExtra("fcm_category").equals("목표 달성 성공 알림")){
+                IS_FCM_FLAG = 1
+            } else { IS_FCM_FLAG = 0 }
+        }
+
+
         getParticipatedInfo()
 
         val cal = Calendar.getInstance()
@@ -155,6 +179,61 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         contentJoinButton?.setOnClickListener {
             contentJoin()
         }
+
+
+        if(ownIntent.getStringExtra("fcm_category") == null){
+            // 아무것도 안해도 됨
+            println("TEST 334 -- 아무것도 안함")
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 실패 알림")){
+            // TODO 여기에 ContentHomeActivity 들어가야됨.
+            println("TEST 334 -- 목표 달성 실패 알림")
+//            viewPager?.currentItem = 1
+//            contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+
+            val goToPenalty = Intent(this, PenaltyActivity::class.java)
+            goToPenalty.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToPenalty.putExtra("contentName", content)
+//            goToPenalty.putExtra("currentMoney", cm)
+            startActivityForResult(goToPenalty, 88)// PENALTY_CODE 여야하는데 그냥 REWARD랑 동일하게 둬도 정상동작.
+
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("인증 시간이 얼마 남지 않았어요!")){
+            println("TEST 334 -- 인증시간 얼마안남음")
+            Toast.makeText(this, "인증버튼을 눌러 인증을 시작해주세요", Toast.LENGTH_SHORT).show()
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 성공 알림")){
+            println("TEST 334 -- 목표달성 성공")
+            Toast.makeText(this, "보상 확인 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
+//            viewPager?.currentItem = 1
+//            contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+        }
+        else if(ownIntent.getStringExtra("fcm_category").equals("과반수의 반대로 인증에 실패하셨습니다")){
+            println("TEST 334 -- 과반수의 반대로 인증에 실패하셨습니다")
+            Toast.makeText(this, "과반수의 반대로 인증에 실패하셨습니다 - 나머지 짜세요", Toast.LENGTH_SHORT).show()
+            val rejectUserArray = ownIntent.getStringExtra("rejectUserArray")
+            val rejectReasonArray = ownIntent.getStringExtra("rejectReasonArray")
+
+            println("TESTINBLACK ----- USERs" + rejectUserArray.length + " :::: " + rejectUserArray!!)
+            println("TESTINBLACK ----- REASONs" + rejectReasonArray.length + " :::: " + rejectReasonArray!!)
+
+
+            val goToReport = Intent(this, ReportActivity::class.java)
+            goToReport.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToReport.putExtra("contentName", content)
+            goToReport.putExtra("rejectUserArray", rejectUserArray)
+            goToReport.putExtra("rejectReasonArray", rejectReasonArray)
+
+            startActivityForResult(goToReport, 88)// TODO 일단 REWARD랑 동일하게 두되 오류나면 수정필요
+
+
+            // TODO 여기서 신고 Activity 만들어야된다.
+
+        }
+
+
 
     }
 
@@ -214,13 +293,21 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                 }
                 4->{
                     text_joinedORnot?.setText("목표 달성 실패")
+                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
                     contentJoinButton!!.isEnabled = false
                     contentDuration!!.setText(d)
                 }
             }
             viewPager = findViewById(R.id.contents_pager_container)
-            val pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
+            pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
             viewPager!!.adapter = pAdapter
+
+            if(tmpRequestCode == 88 || IS_FCM_FLAG == 1){
+                println("TEST KAPPA -- ")
+                viewPager?.currentItem = 1
+                contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+            }
 
             viewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
                 override fun onPageScrollStateChanged(p0: Int) {
@@ -234,7 +321,9 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
                 }
             })
 
-            contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+            if(tmpRequestCode != 88 && IS_FCM_FLAG != 1){
+                contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+            }
             getOthers()
 
         }
@@ -331,7 +420,5 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
         datePickerDialog.selectableDays = calendars
         datePickerDialog.highlightedDays = calendars
     }
-
-
 
 }
