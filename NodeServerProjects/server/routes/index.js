@@ -122,7 +122,6 @@ router.post('/userPasswordEdit', function(req,res){
       // res.send({success: true});
     }
   });
-
 });
 // router.post('/editUserImage', function(req,res) {
 //   console.log("edit User Image start!!");
@@ -202,7 +201,7 @@ router.post('/editProfileWithoutImage', function(req,res){
     var contentListCount = user.contentList.length;
     var contentName ;
     var contentId;
-    if(contentListCount == null){
+    if(contentListCount == 0){
       console.log("editProfileWithoutImage Nocontent")
     }
     else {
@@ -263,8 +262,8 @@ router.post('/userInfoEdit', function(req,res){
     var contentListCount = user.contentList.length;
     var contentName ;
     var contentId;
-    if(contentListCount == null){
-      console.log("editProfileWithoutImage Nocontent")
+    if(contentListCount == 0){
+      console.log("userInfoEdit Nocontent")
     }
     else{
       for (var i = 0; i < contentListCount; i++) {
@@ -404,38 +403,49 @@ router.post('/getOtherUserInfo', function (req,res) {
 router.get("/pwdSendMail/:email", function(req, res, next){
   console.log("pwdSendMail Start");
   let email = req.params.email;
-  // let email = "hwangeyikwon@gmail.com";
 
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'ehddlrdk123@ajou.ac.kr',  // gmail 계정 아이디를 입력
-      pass: 'wkdehddlr12'          // gmail 계정의 비밀번호를 입력
-    }
-  });
-  let mailOptions = {
-    from: 'ehddlrdk123@ajou.ac.kr',
-    to: email,
-    subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
-    html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
+  User.findOne({email: email}, function(err, user) {
+
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'ehddlrdk123@ajou.ac.kr',  // gmail 계정 아이디를 입력
+        pass: 'wkdehddlr12'          // gmail 계정의 비밀번호를 입력
+      }
+    });
+    let mailOptions = {
+      from: 'ehddlrdk123@ajou.ac.kr',
+      to: email,
+      subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
+      html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
       " <form action=\"http://localhost:3000/pwdEmailAuthen\" method=\"post\"> " +
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
       "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
       "  <input type=\"submit\" value=\"전송\"> " +
       "</form>"
-  };
+    };
 
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-      res.send({success: false});
+    if(err) console.log("error");
+
+    if(user){
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+          res.send({success: false,  why:1});
+        }
+        else {
+          console.log('Email sent: ' + info.response);
+          res.send({success: true});
+        }
+      });
+    }else{
+      console.log("사용자 정보 없습니다");
+      res.send({success: false, why:0});
     }
-    else {
-      console.log('Email sent: ' + info.response);
-      res.send({success: true});
-    }
-  });
+  })
+  // let email = "hwangeyikwon@gmail.com";
+
 })
 
 router.post("/pwdEmailAuthen", function(req, res, next){
@@ -501,5 +511,179 @@ router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
     }
   });
 });
+
+// -----------------------------------------------------
+// WEB 관리자 페이지 용
+
+router.post('/managerlogin', function(req, res, next) {
+  passport.authenticate('login-manager', function(err, user, info) {
+    if (err) { return next(err); }
+
+    if (!user) { return res.json({access:false, why: 0});} // 로그인 실패 사용자 없음
+    if(user == 1){ // password 불일치
+      return res.json({access:false, why: 1});
+    }
+    if(user == 2){
+      return res.json({access:false, why: 2});
+    }
+
+    // 로그인 성공 시 세션에 사용자 이메일 저장
+    sess = req.session;
+    sess.userCheck = req.body.email;
+
+    return res.json({access:true}); // 로그인 성공
+  })(req, res, next);
+});
+
+router.post('/managerSignUp', function (req, res, next) {
+  console.log("signup Start");
+  passport.authenticate('signup-manager', function (err, user, info) {
+    // console.log(user+"s");
+    console.log("signUPPPPPPPP");
+    if(err) console.log("signup err : "+err);
+
+    if(user == 0){
+      res.send({success: false, why: 0});
+    }
+    else if(user == 1){
+      res.send({success: false, why: 1});
+    }
+    else if(user) {
+      res.send({success: true});
+      var userEmail = req.body.email;
+      mkdirp('./server/user/'+userEmail+'/video', function (err) {
+        if(err) console.log("create dir user err : "+err);
+        else console.log("create dir ./user/" +userEmail );
+      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+    } else {
+      res.send({success: false, why: 2});
+    }
+  })(req,res,next);
+});
+router.get('/managerLogout', function(req, res) { // 로그아웃
+  req.session.destroy(); // 세션 삭제
+  res.send({});
+});
+router.get('/sessionCheck', function(req, res) { // 세션체크
+  res.send({userSess: req.session.userCheck}); // 첫 화면에서 사용자의 로그인 여부
+});
+
+router.get('/getManagerInfo', function(req, res) { // 유저 정보 (로그인 시)
+  console.log("?")
+  if(req.session.userCheck == undefined) { // 사용자 세션 체크, 세션 없으면 오류페이지
+    res.send({error:true});
+  } else {
+    console.log("???")
+    User.findOne({email: req.session.userCheck}, {password: 0}, function (err, user) { // 웹 페이지 좌측에 나타나는 사용자 정보를 불러오는
+      if (err) throw err;
+      res.send(user);
+    });
+  }
+});
+
+
+router.post('/managerInfoEdit', function(req, res) {
+  if(req.session.userCheck == undefined) { // 사용자 세션 체크, 세션 없으면 오류페이지
+    res.send({error:true});
+  } else {
+
+    User.findOne({email: req.session.userCheck}, function (err, dupuser) {
+      if (err) throw err;
+
+      if (dupuser) {
+        User.findOne({email: req.body.email}, function (err, user) {
+          if (err) throw err;
+          if (req.session.userCheck == req.body.email) {
+            user = null;
+          } else { }
+
+          if (!user) {
+            if (req.body.imagePath == undefined) {
+              console.log("11");
+              User.findOneAndUpdate({email: req.session.userCheck},
+                {
+                  name: req.body.name,
+                  email: req.body.email,
+                  phoneNumber: req.body.phoneNumber
+                }, function (err, userUpdate) {
+                  if (err) throw err;
+                  console.log('update success');
+                  res.send({success: true});
+                });
+            } else {
+              console.log("22");
+              User.findOneAndUpdate({email: req.session.userCheck},
+                {
+                  name: req.body.name,
+                  email: req.body.email,
+                  phoneNumber: req.body.phoneNumber,
+                  // userImage: req.body.userImagePath.replace('\\', '/')
+                }, function (err, userUpdate) {
+                  if (err) throw err;
+                  console.log('update success with image');
+                  res.send({success: true});
+                });
+            }
+          } else {
+            res.send({success: false});
+          }
+        });
+      } else { }
+    });
+  }
+});
+router.post('/managerPasswordEdit', function(req,res){
+  console.log("userPasswordEdit Start");
+
+  User.findOne({email: req.session.userCheck}, function(err, user) {
+    if (err) {
+      res.send({success: 2});
+      console.log("userInfoEdit err")
+    } else {
+      console.log("user pwd hash: "+ user.password);
+      if(! user.validPassword(req.body.currentPassword)){
+        res.send({success: 0});
+        console.log("origin password is not correct")
+      }
+      else{
+        user.password = user.generateHash(req.body.newPassword);
+        user.save(function (err) {
+          if (err) {
+            console.log(err);
+            res.send({success: 2});
+          } else {
+            res.send({success: 1}); // 성공
+
+          }
+        })
+      }
+      // res.send({success: true});
+    }
+  });
+});
+router.get('/authorityCheck', function(req, res) { // 사용자 권한 체크
+  // 접근이 가능한 사용자는 {error:false}
+  // 접근이 불가능한 사용자는 {error:true} 반환
+  // {error:true}를 받은 클라이언트는 에러 페이지 출력
+
+  if(req.session.userCheck == undefined) { // 사용자 세션 체크, 세션 없으면 오류페이지
+    res.send({error:true});
+  } else {
+    User.findOne({email: req.session.userCheck}, function (err, user) { // 세션을 통해 사용자 정보 불러오기
+      if (err) throw err;
+
+      var authority = JSON.parse(JSON.stringify(user)).authority; // 접근한 사용자의 권한
+
+     if(authority == 'manager'){
+       res.send({error:false});
+      } else { // 위에서 정의되지 않은 페이지에 접근할 경우(URL 변경 등)
+        res.send({error:true});
+      }
+    });
+  }
+});
+
+// -----------------------------------------------------
+
 
 module.exports = router;

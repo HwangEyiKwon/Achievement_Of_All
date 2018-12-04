@@ -23,6 +23,7 @@ const userSchema = new Schema({
     money: Number, //컨텐츠 별 개인 금액
     reward: Number, // 컨텐츠 별 이익을 본 금액
     rewardCheck: Boolean, // reward 수령 여부 0:x 1:o
+    penalty: Number,
   }],
   pushToken: String,
 });

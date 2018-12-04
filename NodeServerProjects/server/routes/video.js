@@ -121,7 +121,10 @@ router.post('/sendVideo', function(req, res, next){
             }
             var date = year+ "-" + month + "-" + day;
 
-            user.contentList[contentListIndex].authenticationDate = date;
+            var threeDaysAfterDate = new Date(year,(month-1),day);
+            if(content.endDate < threeDaysAfterDate){
+              user.contentList[contentListIndex].authenticationDate = date;
+            }
             user.contentList[contentListIndex].isUploaded = 1;
             console.log("authenticate date and is uploaded update");
 
@@ -155,6 +158,9 @@ router.post('/checkVideo', function(req,res){
   var contentName = req.body.contentName; // 컨텐츠 이름
   var otherEmail = req.body.email; // 상대방 메일
   var authenInfo = req.body.authenInfo; // 인증
+  var checkReason = req.body.checkReason; // 실패 체크한 이유
+  var failAuthenUserArray = new Array();
+  var checkReasonArray = new Array();
   console.log(jwtToken+contentName+otherEmail+authenInfo+"ㅇㅇ");
 
   // console.log("video jwt토큰 "+ req.params.jwtToken);
@@ -192,11 +198,11 @@ router.post('/checkVideo', function(req,res){
     console.log(contentName + contentId + otherEmail);
 
     Content.findOneAndUpdate({name: contentName, id: contentId, "userList.email": otherEmail},
-      {$addToSet:{"userList.$.newVideo.authorizePeople": { $each: [{email : userEmail, authenInfo: authenInfo}]}}},function(err, content){
+      {$addToSet:{"userList.$.newVideo.authorizePeople": { $each: [{email : userEmail, authenInfo: authenInfo, checkReason: checkReason}]}}},function(err, content){
         if(err){
           console.log("User findOneAndUpdate err : "+err);
         }
-        console.log("check video_update authorizePeople: email : "+userEmail+" authenInfo : "+ authenInfo);
+        console.log("check video_update authorizePeople: email : "+userEmail+" authenInfo : "+ authenInfo + "reason" + checkReason);
 
         Content.findOne({name: contentName, id: contentId}, function(err, content){
           var userListCount = content.userList.length;
@@ -231,6 +237,10 @@ router.post('/checkVideo', function(req,res){
               if(content.userList[userListIndex].newVideo.authorizePeople[i].authenInfo == 1){
                 successCount++;
               }
+              else{
+                failAuthenUserArray.push(content.userList[userListIndex].newVideo.authorizePeople[i].email);
+                checkReasonArray.push(content.userList[userListIndex].newVideo.authorizePeople[i].checkReason);
+              }
             }
 
             voteRate = (successCount / authorizeUserCount) * 100;
@@ -243,13 +253,9 @@ router.post('/checkVideo', function(req,res){
             }
             else{
               content.userList[userListIndex].newVideo.authen = 0;
-              content.userList[userListIndex].result = 0;
-              content.balance += otherUser.contentList[contentListIndex].money;
 
-              otherUser.contentList[contentListIndex].joinState = 4;
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 0;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 0;
-              otherUser.contentList[contentListIndex].money = 0;
 
               otherUser.save(function(err, savedDocument) {
                 if (err)
@@ -258,34 +264,6 @@ router.post('/checkVideo', function(req,res){
               content.save(function(err, savedDocument) {
                 if (err)
                   return console.error(err);
-              });
-
-              User.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList){
-                var successUserNum = Object.keys(userList).length;
-                for(var i = 0; i < successUserNum; i++) {
-                  if(userList[i].email === otherEmail){
-                    successUserNum --;
-                    break;
-                  }
-                }
-
-                for(var i = 0; i < Object.keys(userList).length && userList[i].email !== otherEmail; i++) {
-                  var contentListIndex;
-                  var contentListCount = userList[i].contentList.length;
-
-                  for (var j = 0; j < contentListCount; j++) {
-                    if (userList[i].contentList[j].contentName === contentName) {
-                      contentListIndex = j;
-                      break;
-                    }
-                  }
-                  userList[i].contentList[contentListIndex].reward = (content.balance / successUserNum) * 0.8;
-
-                  userList[i].save(function(err, savedDocument) {
-                    if (err)
-                      return console.error(err);
-                  });
-                }
               });
 
               console.log("push message 문 전");
@@ -297,21 +275,16 @@ router.post('/checkVideo', function(req,res){
                 var todayYear = todayDate.getFullYear();
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
-
-                var fcmMessageFormat = "목표 달성에 실패하셨습니다!"
+                var titleFailVideo = "비디오실패";
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
-                fcmMessage.sendPushMessage(otherUser, contentListIndex, sendTime, fcmMessageFormat);
+                fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleFailVideo, contentName, failAuthenUserArray, checkReasonArray);
               }
-
             }
           }
         });
       })
-
   })
-
 });
-
 
 //android쪽에서 반복적으로 호출, 해당 내용 보내주기만 하면 됨.
 router.get('/getVideo/:jwtToken/:contentName/:videoPath', function(req,res){

@@ -7,27 +7,23 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpService} from './http-service';
 import {Router} from '@angular/router';
 import {DataService} from './data.service';
-import * as myGlobals from '../../../../../../4-1/CapD/Capstone_Design/Capstone_Team4/NodeServerProjects/src/app/global.service'; // 글로벌 변수를 주입하기 위한 서비스
+import * as myGlobals from './global.service'; // 글로벌 변수를 주입하기 위한 서비스
 
 @Component({
   selector: 'app-user-page',
   templateUrl: './userPage.component.html',
   styleUrls: ['./userPage.component.css']
 })
-export class UserPageComponent implements OnInit,OnDestroy {
+export class UserPageComponent implements OnInit, OnDestroy {
 
   imagePath = myGlobals.imagePath; // 이미지 경로
   menuState: string = 'out';
 
   userInfo = { // 사용자 정보 변수
-    userEmail: '',
-    userName: '',
-    userAuthority: '',
-    groupName: '',
-      deviceID:'',
-    userGender: '',
-    userPhoneNumber: '',
-    userImage: ''
+    email: '',
+    name: '',
+    authority: '',
+    phoneNumber: '',
   }
 
   menu = [];
@@ -44,7 +40,7 @@ export class UserPageComponent implements OnInit,OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.userInfo.userImage = '';
+
     // Session Check
     // 처음 로그인 페이지를 들어가면 세션 정보를 확인한다.
     // 만약 세션이 존재할 경우 로그인 진행 없이 사용자 페이지로 이동하고
@@ -52,28 +48,25 @@ export class UserPageComponent implements OnInit,OnDestroy {
 
     this.myObserver_sess = this.httpService.sessionCheck().subscribe(result => {
       // 세션에 사용자 정보가 남아 있을 경우
-      if(JSON.parse(JSON.stringify(result)).userSess !== undefined ){
-        console.log("Session: " + JSON.stringify(result));
-        // HTTP 통신을 통해 현재 세션에 남은 사용자의 모든 정보를 불러온다.
-        this.myObserver=this.httpService.getUserInfo().subscribe(result => { // Session을 통해 정보 불러옴
+      if( JSON.parse(JSON.stringify(result)).userSess !== undefined ){
 
+        console.log('Session: ' + JSON.stringify(result));
+        // HTTP 통신을 통해 현재 세션에 남은 사용자의 모든 정보를 불러온다.
+
+        this.myObserver = this.httpService.getUserInfo().subscribe(result => { // Session을 통해 정보 불러옴
+
+          console.log('find!!' + JSON.stringify(result));
           // 서버/데이터베이스에서 가져온 사용자 정보를 모두 변수에 담는다.
-          var email = JSON.parse(JSON.stringify(result)).userEmail;
-          var name = JSON.parse(JSON.stringify(result)).userName;
-          var authority = JSON.parse(JSON.stringify(result)).userAuthority;
-          var groupName = JSON.parse(JSON.stringify(result)).groupName;
-            var deviceID = JSON.parse(JSON.stringify(result)).deviceID;
-          var userGender = JSON.parse(JSON.stringify(result)).userGender;
-          var userPhoneNumber= JSON.parse(JSON.stringify(result)).userPhoneNumber;
-          var userImage = JSON.parse(JSON.stringify(result)).userImage;
+          var email = JSON.parse(JSON.stringify(result)).email;
+          var name = JSON.parse(JSON.stringify(result)).name;
+          var authority = JSON.parse(JSON.stringify(result)).authority;
+          var phoneNumber= JSON.parse(JSON.stringify(result)).phoneNumber;
 
           // 변수들에 불러온 값들을 대입
-          this.setupUserInfo(email, name , authority, groupName,deviceID, userGender, userPhoneNumber,userImage);
-          // 현재 사용자의 권한을 통해 좌측 메뉴를 생성한다.
-          this.setupMenu(authority);
-          // 다른 컴포넌트에 데이터를 넣기 위해 현재 사용자의 모든 정보를 넣는다. (자세한 내용은 Data.Service.ts 확인)
+          this.setupUserInfo(email, name , authority, phoneNumber );
+          this.setupMenu();
+          // 다른 컴포넌트에 데이터를 넣기 위해 현재 사용자의 모든 정보를 넣는다.
           this.updateUserInfo(this.userInfo);
-
 
         });
       }
@@ -88,26 +81,17 @@ export class UserPageComponent implements OnInit,OnDestroy {
   // setupMenu
   // 파라미터로 현재 사용자의 권한이 들어온다.
   // 그 권한에 따라 맞는 좌측 메뉴를 생성한다.
-  setupMenu(a: string) {
-    if ( a === 'master' ) {
-      this.menu = ['userInfo', 'deviceInfo', 'groupManage','userManage', 'deviceManage'];
-    }else if(a === 'groupMaster') {
-      this.menu = ['userInfo', 'deviceInfo'];
-    }else if(a === 'user') {
-      this.menu = ['userInfo', 'deviceInfo'];
-    }
+  setupMenu() {
+    this.menu = ['userInfo', 'userManage' , 'contentManage'];
   }
 
   // setupUserInfo
-  setupUserInfo(email: string, name: string, authority: string, groupName: string,deviceID: string, userGender: string, userPhoneNumber: string, userImage: string) {
-    this.userInfo.userEmail = email;
-    this.userInfo.userName = name;
-    this.userInfo.userAuthority = authority;
-    this.userInfo.groupName = groupName;
-      this.userInfo.deviceID = deviceID;
-    this.userInfo.userGender = userGender;
-    this.userInfo.userPhoneNumber = userPhoneNumber;
-    this.userInfo.userImage = userImage;
+  setupUserInfo(email: string, name: string, authority: string, phoneNumber: string) {
+    this.userInfo.email = email;
+    this.userInfo.name = name;
+    this.userInfo.authority = authority;
+    this.userInfo.phoneNumber = phoneNumber;
+
   }
 
   // updataUserInfo
@@ -115,6 +99,7 @@ export class UserPageComponent implements OnInit,OnDestroy {
   updateUserInfo(value: Object){
     this.dataService.updateData(value);
   }
+
   // LogOut
   // 사용자가 로그아웃 버튼을 누르면 세션을 파괴한 후 로그인 페이지로 이동시킨다.
   logOut(){

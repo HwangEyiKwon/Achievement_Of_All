@@ -4,6 +4,7 @@ var jwt = require('jwt-simple'); // jwt token 사용
 var Content = require('../models/content')
 var User = require('../models/user');
 var mkdirp = require('mkdirp'); // directory 만드는것
+var fcmMessage = require('../../server.js');
 
 
 router.get('/contentJoin/:contentName', function (req,res) {
@@ -153,9 +154,8 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
         res.send({rate: -1});
       }
       else if(content != null){
-        if(content.description != null && content.achievementRate != null){
-          console.log(content.description + " and "  + content.achievementRate);
-          res.send({success: true, description: content.description, rate: content.achievementRate});
+        if(content.achievementRate != null){
+          res.send({success: true,  rate: content.achievementRate});
         }
         else{
           console.log("content 시작 전")
@@ -166,31 +166,61 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
   });
 });
 
+router.get('/getContentRule/:contentName/:startDay/:startMonth/:startYear',  function (req,res) {
+  var contentName = req.params.contentName;
+  var startYear = req.params.startYear;
+  var startMonth = req.params.startMonth;
+  var startDay = req.params.startDay;
+  var startDate = new Date(startYear, (startMonth-1), startDay);
+  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+  console.log("rule start : "+ startDate);
+  console.log("rule start : "+ startYear);
+  console.log("rule start : "+ startMonth);
+  console.log("rule start : "+ startDay);
+  Content.findOne({name: contentName, startDate: startDate}, function(err, content){
+    console.log(content);
+    if(err) {
+      console.log(" err : "+err);
+      res.send({success: false});
+    }
+    else if(content != null){
+      if(content.description != null){
+        res.send({success: true,  description: content.description});
+      }
+      else{
+        res.send({success: false});
+      }
+    }
+  });
+});
+
 //유저가 참여중인 컨텐츠의 현재 money 및 reward를 보내준다.
 router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
   // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
+  var contentListIndex = -1;
 
   User.findOne({ email : userEmail }, function(err, user) {
     if (user.contentList.length == 0) {
-      res.send({success: false});
+      res.send({success: "false1"});
     }
     else {
       var contentListCount = user.contentList.length;
-      var contentListIndex = -1;
+      var indexFlag = 0;
       for (var i = 0; i < contentListCount; i++) {
-        if (user.contentList[i].contentName === contentName) {
+        if (user.contentList[i].contentName == contentName) {
           contentListIndex = i;
-          break;
+          indexFlag = 1;
+        }
+        if(contentListIndex != -1 && indexFlag == 1){
+          res.send({money: user.contentList[contentListIndex].money, reward: user.contentList[contentListIndex].reward, penalty: user.contentList[contentListIndex].penalty});
         }
       }
-      if (contentListIndex == -1) {
-        res.send({success: false});
-      }
-      else {
-        res.send({money: user.contentList[contentListIndex].money, reward: user.contentList[contentListIndex].reward});
+      console.log("content list index: "+contentListIndex);
+      if (contentListIndex == -1 && indexFlag != 1) {
+         res.send({success: false});
       }
     }
   });
@@ -225,6 +255,110 @@ router.post('/getRewardCheck',  function (req,res) {
       res.send({success:true});
     }
     else res.send({success:false});
+  });
+});
+
+router.post('/getFailureCheck',  function (req,res) {
+  console.log("getFailure check start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
+  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentName = req.body.contentName;
+  var contentId;
+
+  User.findOne({email: userEmail}, function(err, user) {
+    var userMoney;
+    if (user.contentList.length != 0) {
+      var contentListCount = user.contentList.length;
+      var contentListIndex;
+      for (var i = 0; i < contentListCount; i++) {
+        if (user.contentList[i].contentName === contentName) {
+          contentListIndex = i;
+          break;
+        }
+      }
+      contentId = user.contentList[contentListIndex].contentId;
+      userMoney = user.contentList[contentListIndex].money;
+
+      console.log(userMoney);
+
+      user.contentList[contentListIndex].joinState = 4;
+      user.contentList[contentListIndex].penalty = userMoney;
+      user.contentList[contentListIndex].money = 0;
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+    }
+
+    Content.findOne({name: contentName, id: contentId}, function (err, content) {
+      var userListCount = content.userList.length;
+      var userListIndex;
+      var contentListIndex;
+
+      for (var i = 0; i < userListCount; i++) {
+        if (content.userList[i].email === userEmail) {
+          userListIndex = i;
+          break;
+        }
+      }
+      content.userList[userListIndex].result = 0;
+      content.balance += userMoney;
+
+      content.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+
+      //reward 다른 사람들 올려주는 코드
+      User.find({
+        "contentList.contentName": contentName,
+        "contentList.contentId": contentId,
+        "contentList.joinState": 1
+      }, function (err, userList) {
+        var successUserNum = Object.keys(userList).length;
+        for (var i = 0; i < successUserNum; i++) {
+          if (userList[i].email === userEmail) {
+            successUserNum--;
+            break;
+          }
+        }
+
+        for (var i = 0; i < Object.keys(userList).length && userList[i].email !== userEmail; i++) {
+          var contentListIndex;
+          var contentListCount = userList[i].contentList.length;
+
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentName === contentName) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          userList[i].contentList[contentListIndex].reward = (content.balance / successUserNum) * 0.8;
+
+          userList[i].save(function (err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+      });
+    });
+
+    if(user.pushToken != null){
+      console.log("실패 푸쉬메시지 전송");
+      var todayDate = new Date();
+      var todayMonth = todayDate.getMonth() + 1;
+      var todayDay = todayDate.getDate();
+      var todayYear = todayDate.getFullYear();
+      var currentHour = todayDate.getHours();
+      var currentMinute = todayDate.getMinutes();
+      var titleFail = "실패";
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+      var tempArray = new Array();
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
+    }
+
+    res.send({success:true});
   });
 });
 

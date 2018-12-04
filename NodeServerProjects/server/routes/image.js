@@ -65,4 +65,80 @@ router.get('/getOtherUserImage/:email', function(req, res){
   });
 });
 
+
+// -----------------------------------------------------
+// WEB 관리자 페이지 용
+
+var multer = require('multer');
+var crypto = require('crypto'); // 파일명 암호화
+var mime=require('mime-types');
+
+//define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
+
+var storage = '';
+
+var upload = multer({ storage: storage }).single('photo');
+
+router.post('/photo', function(req, res, next) {
+
+  User.findOne({ email : req.session.userCheck }, function(err, user) {
+
+    storage = multer.diskStorage({
+      destination: function(req, file, cb) {
+        cb(null, './server');
+      },
+      filename: function(req, file, cb) {
+        crypto.pseudoRandomBytes(16, function(err, raw) {
+          cb(null, user.name + '.' + 'jpg');
+        });
+      }
+    });
+
+    var path = '';
+    console.log('파일이름바꾸기');
+    console.log(req.body);
+
+    upload(req, res, function(err) {
+
+      if (err) {
+        // An error occurred when uploading
+        console.log(err);
+        return res.status(422).send('an Error occured');
+      }
+      console.log(req.file);
+      console.log(req.cb);
+      console.log('no error');
+      fileName = req.file.filename;
+      console.log(fileName);
+      return res.send(fileName);
+    });
+
+  });
+});
+
+router.get('/getManagerImage/:email', function(req, res){
+  console.log("getUserImage Start");
+  var email = req.params.email;
+  console.log("email : "+ email);
+
+  User.findOne({ email : email }, function(err, user) {
+    if(err){
+      console.log("getUserImage err : "+err);
+      res.send({success: false});
+    }
+    else{
+      console.log("user.imagePath =" + user.imagePath);
+      if(user.imagePath == null ){
+        var filename = './server/user/profile.png'; //기본 이미지
+      }
+      else{
+        var filename = "./server/user/"+email+"/"+user.imagePath+".jpg";
+      }
+      var file = fs.createReadStream(filename, {flags: 'r'});
+      file.pipe(res);
+    }
+  });
+})
+// -----------------------------------------------------
+
 module.exports = router ;
