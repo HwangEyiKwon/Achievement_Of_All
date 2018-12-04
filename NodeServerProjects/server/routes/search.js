@@ -4,6 +4,7 @@ var User = require('../models/user');
 var Content = require('../models/content');
 var Report = require('../models/report');
 var passport = require('passport');
+var jwt = require('jwt-simple'); // jwt token 사용
 const passportConfig = require('../../config/passport');
 
 router.get('/getSearchUserData', function (req,res) {
@@ -145,7 +146,7 @@ router.get('/getContentsInfo', function(req, res) {
   }
 });
 
-router.get('/reportUserList/:jwtToken/:contentName', function (req,res) {
+router.get('/reportUserList/:jwtToken/:contentName/:reportReason', function (req,res) {
   console.log("reportUserList Start!!!");
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
   // console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
@@ -201,8 +202,11 @@ router.get('/reportUserList/:jwtToken/:contentName', function (req,res) {
       newReport.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
-        console.log(savedDocument);
-        console.log("report save");
+        else{
+          console.log(savedDocument);
+          console.log("report save");
+          res.send({success:true});
+        }
       });
     });
   });

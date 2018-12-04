@@ -4,6 +4,7 @@ var jwt = require('jwt-simple'); // jwt token 사용
 var Content = require('../models/content')
 var User = require('../models/user');
 var mkdirp = require('mkdirp'); // directory 만드는것
+var fcmMessage = require('../../server.js');
 
 
 router.get('/contentJoin/:contentName', function (req,res) {
@@ -258,6 +259,7 @@ router.post('/getRewardCheck',  function (req,res) {
 });
 
 router.post('/getFailureCheck',  function (req,res) {
+  console.log("getFailure check start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
   // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
@@ -265,6 +267,7 @@ router.post('/getFailureCheck',  function (req,res) {
   var contentId;
 
   User.findOne({email: userEmail}, function(err, user) {
+    var userMoney;
     if (user.contentList.length != 0) {
       var contentListCount = user.contentList.length;
       var contentListIndex;
@@ -275,6 +278,17 @@ router.post('/getFailureCheck',  function (req,res) {
         }
       }
       contentId = user.contentList[contentListIndex].contentId;
+      userMoney = user.contentList[contentListIndex].money;
+
+      console.log(userMoney);
+
+      user.contentList[contentListIndex].joinState = 4;
+      user.contentList[contentListIndex].penalty = userMoney;
+      user.contentList[contentListIndex].money = 0;
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
     }
 
     Content.findOne({name: contentName, id: contentId}, function (err, content) {
@@ -289,11 +303,12 @@ router.post('/getFailureCheck',  function (req,res) {
         }
       }
       content.userList[userListIndex].result = 0;
-      content.balance += user.contentList[contentListIndex].money;
+      content.balance += userMoney;
 
-      user.contentList[contentListIndex].joinState = 4;
-      user.contentList[contentListIndex].penalty = user.contentList[contentListIndex].money;
-      user.contentList[contentListIndex].money = 0;
+      content.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
 
       //reward 다른 사람들 올려주는 코드
       User.find({
@@ -328,6 +343,22 @@ router.post('/getFailureCheck',  function (req,res) {
         }
       });
     });
+
+    if(user.pushToken != null){
+      console.log("실패 푸쉬메시지 전송");
+      var todayDate = new Date();
+      var todayMonth = todayDate.getMonth() + 1;
+      var todayDay = todayDate.getDate();
+      var todayYear = todayDate.getFullYear();
+      var currentHour = todayDate.getHours();
+      var currentMinute = todayDate.getMinutes();
+      var titleFail = "실패";
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+      var tempArray = new Array();
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
+    }
+
+    res.send({success:true});
   });
 });
 

@@ -440,148 +440,26 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
       });
     }
   });
-
 });
 
-// var scheduler = schedule.scheduleJob('50 * * * * *', function() {
-//   dbDelete();
-// });
-//
-// var scheduler = schedule.scheduleJob('55 * * * * *', function() {
-//   dbInit();
-// });
-
-var fcm = new FCM(serverKey);
-var client_token ='22e6DwPZB5vVc:APA91bEx98_N-CW-EeC-cATxRviqjQs6Uhi62Vz3KeMRYZkY8aYL_bfqmQ8SBAE4eE9QuxPFK1xTxycx2uRQz1zxKwNRdFrWVnUmf2MsFNoHe_bXioir5qfdu4xkWRTCTtItflm8e80h';
-var push_data = {
-  // 수신대상
-  to: client_token,
-  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-  data: {
-    title: titleAuthen,
-    body: "NoSmoking",
-    // sound: "default",
-    // click_action: "FCM_PLUGIN_ACTIVITY",
-    // click_action:"OPEN_ACTIVITY",
-    // icon: "fcm_push_icon"
-  },
-  // 메시지 중요도
-  priority: "high",
-  // App 패키지 이름
-  restricted_package_name: "com.example.parkseunghyun.achievementofall",
-};
-var push_data1 = {
-  // 수신대상
-  to: client_token,
-  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-  data: {
-    title: titleFail,
-    body: "NoSmoking",
-    // sound: "default",
-    // click_action: "FCM_PLUGIN_ACTIVITY",
-    // click_action:"OPEN_ACTIVITY",
-    // icon: "fcm_push_icon"
-  },
-  // 메시지 중요도
-  priority: "high",
-  // App 패키지 이름
-  restricted_package_name: "com.example.parkseunghyun.achievementofall",
-};
-var push_data2 = {
-  // 수신대상
-  to: client_token,
-  // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-  data: {
-    title: titleSuccess,
-    body: "NoSmoking",
-    // sound: "default",
-    // click_action: "FCM_PLUGIN_ACTIVITY",
-    // click_action:"OPEN_ACTIVITY",
-    // icon: "fcm_push_icon"
-  },
-  // 메시지 중요도
-  priority: "high",
-  // App 패키지 이름
-  restricted_package_name: "com.example.parkseunghyun.achievementofall",
-};
-
-// var scheduler = schedule.scheduleJob('00 * * * * *', function() {
-//   fcm.send(push_data, function(err, response) {
-//     if (err) {
-//       console.error('실패 Push메시지 발송에 실패했습니다.');
-//       console.error(err);
-//       return;
-//     }
-//     console.log('인증 Push메시지가 발송되었습니다.');
-//     console.log(response);
-//   });
-// });
-// var scheduler = schedule.scheduleJob('20 * * * * *', function() {
-//   fcm.send(push_data1, function(err, response) {
-//     if (err) {
-//       console.error('실패 Push메시지 발송에 실패했습니다.');
-//       console.error(err);
-//       return;
-//     }
-//     console.log('실패 Push메시지가 발송되었습니다.');
-//     console.log(response);
-//   });
-// });
-// var scheduler = schedule.scheduleJob('40 * * * * *', function() {
-//   fcm.send(push_data2, function(err, response) {
-//     if (err) {
-//       console.error('실패 Push메시지 발송에 실패했습니다.');
-//       console.error(err);
-//       return;
-//     }
-//     console.log('성공 Push메시지가 발송되었습니다.');
-//     console.log(response);
-//   });
-// });
-
-
-
-
-
-
-function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUserArray, checkReasonArray) {
+function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
   console.log("내부 push!!");
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  if(titles == titleVideoFail)
-  {
-    var push_data = {
-      // 수신대상
-      to: client_token,
-      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-      data: {
-        title: titles,
-        body: contentName,
-        user: authenUserArray,
-        checkReason: checkReasonArray
-      },
-      // 메시지 중요도
-      priority: "high",
-      // App 패키지 이름
-      restricted_package_name: "com.example.parkseunghyun.achievementofall",
-    };
-  }
-  else {
-    var push_data = {
-      // 수신대상
-      to: client_token,
-      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-      data: {
-        title: titles,
-        body: contentName,
-      },
-      // 메시지 중요도
-      priority: "high",
-      // App 패키지 이름
-      restricted_package_name: "com.example.parkseunghyun.achievementofall",
-    };
-  }
+  var push_data = {
+    // 수신대상
+    to: client_token,
+    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+    data: {
+      title: titles,
+      body: contentName,
+    },
+    // 메시지 중요도
+    priority: "high",
+    // App 패키지 이름
+    restricted_package_name: "com.example.parkseunghyun.achievementofall",
+  };
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
@@ -623,32 +501,21 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
           return;
         }
         console.log('성공 Push메시지가 발송되었습니다.');
-        console.log(response);
-      });
-    }
-    else if(titles === titleVideoFail){
-      fcm.send(push_data, function(err, response) {
-        if (err) {
-          console.error('인증 실패 Push메시지 발송에 실패했습니다.2');
-          console.error(err);
-          return;
-        }
-        console.log('인증 실패 Push메시지가 발송되었습니다.2');
         console.log(response);
       });
     }
   });
 }
 
-//푸쉬메시지 펑션
+//외부 푸쉬메시지 펑션
 exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentName, authenUserArray, checkReasonArray)  {
   console.log(user.pushToken);
   console.log("외부 push");
-  console.log('6');
+  console.log('titles: ' + titles);
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  if(titles == titleVideoFail)
-  {
+  if(titles === titleVideoFail){
+    console.log("비디오실패 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -665,7 +532,8 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
       restricted_package_name: "com.example.parkseunghyun.achievementofall",
     };
   }
-  else {
+  else{
+    console.log("실패 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -683,27 +551,9 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
-    console.log("와 두번 ㄷ도노?");
-    if(titles === titleAuthen){
-      if(user.contentList[arrayIndex].isUploaded == 1 ) {
-        console.log('before user authen : ' + user.contentList[0].isUploaded);
-        user.contentList[arrayIndex].isUploaded = 0;
-        console.log('after user authen : ' + user.contentList[0].isUploaded);
-      }
-      else{
-        console.log('8');
-        fcm.send(push_data, function(err, response) {
-          if (err) {
-            console.error('Push메시지 발송에 실패했습니다.');
-            console.error(err);
-            return;
-          }
-          console.log('Push메시지가 발송되었습니다.');
-          console.log(response);
-        });
-      };
-    }
-    else if(titles === titleFail){
+    console.log(titles);
+    console.log(titleFail);
+    if(titles === titleFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('실패 Push메시지 발송에 실패했습니다.');
@@ -714,19 +564,7 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
         console.log(response);
       });
     }
-    else if(titles === titleSuccess){
-      fcm.send(push_data, function(err, response) {
-        if (err) {
-          console.error('성공 Push메시지 발송에 실패했습니다.');
-          console.error(err);
-          return;
-        }
-        console.log('성공 Push메시지가 발송되었습니다.');
-        console.log(response);
-      });
-    }
     else if(titles === titleVideoFail){
-      console.log("몇번 찍히냐?");
       fcm.send(push_data, function(err, response) {
         if (err) {
           console.error('인증 실패 Push메시지 발송에 실패했습니다.1');
@@ -799,14 +637,14 @@ function dbInit(){
       contentId : 0,
       videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
       contentName: "NoSmoking",
-      joinState : 4,
+      joinState : 1,
       authenticationDate : "2018-11-24",
       isUploaded : 0,
-      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 0}],
-      money: 0,
+      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}],
+      money: 100000,
       reward: 0,
       rewardCheck: 0,
-      penalty: 100000
+      penalty: 0
     }]
   });
    var user4 = new user({
