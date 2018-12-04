@@ -153,9 +153,8 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
         res.send({rate: -1});
       }
       else if(content != null){
-        if(content.description != null && content.achievementRate != null){
-          console.log(content.description + " and "  + content.achievementRate);
-          res.send({success: true, description: content.description, rate: content.achievementRate});
+        if(content.achievementRate != null){
+          res.send({success: true,  rate: content.achievementRate});
         }
         else{
           console.log("content 시작 전")
@@ -163,6 +162,34 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
         }
       }
     });
+  });
+});
+
+router.get('/getContentRule/:contentName/:startDay/:startMonth/:startYear',  function (req,res) {
+  var contentName = req.params.contentName;
+  var startYear = req.params.startYear;
+  var startMonth = req.params.startMonth;
+  var startDay = req.params.startDay;
+  var startDate = new Date(startYear, (startMonth-1), startDay);
+  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+  console.log("rule start : "+ startDate);
+  console.log("rule start : "+ startYear);
+  console.log("rule start : "+ startMonth);
+  console.log("rule start : "+ startDay);
+  Content.findOne({name: contentName, startDate: startDate}, function(err, content){
+    console.log(content);
+    if(err) {
+      console.log(" err : "+err);
+      res.send({success: false});
+    }
+    else if(content != null){
+      if(content.description != null){
+        res.send({success: true,  description: content.description});
+      }
+      else{
+        res.send({success: false});
+      }
+    }
   });
 });
 
