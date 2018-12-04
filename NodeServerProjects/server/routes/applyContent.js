@@ -257,4 +257,78 @@ router.post('/getRewardCheck',  function (req,res) {
   });
 });
 
+router.post('/getFailureCheck',  function (req,res) {
+  var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
+  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
+  var userEmail = decoded.userCheck;
+  var contentName = req.body.contentName;
+  var contentId;
+
+  User.findOne({email: userEmail}, function(err, user) {
+    if (user.contentList.length != 0) {
+      var contentListCount = user.contentList.length;
+      var contentListIndex;
+      for (var i = 0; i < contentListCount; i++) {
+        if (user.contentList[i].contentName === contentName) {
+          contentListIndex = i;
+          break;
+        }
+      }
+      contentId = user.contentList[contentListIndex].contentId;
+    }
+
+    Content.findOne({name: contentName, id: contentId}, function (err, content) {
+      var userListCount = content.userList.length;
+      var userListIndex;
+      var contentListIndex;
+
+      for (var i = 0; i < userListCount; i++) {
+        if (content.userList[i].email === userEmail) {
+          userListIndex = i;
+          break;
+        }
+      }
+      content.userList[userListIndex].result = 0;
+      content.balance += user.contentList[contentListIndex].money;
+
+      user.contentList[contentListIndex].joinState = 4;
+      user.contentList[contentListIndex].penalty = user.contentList[contentListIndex].money;
+      user.contentList[contentListIndex].money = 0;
+
+      //reward 다른 사람들 올려주는 코드
+      User.find({
+        "contentList.contentName": contentName,
+        "contentList.contentId": contentId,
+        "contentList.joinState": 1
+      }, function (err, userList) {
+        var successUserNum = Object.keys(userList).length;
+        for (var i = 0; i < successUserNum; i++) {
+          if (userList[i].email === userEmail) {
+            successUserNum--;
+            break;
+          }
+        }
+
+        for (var i = 0; i < Object.keys(userList).length && userList[i].email !== userEmail; i++) {
+          var contentListIndex;
+          var contentListCount = userList[i].contentList.length;
+
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentName === contentName) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          userList[i].contentList[contentListIndex].reward = (content.balance / successUserNum) * 0.8;
+
+          userList[i].save(function (err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+      });
+    });
+  });
+});
+
 module.exports = router ;

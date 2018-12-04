@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+ mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://localhost:27017');
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
@@ -32,6 +32,7 @@ var fs = require("fs");
 var titleFail = "실패";
 var titleAuthen = "인증";
 var titleSuccess = "성공";
+var titleVideoFail = "비디오실패";
 
 
 var schedule = require('node-schedule');
@@ -57,8 +58,8 @@ var appInfoSchema = require('./server/models/app');
 
 require('./config/passport')(passport);
 
-// //db 초기화
-// dbInit();
+//db 초기화
+dbInit();
 // //db 삭제
 // dbDelete();
 
@@ -451,7 +452,7 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
 // });
 
 var fcm = new FCM(serverKey);
-var client_token ='e6DwPZB5vVc:APA91bEx98_N-CW-EeC-cATxRviqjQs6Uhi62Vz3KeMRYZkY8aYL_bfqmQ8SBAE4eE9QuxPFK1xTxycx2uRQz1zxKwNRdFrWVnUmf2MsFNoHe_bXioir5qfdu4xkWRTCTtItflm8e80h';
+var client_token ='22e6DwPZB5vVc:APA91bEx98_N-CW-EeC-cATxRviqjQs6Uhi62Vz3KeMRYZkY8aYL_bfqmQ8SBAE4eE9QuxPFK1xTxycx2uRQz1zxKwNRdFrWVnUmf2MsFNoHe_bXioir5qfdu4xkWRTCTtItflm8e80h';
 var push_data = {
   // 수신대상
   to: client_token,
@@ -515,17 +516,17 @@ var push_data2 = {
 //     console.log(response);
 //   });
 // });
-var scheduler = schedule.scheduleJob('20 * * * * *', function() {
-  fcm.send(push_data1, function(err, response) {
-    if (err) {
-      console.error('실패 Push메시지 발송에 실패했습니다.');
-      console.error(err);
-      return;
-    }
-    console.log('실패 Push메시지가 발송되었습니다.');
-    console.log(response);
-  });
-});
+// var scheduler = schedule.scheduleJob('20 * * * * *', function() {
+//   fcm.send(push_data1, function(err, response) {
+//     if (err) {
+//       console.error('실패 Push메시지 발송에 실패했습니다.');
+//       console.error(err);
+//       return;
+//     }
+//     console.log('실패 Push메시지가 발송되었습니다.');
+//     console.log(response);
+//   });
+// });
 // var scheduler = schedule.scheduleJob('40 * * * * *', function() {
 //   fcm.send(push_data2, function(err, response) {
 //     if (err) {
@@ -543,12 +544,12 @@ var scheduler = schedule.scheduleJob('20 * * * * *', function() {
 
 
 
-function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUser) {
-
+function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUserArray, checkReasonArray) {
+  console.log("내부 push!!");
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  if(titles == 'titleFailVideo')
+  if(titles == titleVideoFail)
   {
     var push_data = {
       // 수신대상
@@ -557,7 +558,8 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
       data: {
         title: titles,
         body: contentName,
-        user: fasf,
+        user: authenUserArray,
+        checkReason: checkReasonArray
       },
       // 메시지 중요도
       priority: "high",
@@ -624,30 +626,64 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
         console.log(response);
       });
     }
+    else if(titles === titleVideoFail){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('인증 실패 Push메시지 발송에 실패했습니다.2');
+          console.error(err);
+          return;
+        }
+        console.log('인증 실패 Push메시지가 발송되었습니다.2');
+        console.log(response);
+      });
+    }
   });
 }
 
 //푸쉬메시지 펑션
-exports.sendPushMessage = function(user, arrayIndex, sendTime, titles, contentName) {
+exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentName, authenUserArray, checkReasonArray)  {
+  console.log(user.pushToken);
+  console.log("외부 push");
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  var push_data = {
-    // 수신대상
-    to: client_token,
-    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-    data: {
-      title: titles,
-      body: contentName,
-    },
-    // 메시지 중요도
-    priority: "high",
-    // App 패키지 이름
-    restricted_package_name: "com.example.parkseunghyun.achievementofall",
-  };
+  if(titles == titleVideoFail)
+  {
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+        user: authenUserArray,
+        checkReason: checkReasonArray
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
+  else {
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
+    console.log("와 두번 ㄷ도노?");
     if(titles === titleAuthen){
       if(user.contentList[arrayIndex].isUploaded == 1 ) {
         console.log('before user authen : ' + user.contentList[0].isUploaded);
@@ -678,17 +714,6 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, titles, contentNa
         console.log(response);
       });
     }
-    else if(titles === titleFailVideo){
-      fcm.send(push_data, function(err, response) {
-        if (err) {
-          console.error('실패Video Push메시지 발송에 실패했습니다.');
-          console.error(err);
-          return;
-        }
-        console.log('실패Video Push메시지가 발송되었습니다.');
-        console.log(response);
-      });
-    }
     else if(titles === titleSuccess){
       fcm.send(push_data, function(err, response) {
         if (err) {
@@ -697,6 +722,18 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, titles, contentNa
           return;
         }
         console.log('성공 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleVideoFail){
+      console.log("몇번 찍히냐?");
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('인증 실패 Push메시지 발송에 실패했습니다.1');
+          console.error(err);
+          return;
+        }
+        console.log('인증 실패 Push메시지가 발송되었습니다.1');
         console.log(response);
       });
     }
@@ -891,7 +928,7 @@ function dbInit(){
     isDone: 0,
     userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
       {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
-      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0}]}, result: 2}],
+      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0, checkReason: "싪패같아요"}]}, result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
