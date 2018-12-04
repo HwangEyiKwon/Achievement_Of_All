@@ -58,7 +58,7 @@ var appInfoSchema = require('./server/models/app');
 require('./config/passport')(passport);
 
 // //db 초기화
-// dbInit();
+dbInit();
 // //db 삭제
 // dbDelete();
 
@@ -197,9 +197,9 @@ app.post('/sendToken', function(req, res) {
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName, null);
-        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName, null);
-        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName, null);
+        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName);
+        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName);
+        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName);
       }
     }
   });
@@ -259,7 +259,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           if(userList[i].pushToken != null) {
             console.log("푸쉬메시지 성공 전송");
             var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
-            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName, null);
+            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName);
           }
           else console.log("pushtoken is null");
         }
@@ -351,7 +351,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       if(userList[i].pushToken != null){
         console.log("실패 푸쉬메시지 전송");
         var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName, null);
+        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName);
       }
     }
   });
@@ -371,9 +371,9 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName,null);
-        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName,null);
-        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName,null);
+        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
       }
     }
   });
@@ -543,43 +543,24 @@ var scheduler = schedule.scheduleJob('20 * * * * *', function() {
 
 
 
-function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUser) {
+function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
 
   console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  if(titles == 'titleFailVideo')
-  {
-    var push_data = {
-      // 수신대상
-      to: client_token,
-      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-      data: {
-        title: titles,
-        body: contentName,
-        user: fasf,
-      },
-      // 메시지 중요도
-      priority: "high",
-      // App 패키지 이름
-      restricted_package_name: "com.example.parkseunghyun.achievementofall",
-    };
-  }
-  else {
-    var push_data = {
-      // 수신대상
-      to: client_token,
-      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-      data: {
-        title: titles,
-        body: contentName,
-      },
-      // 메시지 중요도
-      priority: "high",
-      // App 패키지 이름
-      restricted_package_name: "com.example.parkseunghyun.achievementofall",
-    };
-  }
+  var push_data = {
+    // 수신대상
+    to: client_token,
+    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+    data: {
+      title: titles,
+      body: contentName,
+    },
+    // 메시지 중요도
+    priority: "high",
+    // App 패키지 이름
+    restricted_package_name: "com.example.parkseunghyun.achievementofall",
+  };
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
     console.log('7');
@@ -675,17 +656,6 @@ exports.sendPushMessage = function(user, arrayIndex, sendTime, titles, contentNa
           return;
         }
         console.log('실패 Push메시지가 발송되었습니다.');
-        console.log(response);
-      });
-    }
-    else if(titles === titleFailVideo){
-      fcm.send(push_data, function(err, response) {
-        if (err) {
-          console.error('실패Video Push메시지 발송에 실패했습니다.');
-          console.error(err);
-          return;
-        }
-        console.log('실패Video Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
