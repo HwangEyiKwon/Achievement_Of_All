@@ -132,7 +132,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:layout_gravity="left"
-            android:background="@drawable/mediatransperent_ract"
+            android:background="@drawable/view_white_rectangle"
             android:text="승인"
             android:fontFamily="@font/font5"
             android:textColor="@color/colorPrimaryDark" />
@@ -144,7 +144,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:layout_gravity="right"
-            android:background="@drawable/mediatransperent_ract"
+            android:background="@drawable/view_white_rectangle"
             android:fontFamily="@font/font5"
             android:text="신고"
             android:textColor="@color/colorPrimaryDark" />

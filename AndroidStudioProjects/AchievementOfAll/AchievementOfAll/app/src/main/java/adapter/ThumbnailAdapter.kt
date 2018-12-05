@@ -27,7 +27,7 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
     private var ipAddress: String = globalVariables!!.ipAddress
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.account_thumbnail_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.view_thumbnail, parent, false)
         return ViewHolder(view)
     }
 
@@ -50,7 +50,6 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
             Glide
                     .with(context)
                     .setDefaultRequestOptions(requestOptions)
-
                     .load("${ipAddress}/getVideo/${jwtToken}/${contentName}/${videoPath}")
                     .into(holder.thumbnailView)
 

@@ -36,13 +36,20 @@
             android:textColorHint="@android:color/darker_gray" />
 
 
+        <!--<android.support.v4.widget.NestedScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:scrollbars="vertical">-->
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:dividerHeight="1dp" />
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="1dp"
+                android:scrollbars="vertical"
+                />
 
+        <!--</android.support.v4.widget.NestedScrollView>-->
 
     </LinearLayout>
 

@@ -18,20 +18,6 @@ object VolleyHttpService{
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
-    // 사용자 jwt-token 확인
-//    fun jwtCheck(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
-//
-//        var jwtCheckRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/jwtCheck", jsonObject, Response.Listener{ response ->
-//            println("서버 수신: $response")
-//            success(response.getString("success").toBoolean())
-//
-//        }, Response.ErrorListener { error ->
-//            println("수신 에러: $error")
-//            success(false)
-//        }){
-//        }
-//        Volley.newRequestQueue(context).add(jwtCheckRequest)
-//    }
     // 사용자 fcm-token
     fun sendToken(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
@@ -46,6 +32,7 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(sendTokenRequest)
     }
+
     // 사용자 로그인
     fun login(context: Context, jsonObject: JSONObject,success: (JSONObject) -> Unit){
 

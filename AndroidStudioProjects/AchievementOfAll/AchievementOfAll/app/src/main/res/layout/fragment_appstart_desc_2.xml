@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/app_desc_2"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="목표달성을 함께할\n친구를 찾으시나요 ?"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="28sp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="45dp"
+        android:gravity="center"
+        android:layout_marginRight="45dp"
+        android:layout_marginTop="10dp"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="단조로운 목표달성,\n모두의 달성과 함께라면\n즐겁습니다!"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/icongrey"
+        android:textSize="16sp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="모달 친구들과 서로\n목표 실천 과정을\n확인해주세요!"
+        android:fontFamily="@font/font5"
+        android:textColor="@color/icongrey"
+        android:textSize="16sp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"/>
+
+</LinearLayout>

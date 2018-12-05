@@ -18,6 +18,7 @@ import com.studio572.searchlistview.SearchAdapter
 import org.json.JSONArray
 import android.content.Intent
 import android.content.BroadcastReceiver
+import android.text.method.ScrollingMovementMethod
 import org.json.JSONObject
 
 
@@ -40,6 +41,7 @@ class HomeSearchPager : Fragment() {
 
         editSearch = view_!!.findViewById(R.id.editSearch);
         listView = view_!!.findViewById(R.id.listView);
+        listView!!.isVerticalScrollBarEnabled = true
 
         // 리스트를 생성한다.
         list = ArrayList()

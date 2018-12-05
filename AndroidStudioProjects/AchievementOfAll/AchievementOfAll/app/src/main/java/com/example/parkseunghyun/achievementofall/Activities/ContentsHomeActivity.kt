@@ -305,7 +305,7 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
             if(tmpRequestCode == 88 || IS_FCM_FLAG == 1){
                 println("TEST KAPPA -- ")
                 viewPager?.currentItem = 1
-                contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
 
             }
 
@@ -317,12 +317,12 @@ class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, Dat
 
                 }
                 override fun onPageSelected(p0: Int) {
-                    contents_circle_indicator.selectDot(p0)
+                    app_desc_indicator.selectDot(p0)
                 }
             })
 
             if(tmpRequestCode != 88 && IS_FCM_FLAG != 1){
-                contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
             }
             getOthers()
 
