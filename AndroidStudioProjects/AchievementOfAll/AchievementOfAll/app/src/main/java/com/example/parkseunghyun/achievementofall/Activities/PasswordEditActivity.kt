@@ -10,48 +10,51 @@ import kotlinx.android.synthetic.main.activity_password_edit.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
-
+/*
+    REFACTORED.
+ */
 
 class PasswordEditActivity : AppCompatActivity() {
 
-    // jwt-token
-    var jwtToken: String?= null
-
-    var name: String ?= null
-    var phoneNumber: String ?= null
+    private var jwtToken: String?= null
+    private var userName: String ?= null
+    private var phoneNumber: String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_password_edit)
 
-        name = intent.getStringExtra("name")
+        initButtonListener()
+
+        userName = intent.getStringExtra("name")
         phoneNumber = intent.getStringExtra("phoneNumber")
 
-        bt_editPassword.setOnClickListener{
-            println("앙기모")
-            jwtToken = loadToken()
-            if(edit_password.text.toString()!= edit_passwordCheck.text.toString()){
-                Toast.makeText(this, "비밀번호 체크가 틀립니다.", Toast.LENGTH_LONG).show()
-            }else{
-                editPassword()
 
+    }
+
+    private fun initButtonListener() {
+        button_edit_pw.setOnClickListener {
+            jwtToken = loadJwtToken()
+            if (new_pw.text.toString() != new_pw_check.text.toString()) {
+                Toast.makeText(this, "비밀번호 체크가 틀립니다.", Toast.LENGTH_LONG).show()
+            } else {
+                editPasswordRequest()
             }
         }
 
-        goInfoEdit.setOnClickListener {
+        button_go_Info_edit.setOnClickListener {
             startActivity<ProfileEditActivity>(
-                    "name" to name,
+                    "name" to userName,
                     "phoneNumber" to phoneNumber
             )
             finish()
         }
-
     }
 
-    private fun editPassword(){
+    private fun editPasswordRequest(){
 
-        val pwCurrent = edit_passwordCurrent.text.toString()
-        val pw = edit_password.text.toString()
+        val pwCurrent = current_pw.text.toString()
+        val pw = new_pw.text.toString()
         val token = jwtToken
 
         val jsonObject = JSONObject()
@@ -63,9 +66,7 @@ class PasswordEditActivity : AppCompatActivity() {
        VolleyHttpService.editPassword(this, jsonObject){ success ->
 
            // 성공 1 실패(현재비번틀릴때) 0 나머지 2
-           println("비번바뀌나"+success)
            when(success.getInt("success")){
-
                0->{
                    Toast.makeText(this, "현재 비밀번호가 틀립니다.", Toast.LENGTH_LONG).show()
                }
@@ -80,9 +81,8 @@ class PasswordEditActivity : AppCompatActivity() {
 
        }
     }
-    private fun loadToken(): String{
-        var auto = PreferenceManager.getDefaultSharedPreferences(this)
-
-        return auto.getString("token", "")
+    private fun loadJwtToken(): String{
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        return sharedPref.getString("token", "")
     }
 }

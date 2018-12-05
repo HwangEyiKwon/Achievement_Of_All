@@ -6,7 +6,7 @@
     android:layout_height="500dp"
     android:layout_gravity="center"
 
-    android:background="@drawable/round_background"
+    android:background="@drawable/background_round_edge"
     tools:context=".Activities.ProfileEditActivity">
 
     <TextView
@@ -77,7 +77,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_password"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_user_pw"
         app:layout_constraintVertical_bias="0.807" />
 
     <TextView
@@ -115,8 +115,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_phone_number"
-        app:srcCompat="@drawable/barackobama" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_phone_number" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -6,7 +6,7 @@
     android:layout_height="500dp"
     android:layout_gravity="center"
 
-    android:background="@drawable/round_background"
+    android:background="@drawable/background_round_edge"
     tools:context=".Activities.RewardActivity">
 
 

@@ -36,24 +36,18 @@ class AppStartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_start)
 
+        initViewComponents()
+        initButtonListener()
+
         val jsonObjectForLogin = loadData()
         val userEmail = jsonObjectForLogin.getString("email")
         val userPW = jsonObjectForLogin.getString("password")
 
         loginRequest( userEmail, userPW )
 
-        initViewComponents()
-
     }
 
-    private fun initViewComponents() {
-        signUpButton = findViewById(R.id.sign_up_button)
-        loginButton = findViewById(R.id.login_button)
-
-        appDescViewPager = findViewById(R.id.app_desc_viewpager)
-        adapterForDescView = AppStartPagerAdapter(supportFragmentManager)
-        appDescViewPager!!.adapter = adapterForDescView
-
+    private fun initButtonListener() {
         signUpButton!!.setOnClickListener {
             val goToSignupActivity = Intent(applicationContext, SignupActivity::class.java)
             goToSignupActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
@@ -65,6 +59,16 @@ class AppStartActivity : AppCompatActivity() {
             goToLoginActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             startActivity(goToLoginActivity)
         }
+    }
+
+    private fun initViewComponents() {
+
+        signUpButton = findViewById(R.id.sign_up_button)
+        loginButton = findViewById(R.id.login_button)
+
+        appDescViewPager = findViewById(R.id.app_desc_viewpager)
+        adapterForDescView = AppStartPagerAdapter(supportFragmentManager)
+        appDescViewPager!!.adapter = adapterForDescView
 
         app_desc_indicator.createDotPanel(3, R.drawable.desc_num_indicator_off, R.drawable.desc_num_indicator_on, 0)
 
@@ -76,6 +80,7 @@ class AppStartActivity : AppCompatActivity() {
                 app_desc_indicator.selectDot(p0)
             }
         })
+
     }
 
     override fun onBackPressed() {
@@ -121,7 +126,7 @@ class AppStartActivity : AppCompatActivity() {
 
                 val jsonObjectForFCM = fcmService.jsonObject as JSONObject
                 jsonObjectForFCM.put("email", email)
-                SendFCMToken(jsonObjectForFCM)
+                sendFCMToken(jsonObjectForFCM)
 
                 // 자동 로그인을 위한 정보 저장
                 saveDataForAutoLogin(email, password)
@@ -164,7 +169,7 @@ class AppStartActivity : AppCompatActivity() {
 
     }
 
-    private fun SendFCMToken(jsonObject: JSONObject){
+    private fun sendFCMToken(jsonObject: JSONObject){
 
         VolleyHttpService.sendToken(this, jsonObject) { success ->
             if (success) {
