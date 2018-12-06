@@ -344,7 +344,7 @@ router.post('/getFailureCheck',  function (req,res) {
       });
     });
 
-    if(user.pushToken != null){
+    if(user.pushToken != ""){
       console.log("실패 푸쉬메시지 전송");
       var todayDate = new Date();
       var todayMonth = todayDate.getMonth() + 1;
