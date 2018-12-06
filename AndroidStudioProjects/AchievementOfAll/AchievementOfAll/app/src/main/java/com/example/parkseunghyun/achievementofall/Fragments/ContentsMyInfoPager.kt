@@ -24,6 +24,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadinFlag
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.ResultObject
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
@@ -308,6 +309,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 val result = response.body()
 
                 if (!TextUtils.isEmpty(result.success)) {
+                    GlideLoadinFlag.setThumbnailFlag(true)
                     Toast.makeText(activity, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
                 }
 
@@ -543,9 +545,9 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             remainingMinutesText!!.visibility = View.GONE
 
             contents_not_joined!!.visibility = View.VISIBLE
+//            goToVideoButton?.setTextColor(resources.getColor(R.color.icongrey, null))
 
             goToVideoButton!!.isEnabled = false
-            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
 
         }
     }

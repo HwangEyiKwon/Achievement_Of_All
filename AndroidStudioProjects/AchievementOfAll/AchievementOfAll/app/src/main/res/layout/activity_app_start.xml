@@ -31,7 +31,7 @@
             android:layout_marginTop="120dp"/>
 
         <include
-            layout="@layout/app_desc_container"
+            layout="@layout/container_app_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

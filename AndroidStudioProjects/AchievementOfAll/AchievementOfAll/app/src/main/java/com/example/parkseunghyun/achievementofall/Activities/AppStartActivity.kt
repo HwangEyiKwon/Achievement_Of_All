@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.MyFirebaseInstanceIDService
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
-import kotlinx.android.synthetic.main.contents_pager_container.*
+import kotlinx.android.synthetic.main.container_contents_pager.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 

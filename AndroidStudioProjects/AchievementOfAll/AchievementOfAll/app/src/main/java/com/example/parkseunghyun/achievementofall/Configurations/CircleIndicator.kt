@@ -5,7 +5,7 @@ import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.LinearLayout
 
-class CircleIndicatorForContents: LinearLayout {
+class CircleIndicator: LinearLayout {
 
     private var mContext: Context? = null
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.ExoplayerActivity
@@ -16,8 +17,9 @@ import model.ThumbnailModel
 import org.jetbrains.anko.startActivity
 
 
-/**
- * Created by A on 23-03-2018.
+/*
+    REFARCTORED
+    TODO: Glide Placeholder
  */
 
 class ThumbnailAdapter(private val context: Context, private val thumbnailModels: List<ThumbnailModel>) : RecyclerView.Adapter<ThumbnailAdapter.ViewHolder>() {
@@ -27,48 +29,48 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
     private var ipAddress: String = globalVariables!!.ipAddress
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_thumbnail, parent, false)
         return ViewHolder(view)
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        var who = thumbnailModels[position].who
-        println("WHOWHOWHOWHOW:"+who)
+        val who = thumbnailModels[position].who
+
         if(who == "me"){
-            var videoPath = thumbnailModels[position].videoPath!!.getString("path")
-            println("fasdfasdfasdfasdf")
-            println(videoPath)
 
-            var jwtToken = thumbnailModels[position].userToken
-            var contentName = thumbnailModels[position].contentName
+            val videoPath = thumbnailModels[position].videoPath!!.getString("path")
 
-            // 비디오 썸네일 코드
-            val requestOptions = RequestOptions()
-            requestOptions.isMemoryCacheable
+            val jwtToken = thumbnailModels[position].userToken
+            val contentName = thumbnailModels[position].contentName
 
             Glide
                     .with(context)
-                    .setDefaultRequestOptions(requestOptions)
                     .load("${ipAddress}/getVideo/${jwtToken}/${contentName}/${videoPath}")
+                    .apply(RequestOptions().fitCenter())
+                    .apply(RequestOptions().centerCrop())
+                    .apply(RequestOptions().transform(RoundedCorners(20)))
                     .into(holder.thumbnailView)
 
             holder.videoName = videoPath
         }
+
         else if(who == "other"){
-            println("앙앙앙?")
-            var videoPath = thumbnailModels[position].videoPath!!.getString("path")
 
-            var email = thumbnailModels[position].userEmail
-            var contentName = thumbnailModels[position].contentName
+            val videoPath = thumbnailModels[position].videoPath!!.getString("path")
 
-            // 비디오 썸네일 코드
-            val requestOptions = RequestOptions()
+            val email = thumbnailModels[position].userEmail
+            val contentName = thumbnailModels[position].contentName
 
+//            val requestOptions = RequestOptions()
             Glide
                     .with(context)
-                    .setDefaultRequestOptions(requestOptions)
                     .load("${ipAddress}/getOtherUserVideo/${email}/${contentName}/${videoPath}")
+                    .apply(RequestOptions().fitCenter())
+                    .apply(RequestOptions().centerCrop())
+                    .apply(RequestOptions().transform(RoundedCorners(20)))
                     .apply(RequestOptions().skipMemoryCache(true))
                     .into(holder.thumbnailView)
 
@@ -79,53 +81,64 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
     }
 
     override fun getItemCount(): Int {
+
         return thumbnailModels.size
+
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
+
         internal var thumbnailView: ImageView
         internal var videoName: String ?= null
 
         init {
+
             itemView.setOnClickListener(this)
             thumbnailView = itemView.findViewById(R.id.accountpic)
+
         }
 
         override fun onClick(v: View) {
-            val pos = adapterPosition
-            println("clickcliclcilcicliclic")
-            var who = thumbnailModels[pos].who
+
+            val clickedPos = adapterPosition
+            val who = thumbnailModels[clickedPos].who
+
             if(who == "me"){
 
-                var jwtToken = thumbnailModels[pos].userToken
-                var contentName = thumbnailModels[pos].contentName
-                var videoPath = thumbnailModels[pos].videoPath!!.getString("path")
-                var isAuthen = thumbnailModels[pos].videoPath!!.getInt("authen")
+                val jwtToken = thumbnailModels[clickedPos].userToken
+                val contentName = thumbnailModels[clickedPos].contentName
+                val videoPath = thumbnailModels[clickedPos].videoPath!!.getString("path")
+                val isAuthen = thumbnailModels[clickedPos].videoPath!!.getInt("authen")
 
-                Toast.makeText(v.context, "You clicked "+ videoName, Toast.LENGTH_SHORT).show()
                 context.startActivity<ExoplayerActivity>(
+
                         "who" to "me",
                         "token" to jwtToken,
                         "contentName" to contentName,
                         "videoPath" to videoPath,
                         "isAuthen" to isAuthen
+
                 )
-            }else if(who == "other"){
 
-                var email = thumbnailModels[pos].userEmail
-                var contentName = thumbnailModels[pos].contentName
-                var videoPath = thumbnailModels[pos].videoPath!!.getString("path")
-                var isAuthen = thumbnailModels[pos].videoPath!!.getInt("authen")
+            } else if(who == "other"){
 
-                Toast.makeText(v.context, "You clicked "+ videoName, Toast.LENGTH_SHORT).show()
+                val email = thumbnailModels[clickedPos].userEmail
+                val contentName = thumbnailModels[clickedPos].contentName
+                val videoPath = thumbnailModels[clickedPos].videoPath!!.getString("path")
+                val isAuthen = thumbnailModels[clickedPos].videoPath!!.getInt("authen")
+
                 context.startActivity<ExoplayerActivity>(
+
                         "who" to "other",
                         "email" to email,
                         "contentName" to contentName,
                         "videoPath" to videoPath,
                         "isAuthen" to isAuthen
+
                 )
             }
         }
+
     }
+
 }

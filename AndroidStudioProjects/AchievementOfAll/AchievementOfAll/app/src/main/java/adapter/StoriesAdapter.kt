@@ -30,7 +30,7 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
     private var ipAddress: String = globalVariables!!.ipAddress
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.stories_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.view_story, parent, false)
 
         return ViewHolder(view)
     }
@@ -41,6 +41,8 @@ class StoriesAdapter(private val context: Context, private val storiesModels: Li
         Glide
                 .with(this.context)
                 .load("${ipAddress}/getOtherUserImage/$email")
+                .apply(RequestOptions().fitCenter())
+                .apply(RequestOptions().centerCrop())
                 .apply(RequestOptions().skipMemoryCache(true))
                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
                 .into(holder.profile)

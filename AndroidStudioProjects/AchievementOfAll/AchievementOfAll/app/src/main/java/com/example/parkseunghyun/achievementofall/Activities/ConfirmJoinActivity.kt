@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
 import android.widget.*
+import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadinFlag
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import org.json.JSONObject
 import org.w3c.dom.Text
@@ -105,6 +106,7 @@ class ConfirmJoinActivity : AppCompatActivity() {
         VolleyHttpService.contentJoinComplete(this, jsonObject){ success ->
 
             if(success.getBoolean("success")== true){
+                GlideLoadinFlag.setContentListFlag(true)
                 println(success)
                 finish()
             }else{
