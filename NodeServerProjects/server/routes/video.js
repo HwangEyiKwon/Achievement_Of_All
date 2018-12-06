@@ -267,7 +267,7 @@ router.post('/checkVideo', function(req,res){
               });
 
               console.log("push message 문 전");
-              if(otherUser.pushToken != null){
+              if(otherUser.pushToken != ""){
                 console.log("push message 문");
                 var todayDate = new Date();
                 var todayMonth = todayDate.getMonth() + 1;

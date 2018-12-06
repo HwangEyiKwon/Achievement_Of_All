@@ -123,68 +123,7 @@ router.post('/userPasswordEdit', function(req,res){
     }
   });
 });
-// router.post('/editUserImage', function(req,res) {
-//   console.log("edit User Image start!!");
-//   // var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-//   // var userEmail = decoded.userCheck;
-//   var decoded = jwt.decode(req.headers.token, req.app.get("jwtTokenSecret"));
-//   var userEmail = decoded.userCheck;
-//
-//   User.findOne({email: userEmail}, function(err, user) {
-//     var userName = user.name;
-//     var form = new multiparty.Form();
-//     form.on('field', function (name, value) {
-//       console.log('normal field / name = ' + name + ' , value = ' + value);
-//     });
-//     form.on('part', function (part) {
-//       var filename;
-//       var size;
-//       if (part.filename) {
-//         // filename = part.filename;
-//         filename = userName + '.jpg';
-//         size = part.byteCount;
-//       } else {
-//         part.resume();
-//       }
-//       console.log("Write Streaming file :" + filename);
-//       var writeStream = fs.createWriteStream('./server/user/' + userEmail + '/' + filename);
-//       writeStream.filename = filename;
-//       part.pipe(writeStream);
-//       part.on('data', function (chunk) {
-//         console.log(filename + ' read ' + chunk.length + 'bytes');
-//       });
-//       part.on('end', function () {
-//         console.log(filename + ' Part read complete');
-//         writeStream.end();
-//       });
-//     });
-//     form.on('close', function (err) {
-//       if (err) {
-//         console.log("close err : " + err);
-//         res.send({success: false});
-//       }
-//       else {
-//         console.log("Edit Image success");
-//         user.imagePath = userName;
-//         user.save(function (err) {
-//           if (err) {
-//             console.log(err);
-//             res.send({success: false});
-//           } else {
-//             console.log("ImagePath modi Success ");
-//           }
-//         });
-//       }
-//     });
-//     // track progress
-//     form.on('progress', function (byteRead, byteExpected) {
-//       console.log(' Reading total  ' + byteRead + '/' + byteExpected);
-//     });
-//     form.parse(req);
-//   });
-//
-// });
-//jwt token 사용
+
 router.post('/editProfileWithoutImage', function(req,res){
   console.log("editProfileWithoutImage Start");
 
@@ -231,8 +170,16 @@ router.post('/editProfileWithoutImage', function(req,res){
       res.send({success: false});
       console.log("editProfileWithoutImage err")
     }else{
+
+          fs.rename('./server/user/'+user.email+'/'+user.imagePath+'.jpg', './server/user/'+user.email+'/'+userName+'.jpg',function (err) {
+            if( err ) console.log('ERROR: '+err);
+            else console.log("image 이름 변경 ㅅ성공");
+          });
+
           user.name = userName;
           user.phoneNumber = phoneNumber;
+          user.imagePath = userName;
+
           user.save(function (err) {
             if (err) {
               console.log(err);
@@ -246,7 +193,7 @@ router.post('/editProfileWithoutImage', function(req,res){
       });
 });
 
-router.post('/userInfoEdit', function(req,res){
+router.post('/editProfileWithImage', function(req,res){
   console.log("userInfoEdit Start");
 
   var decoded = jwt.decode(req.headers.jwt_token, req.app.get("jwtTokenSecret"));
@@ -466,50 +413,6 @@ router.post("/pwdEmailAuthen", function(req, res, next){
       }
   });
 
-});
-
-router.get("/isParticipated/:jwtToken/:contentName", function(req,res) {
-  console.log("isParticipated Start");
-  var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  // console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
-  var userEmail = decoded.userCheck;
-
-  var contentName = req.params.contentName;
-
-  var joinState;
-  var startDate;
-  var endDate;
-  User.findOne({ email : userEmail , "contentList.contentName": contentName}, function(err, user) {
-    if(err){
-      console.log("isparticipated err : "+err);
-      res.send({success: false});
-    }
-    else{
-      if(user == null) res.send({joinState: 3, startDate: {year: -1, month: -1, day: -1},  endDate: {year: -1, month: -1, day: -1}});
-      else  {
-        var contentIndex;
-        var joinContentCount = user.contentList.length;
-        var contentId;
-
-        for (var i = 0; i < joinContentCount; i++) {
-          if (user.contentList[i].contentName === contentName) {
-            contentIndex = i;
-            break;
-          }
-        }
-        joinState = user.contentList[contentIndex].joinState;
-        contentId = user.contentList[contentIndex].contentId;
-
-        Content.findOne({name: contentName, id: contentId}, function(err, content){
-          startDate = content.startDate;
-          endDate = content.endDate;
-
-          res.send({joinState: joinState, startDate: {year: startDate.getFullYear(), month: startDate.getMonth() + 1, day: startDate.getDate()},
-            endDate: {year: endDate.getFullYear(), month: endDate.getMonth() + 1, day: endDate.getDate()}});
-        });
-      }
-    }
-  });
 });
 
 // -----------------------------------------------------

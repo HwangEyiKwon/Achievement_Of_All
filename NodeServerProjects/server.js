@@ -2,13 +2,11 @@
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
  // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-// mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -17,14 +15,18 @@ var session = require('express-session');
 var passport = require('passport');
 const passportConfig = require('./config/passport');
 const bodyParser = require('body-parser');
-const test = require('./server/routes/test');
 const video = require('./server/routes/video');
 const image = require('./server/routes/image');
 const index = require('./server/routes/index');
 const appInfo = require('./server/routes/appInfo');
 const search = require('./server/routes/search');
-const calendar = require('./server/routes/calendar');
-const applyContent = require('./server/routes/applyContent');
+const aboutContent = require('./server/routes/aboutContent');
+const manager = require('./server/routes/manager');
+const report = require('./server/routes/report');
+const reward = require('./server/routes/reward');
+
+
+
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
 var fs = require("fs");
@@ -84,8 +86,6 @@ app.use(passport.session());
 // ng build 명령
 app.use(express.static(path.join(__dirname, 'dist/simple-memo')));
 
-// test
-app.use('/test', test);
 // index(유저 관련) router
 app.use('/', index);
 // app info router
@@ -98,10 +98,14 @@ app.use('/', image);
 //app.use('/fcm', fcm);
 //search router
 app.use('/', search);
-//calendar router
-app.use('/', calendar);
-//applyContent router
-app.use('/', applyContent);
+//aboutContent router
+app.use('/', aboutContent);
+//manager router
+app.use('/', manager);
+//report router
+app.use('/', report);
+//reward router
+app.use('/', reward);
 
 app.set('jwtTokenSecret', "afafaffffff");
 app.set('managerKey', "3Ke34Meg9ek");
@@ -257,7 +261,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           });
           //푸쉬메시지 전송
           console.log("push token: " + userList[i].pushToken);
-          if(userList[i].pushToken != null) {
+          if(userList[i].pushToken != "") {
             console.log("푸쉬메시지 성공 전송");
             var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
             sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName);
@@ -349,7 +353,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         });
       });
       //푸쉬메시지 전송
-      if(userList[i].pushToken != null){
+      if(userList[i].pushToken != ""){
         console.log("실패 푸쉬메시지 전송");
         var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
         sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName);
@@ -368,7 +372,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           break;
         }
       }
-      if(userList[i].pushToken != null  && userList[i].contentList[authenContentIndex].isUploaded != 1) {
+      if(userList[i].pushToken != ""  && userList[i].contentList[authenContentIndex].isUploaded != 1) {
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
@@ -794,7 +798,7 @@ function dbInit(){
     id: 3,
     name: "NoSmoking",
     startDate: "01/01/2018",
-    endDate: "12/05/2018",
+    endDate: "12/14/2018",
     isDone: 0,
     userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
                {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
