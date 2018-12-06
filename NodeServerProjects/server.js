@@ -5,11 +5,6 @@ mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://localhost:27017');
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-// mongoose.connect('mongodb://localhost:27017');
-
-
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -17,14 +12,14 @@ var session = require('express-session');
 var passport = require('passport');
 const passportConfig = require('./config/passport');
 const bodyParser = require('body-parser');
-const test = require('./server/routes/test');
 const video = require('./server/routes/video');
 const image = require('./server/routes/image');
 const index = require('./server/routes/index');
 const appInfo = require('./server/routes/appInfo');
 const search = require('./server/routes/search');
 const calendar = require('./server/routes/calendar');
-const applyContent = require('./server/routes/applyContent');
+const aboutContent = require('./server/routes/aboutContent');
+
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
 var fs = require("fs");
@@ -84,8 +79,6 @@ app.use(passport.session());
 // ng build 명령
 app.use(express.static(path.join(__dirname, 'dist/simple-memo')));
 
-// test
-app.use('/test', test);
 // index(유저 관련) router
 app.use('/', index);
 // app info router
@@ -100,8 +93,8 @@ app.use('/', image);
 app.use('/', search);
 //calendar router
 app.use('/', calendar);
-//applyContent router
-app.use('/', applyContent);
+//aboutContent router
+app.use('/', aboutContent);
 
 app.set('jwtTokenSecret', "afafaffffff");
 app.set('managerKey', "3Ke34Meg9ek");
