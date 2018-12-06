@@ -17,8 +17,12 @@ const image = require('./server/routes/image');
 const index = require('./server/routes/index');
 const appInfo = require('./server/routes/appInfo');
 const search = require('./server/routes/search');
-const calendar = require('./server/routes/calendar');
 const aboutContent = require('./server/routes/aboutContent');
+const manager = require('./server/routes/manager');
+const report = require('./server/routes/report');
+const reward = require('./server/routes/reward');
+
+
 
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 var mkdirp = require('mkdirp'); // directory 만드는것
@@ -91,10 +95,14 @@ app.use('/', image);
 //app.use('/fcm', fcm);
 //search router
 app.use('/', search);
-//calendar router
-app.use('/', calendar);
 //aboutContent router
 app.use('/', aboutContent);
+//manager router
+app.use('/', manager);
+//report router
+app.use('/', report);
+//reward router
+app.use('/', reward);
 
 app.set('jwtTokenSecret', "afafaffffff");
 app.set('managerKey', "3Ke34Meg9ek");
