@@ -231,8 +231,16 @@ router.post('/editProfileWithoutImage', function(req,res){
       res.send({success: false});
       console.log("editProfileWithoutImage err")
     }else{
+
+          fs.rename('./server/user/'+user.email+'/'+user.imagePath+'.jpg', './server/user/'+user.email+'/'+userName+'.jpg',function (err) {
+            if( err ) console.log('ERROR: '+err);
+            else console.log("image 이름 변경 ㅅ성공");
+          });
+
           user.name = userName;
           user.phoneNumber = phoneNumber;
+          user.imagePath = userName;
+
           user.save(function (err) {
             if (err) {
               console.log(err);
