@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.MyFirebaseInstanceIDService
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
-import kotlinx.android.synthetic.main.contents_pager_container.*
+import kotlinx.android.synthetic.main.container_contents_pager.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
@@ -49,15 +49,19 @@ class AppStartActivity : AppCompatActivity() {
 
     private fun initButtonListener() {
         signUpButton!!.setOnClickListener {
+
             val goToSignupActivity = Intent(applicationContext, SignupActivity::class.java)
             goToSignupActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             startActivity(goToSignupActivity)
+
         }
 
         loginButton!!.setOnClickListener {
+
             val goToLoginActivity = Intent(applicationContext, LoginActivity::class.java)
             goToLoginActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             startActivity(goToLoginActivity)
+
         }
     }
 
@@ -74,10 +78,13 @@ class AppStartActivity : AppCompatActivity() {
 
 
         appDescViewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
             override fun onPageScrollStateChanged(p0: Int) {}
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
             override fun onPageSelected(p0: Int) {
+
                 app_desc_indicator.selectDot(p0)
+
             }
         })
 
@@ -86,11 +93,15 @@ class AppStartActivity : AppCompatActivity() {
     override fun onBackPressed() {
 
         if(System.currentTimeMillis() - timeToCheckExitConfirm >= 2000){
+
             timeToCheckExitConfirm = System.currentTimeMillis()
             Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 종료합니다.",Toast.LENGTH_SHORT).show();
+
         }
         else if(System.currentTimeMillis() - timeToCheckExitConfirm<2000){
+
             finish()
+
         }
 
     }
@@ -119,6 +130,7 @@ class AppStartActivity : AppCompatActivity() {
         jsonObject.put("password",password)
 
         VolleyHttpService.login(this, jsonObject) { success ->
+
             if (success.get("success") == true) { // 로그인 성공
 
                 val fcmService = MyFirebaseInstanceIDService()
@@ -140,7 +152,7 @@ class AppStartActivity : AppCompatActivity() {
             } else { // 로그인 실패
 
                 saveDataForAutoLogin("0", "0")
-//                Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
 
             }
         }

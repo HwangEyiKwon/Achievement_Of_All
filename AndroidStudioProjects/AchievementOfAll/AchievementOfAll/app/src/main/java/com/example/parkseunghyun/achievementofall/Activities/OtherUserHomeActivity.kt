@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -32,7 +31,6 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
     private var otherUserNameView:TextView? = null
     private var otherUserName:String? = null
     private var otherUserEmail: String? = null
-
     private var otherUserProfile: CircleImageView ?= null
 
     private var joinedContentsView: RecyclerView? = null
@@ -44,41 +42,42 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
     private var videoList = mutableListOf<JSONObject>()
     private var videoContentList = mutableListOf<String>()
     private var thumbnailView: RecyclerView? = null
-
     private var thumbnailAdapter: ThumbnailAdapter? = null
     private var thumbnailModelList: ArrayList<ThumbnailModel>? = null
 
-    override fun recyclerViewListClicked(v: View, position: Int) {
-        Toast.makeText(this, "position is $position", Toast.LENGTH_LONG)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.other_user_home_layout)
+        setContentView(R.layout.activity_other_user_home)
+
+        initViewComponents()
+
+    }
+
+    private fun initViewComponents() {
 
         otherUserNameView = findViewById(R.id.other_user_name)
         otherUserProfile = findViewById(R.id.other_user_profile_image)
 
-        if(intent.getStringExtra("email")!=null){
+        if (intent.getStringExtra("email") != null) {
+
             otherUserEmail = intent.getStringExtra("email")
             otherUserName = intent.getStringExtra("userName")
+            otherUserNameView!!.text = otherUserName
 
-            otherUserNameView!!.setText(otherUserName)
-//            otherUserParticipatedInfo()
-            println("TEST_____" + otherUserName)
         }
 
         setOtherUserInfo(otherUserEmail!!)
+
     }
 
     private fun setOtherUserInfo(email: String) {
-        val jsonObject = JSONObject()
-        jsonObject.put("email", email)
 
-        VolleyHttpService.getOtherUserInfo(this, jsonObject) { success ->
-            println(success)
+        val jsonObjectForOtherUserInfo = JSONObject()
+        jsonObjectForOtherUserInfo.put("email", email)
 
+        VolleyHttpService.getOtherUserInfo(this, jsonObjectForOtherUserInfo) { success ->
             // 사용자 프로필 사진 갱신
             Glide
                     .with(this)
@@ -89,17 +88,24 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
 
             // 사용자 참여 컨텐츠 정보 갱신
             var contentList: JSONObject
+            var contentName: String
 
-            for(i in 0.. (success.getJSONArray("contentList").length()-1)){
-                contentList = success.getJSONArray("contentList")[i] as JSONObject
-                var contentName =  contentList.getString("contentName")
-                joinedContents?.add(contentName.toString())
+            for(indexOfContentList in 0.. (success.getJSONArray("contentList").length() - 1)) {
 
-                for(i in 0..(contentList.getJSONArray("videoPath").length()-1)){
-                    videoList?.add(contentList.getJSONArray("videoPath").getJSONObject(i))
-                    videoContentList?.add(contentName)
+                contentList = success.getJSONArray("contentList")[indexOfContentList] as JSONObject
+                contentName = contentList.getString("contentName")
+
+                joinedContents.add(contentName)
+
+                for(indexOfVideoList in 0..(contentList.getJSONArray("videoPath").length() - 1)){
+
+                    videoList.add(contentList.getJSONArray("videoPath").getJSONObject(indexOfVideoList))
+                    videoContentList.add(contentName)
+
                 }
+
             }
+
             generateJoinedContentsView()
             generateVideoCollection()
         }
@@ -108,45 +114,50 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
     private fun generateJoinedContentsView() {
 
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
         joinedContentsView = findViewById(R.id.id_other_user_contents)
         joinedContentsView!!.layoutManager = layoutManager
         joinedContentsView!!.itemAnimator = DefaultItemAnimator()
         joinedContentsModelArrayList = ArrayList()
 
-        for (i in joinedContents.indices) {
+        for (indexOfJoinedContents in joinedContents.indices) {
+
             val joinedContentsModel = JoinedContentsModel()
-            joinedContentsModel.name = joinedContents?.get(i)
+            joinedContentsModel.name = joinedContents?.get(indexOfJoinedContents)
             joinedContentsModelArrayList!!.add(joinedContentsModel)
+
         }
 
         joinedContentsAdapter = JoinedContentsAdapter(this, joinedContentsModelArrayList!!, this)
         joinedContentsView!!.adapter = joinedContentsAdapter
 
     }
+
     private fun generateVideoCollection() {
 
-        val layoutManager: RecyclerView.LayoutManager
+        val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(this, 3)
+
         thumbnailView = findViewById(R.id.id_other_thumbnail)
-        layoutManager = GridLayoutManager(this, 3)
         thumbnailView!!.layoutManager = layoutManager
         thumbnailView!!.itemAnimator = DefaultItemAnimator()
-
         thumbnailModelList = ArrayList()
 
-        for (i in videoList.indices) {
-            val thumbnailModel = ThumbnailModel()
+        for (indexOfVideoList in videoList.indices) {
 
+            val thumbnailModel = ThumbnailModel()
             thumbnailModel.userEmail = otherUserEmail
             thumbnailModel.who = "other"
-            thumbnailModel.videoPath = videoList?.get(i)
-            thumbnailModel.contentName = videoContentList?.get(i)
-
+            thumbnailModel.videoPath = videoList.get(indexOfVideoList)
+            thumbnailModel.contentName = videoContentList.get(indexOfVideoList)
             thumbnailModelList!!.add(thumbnailModel)
+
         }
 
         thumbnailAdapter = ThumbnailAdapter(this, thumbnailModelList!!)
         thumbnailView!!.adapter = thumbnailAdapter
 
     }
+
+    override fun recyclerViewListClicked(v: View, position: Int) {}
 
 }

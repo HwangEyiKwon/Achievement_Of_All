@@ -8,116 +8,107 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import android.widget.Toast
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Parser
+import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
-import com.google.android.exoplayer2.upstream.ParsingLoadable
-import com.google.gson.JsonParser
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
-import com.google.gson.Gson
 
+/*
+    REFARCTORED
+ */
 
+class SearchAdapter(private val list: List<String>, private val context: Context, private  val categoryToSearch: String) : BaseAdapter() {
 
-
-
-
-
-
-class SearchAdapter(private val list: List<String>, private val context: Context, private  val cu: String) : BaseAdapter() {
-    private val inflate: LayoutInflater
+    private var inflate: LayoutInflater? = null
     private var viewHolder: ViewHolder? = null
     private var userName: String? = null
 
-    val REQUEST_FROM_SEARCH = 1010
-
     init {
+
         this.inflate = LayoutInflater.from(context)
-    }
 
-    override fun getCount(): Int {
-        return list.size
-    }
-
-    override fun getItem(i: Int): Any? {
-        return null
-    }
-
-    override fun getItemId(i: Int): Long {
-        return 0
     }
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
-            convertView = inflate.inflate(R.layout.ractangle_listview, null)
+
+        var mConvertView = convertView
+
+        if (mConvertView == null) {
+
+            mConvertView = inflate?.inflate(R.layout.view_ractangle_for_listview, null)
 
             viewHolder = ViewHolder()
-            viewHolder!!.label = convertView!!.findViewById(R.id.label) as TextView
+            viewHolder!!.label = mConvertView!!.findViewById(R.id.label) as TextView
+            mConvertView.tag = viewHolder
 
-            convertView.tag = viewHolder
         } else {
-            viewHolder = convertView.tag as ViewHolder
+
+            viewHolder = mConvertView.tag as ViewHolder
+
         }
 
-        if(cu == "content"){
+        if(categoryToSearch == "content"){
 
             viewHolder!!.label!!.text = list[position]
 
         }
-        else if (cu == "user"){
+        else if (categoryToSearch == "user"){
 
-            println("TEST_-_- : " + list[position])
+            viewHolder!!.label!!.text = list[position]
 
-            var string= list[position]
-            var userObjects = JSONObject(string)
-            userName = userObjects.getString("name")
-            println("TEST_-_-NAME : " + userName)
-
-            // 리스트에 있는 데이터를 리스트뷰 셀에 뿌린다.
-            viewHolder!!.label!!.text = userName
         }
 
         viewHolder!!.label!!.setOnClickListener {
 
-            if(cu == "content"){
-                // 컨텐츠 홈으로 이동
-                Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
+            if(categoryToSearch == "content"){
 
-                val goToContents = Intent(context, ContentsHomeActivity::class.java)
-                goToContents.putExtra("contentName", list[position])
+                val intentForContentsHome = Intent(context, ContentsHomeActivity::class.java)
+                intentForContentsHome.putExtra("contentName", list[position])
                 val contextToActivity = context as Activity
-                contextToActivity.startActivityForResult(goToContents, REQUEST_FROM_SEARCH)
+                contextToActivity.startActivityForResult(intentForContentsHome, RequestCodeCollection.REQUEST_RETURN_FROM_SEARCH)
 
-//                context.startActivity<ContentsHomeActivity>(
-//                        "contentName" to  list[position]
-//                )
+            }else if(categoryToSearch == "user"){
 
-            }else if(cu == "user"){
-                // 사용자 홈으로 이동
+                val string= list[position]
+                val userObjects = JSONObject(string)
 
-                // 값 두개 넘겨야 됨
-
-                var string= list[position]
-                var userObjects = JSONObject(string)
-
-                Toast.makeText(context, " 서치 어댑터"+ list[position], Toast.LENGTH_LONG).show()
                 context.startActivity<OtherUserHomeActivity>(
+
                         "email" to  userObjects.getString("email"),
                         "userName" to userObjects.getString("name")
+
                 )
+
             }
         }
 
-        return convertView
+        return mConvertView
     }
 
 
     internal inner class ViewHolder {
+
         var label: TextView? = null
+
+    }
+
+    override fun getCount(): Int {
+
+        return list.size
+
+    }
+
+    override fun getItem(i: Int): Any? {
+
+        return null
+
+    }
+
+    override fun getItemId(i: Int): Long {
+
+        return 0
 
     }
 

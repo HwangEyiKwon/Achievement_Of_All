@@ -91,7 +91,7 @@ object VolleyHttpService{
     // 사용자 정보 수정
     fun edit(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
-        var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/userInfoEdit", jsonObject, Response.Listener{ response ->
+        var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/editProfileWithImage", jsonObject, Response.Listener{ response ->
             println("서버 수신: $response")
             success(response.getString("success").toBoolean())
 
@@ -104,6 +104,7 @@ object VolleyHttpService{
 
         Volley.newRequestQueue(context).add(editRequest)
     }
+
     fun editPassword(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var editPasswordRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/userPasswordEdit", jsonObject, Response.Listener{ response ->
@@ -437,6 +438,21 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(failAcceptRequest)
 
+    }
+
+    fun emailAuthentication(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var emailAuthenticationRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/emailAuthentication", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+
+        }
+
+        Volley.newRequestQueue(context).add(emailAuthenticationRequest)
     }
 
 }

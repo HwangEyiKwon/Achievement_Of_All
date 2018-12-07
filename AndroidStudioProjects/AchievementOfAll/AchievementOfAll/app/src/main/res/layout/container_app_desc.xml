@@ -12,13 +12,13 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/app_desc_viewpager"/>
 
-    <com.example.parkseunghyun.achievementofall.Configurations.CircleIndicatorForContents
+    <com.example.parkseunghyun.achievementofall.Configurations.CircleIndicator
         android:id="@+id/app_desc_indicator"
         android:layout_gravity="center_horizontal|bottom"
         android:gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_marginBottom="230dp"
+        android:layout_marginBottom="180dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -63,7 +63,7 @@ class ExoplayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.exoplayer_view)
+        setContentView(R.layout.view_exoplayer)
 
 
         val successButton = findViewById(R.id.success) as ImageView

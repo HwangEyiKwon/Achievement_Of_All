@@ -1,9 +1,5 @@
 package com.example.parkseunghyun.achievementofall
 
-//import android.support.v7.widget.RecyclerView
-
-//import adapter.StoriesAdapter
-//import model.StoriesModel
 import adapter.ContentsPagerAdapter
 import adapter.StoriesAdapter
 import android.content.Context
@@ -24,7 +20,7 @@ import com.example.parkseunghyun.achievementofall.Activities.ReportActivity
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import kotlinx.android.synthetic.main.contents_pager_container.*
+import kotlinx.android.synthetic.main.container_contents_pager.*
 import model.StoriesModel
 import org.json.JSONObject
 import java.util.*
@@ -32,8 +28,6 @@ import kotlin.collections.ArrayList
 
 
 class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, DatePickerDialog.OnDateSetListener {
-
-    // 타 사용자 인증 영상
 
     private var othersArrayList=  mutableListOf<StoriesModel>()
     private var recyclerView: RecyclerView? = null

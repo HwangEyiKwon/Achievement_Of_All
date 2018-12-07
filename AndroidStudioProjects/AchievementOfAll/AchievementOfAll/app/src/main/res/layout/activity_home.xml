@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <include layout="@layout/top_toolbar_home"/>
+    <include layout="@layout/toolbar_home_top"/>
 
 
     <android.support.v4.view.ViewPager
@@ -23,7 +23,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </LinearLayout>
 
-    <include layout="@layout/bottom_toolbar_home"
+    <include layout="@layout/toolbar_home_bottom"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
