@@ -10,7 +10,7 @@ interface ImageUploadInterface {
 
     fun getTasks(@Header("Content-Range") contentRange: String): Call<List<Task<*>>>
     @Multipart
-    @POST("/userInfoEdit")
+    @POST("/editProfileWithImage")
     fun uploadImageToServer(@Part image: MultipartBody.Part): Call<ResultObject>
 
 }

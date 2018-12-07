@@ -121,15 +121,14 @@ object VolleyHttpService{
     }
 
     // 사용자 회원가입
-    fun signup(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
+    fun emailConfirm(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
-        var signupRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/signup", jsonObject, Response.Listener{ response ->
+        var signupRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/emailConfirm", jsonObject, Response.Listener{ response ->
             println("서버 수신: $response")
-            success(response.getString("success").toBoolean())
+            success(response)
 
         }, Response.ErrorListener { error ->
             println("수신 에러: $error")
-            success(false)
         }){
         }
         Volley.newRequestQueue(context).add(signupRequest)

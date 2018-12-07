@@ -149,6 +149,7 @@
                     android:layout_marginEnd="20dp"
                     android:fontFamily="@font/font5"
                     android:textAlignment="center"
+                    android:autoLink="phone"
                     android:text="앱에 관한 문의 및\n남자친구가 필요하신 분은\n010-9396-9408로\n문의해주세요"
                     android:textColor="@android:color/black"
                     android:gravity="right"/>
@@ -193,6 +194,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:text="피드백을 주실 분은\n010-9396-9408로\n문자주세요"
+                    android:autoLink="phone"
                     android:textAlignment="center"
                     android:fontFamily="@font/font5"
                     android:textColor="@android:color/black"

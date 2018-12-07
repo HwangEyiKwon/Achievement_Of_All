@@ -33,12 +33,19 @@ class PasswordEditActivity : AppCompatActivity() {
     }
 
     private fun initButtonListener() {
+
         button_edit_pw.setOnClickListener {
+
             jwtToken = loadJwtToken()
+
             if (new_pw.text.toString() != new_pw_check.text.toString()) {
+
                 Toast.makeText(this, "비밀번호 체크가 틀립니다.", Toast.LENGTH_LONG).show()
+
             } else {
+
                 editPasswordRequest()
+
             }
         }
 
