@@ -25,12 +25,12 @@ class HomeSearchPager : Fragment() {
 
     private var homeSearchView: View? = null
 
-    private var editSearch: EditText? = null        // 검색어를 입력할 Input 창
-    private var searchedList: MutableList<String>? = null  // 데이터를 넣은 리스트변수
+    private var editSearch: EditText? = null                // 검색어를 입력할 Input 창
+    private var searchedList: MutableList<String>? = null   // 데이터를 넣은 리스트변수
     private var searchedArraylist: ArrayList<String>? = null
     private var searchedListView: ListView? = null          // 검색을 보여줄 리스트변수
 
-    private var searchAdapter: SearchAdapter? = null      // 리스트뷰에 연결할 아답터
+    private var searchAdapter: SearchAdapter? = null        // 리스트뷰에 연결할 아답터
 
     private var selectSearchingTab: TabLayout? = null
 
@@ -55,6 +55,19 @@ class HomeSearchPager : Fragment() {
         searchedListView = homeSearchView!!.findViewById(R.id.searched_item_listview);
         searchedListView!!.isVerticalScrollBarEnabled = true
 
+        editSearch!!.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+            override fun afterTextChanged(editable: Editable) {
+
+                val textToSearch = editSearch?.text.toString()
+                search(textToSearch)
+
+            }
+        })
+
     }
 
 
@@ -63,20 +76,22 @@ class HomeSearchPager : Fragment() {
         searchedList!!.clear()
 
         // 문자 입력이 없을때는 모든 데이터를 보여준다.
-        if (charText.isEmpty()) {
+        if (charText.replace(" ","").equals("")) {
 
             searchedList!!.addAll(searchedArraylist!!)
 
         } else {
             // 리스트의 모든 데이터를 검색한다.
+
             for (indexOfSearchedList in 0 until searchedArraylist!!.size) {
                 // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
-                if (searchedArraylist!![indexOfSearchedList].toLowerCase().contains(charText)) {
-                    // 검색된 데이터를 리스트에 추가한다.
-                    searchedList!!.add(searchedArraylist!![indexOfSearchedList]) // c
-                }
-            }
+                if (searchedArraylist!![indexOfSearchedList].contains(charText, ignoreCase = true)) {
 
+                    searchedList!!.add(searchedArraylist!![indexOfSearchedList])
+
+                }
+
+            }
         }
         // 리스트 데이터가 변경되었으므로 아답터를 갱신하여 검색된 데이터를 화면에 보여준다.
         searchAdapter!!.notifyDataSetChanged()
@@ -85,7 +100,6 @@ class HomeSearchPager : Fragment() {
 
     private fun settingContentList() {
 
-        searchedList = ArrayList()
         searchedList!!.clear()
 
         VolleyHttpService.getSearchContentData(activity){ success ->
@@ -118,7 +132,7 @@ class HomeSearchPager : Fragment() {
 
             for (i in 0..(usersData.length() - 1)) {
 
-                searchedList?.add((usersData[i] as JSONObject).toString())
+                searchedList?.add((usersData[i] as JSONObject).getString("name"))
 
             }
 
@@ -127,18 +141,6 @@ class HomeSearchPager : Fragment() {
             searchAdapter = SearchAdapter(searchedList!!, this.context, "user")
             searchedListView?.adapter = searchAdapter
 
-            editSearch!!.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-
-                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-
-                override fun afterTextChanged(editable: Editable) {
-
-                    val textToSearch = editSearch?.text.toString()
-                    search(textToSearch)
-
-                }
-            })
         }
 
     }
@@ -151,11 +153,13 @@ class HomeSearchPager : Fragment() {
         selectSearchingTab!!.addTab(selectSearchingTab!!.newTab().setText("User").setTag("user"))
         selectSearchingTab!!.tabGravity = TabLayout.GRAVITY_FILL
 
+        searchedList = ArrayList()
+
         selectSearchingTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
 
-                if(tab.tag == "content"){
+                if(tab.tag == "content") {
 
                     settingContentList()
 

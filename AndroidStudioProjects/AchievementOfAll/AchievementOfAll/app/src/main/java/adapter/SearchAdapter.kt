@@ -56,12 +56,7 @@ class SearchAdapter(private val list: List<String>, private val context: Context
         }
         else if (categoryToSearch == "user"){
 
-            val string= list[position]
-            val userObjects = JSONObject(string)
-
-            userName = userObjects.getString("name")
-            // 리스트에 있는 데이터를 리스트뷰 셀에 뿌린다.
-            viewHolder!!.label!!.text = userName
+            viewHolder!!.label!!.text = list[position]
 
         }
 
