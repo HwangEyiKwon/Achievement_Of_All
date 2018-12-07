@@ -104,6 +104,7 @@ object VolleyHttpService{
 
         Volley.newRequestQueue(context).add(editRequest)
     }
+
     fun editPassword(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var editPasswordRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/userPasswordEdit", jsonObject, Response.Listener{ response ->
@@ -437,6 +438,21 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(failAcceptRequest)
 
+    }
+
+    fun emailAuthentication(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
+
+        var emailAuthenticationRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/emailAuthentication", jsonObject, Response.Listener{ response ->
+            println("서버 수신: $response")
+            success(response)
+
+        }, Response.ErrorListener { error ->
+            println("수신 에러: $error")
+        }){
+
+        }
+
+        Volley.newRequestQueue(context).add(emailAuthenticationRequest)
     }
 
 }

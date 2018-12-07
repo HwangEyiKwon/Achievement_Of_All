@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
         initButtonListener()
 
         // 회원가입 직후 로그인 화면 전환
