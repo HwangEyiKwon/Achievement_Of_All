@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 // mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
@@ -753,6 +753,26 @@ function dbInit(){
     console.log("DB initialization");
 
   });
+  //
+  // var user7 = new user({
+  //   name: "aaa",
+  //   email: "ehddlrdk@naver.com",
+  //   authority: "user",
+  //   // password : user.generateHash("123"),
+  //   phoneNumber : "01084840101",
+  //   nickName : "asd",
+  //   pushToken: "",
+  //   contentList:[]
+  // });
+  //
+  // user7.password = user7.generateHash("123");
+  // user7.save(function(err, savedDocument) {
+  //   if (err)
+  //     return console.error(err);
+  //   console.log(savedDocument);
+  //   console.log("DB initialization");
+  //
+  // });
 
   // --------------------------------
   //

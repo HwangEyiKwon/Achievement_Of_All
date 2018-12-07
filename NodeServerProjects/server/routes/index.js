@@ -11,6 +11,7 @@ var mkdirp = require('mkdirp'); // directory 만드는것
 var nodemailer = require('nodemailer');
 var multiparty = require('multiparty');
 
+
 router.post('/jwtCheck', function(req, res){
   console.log("jwtCheck Start");
   // console.log("jwtCheck jwt토큰 "+ req.body.token);
@@ -65,28 +66,88 @@ router.post('/logout', function(req, res){
     }
     user.pushToken = null;
     console.log('user token is ='+ user.pushToken + '!!');
-
-
   });
   res.send({success: true});
 });
 
+router.post('/emailAuthentication',function (req, res, next) {
+  console.log("emailAuthentication Start ");
+  var validEmail = 0;
+  var duplicatedEmail = 2;
+  var authenEmail = req.body.email;
+
+  User.findOne({email : authenEmail},function (err, user) {
+    if (user){
+      console.log("이미 존재하는 Email 입니다 " + authenEmail);
+      res.send({success: duplicatedEmail});
+    }
+    else{
+          console.log('유효한 Email 입니다.: ');
+          res.send({success: validEmail});
+    }
+  });
+})
+
+router.post('/emailConfirm',function (req, res, next) {
+  console.log("emailConfirm Start");
+  var validEmail = 0;
+  var invalidEmail = 1;
+  var userEmail = req.body.email;
+  var password = req.body.password;
+  var name = req.body.name;
+  var phoneNumber = req.body.phoneNumber;
+
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'ehddlrdk123@ajou.ac.kr',  // gmail 계정 아이디를 입력
+      pass: 'wkdehddlr12'          // gmail 계정의 비밀번호를 입력
+    }
+  });
+  let mailOptions = {
+    from: 'ehddlrdk123@ajou.ac.kr',
+    to: userEmail,
+    subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
+    html: '<p>아래의 확인 버튼을 클릭하시면 회원가입이 완료됩니다 !</p>' +
+      " <form action=\"http://:54.180.32.212/signup\" method=\"post\"> " +
+      "  <input type=\"hidden\" name=\"email\" value="+userEmail+" >" +
+      "  <input type=\"hidden\" name=\"password\" value="+password+" >" +
+      "  <input type=\"hidden\" name=\"name\" value="+name+" >" +
+      "  <input type=\"hidden\" name=\"phoneNumber\" value="+phoneNumber+" >" +
+      "  <input type=\"submit\" value=\"확인\"> " +
+      "</form>"
+  };
+    transporter.sendMail(mailOptions, function(error, info, response){
+      if (error) {
+        console.log("유효하지 않은 Email 입니다. "+error);
+        res.send({success: invalidEmail});
+      }
+      else {
+        console.log('유효한 Email로  보냈습니다. : ' +userEmail);
+        res.send({success: validEmail});
+      }
+    });
+})
+
 router.post('/signup', function (req, res, next) {
   console.log("signup Start");
+
   passport.authenticate('signup', function (err, user, info) {
     // console.log(user+"s");
     console.log("signUPPPPPPPP");
     if(err) console.log("signup err : "+err);
     if(user) {
-      res.send({success: true});
-      var userEmail = req.body.email;
+        // res.send({success: true});
+        var userEmail = req.body.email;
 
-      mkdirp('./server/user/'+userEmail+'/video', function (err) {
-        if(err) console.log("create dir user err : "+err);
-        else console.log("create dir ./user/" +userEmail );
-      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+        mkdirp('./server/user/' + userEmail + '/video', function (err) {
+          if (err) console.log("create dir user err : " + err);
+          else console.log("create dir ./user/" + userEmail);
+        }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+
     }
-    else res.send({success: false});
+    else console.log("회원가입 실패.");
+    // else res.send({success: false});
   })(req,res,next);
 });
 
@@ -365,7 +426,7 @@ router.get("/pwdSendMail/:email", function(req, res, next){
       to: email,
       subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
       html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
-      " <form action=\"http://localhost:3000/pwdEmailAuthen\" method=\"post\"> " +
+      " <form action=\"http://54.180.32.212/pwdEmailAuthen\" method=\"post\"> " +
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
       "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
