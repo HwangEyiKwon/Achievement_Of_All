@@ -27,6 +27,8 @@ class HomeSearchPager : Fragment() {
 
     private var editSearch: EditText? = null                // 검색어를 입력할 Input 창
     private var searchedList: MutableList<String>? = null   // 데이터를 넣은 리스트변수
+    private var searchedEmailList: MutableList<String>? = null   // 데이터를 넣은 리스트변수
+
     private var searchedArraylist: ArrayList<String>? = null
     private var searchedListView: ListView? = null          // 검색을 보여줄 리스트변수
 
@@ -75,6 +77,7 @@ class HomeSearchPager : Fragment() {
     fun search(charText: String) {
         // 문자 입력시마다 리스트를 지우고 새로 뿌려준다.
         searchedList!!.clear()
+        searchedEmailList!!.clear()
 
         // 문자 입력이 없을때는 모든 데이터를 보여준다.
         if (charText.replace(" ","").equals("")) {
@@ -102,6 +105,7 @@ class HomeSearchPager : Fragment() {
     private fun settingContentList() {
 
         searchedList!!.clear()
+        searchedEmailList!!.clear()
 
         VolleyHttpService.getSearchContentData(activity){ success ->
 
@@ -116,7 +120,7 @@ class HomeSearchPager : Fragment() {
 
             searchedArraylist = ArrayList()
             searchedArraylist!!.addAll(searchedList!!)
-            searchAdapter = SearchAdapter(searchedList!!, this.context, "content")
+            searchAdapter = SearchAdapter(searchedList!!, null, this.context, "content")
             searchedListView?.adapter = searchAdapter
 
         }
@@ -126,6 +130,7 @@ class HomeSearchPager : Fragment() {
     private fun settingUserList() {
 
         searchedList!!.clear()
+        searchedEmailList!!.clear()
 
         VolleyHttpService.getSearchUserData(activity){ success ->
 
@@ -133,13 +138,15 @@ class HomeSearchPager : Fragment() {
 
             for (i in 0..(usersData.length() - 1)) {
 
+//                searchedList?.add((usersData[i] as JSONObject).getString("name"))
                 searchedList?.add((usersData[i] as JSONObject).getString("name"))
+                searchedEmailList?.add((usersData[i] as JSONObject).getString("email"))
 
             }
 
             searchedArraylist = ArrayList()
             searchedArraylist!!.addAll(searchedList!!)
-            searchAdapter = SearchAdapter(searchedList!!, this.context, "user")
+            searchAdapter = SearchAdapter(searchedList!!, searchedEmailList!!, this.context, "user")
             searchedListView?.adapter = searchAdapter
 
         }
@@ -155,6 +162,7 @@ class HomeSearchPager : Fragment() {
         selectSearchingTab!!.tabGravity = TabLayout.GRAVITY_FILL
 
         searchedList = ArrayList()
+        searchedEmailList = ArrayList()
 
         selectSearchingTab!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 

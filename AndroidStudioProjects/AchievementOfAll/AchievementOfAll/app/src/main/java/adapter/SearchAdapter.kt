@@ -19,7 +19,7 @@ import org.json.JSONObject
     REFARCTORED
  */
 
-class SearchAdapter(private val list: List<String>, private val context: Context, private  val categoryToSearch: String) : BaseAdapter() {
+class SearchAdapter(private val list: List<String>, private val emailList: List<String>?, private val context: Context, private  val categoryToSearch: String) : BaseAdapter() {
 
     private var inflate: LayoutInflater? = null
     private var viewHolder: ViewHolder? = null
@@ -71,13 +71,13 @@ class SearchAdapter(private val list: List<String>, private val context: Context
 
             }else if(categoryToSearch == "user"){
 
-                val string= list[position]
-                val userObjects = JSONObject(string)
+//                val string= list[position]
+//                val userObjects = JSONObject(string)
 
                 context.startActivity<OtherUserHomeActivity>(
 
-                        "email" to  userObjects.getString("email"),
-                        "userName" to userObjects.getString("name")
+                        "email" to  emailList!![position],
+                        "userName" to list[position]
 
                 )
 
