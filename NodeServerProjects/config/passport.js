@@ -49,6 +49,7 @@ module.exports = function(passport) {
         if (err) return done(err);
 
         if (user) {
+
           console.log('이메일 존재');
 
           return done(null, false);
@@ -56,7 +57,7 @@ module.exports = function(passport) {
         }
         else {
           console.log(JSON.stringify(req.body));
-          ;          console.log('회원가입 성공');
+          console.log('회원가입 성공');
           var newUser = new User();
           newUser.name = req.body.name;
           newUser.email = email;
