@@ -124,8 +124,7 @@ router.post('/emailConfirm',function (req, res, next) {
     to: userEmail,
     subject: '안녕하세요, 모두의 달성입니다. 5분 안에 이메일 인증을 해주세요.',
     html: '<p>아래의 확인 버튼을 클릭하시면 회원가입이 완료됩니다 !</p>' +
-//      " <form action=\"http://54.180.32.212/confirm\" method=\"get\"> " +
-      " <form action=\"http://192.168.0.34:3000/confirm\" method=\"get\"> " +
+      " <form action=\"http://54.180.32.212/confirm\" method=\"get\"> " +
       "  <input type=\"hidden\" name=\"email\" value="+userEmail+" >" +
       "  <input type=\"submit\" value=\"확인\"> " +
       "</form>"
@@ -445,7 +444,7 @@ router.get("/pwdSendMail/:email", function(req, res, next){
       to: email,
       subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
       html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
-      " <form action=\"http://192.168.0.34:3000/pwdEmailAuthen\" method=\"get\"> " +
+      " <form action=\"http://54.180.32.212/pwdEmailAuthen\" method=\"get\"> " +
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
       "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
