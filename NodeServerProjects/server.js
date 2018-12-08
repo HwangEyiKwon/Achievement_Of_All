@@ -3,10 +3,10 @@
 
 
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -62,8 +62,8 @@ require('./config/passport')(passport);
 
 // //db 초기화
 // dbInit();
-// //db 삭제
-// dbDelete();
+//db 삭제
+dbDelete();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);

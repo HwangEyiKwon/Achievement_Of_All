@@ -26,6 +26,7 @@ const userSchema = new Schema({
     penalty: Number,
   }],
   pushToken: String,
+  emailAuthenticated: Number, //0: 인증x 1: 인증
 });
 
 //password를 암호화
