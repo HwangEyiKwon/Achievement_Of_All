@@ -249,9 +249,9 @@ router.post('/checkVideo', function(req,res){
             var year = authenDay.substr(0,4);
             var month = authenDay.substr(5,2);
             var day = authenDay.substr(8,2);
-            var threeAfterauthenDate = new Date(year, month-1, day);
-            threeAfterauthenDate.setDate(threeAfterauthenDate.getDate() + 3);
-            console.log("threeAfterauthenDate : "+threeAfterauthenDate+"end date : "+content.endDate);
+            var threeAfterAuthenDate = new Date(year, month-1, day);
+            threeAfterAuthenDate.setDate(threeAfterAuthenDate.getDate() + 3);
+            console.log("threeAfterauthenDate : "+threeAfterAuthenDate+"end date : "+content.endDate);
 
             voteRate = (successCount / authorizeUserCount) * 100;
             console.log("voteRate = " + voteRate);
@@ -260,7 +260,17 @@ router.post('/checkVideo', function(req,res){
 
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 1;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 1;
-              if(threeAfterauthenDate >= content.endDate){
+
+              otherUser.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+              content.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+
+              if(threeAfterAuthenDate >= content.endDate){
                 console.log("성공예정push message 문 전");
                 console.log("push token: " + otherUser.pushToken);
                 if(otherUser.pushToken != ""){

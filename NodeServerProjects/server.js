@@ -655,7 +655,7 @@ function dbInit(){
       contentName: "NoSmoking",
       joinState : 1,
       authenticationDate : "2018-12-08",
-      isUploaded : 0,
+      isUploaded : 1,
       calendar: [{year: "2018", month: "12", day: "2", authen: 1}, {year: "2018", month: "12", day: "5", authen: 1}, {year: "2018", month: "12", day: "8", authen: 2}],
       money: 100000,
       reward: 0,
