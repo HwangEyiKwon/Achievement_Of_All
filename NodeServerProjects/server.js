@@ -3,10 +3,10 @@
 
 
 
-//mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -35,6 +35,7 @@ var titleFail = "실패";
 var titleAuthen = "인증";
 var titleSuccess = "성공";
 var titleVideoFail = "비디오실패";
+var titleWillSuccess = "성공예정";
 
 
 var schedule = require('node-schedule');
@@ -62,8 +63,8 @@ require('./config/passport')(passport);
 
 // //db 초기화
 // dbInit();
-//db 삭제
-dbDelete();
+// //db 삭제
+// dbDelete();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
@@ -227,7 +228,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
 
   /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
-  content.find({"endDate" : yesterdayDate}, function(err, contentList){
+  content.find({"endDate" : yesterdayDate, "isDone": 0}, function(err, contentList){
     console.log("contents done code in!!!!!");
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
@@ -362,7 +363,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   });
 
   /* 모든 유저에 대해 authentication Date가 오늘인지 체크해서 푸쉬메시지 전송 */
-  user.find({"contentList.authenticationDate" : today}, function(err, userList){
+  user.find({"contentList.authenticationDate" : today, "contentList.isUploaded": 0}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
       var joinContentCount = userList[i].contentList.length;
       var authenContentIndex;
@@ -537,7 +538,7 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
     };
   }
   else{
-    console.log("실패 변수 저장");
+    console.log("push data 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -576,6 +577,17 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
           return;
         }
         console.log('인증 실패 Push메시지가 발송되었습니다.1');
+        console.log(response);
+      });
+    }
+    else if(titles === titleWillSuccess){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('성공 예정 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('성공 예정 Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
@@ -642,9 +654,9 @@ function dbInit(){
       videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
       contentName: "NoSmoking",
       joinState : 1,
-      authenticationDate : "2018-11-24",
+      authenticationDate : "2018-12-08",
       isUploaded : 0,
-      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}],
+      calendar: [{year: "2018", month: "12", day: "2", authen: 1}, {year: "2018", month: "12", day: "5", authen: 1}, {year: "2018", month: "12", day: "8", authen: 2}],
       money: 100000,
       reward: 0,
       rewardCheck: 0,
@@ -786,11 +798,11 @@ function dbInit(){
     id: 0,
     name: "NoSmoking",
     startDate: "11/01/2018",
-    endDate: "12/31/2018",
+    endDate: "12/10/2018",
     isDone: 0,
     userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
       {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
-      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0, checkReason: "싪패같아요"}]}, result: 2}],
+      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0, checkReason: "실패같아요"}]}, result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
