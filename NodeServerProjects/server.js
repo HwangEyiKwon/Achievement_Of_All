@@ -811,21 +811,21 @@ function dbInit(){
   var content2 = new content({
     id: 1,
     name: "NoSmoking",
-    startDate: "01/01/2019",
+    startDate: "01/14/2019",
     endDate: "11/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n  니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
   })
   var content3 = new content({
     id: 2,
     name: "NoSmoking",
-    startDate: "01/08/2019",
+    startDate: "01/07/2019",
     endDate: "12/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
   })
   var content4 = new content({
@@ -845,6 +845,46 @@ function dbInit(){
     startDate: "12/09/2018",
     endDate: "12/11/2018",
     isDone: 0,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content6 = new content({
+    id: 5,
+    name: "NoSmoking",
+    startDate: "12/11/2018",
+    endDate: "12/13/2018",
+    isDone: 2,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content7 = new content({
+    id: 6,
+    name: "NoSmoking",
+    startDate: "12/17/2018",
+    endDate: "01/17/2019",
+    isDone: 2,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content8 = new content({
+    id: 7,
+    name: "NoSmoking",
+    startDate: "12/24/2018",
+    endDate: "01/24/2019",
+    isDone: 2,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content9 = new content({
+    id: 8,
+    name: "NoSmoking",
+    startDate: "12/31/2018",
+    endDate: "01/31/2019",
+    isDone: 2,
     userList: [],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0

@@ -468,7 +468,7 @@ router.get("/pwdSendMail/:email", function(req, res, next){
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
       "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
-      "  <input type=\"submit\" value=\"전송\" style=\"color: tomato; font-size: 30px; height:40px; width: 40px;\"> " +
+      "  <input type=\"submit\" value=\"전송\" style=\"color: tomato; font-size: 20px; height:40px; width: 60px;\"> " +
       "</form>"
     };
 
