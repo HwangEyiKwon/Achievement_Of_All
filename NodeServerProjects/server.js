@@ -3,9 +3,9 @@
 
 
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
@@ -226,6 +226,37 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
   var yesterday = todayYear+ "-" + todayMonth + "-" + (todayDay-1);
   var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
+  var midnightDate = new Date(todayYear,(todayMonth-1),todayDay);
+
+  content.find({"startDate" : midnightDate}, function(err, contentList){
+    for(var i = 0; i < Object.keys(contentList).length; i++){
+      var contentId = contentList[i].id;
+      var contentName = contentList[i].name;
+      contentList[i].isDone = 0;
+
+      contentList[i].save(function(err, savedDocument) {
+        if (err) console.log("save err : "+err);
+      });
+
+      user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList) {
+        var userListCount = Object.keys(userList).length;
+        for (var i = 0; i < userListCount; i++) {
+          var contentListCount = userList[i].contentList.length;
+          var contentListIndex;
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentId === contentId) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          userList[i].contentList[contentListIndex].joinState = 1;
+          userList[i].save(function (err, savedDocument) {
+            if (err) console.log("save err : " + err);
+          });
+        }
+      });
+    }
+  });
 
   /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
   content.find({"endDate" : yesterdayDate, "isDone": 0}, function(err, contentList){
@@ -249,7 +280,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           var contentListCount = userList[i].contentList.length;
           var contentListIndex;
           for (var j = 0; j < contentListCount; j++) {
-            if (userList[i].contentList[j].contentName === contentName) {
+            if (userList[i].contentList[j].contentId === contentId) {
               contentListIndex = j;
               break;
             }
@@ -640,7 +671,7 @@ function dbInit(){
     }]
   });
 
-   var user3 = new user({
+  var user3 = new user({
     name: "ChoGeonHee17",
     email: "cgh17@gmail.com",
     authority: "user",
@@ -663,7 +694,7 @@ function dbInit(){
       penalty: 0
     }]
   });
-   var user4 = new user({
+  var user4 = new user({
     name: "JangDongIk17",
     email: "jdi17@gmail.com",
     authority: "user",
@@ -685,7 +716,7 @@ function dbInit(){
       rewardCheck: 0
     }]
   });
-   var user5 = new user({
+  var user5 = new user({
     name: "HEK",
     email: "hwangeyikwon@gmail.com",
     authority: "user",
@@ -706,8 +737,8 @@ function dbInit(){
       reward: 0,
       rewardCheck: 0
     }]
-   });
-   var user6 = new user({
+  });
+  var user6 = new user({
     name: "manager",
     email: "manager@gmail.com",
     authority: "manager",
@@ -717,7 +748,7 @@ function dbInit(){
     imagePath: "manager",
     pushToken: "",
     contentList:[]
-   });
+  });
 
   user1.password = user1.generateHash("123");
   user1.save(function(err, savedDocument) {
@@ -833,7 +864,7 @@ function dbInit(){
     endDate: "12/14/2018",
     isDone: 0,
     userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
-               {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
+      {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
     balance: 0
   })
