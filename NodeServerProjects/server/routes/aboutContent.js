@@ -289,6 +289,8 @@ router.get('/getCalendarInfo/:jwtToken/:contentName', function (req,res) {
             break;
           }
         }
+        console.log("고니 캘린더 : "+user.contentList[contentIndex].calendar)
+
         res.send(user.contentList[contentIndex].calendar);
       }
     }

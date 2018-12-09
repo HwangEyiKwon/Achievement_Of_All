@@ -22,9 +22,8 @@ const appInfo = require('./server/routes/appInfo');
 const search = require('./server/routes/search');
 const aboutContent = require('./server/routes/aboutContent');
 const manager = require('./server/routes/manager');
-const report = require('./server/routes/report');
 const reward = require('./server/routes/reward');
-
+const report = require('./server/routes/report');
 
 
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
@@ -58,11 +57,13 @@ db.on('connected', function() {
 var user = require('./server/models/user');
 var content = require('./server/models/content');
 var appInfoSchema = require('./server/models/app');
+var Report = require('./server/models/report');
+
 
 require('./config/passport')(passport);
 
 // //db 초기화
-// dbInit();
+dbInit();
 // //db 삭제
 // dbDelete();
 
@@ -941,6 +942,11 @@ function dbDelete(){
   content.remove(function (err, info) {
     console.log("DELETED");
   });
+
+  Report.remove(function (err, info) {
+    console.log("DELETED");
+  });
+
 }
 
 //Port 설정

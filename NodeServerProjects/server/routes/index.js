@@ -123,11 +123,11 @@ router.post('/emailConfirm',function (req, res, next) {
     from: 'ehddlrdk123@ajou.ac.kr',
     to: userEmail,
     subject: '안녕하세요, 모두의 달성입니다. 5분 안에 이메일 인증을 해주세요.',
-    html: '<p>아래의 확인 버튼을 클릭하시면 회원가입이 완료됩니다 !</p>' +
+    html: '<p style="font-size: 30px; color: darkblue;">아래의 확인 버튼을 클릭하시면 회원가입이 완료됩니다 !</p>' +
       // " <form action=\"http://54.180.32.212/confirm\" method=\"get\"> " +
       " <form action=\"http://192.168.0.16:3000/confirm\" method=\"get\"> " +
       "  <input type=\"hidden\" name=\"email\" value="+userEmail+" >" +
-      "  <input type=\"submit\" value=\"확인\"> " +
+      "  <input type=\"submit\" value=\"확인\" style=\"color: tomato; font-size: 40px; height:100px; width: 300px;\"> " +
       "</form>"
   };
   transporter.sendMail(mailOptions, function(error, info, response){
@@ -264,26 +264,44 @@ router.post('/editProfileWithoutImage', function(req,res){
       console.log("editProfileWithoutImage err")
     }else{
 
-          fs.rename('./server/user/'+user.email+'/'+user.imagePath+'.jpg', './server/user/'+user.email+'/'+userName+'.jpg',function (err) {
-            if( err ) console.log('ERROR: '+err);
-            else console.log("image 이름 변경 ㅅ성공");
-          });
+      if(user.imagePath == null)
+      {
+        user.name = userName;
+        user.phoneNumber = phoneNumber;
 
-          user.name = userName;
-          user.phoneNumber = phoneNumber;
-          user.imagePath = userName;
+        user.save(function (err) {
+          if (err) {
+            console.log(err);
+            res.send({success: false});
+          } else {
+            console.log("NO Profile Image editProfileWithoutImage Success ");
+            res.send({success: true});
+          }
+        });
+      }
+      else {
+        fs.rename('./server/user/' + user.email + '/' + user.imagePath + '.jpg', './server/user/' + user.email + '/' + userName + '.jpg', function (err) {
+          if (err) console.log('ERROR: ' + err);
+          else console.log("image 이름 변경 ㅅ성공");
+        });
 
-          user.save(function (err) {
-            if (err) {
-              console.log(err);
-              res.send({success: false});
-            } else {
-              console.log("editProfileWithoutImage Success ");
-                  res.send({success: true});
-            }
-          });
+        user.name = userName;
+        user.phoneNumber = phoneNumber;
+        user.imagePath = userName;
+
+        user.save(function (err) {
+          if (err) {
+            console.log(err);
+            res.send({success: false});
+          } else {
+            console.log("editProfileWithoutImage Success ");
+            res.send({success: true});
+          }
+        });
+      }
         }
       });
+
 });
 
 router.post('/editProfileWithImage', function(req,res){
@@ -444,13 +462,13 @@ router.get("/pwdSendMail/:email", function(req, res, next){
       from: 'ehddlrdk123@ajou.ac.kr',
       to: email,
       subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
-      html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
+      html: '<p style="font-size: 20px; color: darkblue;">새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
       // " <form action=\"http://54.180.32.212/pwdEmailAuthen\" method=\"get\"> " +
       " <form action=\"http://192.168.0.16:3000/pwdEmailAuthen\" method=\"get\"> " +
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
       "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
-      "  <input type=\"submit\" value=\"전송\"> " +
+      "  <input type=\"submit\" value=\"전송\" style=\"color: tomato; font-size: 30px; height:40px; width: 40px;\"> " +
       "</form>"
     };
 
