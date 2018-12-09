@@ -65,7 +65,7 @@ require('./config/passport')(passport);
 // //db 초기화
 //dbInit();
 // //db 삭제
-// dbDelete();
+//dbDelete();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
