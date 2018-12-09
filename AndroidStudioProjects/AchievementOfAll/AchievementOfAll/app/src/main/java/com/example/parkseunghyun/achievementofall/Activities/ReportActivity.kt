@@ -75,7 +75,7 @@ class ReportActivity : AppCompatActivity(){
 
             val idString = reportUserList.get(index).replace("\"", "").split("@")
             reportView += idString[0].replaceRange(2, 4, "***") + "@" + idString[1]
-            reportView += " 님 \n -> "
+            reportView += " 님 \n : "
             reportView += reportReasonList.get(index)
             reportView += "\n\n"
 
