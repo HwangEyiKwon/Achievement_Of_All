@@ -24,16 +24,12 @@ import org.json.JSONObject
 class HomeSearchPager : Fragment() {
 
     private var homeSearchView: View? = null
-
     private var editSearch: EditText? = null
     private var searchedList: MutableList<String>? = null
     private var searchedEmailList: MutableList<String>? = null
-
     private var searchedArraylist: ArrayList<String>? = null
     private var searchedListView: ListView? = null
-
     private var searchAdapter: SearchAdapter? = null
-
     private var selectSearchingTab: TabLayout? = null
 
 

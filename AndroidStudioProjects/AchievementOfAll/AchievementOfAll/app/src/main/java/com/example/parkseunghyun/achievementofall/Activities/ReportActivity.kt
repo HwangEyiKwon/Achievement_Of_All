@@ -12,7 +12,7 @@ import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpServi
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 import android.text.method.ScrollingMovementMethod
-
+import java.lang.StringBuilder
 
 
 class ReportActivity : AppCompatActivity(){
@@ -71,9 +71,12 @@ class ReportActivity : AppCompatActivity(){
         println("TESTINBLACK ----- LIST " + reportUserList.size + "----" + reportUserList)
         println("TESTINBLACK ----- LIST " + reportReasonList.size+ "----" + reportReasonList)
 
-        for(index in reportUserList.indices){
+        for(index in reportUserList.indices) {
 
             reportView += reportUserList.get(index).replace("\"", "")
+
+            val idString = reportView.split("@")
+            reportView = idString[0].replaceRange(1, 3, "***") + "@" + idString[1]
             reportView += " 님 \n -> "
             reportView += reportReasonList.get(index)
             reportView += "\n\n"

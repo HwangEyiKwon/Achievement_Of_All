@@ -1,7 +1,6 @@
 package com.example.parkseunghyun.achievementofall.Activities
 
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Patterns
 import android.view.View
@@ -24,6 +23,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
     private var userEmail: String ?= null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
@@ -35,13 +35,13 @@ class ForgotPasswordActivity : AppCompatActivity() {
     private fun initButtonListener() {
         button_to_send_email.setOnClickListener {
 
-            if (!Patterns.EMAIL_ADDRESS.matcher(user_email_to_find_pw.text).matches()) {
+            if (!Patterns.EMAIL_ADDRESS.matcher(user_email_to_login.text).matches()) {
 
                 Toast.makeText(this, "이메일 형식이 아닙니다. \n Modal@gmail.com", Toast.LENGTH_SHORT).show();
 
             } else {
 
-                userEmail = user_email_to_find_pw.text.toString()
+                userEmail = user_email_to_login.text.toString()
                 sendEmailForFindingPW()
 
             }

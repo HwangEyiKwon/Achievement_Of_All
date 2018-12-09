@@ -21,6 +21,7 @@ class PasswordEditActivity : AppCompatActivity() {
     private var phoneNumber: String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_password_edit)
 
@@ -77,11 +78,13 @@ class PasswordEditActivity : AppCompatActivity() {
 
        VolleyHttpService.editPassword(this, jsonObject){ success ->
 
-           // 성공 1 실패(현재비번틀릴때) 0 나머지 2
+           /** 실패(현재비번틀릴때) 0, 성공 1, 나머지 2 */
            when(success.getInt("success")){
 
                0 -> {
+
                    Toast.makeText(this, "현재 비밀번호가 틀립니다.", Toast.LENGTH_LONG).show()
+
                }
 
                1 -> {

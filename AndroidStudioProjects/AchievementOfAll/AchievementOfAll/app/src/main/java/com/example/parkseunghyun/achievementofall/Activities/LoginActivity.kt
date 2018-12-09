@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Patterns
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.FirebaseInstanceIDService
@@ -20,27 +22,22 @@ import org.json.JSONObject
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         initButtonListener()
 
-        if(intent.getStringExtra("email") != null){
-
-            val afterSignup = intent.getStringExtra("email")
-            user_email_to_find_pw.setText(afterSignup)
-
-        }
-
     }
 
     private fun initButtonListener() {
+
         button_login.setOnClickListener {
 
-            val userEmail = user_email_to_find_pw.text.toString()
+            val userEmail = user_email_to_login.text.toString()
             val userPW = edit_text_user_pw.text.toString()
 
-            if (!Patterns.EMAIL_ADDRESS.matcher(user_email_to_find_pw.text).matches()) {
+            if (!Patterns.EMAIL_ADDRESS.matcher(user_email_to_login.text).matches()) {
 
                 Toast.makeText(this, "이메일 형식이 아닙니다. \n Modal@gmail.com", Toast.LENGTH_SHORT).show()
 
@@ -57,6 +54,39 @@ class LoginActivity : AppCompatActivity() {
             finish()
 
         }
+
+        user_email_to_login!!.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+            override fun afterTextChanged(editable: Editable) {
+
+                login_info_text.text = ""
+
+                if (editable.toString().replace(" ","").equals("")) {
+
+                    login_info_text.text = "Email을 입력해주세요."
+
+                } else {
+
+                    if (Patterns.EMAIL_ADDRESS.matcher(user_email_to_login.text).matches()) {
+
+                        login_info_text.text = ""
+
+                    } else {
+
+                        login_info_text.setTextColor(resources.getColor(R.color.colorAccent))
+                        login_info_text.text = "이메일 형식에 맞게 입력 해주세요 ..."
+
+                    }
+
+                }
+
+            }
+        })
+
     }
 
     private fun saveDataForAutoLogin(email: String, password: String){
@@ -83,11 +113,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginRequest(email: String, password: String){
 
-        val jsonObject = JSONObject()
-        jsonObject.put("email", email)
-        jsonObject.put("password",password)
+        val jsonObjectForLogin = JSONObject()
+        jsonObjectForLogin.put("email", email)
+        jsonObjectForLogin.put("password",password)
 
-        VolleyHttpService.login(this, jsonObject) { success ->
+        VolleyHttpService.login(this, jsonObjectForLogin) { success ->
 
             if (success.get("success") == true) {
 

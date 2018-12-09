@@ -35,7 +35,6 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
     private var storyView: RecyclerView? = null
     private var storiesAdapter: StoriesAdapter? = null
 
-
     private var contentJoinButton: Button? = null
     private var contentsPagerAdapter: ContentsPagerAdapter? = null
     private var contentsViewPager: ViewPager? = null
@@ -61,7 +60,6 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contents_home)
-
 
         textJoinState = findViewById(R.id.id_joined_OR_not)
         textContentName = findViewById(R.id.contentName)
@@ -148,11 +146,11 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
 
     private fun initViewComponents(){
 
-        val jsonObject = JSONObject()
-        jsonObject.put("token", loadJWTToken())
-        jsonObject.put("contentName", content)
+        val jsonObjectForGetUserInfo = JSONObject()
+        jsonObjectForGetUserInfo.put("token", loadJWTToken())
+        jsonObjectForGetUserInfo.put("contentName", content)
 
-        VolleyHttpService.getParticipatedInfo(this, jsonObject){ success ->
+        VolleyHttpService.getParticipatedInfo(this, jsonObjectForGetUserInfo){ success ->
 
             joinState = success.getInt("joinState")
             startDate = success.getJSONObject("startDate")

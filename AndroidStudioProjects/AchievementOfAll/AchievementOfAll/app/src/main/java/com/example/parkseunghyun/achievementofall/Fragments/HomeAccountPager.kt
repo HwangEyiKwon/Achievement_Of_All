@@ -36,7 +36,6 @@ import java.util.*
     TODO: Glide Placeholder
  */
 
-
 class HomeAccountPager : Fragment() {
 
     private var globalVariables: GlobalVariables?= GlobalVariables()
@@ -223,8 +222,8 @@ class HomeAccountPager : Fragment() {
 
     private fun loadUriForSelfCaching(): String {
 
-        val sharedRefForImageCaching = PreferenceManager.getDefaultSharedPreferences(context)
-        val imageUri = sharedRefForImageCaching.getString("imageUri","0")
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val imageUri = sharedPref.getString("imageUri","0")
 
         return imageUri
 

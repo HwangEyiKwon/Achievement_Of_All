@@ -262,64 +262,65 @@ class HomeActivity : AppCompatActivity() {
         /** 아래는 전부 FCM통해 들어오는 상황 */
         else if (fcmCategory.equals("목표 달성 실패 알림")) {
 
-            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
 
-            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intentForContentsHomeActivity.putExtra("fcm_category", "목표 달성 실패 알림")
-            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "목표 달성 실패 알림")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
 
-            startActivity(intentForContentsHomeActivity)
+            startActivity(goToContentsHome)
 
         } else if (fcmCategory.equals("인증 시간이 얼마 남지 않았어요!")) {
 
-            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
 
-            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intentForContentsHomeActivity.putExtra("fcm_category", "인증 시간이 얼마 남지 않았어요!")
-            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "인증 시간이 얼마 남지 않았어요!")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
 
-            startActivity(intentForContentsHomeActivity)
+            startActivity(goToContentsHome)
 
         } else if (fcmCategory.equals("목표 달성 성공 알림")) {
 
-            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
 
-            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intentForContentsHomeActivity.putExtra("fcm_category", "목표 달성 성공 알림")
-            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "목표 달성 성공 알림")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
 
-            startActivity(intentForContentsHomeActivity)
+            startActivity(goToContentsHome)
 
         } else if (fcmCategory.equals("과반수의 반대로 인증에 실패하셨습니다")) {
 
-            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
 
-            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intentForContentsHomeActivity.putExtra("fcm_category", "과반수의 반대로 인증에 실패하셨습니다")
-            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
-            intentForContentsHomeActivity.putExtra("rejectUserArray", intentToCommuinate?.getStringExtra("rejectUserArray"))
-            intentForContentsHomeActivity.putExtra("rejectReasonArray", intentToCommuinate?.getStringExtra("rejectReasonArray"))
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "과반수의 반대로 인증에 실패하셨습니다")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.putExtra("rejectUserArray", intentToCommuinate?.getStringExtra("rejectUserArray"))
+            goToContentsHome.putExtra("rejectReasonArray", intentToCommuinate?.getStringExtra("rejectReasonArray"))
 
-            startActivity(intentForContentsHomeActivity)
+            startActivity(goToContentsHome)
 
         } else if (fcmCategory.equals("마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.")) {
 
-            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
 
-            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intentForContentsHomeActivity.putExtra("fcm_category", "마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.")
-            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
 
-            startActivity(intentForContentsHomeActivity)
+            startActivity(goToContentsHome)
+
         } else if (fcmCategory.equals("컨텐츠에 새로운 인증영상이 올라왔습니다!")) {
 
-            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
 
-            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intentForContentsHomeActivity.putExtra("fcm_category", "컨텐츠에 새로운 인증영상이 올라왔습니다!")
-            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "컨텐츠에 새로운 인증영상이 올라왔습니다!")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
 
-            startActivity(intentForContentsHomeActivity)
+            startActivity(goToContentsHome)
 
         }
     }

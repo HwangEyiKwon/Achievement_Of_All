@@ -39,7 +39,7 @@ class AppStartActivity : AppCompatActivity() {
         initViewComponents()
         initButtonListener()
 
-        val jsonObjectForLogin = loadData()
+        val jsonObjectForLogin = loadDataForAutoLogin()
         val userEmail = jsonObjectForLogin.getString("email")
         val userPW = jsonObjectForLogin.getString("password")
 
@@ -76,7 +76,6 @@ class AppStartActivity : AppCompatActivity() {
 
         app_desc_indicator.createDotPanel(3, R.drawable.desc_num_indicator_off, R.drawable.desc_num_indicator_on, 0)
 
-
         appDescViewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
             override fun onPageScrollStateChanged(p0: Int) {}
@@ -106,30 +105,29 @@ class AppStartActivity : AppCompatActivity() {
 
     }
 
-    private fun loadData(): JSONObject {
+    private fun loadDataForAutoLogin(): JSONObject {
 
-        val auto = PreferenceManager.getDefaultSharedPreferences(this)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val jsonObjectForAutoLogin = JSONObject()
+        val email = sharedPref.getString("email","0")
+        val password = sharedPref.getString("password","0")
+        val isChecked = sharedPref.getBoolean("isChecked",false)
 
-        val jsonObject = JSONObject()
-        val email = auto.getString("email","0")
-        val password = auto.getString("password","0")
-        val isChecked = auto.getBoolean("isChecked",false)
+        jsonObjectForAutoLogin.put("email", email)
+        jsonObjectForAutoLogin.put("password",password)
+        jsonObjectForAutoLogin.put("isChecked", isChecked)
 
-        jsonObject.put("email", email)
-        jsonObject.put("password",password)
-        jsonObject.put("isChecked", isChecked)
-
-        return jsonObject
+        return jsonObjectForAutoLogin
 
     }
 
     private fun loginRequest(email: String, password: String){
 
-        val jsonObject = JSONObject()
-        jsonObject.put("email", email)
-        jsonObject.put("password",password)
+        val jsonObjectForLogin = JSONObject()
+        jsonObjectForLogin.put("email", email)
+        jsonObjectForLogin.put("password",password)
 
-        VolleyHttpService.login(this, jsonObject) { success ->
+        VolleyHttpService.login(this, jsonObjectForLogin) { success ->
 
             if (success.get("success") == true) {
 

@@ -29,7 +29,6 @@ class ConfirmJoinActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_confirming_join)
 
         ruleView = findViewById(R.id.id_content_rule)
@@ -64,8 +63,6 @@ class ConfirmJoinActivity : AppCompatActivity() {
         jsonObjectForGetRule.put("startMonth", selectedDayOfMonth.toString())
         jsonObjectForGetRule.put("startDay",selectedYear.toString())
 
-
-
         VolleyHttpService.getContentRule(this, jsonObjectForGetRule) { success ->
 
             if (success.get("success") == true) {
@@ -84,8 +81,6 @@ class ConfirmJoinActivity : AppCompatActivity() {
         jsonObjectForConfirmJoin.put("year", selectedYear!!)
         jsonObjectForConfirmJoin.put("month", selectedMonthOfYear!!)
         jsonObjectForConfirmJoin.put("day", selectedDayOfMonth!!)
-
-
 
         val selectedTime = "선택된 날짜는 $selectedYear / $selectedMonthOfYear / $selectedDayOfMonth 입니다."
         pickedDateTextView = findViewById(R.id.id_picked_date)

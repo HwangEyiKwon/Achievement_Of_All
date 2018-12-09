@@ -33,12 +33,11 @@ class ContentsProgressPager : Fragment() {
     private var joinState: Int ?= null
 
     private var rewardButton: Button ?= null
-
     private var rewardMoneyView: TextView?= null
     private var returnMoneyView: TextView?= null
-
     private var rewardMoney: Int ?= null
     private var currentMoney: Int ?= null
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -70,7 +69,6 @@ class ContentsProgressPager : Fragment() {
         return contentProgressView
 
     }
-
 
 
     fun rewardCheck (){
@@ -117,8 +115,10 @@ class ContentsProgressPager : Fragment() {
                 currentMoney = success.getInt("money")
 
             } else {
+
                 rewardMoneyView!!.text = "0"
                 returnMoneyView!!.text = "0"
+
             }
 
         }

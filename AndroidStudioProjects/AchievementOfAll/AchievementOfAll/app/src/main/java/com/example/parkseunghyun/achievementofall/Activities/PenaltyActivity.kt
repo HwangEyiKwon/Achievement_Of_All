@@ -25,6 +25,7 @@ class PenaltyActivity : AppCompatActivity() {
     var fm: Int ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_penalty)
 
@@ -32,7 +33,6 @@ class PenaltyActivity : AppCompatActivity() {
 
         contentName = intent.getStringExtra("contentName")
 
-        println("")
         getCurrentMoney()
 
 

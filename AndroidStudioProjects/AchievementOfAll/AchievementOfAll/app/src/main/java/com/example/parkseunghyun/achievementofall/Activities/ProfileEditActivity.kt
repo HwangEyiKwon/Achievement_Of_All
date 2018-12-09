@@ -177,14 +177,14 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
         VolleyHttpService.editProfileWithoutImage(this, jsonObjectToEditProfile) { success ->
 
-            if (success.get("success") == true) { //  성공
+            if (success.get("success") == true) {
 
                 Toast.makeText(this, "프로필 수정 완료", Toast.LENGTH_LONG).show()
                 GlideLoadingFlag.setProfileWithOutImageFlag(GlideLoadingFlag.FLAG_UPDATED)
 
                 finish()
 
-            } else { //  실패
+            } else {
 
                 Toast.makeText(this, "프로필 수정 실패", Toast.LENGTH_LONG).show()
 
@@ -237,6 +237,7 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
         val httpClient = OkHttpClient.Builder()
 
         httpClient.addInterceptor(object: Interceptor {
+
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain?): okhttp3.Response {
 
@@ -265,12 +266,12 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
         serverCom.enqueue(object : Callback<ResultObjectFromRetrofit2> {
             override fun onResponse(call: Call<ResultObjectFromRetrofit2>, response: Response<ResultObjectFromRetrofit2>) {
+
                 val result = response.body()
 
                 if (!TextUtils.isEmpty(result.success)) {
 
                     GlideLoadingFlag.setProfileWithImageFlag(GlideLoadingFlag.FLAG_UPDATED)
-
                     Toast.makeText(applicationContext, "프로필 수정 완료", Toast.LENGTH_SHORT).show()
                     finish()
 
@@ -278,8 +279,11 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
             }
             override fun onFailure(call: Call<ResultObjectFromRetrofit2>, t: Throwable) {
+
                 Toast.makeText(applicationContext, "프로필 수정 실패", Toast.LENGTH_SHORT).show()
+
             }
+
         })
     }
 
@@ -292,6 +296,7 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
 
     private fun getRealPathFromURIPath(contentURI: Uri, activity: Activity): String? {
+
         val cursor = activity.contentResolver.query(contentURI, null, null, null, null)
         if (cursor == null) {
 
@@ -335,8 +340,8 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
     private fun saveUriForSelfCaching(imageUri: String){
 
-        val sharedPrefForSaveImage = PreferenceManager.getDefaultSharedPreferences(this)
-        val editorForSaveImageUri = sharedPrefForSaveImage.edit()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        val editorForSaveImageUri = sharedPref.edit()
 
         editorForSaveImageUri
                 .putString("imageUri", imageUri)
