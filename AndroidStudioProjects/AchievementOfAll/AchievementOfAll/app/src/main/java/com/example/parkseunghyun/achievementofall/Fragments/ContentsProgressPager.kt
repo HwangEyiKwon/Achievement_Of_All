@@ -12,141 +12,113 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Activities.RewardActivity
+import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 
-
+/**
+    REFACTORED
+ */
 
 class ContentsProgressPager : Fragment() {
 
-    private var view_: View? = null
+    private var contentProgressView: View? = null
     private var achievementRate: TextView ? = null
-    private var contentsName: TextView? = null
+    private var contentNameView: TextView? = null
 
-    // 사용자의 jwt-token
     private var jwtToken: String ?= null
     private var contentName: String? = null
     private var joinState: Int ?= null
 
     private var rewardButton: Button ?= null
 
-    private var reward: TextView?= null
-    private var money: TextView?= null
+    private var rewardMoneyView: TextView?= null
+    private var returnMoneyView: TextView?= null
 
     private var rewardMoney: Int ?= null
     private var currentMoney: Int ?= null
 
-    private val REWARD_CODE = 88
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        view_ =  inflater!!.inflate(R.layout.fragment_contents_progress, container, false)
+        contentProgressView =  inflater!!.inflate(R.layout.fragment_contents_progress, container, false)
 
-        achievementRate = view_?.findViewById(R.id.achievementRate)
-
-        println("getAcheid달성달성률")
+        achievementRate = contentProgressView?.findViewById(R.id.achievementRate)
 
         val activity = activity as ContentsHomeActivity
-        jwtToken = activity.jwtToken.toString()
+        jwtToken = activity.loadJWTToken()
         contentName = activity.content.toString()
         joinState = activity.joinState
 
-        println("TEST2 " + contentName)
+        contentNameView = contentProgressView?.findViewById(R.id.id_contents_name_2)
+        contentNameView?.text = contentName
 
-        contentsName = view_?.findViewById(R.id.id_contents_name_2)
-        contentsName?.setText(contentName)
-
-        reward= view_?.findViewById(R.id.reward)
-        money= view_?.findViewById(R.id.money)
-
-        rewardButton = view_?.findViewById(R.id.button_to_reward)
-
-
-        when(joinState){
-            2 -> {
-                rewardButton!!.isEnabled = true
-            }
-            else->{
-                rewardButton!!.isEnabled = false
-                rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
-            }
-        }
+        rewardMoneyView = contentProgressView?.findViewById(R.id.reward)
+        returnMoneyView = contentProgressView?.findViewById(R.id.money)
+        rewardButton = contentProgressView?.findViewById(R.id.button_to_reward)
 
         getAchievementRate()
         getCurrentMoney()
 
         rewardButton!!.setOnClickListener {
+
             rewardCheck ()
+
         }
 
-        return view_
+        return contentProgressView
+
     }
 
 
 
     fun rewardCheck (){
 
-        val jsonObject = JSONObject()
-        jsonObject.put("token", jwtToken)
-        jsonObject.put("contentName", contentName)
+        val jsonObjectForReward = JSONObject()
+        jsonObjectForReward.put("token", jwtToken)
+        jsonObjectForReward.put("contentName", contentName)
 
-        VolleyHttpService.rewardCheck(this.context, jsonObject) { success ->
+        VolleyHttpService.rewardCheck(this.context, jsonObjectForReward) { success ->
 
-            println(success)
             if(success.getBoolean("success")){
 
-                if(joinState == 3){
+                val goToReward = Intent(context, RewardActivity::class.java)
+                goToReward.putExtra("token", jwtToken)
+                goToReward.putExtra("contentName", contentName)
+                goToReward.putExtra("penaltyMoney", rewardMoney)
+                goToReward.putExtra("currentMoney", currentMoney)
 
-                }else{
-                    val goToReward = Intent(context, RewardActivity::class.java)
-                    goToReward.putExtra("token", jwtToken)
-                    goToReward.putExtra("contentName", contentName)
-                    goToReward.putExtra("penaltyMoney", rewardMoney)
-                    goToReward.putExtra("currentMoney", currentMoney)
+                val contextToActivity = context as Activity
+                contextToActivity.startActivityForResult(goToReward, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_REWARD)
 
-                    val contextToActivity = context as Activity
-                    contextToActivity.startActivityForResult(goToReward, REWARD_CODE)
-                }
+            } else {
 
-            }else{
-                Toast.makeText(this.context,"이미 보상을 받으셨습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context,"이미 보상을 받으셨습니다.", Toast.LENGTH_SHORT).show()
+
             }
+
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        println("TEST KAPPA 너냐? ")
-
-
-        for (fragment in fragmentManager.fragments) {
-            if (fragment != null) {
-                fragment!!.onActivityResult(requestCode, resultCode, data)
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-
     }
 
     private fun getCurrentMoney(){
 
-        val jsonObject = JSONObject()
-        jsonObject.put("token", jwtToken)
-        jsonObject.put("contentName", contentName)
+        val jsonObjectToGetMoney = JSONObject()
+        jsonObjectToGetMoney.put("token", jwtToken)
+        jsonObjectToGetMoney.put("contentName", contentName)
 
+        VolleyHttpService.getContentMoney(this.context, jsonObjectToGetMoney){ success ->
 
-        VolleyHttpService.getContentMoney(this.context, jsonObject){ success ->
+            if(joinState != 3) {
 
-            println(success)
-
-            if(joinState == 3){
-
-            }else{
-                reward!!.text = success.getInt("reward").toString()
-                money!!.text = success.getInt("money").toString()
+                rewardMoneyView!!.text = success.getInt("reward").toString()
+                returnMoneyView!!.text = success.getInt("money").toString()
                 rewardMoney = success.getInt("reward")
                 currentMoney = success.getInt("money")
+
+            } else {
+                rewardMoneyView!!.text = "0"
+                returnMoneyView!!.text = "0"
             }
 
         }
@@ -159,36 +131,80 @@ class ContentsProgressPager : Fragment() {
         jsonObject.put("contentName", contentName)
 
         VolleyHttpService.getAchievementRate(this.context, jsonObject){ success ->
-            println("getAcheidfdsa "+success)
 
-            var rate = success.getInt("rate")
+            val rate = success.getInt("rate")
 
-            val progress = view_?.findViewById(R.id.progress) as ProgressBar
+            val progress = contentProgressView?.findViewById(R.id.progress) as ProgressBar
             progress.progress = rate
-            progress.visibility = View.GONE
 
-            val progressText = view_?.findViewById(R.id.id_achievement_rate_support) as TextView
+            val progressText = contentProgressView?.findViewById(R.id.id_achievement_rate_support) as TextView
             progressText.visibility = View.GONE
 
-            println("TESTTEST: " + rate)
+            when(joinState) {
 
-            if(joinState == 0){
-                achievementRate!!.setText("컨텐츠 시작 전입니다...........")
-                progress.visibility = View.VISIBLE
-                progress.progress = 0
-            }
-            else if(joinState == 2){
-                achievementRate!!.setText("목표에 달성하셨습니다!! 축하드립니다.!!")
-                progress.visibility = View.VISIBLE
-                progress.progress = 100
+                0 -> { /**"참가중 (시작 전)"*/
 
-            }else if(rate == -1){
-                achievementRate!!.setText("미참가 중입니다...........")
-            }else{
-                achievementRate!!.setText(rate.toString())
-                progress.visibility = View.VISIBLE
-                progress.progress = rate
-                progressText.visibility = View.VISIBLE
+                    rewardButton!!.isEnabled = false
+                    rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
+
+                    achievementRate!!.text = ""
+                    progressText.text = "컨텐츠 시작 전입니다."
+                    progressText.visibility = View.VISIBLE
+
+                    progress.progress = 0
+
+                }
+
+                1 -> { /**"참가중 (진행중)"*/
+
+                    rewardButton!!.isEnabled = false
+                    rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
+
+                    achievementRate!!.setText(rate.toString())
+                    progressText.text = "% 진행 중입니다."
+                    progressText.visibility = View.VISIBLE
+
+                    progress.progress = rate
+
+                }
+
+                2 -> { /**"목표 달성 성공"*/
+
+                    rewardButton!!.isEnabled = true
+                    rewardButton!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+
+                    achievementRate!!.text = ""
+                    progressText.text = "목표 달성에 성공하셨습니다."
+                    progressText.visibility = View.VISIBLE
+
+                    progress.progress = 100
+
+                }
+
+                3 -> { /**"미참가중*/
+                    rewardButton!!.isEnabled = false
+                    rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
+
+                    achievementRate!!.text = ""
+                    progressText.text = "아직 참가중이지 않습니다."
+                    progressText.visibility = View.VISIBLE
+
+                    progress.progress = 0
+
+                }
+
+                4 -> { /**"목표 달성 실패"*/
+                    rewardButton!!.isEnabled = false
+                    rewardButton!!.setTextColor(resources.getColor(R.color.icongrey))
+
+                    achievementRate!!.setText(rate.toString())
+                    progressText.text = "% 진행 중에 실패하셨습니다."
+                    progressText.visibility = View.VISIBLE
+
+                    progress.progress = rate
+
+                }
+
             }
 
         }

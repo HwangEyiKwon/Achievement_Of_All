@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_password_edit.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
-/*
+/**
     REFACTORED.
  */
 
@@ -50,11 +50,16 @@ class PasswordEditActivity : AppCompatActivity() {
         }
 
         button_go_Info_edit.setOnClickListener {
+
             startActivity<ProfileEditActivity>(
+
                     "name" to userName,
                     "phoneNumber" to phoneNumber
+
             )
+
             finish()
+
         }
     }
 
@@ -74,22 +79,32 @@ class PasswordEditActivity : AppCompatActivity() {
 
            // 성공 1 실패(현재비번틀릴때) 0 나머지 2
            when(success.getInt("success")){
-               0->{
+
+               0 -> {
                    Toast.makeText(this, "현재 비밀번호가 틀립니다.", Toast.LENGTH_LONG).show()
                }
-               1->{
+
+               1 -> {
+
                    Toast.makeText(this, "수정 완료.", Toast.LENGTH_LONG).show()
                    finish()
+
                }
-               2->{
+
+               2 -> {
+
                    Toast.makeText(this, "ERROR.", Toast.LENGTH_LONG).show()
+
                }
+
            }
 
        }
     }
     private fun loadJwtToken(): String{
+
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         return sharedPref.getString("token", "")
+
     }
 }

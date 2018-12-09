@@ -8,23 +8,24 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
-import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import de.hdodenhof.circleimageview.CircleImageView
 import model.JoinedContentsModel
 import model.ThumbnailModel
 import org.json.JSONObject
 import java.util.*
 
-class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
+/**
+    REFACTORED
+ */
 
-    // 서버 ip 주소
+class OtherUserHomeActivity : AppCompatActivity() {
+
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
@@ -38,7 +39,6 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
     private var joinedContents = mutableListOf<String>()
     private var joinedContentsAdapter: JoinedContentsAdapter? = null
 
-    // 사용자의 비디오 목록
     private var videoList = mutableListOf<JSONObject>()
     private var videoContentList = mutableListOf<String>()
     private var thumbnailView: RecyclerView? = null
@@ -78,15 +78,16 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
         jsonObjectForOtherUserInfo.put("email", email)
 
         VolleyHttpService.getOtherUserInfo(this, jsonObjectForOtherUserInfo) { success ->
-            // 사용자 프로필 사진 갱신
+
             Glide
                     .with(this)
                     .load("${ipAddress}/getOtherUserImage/"+otherUserEmail)
                     .apply(RequestOptions().skipMemoryCache(true))
                     .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                    .thumbnail(0.1f)
                     .into(otherUserProfile)
 
-            // 사용자 참여 컨텐츠 정보 갱신
+
             var contentList: JSONObject
             var contentName: String
 
@@ -123,12 +124,12 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
         for (indexOfJoinedContents in joinedContents.indices) {
 
             val joinedContentsModel = JoinedContentsModel()
-            joinedContentsModel.name = joinedContents?.get(indexOfJoinedContents)
+            joinedContentsModel.name = joinedContents.get(indexOfJoinedContents)
             joinedContentsModelArrayList!!.add(joinedContentsModel)
 
         }
 
-        joinedContentsAdapter = JoinedContentsAdapter(this, joinedContentsModelArrayList!!, this)
+        joinedContentsAdapter = JoinedContentsAdapter(this, joinedContentsModelArrayList!!)
         joinedContentsView!!.adapter = joinedContentsAdapter
 
     }
@@ -157,7 +158,5 @@ class OtherUserHomeActivity : AppCompatActivity() , RecyclerViewClickListener {
         thumbnailView!!.adapter = thumbnailAdapter
 
     }
-
-    override fun recyclerViewListClicked(v: View, position: Int) {}
 
 }

@@ -2,7 +2,6 @@ package com.example.parkseunghyun.achievementofall
 
 import adapter.ContentsPagerAdapter
 import adapter.StoriesAdapter
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -11,14 +10,13 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Activities.PenaltyActivity
 import com.example.parkseunghyun.achievementofall.Activities.ReportActivity
+import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
-import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import kotlinx.android.synthetic.main.container_contents_pager.*
 import model.StoriesModel
@@ -26,393 +24,354 @@ import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+    REFACTORED
+    TODO: 다른 Pager들과의 상호작용이 제대로 되나 다시 볼 필요 있음.
+ */
 
-class ContentsHomeActivity : AppCompatActivity(), RecyclerViewClickListener, DatePickerDialog.OnDateSetListener {
+class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
-    private var othersArrayList=  mutableListOf<StoriesModel>()
-    private var recyclerView: RecyclerView? = null
+    private var storyArrayList=  mutableListOf<StoriesModel>()
+    private var storyView: RecyclerView? = null
     private var storiesAdapter: StoriesAdapter? = null
-    private var text_joinedORnot: TextView? = null
-    private var remainingTime: TextView? = null
+
+
     private var contentJoinButton: Button? = null
-    private var pAdapter: ContentsPagerAdapter? = null
+    private var contentsPagerAdapter: ContentsPagerAdapter? = null
+    private var contentsViewPager: ViewPager? = null
 
-    // 사용자의 jwt-token
-    var jwtToken: String ?= null
-    var contentName: TextView ?= null
-    var contentDuration: TextView ?= null
-    var startDate: JSONObject?= null
-    var endDate: JSONObject?= null
+    private var textContentName: TextView? = null
+    private var textJoinState: TextView? = null
 
-    var content: String ?= null
-    var joinState: Int ?= null
-    var tmpRequestCode: Int ?= null
+    private var contentDuration: TextView? = null
+    private var tmpRequestCode: Int = -1
 
-    var cm: Int ?= null
-    var rm: Int ?= null
+    private var selectedYear: Int? = null
+    private var selectedMonthOfYear: Int? = null
+    private var selectedDayOfMonth: Int? = null
 
-    var selectedYear: Int? = null
-    var selectedMonthOfYear: Int? = null
-    var selectedDayOfMonth: Int? = null
-    var tmpCalendar: Calendar? = null
+    var startDate: JSONObject? = null
+    var endDate: JSONObject? = null
 
-    var contentsHomeContext: Context? = null
-    val REQUEST_FOR_UPDATE_CONTENTS = 222
+    var content: String? = null
+    var joinState: Int? = null
 
-    var IS_FCM_FLAG = 0
 
-    var viewPager: ViewPager ?= null
+    override fun onCreate(savedInstanceState: Bundle?) {
 
-    override fun onBackPressed() {
-//        super.onBackPressed()
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_contents_home)
 
-//        val goToHome = Intent(applicationContext, HomeActivity::class.java)
-//        goToHome.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-//        startActivity(goToHome)
-        finish()
+
+        textJoinState = findViewById(R.id.id_joined_OR_not)
+        textContentName = findViewById(R.id.contentName)
+        contentDuration = findViewById(R.id.duration)
+        contentJoinButton = findViewById(R.id.button_to_join)
+
+        contentDuration!!.text = "기간"
+        content = intent.getStringExtra("contentName")
+        textContentName!!.text = content
+
+        initViewComponents()
+
+        contentJoinButton?.setOnClickListener {
+
+            goToJoinConfirm()
+
+        }
+
+        /** 위에까지가 View 생성, 여기서부터 FCM인지 체크해서 남은 동작 처리.*/
+        if( RequestCodeCollection.IS_FCM_FLAG == false ) {
+
+        } else {
+
+            RequestCodeCollection.IS_FCM_FLAG = false
+
+            val fcmCategory = intent.getStringExtra("fcm_category")
+
+            if( fcmCategory.equals("목표 달성 실패 알림") ) {
+
+                contentsViewPager?.currentItem = 1
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+                val goToPenalty = Intent(this, PenaltyActivity::class.java)
+                goToPenalty.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                goToPenalty.putExtra("contentName", content)
+
+                startActivityForResult(goToPenalty, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_PENALTY)
+
+            } else if ( fcmCategory.equals("인증 시간이 얼마 남지 않았어요!") ) {
+
+                Toast.makeText(this, "인증버튼을 눌러 인증을 시작해주세요", Toast.LENGTH_SHORT).show()
+
+            } else if( fcmCategory.equals("목표 달성 성공 알림") ) {
+
+                Toast.makeText(this, "보상 확인 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
+
+            } else if( fcmCategory.equals("과반수의 반대로 인증에 실패하셨습니다") ) {
+
+                Toast.makeText(this, "과반수의 반대로 인증에 실패하셨습니다", Toast.LENGTH_SHORT).show()
+
+                val rejectUserArray = intent.getStringExtra("rejectUserArray")
+                val rejectReasonArray = intent.getStringExtra("rejectReasonArray")
+
+                contentsViewPager?.currentItem = 1
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+                val goToReport = Intent(this, ReportActivity::class.java)
+                goToReport.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                goToReport.putExtra("contentName", content)
+                goToReport.putExtra("rejectUserArray", rejectUserArray)
+                goToReport.putExtra("rejectReasonArray", rejectReasonArray)
+
+                startActivityForResult(goToReport, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_REPORT)
+
+            } else if( fcmCategory.equals("마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.") ) {
+
+                contentsViewPager?.currentItem = 1
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+            }
+        }
+
     }
 
+    private fun initViewComponents(){
 
-    override fun recyclerViewListClicked(v: View, position: Int) {
-        Toast.makeText(getApplicationContext(), "position is $position", Toast.LENGTH_LONG)
+        val jsonObject = JSONObject()
+        jsonObject.put("token", loadJWTToken())
+        jsonObject.put("contentName", content)
+
+        VolleyHttpService.getParticipatedInfo(this, jsonObject){ success ->
+
+            joinState = success.getInt("joinState")
+            startDate = success.getJSONObject("startDate")
+            endDate = success.getJSONObject("endDate")
+
+            val durationView =
+                    "${startDate!!.getInt("year")}/${startDate!!.getInt("month")}/${startDate!!.getInt("day")} \n~ ${endDate!!.getInt("year")}/${endDate!!.getInt("month")}/${endDate!!.getInt("day")}"
+
+            contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
+            contentJoinButton!!.isEnabled = false
+            contentDuration!!.text = durationView
+
+            when(joinState){
+
+                0 -> { textJoinState?.text = "참가중 (시작전)" }
+
+                1 -> { textJoinState?.text =  "참가중 (진행중)" }
+
+                2 -> { textJoinState?.text = "목표 달성 성공" }
+
+                3-> {
+
+                    textJoinState?.text = "미참가중"
+
+                    contentJoinButton!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+                    contentJoinButton!!.isEnabled = true
+
+                    contentDuration!!.text = "기간"
+
+                }
+
+                4->{ textJoinState?.setText("목표 달성 실패") }
+
+            }
+
+            getStories()
+
+            contentsViewPager = findViewById(R.id.contents_pager_container)
+            contentsPagerAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
+            contentsViewPager!!.adapter = contentsPagerAdapter
+
+            contentsViewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+
+                override fun onPageScrollStateChanged(p0: Int) {}
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
+                override fun onPageSelected(p0: Int) {
+
+                    app_desc_indicator.selectDot(p0)
+
+                }
+
+            })
+
+            if( tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_PENALTY || tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_REPORT) {
+
+                contentsViewPager?.currentItem = 1
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+            } else {
+
+                contentsViewPager?.currentItem = 0
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
+
+            }
+
+
+        }
     }
 
-
+    /** 참여하기 클릭 후 일자 선택 시 작동 .*/
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
 
         selectedYear = year
         selectedMonthOfYear = monthOfYear + 1
         selectedDayOfMonth = dayOfMonth
 
-//        println("CHECK DATE: " + selectedYear + "/" + selectedMonthOfYear + "/" + selectedDayOfMonth)
-
         val goToConfirmingPage = Intent(applicationContext, ConfirmJoinActivity::class.java)
         goToConfirmingPage.putExtra("selectedYear", selectedYear!!) /*송신*/
         goToConfirmingPage.putExtra("selectedMonthOfYear", selectedMonthOfYear!!)
         goToConfirmingPage.putExtra("selectedDayOfMonth", selectedDayOfMonth!!)
         goToConfirmingPage.putExtra("contentName", content!!)
-        goToConfirmingPage.putExtra("token", jwtToken!!)
+        goToConfirmingPage.putExtra("token", loadJWTToken())
 
-        startActivityForResult(goToConfirmingPage, REQUEST_FOR_UPDATE_CONTENTS)
+        startActivityForResult(goToConfirmingPage, RequestCodeCollection.REQUEST_RETURN_FRON_CONFIRM_JOIN)
+
     }
-
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         super.onActivityResult(requestCode, resultCode, data)
-        println("TEST KAPPA 들어왓니 " + requestCode)
 
         tmpRequestCode = requestCode
-        when (requestCode) {
 
-            REQUEST_FOR_UPDATE_CONTENTS -> {
-                println("TEST------ 1")
-                getParticipatedInfo()
-                /* */
-            }
-
-            101 -> {
-                println("TEST------ 2")
-                /* TODO: 여기서 스토리를 없애는 처리를 해야된다.*/
-                getParticipatedInfo()
-            }
-
-            88 -> {
-                println("TEST KAPPA 왜 일로안와 ")
-                getParticipatedInfo()
-
-            }
-
-        }
-        println("ONACTIVITYTEST")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        println("RESTART contentHOME")
-    }
-
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_contents_home)
-
-        contentsHomeContext = this
-
-        text_joinedORnot = findViewById(R.id.id_joined_OR_not)
-
-        contentName = findViewById(R.id.contentName)
-        contentDuration = findViewById(R.id.duration)
-
-        contentDuration!!.setText("기간")
-
-        jwtToken = loadToken()
-
-        if(intent.getStringExtra("contentName")!=null){
-            content = intent.getStringExtra("contentName")
-            contentName!!.setText(content)
-        }
-
-        var ownIntent:Intent = intent
-
-        if(ownIntent.getStringExtra("fcm_category") != null){
-            if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 실패 알림") || ownIntent.getStringExtra("fcm_category").equals("목표 달성 성공 알림")){
-                IS_FCM_FLAG = 1
-            } else { IS_FCM_FLAG = 0 }
-        }
-
-
-        getParticipatedInfo()
-
-        val cal = Calendar.getInstance()
-        println("CALENDER TEST: " + cal)
-
-        contentJoinButton = findViewById(R.id.button_to_join)
-        contentJoinButton?.setOnClickListener {
-            contentJoin()
-        }
-
-
-        if(ownIntent.getStringExtra("fcm_category") == null){
-            // 아무것도 안해도 됨
-            println("TEST 334 -- 아무것도 안함")
-        }
-        else if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 실패 알림")){
-            // TODO 여기에 ContentHomeActivity 들어가야됨.
-            println("TEST 334 -- 목표 달성 실패 알림")
-//            viewPager?.currentItem = 1
-//            contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
-
-
-            val goToPenalty = Intent(this, PenaltyActivity::class.java)
-            goToPenalty.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            goToPenalty.putExtra("contentName", content)
-//            goToPenalty.putExtra("currentMoney", cm)
-            startActivityForResult(goToPenalty, 88)// PENALTY_CODE 여야하는데 그냥 REWARD랑 동일하게 둬도 정상동작.
-
-        }
-        else if(ownIntent.getStringExtra("fcm_category").equals("인증 시간이 얼마 남지 않았어요!")){
-            println("TEST 334 -- 인증시간 얼마안남음")
-            Toast.makeText(this, "인증버튼을 눌러 인증을 시작해주세요", Toast.LENGTH_SHORT).show()
-        }
-        else if(ownIntent.getStringExtra("fcm_category").equals("목표 달성 성공 알림")){
-            println("TEST 334 -- 목표달성 성공")
-            Toast.makeText(this, "보상 확인 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
-//            viewPager?.currentItem = 1
-//            contents_circle_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
-
-        }
-        else if(ownIntent.getStringExtra("fcm_category").equals("과반수의 반대로 인증에 실패하셨습니다")){
-            println("TEST 334 -- 과반수의 반대로 인증에 실패하셨습니다")
-            Toast.makeText(this, "과반수의 반대로 인증에 실패하셨습니다 - 나머지 짜세요", Toast.LENGTH_SHORT).show()
-            val rejectUserArray = ownIntent.getStringExtra("rejectUserArray")
-            val rejectReasonArray = ownIntent.getStringExtra("rejectReasonArray")
-
-            println("TESTINBLACK ----- USERs" + rejectUserArray.length + " :::: " + rejectUserArray!!)
-            println("TESTINBLACK ----- REASONs" + rejectReasonArray.length + " :::: " + rejectReasonArray!!)
-
-
-            val goToReport = Intent(this, ReportActivity::class.java)
-            goToReport.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            goToReport.putExtra("contentName", content)
-            goToReport.putExtra("rejectUserArray", rejectUserArray)
-            goToReport.putExtra("rejectReasonArray", rejectReasonArray)
-
-            startActivityForResult(goToReport, 88)// TODO 일단 REWARD랑 동일하게 두되 오류나면 수정필요
-
-
-            // TODO 여기서 신고 Activity 만들어야된다.
-
-        }
-
-
+        initViewComponents()
 
     }
 
-    private fun loadToken(): String{
-        var auto = PreferenceManager.getDefaultSharedPreferences(this)
-
-        return auto.getString("token", "")
-    }
-
-    private fun getParticipatedInfo(){
+    private fun goToJoinConfirm(){
 
         val jsonObject = JSONObject()
-        jsonObject.put("token", jwtToken)
+        jsonObject.put("token", loadJWTToken())
         jsonObject.put("contentName", content)
 
-        VolleyHttpService.getParticipatedInfo(this, jsonObject){ success ->
-            println(success)
-            println("팔티시페이트")
-
-            // Start Date + End Date (+ 추가)
-            // 3: 참여 X
-
-            // 0: 시작전 컨텐츠
-            // 1: 진행중 컨텐츠
-            // 2: 종료된 컨텐츠
-
-            joinState = success.getInt("joinState")
-            startDate = success.getJSONObject("startDate")
-            endDate = success.getJSONObject("endDate")
-
-            var d = "${startDate!!.getInt("year")}/${startDate!!.getInt("month")}/${startDate!!.getInt("day")} \n~ ${endDate!!.getInt("year")}/${endDate!!.getInt("month")}/${endDate!!.getInt("day")}"
-
-            when(joinState){
-                0 -> {
-                    text_joinedORnot?.setText("참가중 (시작전)")
-                    contentJoinButton!!.isEnabled = false
-                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
-                    contentDuration!!.setText(d)
-                }
-                1 -> {
-                    text_joinedORnot?.setText("참가중 (진행중)")
-                    contentJoinButton!!.isEnabled = false
-                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
-                    contentDuration!!.setText(d)
-                }
-                2 -> {
-                    text_joinedORnot?.setText("목표 달성 성공")
-                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
-                    contentJoinButton!!.isEnabled = false
-                    contentDuration!!.setText(d)
-                }
-                3-> {
-                    text_joinedORnot?.setText("미참가중")
-                    contentJoinButton!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
-                    contentJoinButton!!.isEnabled = true
-
-                }
-                4->{
-                    text_joinedORnot?.setText("목표 달성 실패")
-                    contentJoinButton!!.setTextColor(resources.getColor(R.color.icongrey))
-                    contentJoinButton!!.isEnabled = false
-                    contentDuration!!.setText(d)
-                }
-            }
-            viewPager = findViewById(R.id.contents_pager_container)
-            pAdapter = adapter.ContentsPagerAdapter(supportFragmentManager)
-            viewPager!!.adapter = pAdapter
-
-            if(tmpRequestCode == 88 || IS_FCM_FLAG == 1){
-                println("TEST KAPPA -- ")
-                viewPager?.currentItem = 1
-                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
-
-            }
-
-            viewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-                override fun onPageScrollStateChanged(p0: Int) {
-
-                }
-                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
-
-                }
-                override fun onPageSelected(p0: Int) {
-                    app_desc_indicator.selectDot(p0)
-                }
-            })
-
-            if(tmpRequestCode != 88 && IS_FCM_FLAG != 1){
-                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 0)
-            }
-            getOthers()
-
-        }
-    }
-
-    private fun getOthers(){
-
-        val jsonObject = JSONObject()
-        jsonObject.put("token", jwtToken)
-        jsonObject.put("contentName", content)
-
-        VolleyHttpService.getOthers(this, jsonObject){ success ->
-            println(success)
-            var others = success.getJSONArray("others")
-
-            println("TESTER___" + others)
-
-            recyclerView = findViewById(R.id.recystories)
-            val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
-            recyclerView!!.layoutManager = layoutManager
-            recyclerView!!.itemAnimator = DefaultItemAnimator()
-            othersArrayList = ArrayList()
-
-            for(i in 0..(others.length()-1)){
-                val storiesModel = StoriesModel()
-                var other = others[i] as JSONObject
-                storiesModel.email = other.getString("email")
-                storiesModel.name = other.getString("name")
-                storiesModel.contentName = content
-                println("STORY TEST: 스토리 뷰 생성할때 서버로부터 받는 email 및 name? ----" + storiesModel.email + " 그리고 " + storiesModel.name + " 컨텐츠는 " + storiesModel.contentName)
-                othersArrayList!!.add(storiesModel)
-            }
-
-            storiesAdapter = StoriesAdapter(this@ContentsHomeActivity, othersArrayList!!, this)
-            recyclerView!!.adapter = storiesAdapter
-
-        }
-    }
-
-    private fun contentJoin(){
-
-        val jsonObject = JSONObject()
-        jsonObject.put("token", jwtToken)
-        jsonObject.put("contentName", content)
         VolleyHttpService.contentJoin(this, jsonObject){ success ->
 
-            println(success)
-
-            var now: Calendar = Calendar.getInstance()
-            var datePickerDialog: DatePickerDialog = DatePickerDialog.newInstance(this@ContentsHomeActivity
+            val now: Calendar = Calendar.getInstance()
+            val datePickerDialog: DatePickerDialog = DatePickerDialog.newInstance(this@ContentsHomeActivity
                     , now.get(Calendar.YEAR)
                     , now.get(Calendar.MONTH)
                     , now.get(Calendar.DAY_OF_MONTH))
-            datePickerDialog.setTitle(("시작 날짜 선택"))
 
-            /* TODO: 아래 함수로 들어가서 서버랑 통신하면서 선택가능일자 받아와서 처리. */
+            datePickerDialog.setTitle(("시작 날짜 선택"))
             availableDaySetting(datePickerDialog, success)
-            /*------*/
             datePickerDialog.show(fragmentManager, "DatePicker")
 
             super.onResume()
+
         }
     }
 
     private fun availableDaySetting(datePickerDialog: DatePickerDialog, startDates: JSONObject) {
-        /*
-        TODO: 서버에서 시작가능일의 개수, 시작가능일을 받아와서 arrayOfNulls의 size에다가 넣고
-        TODO: 아래다가가 for문으로 시작가능일들을 calendars 배열에 쑤셔넣음. 그럼 됨.
-        */
 
+        val dates = startDates.getJSONArray("startDate")
+        val calendars = arrayOfNulls<Calendar>(dates.length())
 
-        var dates = startDates.getJSONArray("startDate")
-        var calendars = arrayOfNulls<Calendar>(dates.length())
+        var availableStartDate: JSONObject
+        var tmpDateToAdd: Calendar?
 
+        for(indexOfAvailableDates in 0 .. (dates.length() - 1) ){
 
-        var ymd: JSONObject
+            availableStartDate = dates[indexOfAvailableDates] as JSONObject
 
-        for(i in 0 .. dates.length()-1 ){
+            tmpDateToAdd = Calendar.getInstance()
+            tmpDateToAdd.set(Calendar.YEAR, availableStartDate.getInt("year"))
+            tmpDateToAdd.set(Calendar.MONTH, availableStartDate.getInt("month")-1)
+            tmpDateToAdd.set(Calendar.DAY_OF_MONTH, availableStartDate.getInt("day"))
 
-            ymd = dates[i] as JSONObject
-
-            /* < TODO: 현재는 임시 데이터 > */
-            tmpCalendar = Calendar.getInstance()
-            tmpCalendar!!.set(Calendar.YEAR, ymd.getInt("year"))
-            tmpCalendar!!.set(Calendar.MONTH, ymd.getInt("month")-1)
-            tmpCalendar!!.set(Calendar.DAY_OF_MONTH, ymd.getInt("day"))
-
-            calendars[i] = tmpCalendar
-            //            calendars.plus(tmpCalendar)
+            calendars[indexOfAvailableDates] = tmpDateToAdd
 
         }
 
-        println("CHECK CALENDAR ----" + tmpCalendar)
         datePickerDialog.selectableDays = calendars
         datePickerDialog.highlightedDays = calendars
+
+    }
+
+    private fun getStories(){
+
+        val jsonObject = JSONObject()
+        jsonObject.put("token", loadJWTToken())
+        jsonObject.put("contentName", content)
+
+        VolleyHttpService.getOthers(this, jsonObject){ success ->
+
+            val layoutManager = LinearLayoutManager(this@ContentsHomeActivity, LinearLayoutManager.HORIZONTAL, false)
+            val othersStories = success.getJSONArray("others")
+
+            storyView = findViewById(R.id.recystories)
+            storyView!!.layoutManager = layoutManager
+            storyView!!.itemAnimator = DefaultItemAnimator()
+            storyArrayList = ArrayList()
+
+            for(indexOfStories in 0..(othersStories.length()-1)){
+
+                val storiesModel = StoriesModel()
+                val other = othersStories[indexOfStories] as JSONObject
+
+                storiesModel.email = other.getString("email")
+                storiesModel.name = other.getString("name")
+                storiesModel.contentName = content
+                storyArrayList.add(storiesModel)
+
+            }
+
+            storiesAdapter = StoriesAdapter(this@ContentsHomeActivity, storyArrayList)
+            storyView!!.adapter = storiesAdapter
+
+        }
+    }
+
+    fun loadJWTToken(): String{
+
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        return sharedPref.getString("token", "")
+
     }
 
 }
+
+/** TODO 주석 지워라
+
+생성
+
+1. FCM으로 들어온 경우 - 마지막에 체크하면 될 듯 .
+2. 일반적인 경로로 들어온 경우
+
+[FCM]
+1. "목표 달성 실패 알림" - pager를 progress로 이동시킨 뒤 Penalty Activity로; ResultCode 필요?? -> 현 코드는 progress pager로 이동시키는데에 쓰이는듯
+2. "목표 달성 성공 알림" - pager만 progress로 이동 + Toast;
+3. "인증 시간이 얼마 남지 않았어요!" - 여기가 끝 + Toast
+4. "과반수의 반대로 인증에 실패하셨습니다" - Report Activity로; ResultCode 필요
+5(아직 미구현). "새로 인증해줘야 하는 사용자가 생김"
+
+[일반적인 경로]
+    joinState체크
+
+        참가중 (시작전)
+            joinState, duration 띄우고
+            참여하기 Button 비활
+
+
+        참가중 (진행중)
+            joinState, duration, 달력 띄우고
+            참여하기 Button 비활
+
+
+        목표 달성 성공
+            joinState, duration, 달력 띄우고
+            참여하기 Button 비활
+
+
+        목표 달성 실패
+            joinState, duration, 달력 띄우고
+            참여하기 Button 비활
+
+
+        미참가중
+            joinState, duration, 달력 띄우고
+            참여하기 Button 활성화
+
+ */
+

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_forgot_password.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
-/*
+/**
     REFACTORED.
  */
 

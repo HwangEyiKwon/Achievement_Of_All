@@ -3,10 +3,10 @@ package com.example.parkseunghyun.achievementofall.Fragments
 import android.Manifest
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -24,26 +24,21 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadinFlag
-import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
-import com.example.parkseunghyun.achievementofall.Configurations.ResultObject
-import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
-import com.example.parkseunghyun.achievementofall.Decorator.EventDecorator
-import com.example.parkseunghyun.achievementofall.Decorator.OneDayDecorator
-import com.example.parkseunghyun.achievementofall.Decorator.SaturdayDecorator
-import com.example.parkseunghyun.achievementofall.Decorator.SundayDecorator
-import com.example.parkseunghyun.achievementofall.Interfaces.VideoSendingInterface
+import com.example.parkseunghyun.achievementofall.CalendarDecorator.EventDecorator
+import com.example.parkseunghyun.achievementofall.CalendarDecorator.OneDayDecorator
+import com.example.parkseunghyun.achievementofall.CalendarDecorator.SaturdayDecorator
+import com.example.parkseunghyun.achievementofall.CalendarDecorator.SundayDecorator
+import com.example.parkseunghyun.achievementofall.Configurations.*
+import com.example.parkseunghyun.achievementofall.Interfaces.VideoUploadInterface
 import com.example.parkseunghyun.achievementofall.R
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import kotlinx.android.synthetic.main.fragment_contents_myinfo.*
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
-import org.w3c.dom.Text
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,8 +49,71 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
+/*
+[일반적인 경로]
+    joinState체크
 
+        참가중 (시작전)
+            joinState, duration, 달력, {남은 인증시간 -> 컨텐츠 시작까지 로 바꿔서} 띄우고
+            참여하기 Button 비활
+            인증하기 Button 비활
+
+            진행현황에서 보상 받기 Button 비활성
+            프로그레스바 0
+            {% 진행중입니다 -> 컨텐츠 시작 전입니다.}
+
+        참가중 (진행중)
+            joinState, duration, 달력, {남은 인증시간} 띄우고
+            참여하기 Button 비활
+            인증하기 Button은 다음 인증일 체크해서 활성/비활성: 일단은 현상유지하기 TODO 이거 더 못올리게 처리해야하나
+
+            진행현황에서 보상 받기 Button 비활성
+            환급가능 금액, 보상가능 금액 받아다가 출력
+            프로그레스바 0
+            {% 진행중입니다 -> 컨텐츠 시작 전입니다.}
+
+
+        목표 달성 성공
+            joinState, duration, 달력, {남은 인증시간} 띄우고
+            참여하기 Button 비활
+            인증하기 Button 비활성
+
+            진행현황에서 보상 받기 Button 비활성
+            환급가능 금액, 보상가능 금액 받아다가 출력
+            프로그레스바는 100이겠지.
+            {% 진행중입니다 -> 컨텐츠 시작 전입니다.}
+
+
+        목표 달성 실패
+            joinState, duration, 달력, {남은 인증시간} 띄우고
+            참여하기 Button 비활
+            인증하기 Button은 비활성
+
+            진행현황에서 보상 받기 Button 비활성
+            환급가능 금액, 보상가능 금액 받아다가 출력
+            프로그레스바 0
+            {% 진행중입니다 -> % 진행중에 실패하셨습니다.}
+
+
+
+        미참가중
+            joinState, duration, 달력, {남은 인증시간 -> 아직 참여중이지 않습니다} 띄우고
+            참여하기 Button 활성화
+            인증하기 Button 비활
+
+            진행현황에서 보상 받기 Button 비활성
+            프로그레스바 0
+            {% 진행중입니다 -> 아직 참가중이지 않습니다.}
+
+ */
+
+
+/*
+    남은 시간 알고리즘
+ */
+
+class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
+    private var mContext: Context? = null
     private var mView: View? = null
     private var calendar: MaterialCalendarView? = null
     private var goToVideoButton: Button? = null
@@ -117,10 +175,11 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     var d: Int ? = null
 
 
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        mContext = context
         mView =  inflater!!.inflate(R.layout.fragment_contents_myinfo, container, false)
-
         remainingDays = mView?.findViewById(R.id.remaining_days)
         remainingHours = mView?.findViewById(R.id.remaining_hours)
         remainingMinutes = mView?.findViewById(R.id.remaining_minutes)
@@ -137,11 +196,11 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 //        fab2 = mView?.findViewById(R.id.fab2)
         fabText = mView?.findViewById(R.id.fab_text)
 
-        fab_open = AnimationUtils.loadAnimation(activity, R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(activity, R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(mContext!!, R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(mContext!!, R.anim.fab_close);
 
-        val contentHomeActivity = activity as ContentsHomeActivity
-        jwtToken = contentHomeActivity.jwtToken.toString()
+        val contentHomeActivity = mContext!! as ContentsHomeActivity
+        jwtToken = contentHomeActivity.loadJWTToken()
         contentName = contentHomeActivity.content.toString()
         joinState = contentHomeActivity.joinState
         startDate = contentHomeActivity.startDate
@@ -157,23 +216,23 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
         goToVideoButton?.setOnClickListener{
             videoCaptureIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-            if (videoCaptureIntent!!.resolveActivity(activity.packageManager) != null) {
+            if (videoCaptureIntent!!.resolveActivity(mContext!!.packageManager) != null) {
 
-                if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.CAMERA)) {
-                            startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.CAMERA)) {
+                            startActivityForResult(videoCaptureIntent, RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD)
                             // 1) 모든 권한이 있다면 바로 카메라 실행
                         } else {
-                            EasyPermissions.requestPermissions(this, getString(R.string.read_file), REQUEST_VIDEO_CAPTURE, Manifest.permission.CAMERA)
+                            EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_CAMERA, Manifest.permission.CAMERA)
                             // 4) READ권한, WRITE권한이 있는데 카메라 권한이 없다면 권한 요청 -> onPermissionsGranted 함수에서 바로 카메라 실행.
                         }
                     } else {
-                        EasyPermissions.requestPermissions(this, getString(R.string.read_file), WRITE_REQUEST_CODE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_WRITE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         // 3) READ권한은 있고 WRITE권한이 없다면 권한 요청 -> onPermissionsGranted 함수에서 체인형태로 CAMERA 이어서 확인.
                     }
                 } else {
-                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_READ, Manifest.permission.READ_EXTERNAL_STORAGE)
                     // 2) READ권한이 없다면 권한 요청 -> onPermissionsGranted 함수에서 체인형태로 WRITE, CAMERA 이어서 확인.
                 }
             }
@@ -215,11 +274,13 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         if (resultCode == Activity.RESULT_OK ) {
 
             when (requestCode){
-                REQUEST_VIDEO_CAPTURE -> {
+                RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD -> {
 
                     uri = data?.data
                     pathToStoredVideo = getRealPathFromURIPath(uri!!, activity)
+                    goToVideoButton!!.isEnabled = false //TODO 이거 false임
                     uploadVideoToServer(pathToStoredVideo!!)
+
                 }
             }
         }
@@ -236,27 +297,27 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         when(requestCode){
             READ_REQUEST_CODE -> {
-                if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.CAMERA)) {
-                        startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.CAMERA)) {
+                        startActivityForResult(videoCaptureIntent, RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD)
                     } else {
-                        EasyPermissions.requestPermissions(this, getString(R.string.read_file), REQUEST_VIDEO_CAPTURE, Manifest.permission.CAMERA)
+                        EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_CAMERA, Manifest.permission.CAMERA)
                     }
                 } else {
-                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), WRITE_REQUEST_CODE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_WRITE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }
 
             WRITE_REQUEST_CODE -> {
-                if (EasyPermissions.hasPermissions(activity, android.Manifest.permission.CAMERA)) {
-                    startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.CAMERA)) {
+                    startActivityForResult(videoCaptureIntent, RequestCodeCollection.GRANT_REQUEST_CAMERA)
                 } else {
-                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), REQUEST_VIDEO_CAPTURE, Manifest.permission.CAMERA)
+                    EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_CAMERA, Manifest.permission.CAMERA)
                 }
             }
 
             REQUEST_VIDEO_CAPTURE -> {
-                startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE)
+                startActivityForResult(videoCaptureIntent, RequestCodeCollection.GRANT_REQUEST_CAMERA)
             }
         }
     }
@@ -265,64 +326,79 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     }
 
+
+
     private fun getCalendarInfo(token: String, contentName: String){
+
         val jsonObject = JSONObject()
         jsonObject.put("token", token)
         jsonObject.put("contentName", contentName)
 
-        VolleyHttpService.getCalendarInfo(this.context, jsonObject){ success ->
-            println("달력달력"+success)
+        VolleyHttpService.getCalendarInfo(mContext!!, jsonObject){ success ->
+
             settingCalendar(success)
+
         }
+
     }
 
     private fun uploadVideoToServer(pathToVideoFile: String) {
+
         val videoFile = File(pathToVideoFile)
         val videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile)
         val vFile = MultipartBody.Part.createFormData("video", videoFile.name, videoBody)
 
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(object:Interceptor {
+
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain?): okhttp3.Response {
+
                 val original = chain!!.request()
                 val request = original.newBuilder()
                         .header("content_name", contentName)
                         .header("jwt_token", jwtToken)
                         .method(original.method(), original.body())
                         .build()
-                return chain!!.proceed(request)
+                return chain.proceed(request)
+
             }
+
         })
 
         val client = httpClient.build()
         val retrofit = Retrofit.Builder()
                 .baseUrl(ipAddress)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(client) // >>>>>>
+                .client(client)
                 .build()
-        val vInterface = retrofit.create(VideoSendingInterface::class.java)
+        val vInterface = retrofit.create(VideoUploadInterface::class.java)
         val serverCom = vInterface.uploadVideoToServer(vFile)
 
-        serverCom.enqueue(object : Callback<ResultObject> {
-            override fun onResponse(call: Call<ResultObject>, response: Response<ResultObject>) {
+        serverCom.enqueue(object : Callback<ResultObjectFromRetrofit2> {
+
+            override fun onResponse(call: Call<ResultObjectFromRetrofit2>, response: Response<ResultObjectFromRetrofit2>) {
+
                 val result = response.body()
 
                 if (!TextUtils.isEmpty(result.success)) {
-                    GlideLoadinFlag.setThumbnailFlag(true)
-                    Toast.makeText(activity, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
+
+                    GlideLoadingFlag.setThumbnailFlag(true)
+                    Toast.makeText(mContext, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
+
                 }
 
                 getCalendarInfo(jwtToken!!,contentName!!)
 
-                // Remove video from my storage.
                 forRemoveFile = File(pathToStoredVideo)
                 forRemoveFile?.delete()
-                var resolver: ContentResolver? = activity.contentResolver
+
+                val resolver: ContentResolver? = mContext!!.contentResolver
                 resolver?.delete(uri, null, null)
 
             }
-            override fun onFailure(call: Call<ResultObject>, t: Throwable) {
+
+            override fun onFailure(call: Call<ResultObjectFromRetrofit2>, t: Throwable) {
 
             }
         })
@@ -484,12 +560,12 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
         calendar!!.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected -> Log.e("DAY", "DAY:$date") })
-        calendar!!.addDecorators(EventDecorator(Color.RED, successDates, activity, "success"))
-        calendar!!.addDecorators(EventDecorator(Color.RED, failDates, activity, "fail"))
-        calendar!!.addDecorators(EventDecorator(Color.RED, notYetDates, activity, "notYet"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, successDates, mContext!! , "success"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, failDates, mContext!!, "fail"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, notYetDates, mContext!!, "notYet"))
 
-        calendar!!.addDecorators(EventDecorator(Color.RED, sDate, activity, "startDate"))
-        calendar!!.addDecorators(EventDecorator(Color.RED, eDate, activity, "endDate"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, sDate, mContext!!, "startDate"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, eDate, mContext!!, "endDate"))
     }
 
 
@@ -524,8 +600,10 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
             contents_over_msg!!.visibility = View.VISIBLE
 
-            goToVideoButton!!.isEnabled = false
-            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
+            goToVideoButton!!.isEnabled = false //TODO 이거 false임
+//            goToVideoButton!!.isEnabled = true
+
+//            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
 
         }
     }

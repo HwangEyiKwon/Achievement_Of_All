@@ -8,14 +8,14 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.Configurations.MyFirebaseInstanceIDService
+import com.example.parkseunghyun.achievementofall.Configurations.FirebaseInstanceIDService
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
 import kotlinx.android.synthetic.main.container_contents_pager.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
-/*
+/**
     REFACTORED.
  */
 
@@ -108,12 +108,12 @@ class AppStartActivity : AppCompatActivity() {
 
     private fun loadData(): JSONObject {
 
-        var auto = PreferenceManager.getDefaultSharedPreferences(this)
+        val auto = PreferenceManager.getDefaultSharedPreferences(this)
 
         val jsonObject = JSONObject()
-        var email = auto.getString("email","0")
-        var password = auto.getString("password","0")
-        var isChecked = auto.getBoolean("isChecked",false)
+        val email = auto.getString("email","0")
+        val password = auto.getString("password","0")
+        val isChecked = auto.getBoolean("isChecked",false)
 
         jsonObject.put("email", email)
         jsonObject.put("password",password)
@@ -131,16 +131,15 @@ class AppStartActivity : AppCompatActivity() {
 
         VolleyHttpService.login(this, jsonObject) { success ->
 
-            if (success.get("success") == true) { // 로그인 성공
+            if (success.get("success") == true) {
 
-                val fcmService = MyFirebaseInstanceIDService()
+                val fcmService = FirebaseInstanceIDService()
                 fcmService.onTokenRefresh()
 
-                val jsonObjectForFCM = fcmService.jsonObject as JSONObject
+                val jsonObjectForFCM = fcmService.jsonObjectForRefreshFCM as JSONObject
                 jsonObjectForFCM.put("email", email)
                 sendFCMToken(jsonObjectForFCM)
 
-                // 자동 로그인을 위한 정보 저장
                 saveDataForAutoLogin(email, password)
 
                 val jwtToken = success.getJSONObject("headers").get("token")
@@ -149,7 +148,7 @@ class AppStartActivity : AppCompatActivity() {
 
                 startActivity<HomeActivity>()
 
-            } else { // 로그인 실패
+            } else {
 
                 saveDataForAutoLogin("0", "0")
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
@@ -184,11 +183,13 @@ class AppStartActivity : AppCompatActivity() {
     private fun sendFCMToken(jsonObject: JSONObject){
 
         VolleyHttpService.sendToken(this, jsonObject) { success ->
+
             if (success) {
-//                Toast.makeText(this, "FCM 토큰 성공", Toast.LENGTH_LONG).show()
+
             } else {
-//                Toast.makeText(this, "FCM 토큰 실패", Toast.LENGTH_LONG).show()
+
             }
+
         }
 
     }

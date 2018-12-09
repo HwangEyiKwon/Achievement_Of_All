@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
@@ -16,15 +17,12 @@ import com.example.parkseunghyun.achievementofall.R
 import model.ThumbnailModel
 import org.jetbrains.anko.startActivity
 
-
-/*
+/**
     REFARCTORED
-    TODO: Glide Placeholder
  */
 
 class ThumbnailAdapter(private val context: Context, private val thumbnailModels: List<ThumbnailModel>) : RecyclerView.Adapter<ThumbnailAdapter.ViewHolder>() {
 
-    // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
@@ -55,23 +53,20 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
                     .into(holder.thumbnailView)
 
             holder.videoName = videoPath
-        }
 
-        else if(who == "other"){
+        } else if(who == "other"){
 
             val videoPath = thumbnailModels[position].videoPath!!.getString("path")
 
             val email = thumbnailModels[position].userEmail
             val contentName = thumbnailModels[position].contentName
 
-//            val requestOptions = RequestOptions()
             Glide
                     .with(context)
                     .load("${ipAddress}/getOtherUserVideo/${email}/${contentName}/${videoPath}")
                     .apply(RequestOptions().fitCenter())
                     .apply(RequestOptions().centerCrop())
                     .apply(RequestOptions().transform(RoundedCorners(20)))
-                    .apply(RequestOptions().skipMemoryCache(true))
                     .into(holder.thumbnailView)
 
             holder.videoName = videoPath

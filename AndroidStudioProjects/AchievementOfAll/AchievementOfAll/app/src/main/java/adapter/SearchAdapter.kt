@@ -15,7 +15,7 @@ import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
-/*
+/**
     REFARCTORED
  */
 
@@ -66,13 +66,11 @@ class SearchAdapter(private val list: List<String>, private val emailList: List<
 
                 val intentForContentsHome = Intent(context, ContentsHomeActivity::class.java)
                 intentForContentsHome.putExtra("contentName", list[position])
+
                 val contextToActivity = context as Activity
                 contextToActivity.startActivityForResult(intentForContentsHome, RequestCodeCollection.REQUEST_RETURN_FROM_SEARCH)
 
             }else if(categoryToSearch == "user"){
-
-//                val string= list[position]
-//                val userObjects = JSONObject(string)
 
                 context.startActivity<OtherUserHomeActivity>(
 

@@ -6,14 +6,14 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Patterns
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.Configurations.MyFirebaseInstanceIDService
+import com.example.parkseunghyun.achievementofall.Configurations.FirebaseInstanceIDService
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.startActivity
 import org.json.JSONObject
 
-/*
+/**
     REFACTORED.
  */
 
@@ -25,7 +25,6 @@ class LoginActivity : AppCompatActivity() {
 
         initButtonListener()
 
-        // 회원가입 직후 로그인 화면 전환
         if(intent.getStringExtra("email") != null){
             val afterSignup = intent.getStringExtra("email")
             user_email_to_find_pw.setText(afterSignup)
@@ -39,11 +38,14 @@ class LoginActivity : AppCompatActivity() {
             val userEmail = user_email_to_find_pw.text.toString()
             val userPW = edit_text_user_pw.text.toString()
 
-            // 로그인
             if (!Patterns.EMAIL_ADDRESS.matcher(user_email_to_find_pw.text).matches()) {
-                Toast.makeText(this, "이메일 형식이 아닙니다. \n Modal@gmail.com", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(this, "이메일 형식이 아닙니다. \n Modal@gmail.com", Toast.LENGTH_SHORT).show()
+
             } else {
+
                 loginRequest(userEmail, userPW)
+
             }
         }
 
@@ -55,7 +57,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // SharedPreferences
     private fun saveDataForAutoLogin(email: String, password: String){
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -68,7 +69,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    // SharedPreferences (jwt-token)
     private fun saveJwtToken(token: String){
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -79,7 +79,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    // 로그인
     private fun loginRequest(email: String, password: String){
 
         val jsonObject = JSONObject()
@@ -87,16 +86,15 @@ class LoginActivity : AppCompatActivity() {
         jsonObject.put("password",password)
 
         VolleyHttpService.login(this, jsonObject) { success ->
-            if (success.get("success") == true) { // 로그인 성공
+            if (success.get("success") == true) {
 
-                val fcmService = MyFirebaseInstanceIDService()
+                val fcmService = FirebaseInstanceIDService()
                 fcmService.onTokenRefresh()
 
-                val jsonObjectForFCM = fcmService.jsonObject as JSONObject
+                val jsonObjectForFCM = fcmService.jsonObjectForRefreshFCM as JSONObject
                 jsonObjectForFCM.put("email", email)
                 sendFCMToken(jsonObjectForFCM)
 
-                // 자동 로그인을 위한 정보 저장
                 saveDataForAutoLogin(email, password)
 
                 val jwtToken = success.getJSONObject("headers").get("token")
@@ -106,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
                 val goToHome = Intent(applicationContext, HomeActivity::class.java)
                 startActivity(goToHome)
 
-            } else { // 로그인 실패
+            } else {
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_LONG).show()
             }
         }
@@ -115,11 +113,13 @@ class LoginActivity : AppCompatActivity() {
     private fun sendFCMToken(jsonObject: JSONObject){
 
         VolleyHttpService.sendToken(this, jsonObject) { success ->
+
             if (success) {
-//                Toast.makeText(this, "FCM 토큰 성공", Toast.LENGTH_LONG).show()
+
             } else {
-//                Toast.makeText(this, "FCM 토큰 실패", Toast.LENGTH_LONG).show()
+
             }
+
         }
 
     }

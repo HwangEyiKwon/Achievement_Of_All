@@ -9,6 +9,8 @@ import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 
+// TODO 여기를 공지가 아니라 규칙으로 걍 바꿔야될듯.
+
 class ContentsNoticePager : Fragment() {
 
 
@@ -21,12 +23,12 @@ class ContentsNoticePager : Fragment() {
         view_ =  inflater!!.inflate(R.layout.fragment_contents_noti, container, false)
         val activity = activity as ContentsHomeActivity
         contentName = activity.content.toString()
-        println("TEST3 " + contentName)
 
         contentsName = view_?.findViewById(R.id.id_contents_name_3)
         contentsName?.setText(contentName)
 
 
         return view_
+
     }
 }
