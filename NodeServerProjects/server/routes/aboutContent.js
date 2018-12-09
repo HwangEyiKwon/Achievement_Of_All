@@ -9,10 +9,17 @@ router.get('/contentJoin/:contentName', function (req,res) {
   console.log("contentJoin Start");
   var contentName = req.params.contentName;
 
-  Content.find({name : contentName, isDone: 2}, function(err, contentList) {
+  var todayDate = new Date();
+  var todayMonth = todayDate.getMonth() + 1;
+  var todayDay = todayDate.getDate();
+  var todayYear = todayDate.getFullYear();
+
+  var today = new Date(todayYear, todayMonth-1, todayDate);
+
+//  Content.find({name : contentName, isDone: 2}, function(err, contentList) {
+  Content.find({ $or: [ { name: contentName, isDone: 2 }, {name: contentName, isDone: 0, startDate: today}]}, function(err,contentList){
     var contentCount = Object.keys(contentList).length;
     var startDate = new Array();
-
     //var endDate = new Array();
     //var contentIdArray = new Array();
 
