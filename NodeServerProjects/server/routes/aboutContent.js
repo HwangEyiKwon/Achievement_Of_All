@@ -14,10 +14,13 @@ router.get('/contentJoin/:contentName', function (req,res) {
   var todayDay = todayDate.getDate();
   var todayYear = todayDate.getFullYear();
 
-  var today = new Date(todayYear, todayMonth-1, todayDate);
+  var today = new Date(todayYear, todayMonth-1, todayDay);
 
-//  Content.find({name : contentName, isDone: 2}, function(err, contentList) {
+ // Content.find({name : contentName, isDone: 2}, function(err, contentList) {
   Content.find({ $or: [ { name: contentName, isDone: 2 }, {name: contentName, isDone: 0, startDate: today}]}, function(err,contentList){
+//   Content.find({name: contentName, isDone: 0, startDate: today}, function(err,contentList){
+    console.log("today : " +today);
+    console.log("contentLsit : "+contentList);
     var contentCount = Object.keys(contentList).length;
     var startDate = new Array();
     //var endDate = new Array();
