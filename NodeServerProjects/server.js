@@ -35,7 +35,7 @@ var titleAuthen = "인증";
 var titleSuccess = "성공";
 var titleVideoFail = "비디오실패";
 var titleWillSuccess = "성공예정";
-
+var titleNewVideo = "새영상";
 
 var schedule = require('node-schedule');
 var FCM = require('fcm-node');
@@ -620,6 +620,17 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
           return;
         }
         console.log('성공 예정 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleNewVideo){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('새영상 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('새영상 Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
