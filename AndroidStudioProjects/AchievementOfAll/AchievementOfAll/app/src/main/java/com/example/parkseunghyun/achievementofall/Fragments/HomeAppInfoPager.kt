@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
 
-/*
+/**
     REFARCTORED
  */
 

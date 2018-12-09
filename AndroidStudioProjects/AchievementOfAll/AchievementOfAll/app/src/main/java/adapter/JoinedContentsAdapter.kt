@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -16,17 +15,14 @@ import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.R
-import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import de.hdodenhof.circleimageview.CircleImageView
 
-/*
+/**
     REFARCTORED
-    TODO: Glide Placeholder
  */
 
-class JoinedContentsAdapter(private val context: Context, private val joinedContentsModels: List<model.JoinedContentsModel>, itemListener: RecyclerViewClickListener) : RecyclerView.Adapter<JoinedContentsAdapter.ViewHolder>() {
+class JoinedContentsAdapter(private val context: Context, private val joinedContentsModels: List<model.JoinedContentsModel>) : RecyclerView.Adapter<JoinedContentsAdapter.ViewHolder>() {
 
-    // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
@@ -38,7 +34,7 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // 사용자 참여 컨텐츠 이미지 받아오기
+
         val contentImage = joinedContentsModels[position].name
 
         Glide

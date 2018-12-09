@@ -17,7 +17,7 @@ import com.studio572.searchlistview.SearchAdapter
 import org.json.JSONArray
 import org.json.JSONObject
 
-/*
+/**
     REFARCTORED
  */
 
@@ -25,14 +25,14 @@ class HomeSearchPager : Fragment() {
 
     private var homeSearchView: View? = null
 
-    private var editSearch: EditText? = null                // 검색어를 입력할 Input 창
-    private var searchedList: MutableList<String>? = null   // 데이터를 넣은 리스트변수
-    private var searchedEmailList: MutableList<String>? = null   // 데이터를 넣은 리스트변수
+    private var editSearch: EditText? = null
+    private var searchedList: MutableList<String>? = null
+    private var searchedEmailList: MutableList<String>? = null
 
     private var searchedArraylist: ArrayList<String>? = null
-    private var searchedListView: ListView? = null          // 검색을 보여줄 리스트변수
+    private var searchedListView: ListView? = null
 
-    private var searchAdapter: SearchAdapter? = null        // 리스트뷰에 연결할 아답터
+    private var searchAdapter: SearchAdapter? = null
 
     private var selectSearchingTab: TabLayout? = null
 
@@ -45,8 +45,7 @@ class HomeSearchPager : Fragment() {
 
         generateTabLayout()
 
-        // 검색에 사용할 데이터을 미리 저장한다.
-        settingContentList()
+        settingContentList() /** 검색에 사용할 데이터을 미리 저장한다. */
 
         return homeSearchView
     }
@@ -75,20 +74,18 @@ class HomeSearchPager : Fragment() {
 
 
     fun search(charText: String) {
-        // 문자 입력시마다 리스트를 지우고 새로 뿌려준다.
+
         searchedList!!.clear()
         searchedEmailList!!.clear()
 
-        // 문자 입력이 없을때는 모든 데이터를 보여준다.
         if (charText.replace(" ","").equals("")) {
 
             searchedList!!.addAll(searchedArraylist!!)
 
         } else {
-            // 리스트의 모든 데이터를 검색한다.
 
             for (indexOfSearchedList in 0 until searchedArraylist!!.size) {
-                // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
+
                 if (searchedArraylist!![indexOfSearchedList].contains(charText, ignoreCase = true)) {
 
                     searchedList!!.add(searchedArraylist!![indexOfSearchedList])
@@ -97,7 +94,7 @@ class HomeSearchPager : Fragment() {
 
             }
         }
-        // 리스트 데이터가 변경되었으므로 아답터를 갱신하여 검색된 데이터를 화면에 보여준다.
+
         searchAdapter!!.notifyDataSetChanged()
 
     }
@@ -136,11 +133,10 @@ class HomeSearchPager : Fragment() {
 
             val usersData = success.get("users") as JSONArray
 
-            for (i in 0..(usersData.length() - 1)) {
+            for (indexOfUserDate in 0..(usersData.length() - 1)) {
 
-//                searchedList?.add((usersData[i] as JSONObject).getString("name"))
-                searchedList?.add((usersData[i] as JSONObject).getString("name"))
-                searchedEmailList?.add((usersData[i] as JSONObject).getString("email"))
+                searchedList?.add((usersData[indexOfUserDate] as JSONObject).getString("name").replace("+", " "))
+                searchedEmailList?.add((usersData[indexOfUserDate] as JSONObject).getString("email"))
 
             }
 

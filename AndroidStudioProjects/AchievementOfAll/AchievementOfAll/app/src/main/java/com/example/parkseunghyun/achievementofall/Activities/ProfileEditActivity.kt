@@ -32,7 +32,7 @@ import java.io.IOException
 import java.net.URLEncoder
 
 
-/*
+/**
     REFARCTORED
     TODO: Glide Placeholder line 126 ~
  */
@@ -51,7 +51,6 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
     private var uri: Uri? = null
     private var pathToStoredImage: String? = null
 
-    // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
@@ -113,8 +112,10 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
         goPasswordEdit.setOnClickListener {
 
             startActivity<PasswordEditActivity>(
+
                     "name" to nickName,
                     "phoneNumber" to phoneNumber
+
             )
 
             finish()
@@ -137,15 +138,30 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
         readImageIntent!!.type = "image/*"
         readImageIntent!!.action = Intent.ACTION_PICK
 
+        if(GlideLoadingFlag.profileURI != null){
 
-        Glide
-                .with(this)
-                .load("${ipAddress}/getUserImage/" + loadJWTToken())
-                .apply(RequestOptions().fitCenter())
-                .apply(RequestOptions().centerCrop())
-                .apply(RequestOptions().skipMemoryCache(true))
-                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-                .into(userImage)
+            Glide
+                    .with(this)
+                    .load(GlideLoadingFlag.profileURI)
+                    .apply(RequestOptions().fitCenter())
+                    .apply(RequestOptions().centerCrop())
+                    .into(userImage)
+
+        } else {
+
+            Glide
+                    .with(this)
+                    .load("${ipAddress}/getUserImage/" + loadJWTToken())
+                    .apply(RequestOptions().fitCenter())
+                    .apply(RequestOptions().centerCrop())
+                    .apply(RequestOptions().skipMemoryCache(true))
+                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                    .into(userImage)
+
+        }
+
+
+
 
     }
 
@@ -164,7 +180,7 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
             if (success.get("success") == true) { //  성공
 
                 Toast.makeText(this, "프로필 수정 완료", Toast.LENGTH_LONG).show()
-                GlideLoadinFlag.setProfileFlag(GlideLoadinFlag.FLAG_UPDATED)
+                GlideLoadingFlag.setProfileWithOutImageFlag(GlideLoadingFlag.FLAG_UPDATED)
 
                 finish()
 
@@ -188,7 +204,14 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
                     uri = data!!.data
                     pathToStoredImage = getRealPathFromURIPath(uri!!, this)
-                    userImage!!.setImageURI(uri)
+                    saveUriForSelfCaching(uri.toString())
+
+                    Glide
+                            .with(this)
+                            .load(uri)
+                            .apply(RequestOptions().fitCenter())
+                            .apply(RequestOptions().centerCrop())
+                            .into(userImage)
 
                 }
 
@@ -225,7 +248,7 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
                         .method(original.method(), original.body())
                         .build()
 
-                return chain!!.proceed(request)
+                return chain.proceed(request)
 
             }
         })
@@ -234,20 +257,19 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
         val retrofit = Retrofit.Builder()
                 .baseUrl(ipAddress)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(client) // >>>>>>
+                .client(client)
                 .build()
 
         val vInterface = retrofit.create(ImageUploadInterface::class.java)
         val serverCom = vInterface.uploadImageToServer(multipartVideoFile)
 
-        serverCom.enqueue(object : Callback<ResultObject> {
-            override fun onResponse(call: Call<ResultObject>, response: Response<ResultObject>) {
+        serverCom.enqueue(object : Callback<ResultObjectFromRetrofit2> {
+            override fun onResponse(call: Call<ResultObjectFromRetrofit2>, response: Response<ResultObjectFromRetrofit2>) {
                 val result = response.body()
 
                 if (!TextUtils.isEmpty(result.success)) {
 
-                    GlideLoadinFlag.setProfileFlag(GlideLoadinFlag.FLAG_UPDATED)
-
+                    GlideLoadingFlag.setProfileWithImageFlag(GlideLoadingFlag.FLAG_UPDATED)
 
                     Toast.makeText(applicationContext, "프로필 수정 완료", Toast.LENGTH_SHORT).show()
                     finish()
@@ -255,7 +277,7 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
                 }
 
             }
-            override fun onFailure(call: Call<ResultObject>, t: Throwable) {
+            override fun onFailure(call: Call<ResultObjectFromRetrofit2>, t: Throwable) {
                 Toast.makeText(applicationContext, "프로필 수정 실패", Toast.LENGTH_SHORT).show()
             }
         })
@@ -311,5 +333,15 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
     }
 
+    private fun saveUriForSelfCaching(imageUri: String){
+
+        val sharedPrefForSaveImage = PreferenceManager.getDefaultSharedPreferences(this)
+        val editorForSaveImageUri = sharedPrefForSaveImage.edit()
+
+        editorForSaveImageUri
+                .putString("imageUri", imageUri)
+                .apply()
+
+    }
 
 }

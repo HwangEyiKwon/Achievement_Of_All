@@ -10,31 +10,16 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadinFlag
+import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadingFlag
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 
-/*
+/**
     REFARCTORED
  */
-
-/*
-        홈화면 정리
-
-        1. 일반적인 로그인상황 (O) REQUEST_DEFAULT_CREATION
-
-        2. FCM으로 들어가는 상황 (O) REQUEST_DEFAULT_CREATION
-
-        3. 프로필 이미지 수정 후 or  프로필 이름 등 텍스트 파트 수정 후 업데이트 필요한 상황
-
-        4. 컨텐츠에 새로 가입후 되돌아와서 업데이트 필요한 상황
-            SearchPager에서 ContentHome에 갓다가 돌아오는 경우
-
-        5. 참여 컨텐츠에 들어가서 인증 후 돌아오면 썸네일 업뎃이 필요
-*/
 
 class HomeActivity : AppCompatActivity() {
 
@@ -69,6 +54,7 @@ class HomeActivity : AppCompatActivity() {
     private fun initButtonListener() {
 
         val logoutButton = findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.logoutButton)
+
         logoutButton.setOnClickListener {
 
             logoutRequest(jwtToken.toString())
@@ -141,7 +127,7 @@ class HomeActivity : AppCompatActivity() {
 
             RequestCodeCollection.REQUEST_RETURN_FROM_JOINED_CONTENT -> {
 
-                if(GlideLoadinFlag.getThumbnailFlag() == GlideLoadinFlag.FLAG_UPDATED) {
+                if(GlideLoadingFlag.getThumbnailFlag() == GlideLoadingFlag.FLAG_UPDATED) {
 
                     homePagerAdapter = HomePagerAdapter(supportFragmentManager)
                     viewPagerForHomeTab?.adapter = homePagerAdapter
@@ -153,8 +139,9 @@ class HomeActivity : AppCompatActivity() {
 
             RequestCodeCollection.REQUEST_RETURN_FROM_SEARCH -> {
 
-                if(GlideLoadinFlag.getJoinedContentFlag() == GlideLoadinFlag.FLAG_UPDATED) {
+                if(GlideLoadingFlag.getJoinedContentFlag() == GlideLoadingFlag.FLAG_UPDATED) {
 
+                    GlideLoadingFlag.setJoinedContentFlag(GlideLoadingFlag.FLAG_NOT_UPDATED)
                     homePagerAdapter = HomePagerAdapter(supportFragmentManager)
                     viewPagerForHomeTab?.adapter = homePagerAdapter
                     viewPagerForHomeTab!!.currentItem = homeTab!!.selectedTabPosition
@@ -165,7 +152,7 @@ class HomeActivity : AppCompatActivity() {
 
             RequestCodeCollection.REQUEST_RETURN_FROM_PROFILE_EDIT -> {
 
-                if(GlideLoadinFlag.getProfileFlag() == GlideLoadinFlag.FLAG_UPDATED) {
+                if(GlideLoadingFlag.getProfileFlag() == GlideLoadingFlag.FLAG_UPDATED) {
 
                     homePagerAdapter = HomePagerAdapter(supportFragmentManager)
                     viewPagerForHomeTab?.adapter = homePagerAdapter
@@ -188,13 +175,12 @@ class HomeActivity : AppCompatActivity() {
                 saveJWTToken("")
                 Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_LONG).show()
 
-            /* 이것은 로그아웃 후 어플 재실행 시 자동로그인이 되버리는 것을 방지. */
+            /** 이것은 로그아웃 후 어플 재실행 시 자동로그인 + 이전 캐싱 이미지가 로딩 되버리는 것을 방지. */
                 val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
                 val editorToClearLoginInfo = sharedPref.edit()
                 editorToClearLoginInfo
                         .clear()
                         .apply()
-            /* 여기까지용 */
 
                 finish()
 
@@ -204,7 +190,6 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    // SharedPreferences (jwt-token)
     private fun saveJWTToken(token: String){
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val editorToSaveJWTToken = sharedPref.edit()
@@ -232,18 +217,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         super.onActivityResult(requestCode, resultCode, data)
-
-        /*
-
-        3. 프로필 이미지 수정 후 or 프로필 이름 등 텍스트 파트 수정 후 업데이트 필요한 상황
-
-        4. 컨텐츠에 새로 가입후 되돌아와서 업데이트 필요한 상황
-            SearchPager에서 ContentHome에 갓다가 돌아오는 경우
-
-        5. 참여 컨텐츠에 들어가서 인증 후 돌아오면 썸네일 업뎃이 필요
-
-         */
 
         when (requestCode) {
 
@@ -252,11 +227,13 @@ class HomeActivity : AppCompatActivity() {
                 genViewComponents(RequestCodeCollection.REQUEST_RETURN_FROM_JOINED_CONTENT)
 
             }
+
             RequestCodeCollection.REQUEST_RETURN_FROM_SEARCH -> {
 
                 genViewComponents(RequestCodeCollection.REQUEST_RETURN_FROM_SEARCH)
 
             }
+
             RequestCodeCollection.REQUEST_RETURN_FROM_PROFILE_EDIT -> {
 
                 genViewComponents(RequestCodeCollection.REQUEST_RETURN_FROM_PROFILE_EDIT)
@@ -267,18 +244,23 @@ class HomeActivity : AppCompatActivity() {
 
     }
     private fun handleFCMRequest() {
+
+        RequestCodeCollection.IS_FCM_FLAG = true
+
         intentToCommuinate = intent
         val contentNameFromFCM = intentToCommuinate?.getStringExtra("contentName")
+        val fcmCategory = intentToCommuinate?.getStringExtra("fcm_category")
 
+        /** 일반적인 로그인 상황 - intent에 별다른 정보가 저장안된다. */
 
-
-        // 1. 일반적인 로그인 상황 - intent에 별다른 정보가 저장안된다.
-        if (intentToCommuinate?.getStringExtra("fcm_category") == null
+        if (fcmCategory == null
                 || intentToCommuinate?.getStringExtra("contentName") == null) {
 
+            RequestCodeCollection.IS_FCM_FLAG = false
+
         }
-        // 2. FCM으로 들어온 상황들
-        else if (intentToCommuinate?.getStringExtra("fcm_category").equals("목표 달성 실패 알림")) {
+        /** 아래는 전부 FCM통해 들어오는 상황 */
+        else if (fcmCategory.equals("목표 달성 실패 알림")) {
 
             val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
 
@@ -288,7 +270,7 @@ class HomeActivity : AppCompatActivity() {
 
             startActivity(intentForContentsHomeActivity)
 
-        } else if (intentToCommuinate?.getStringExtra("fcm_category").equals("인증 시간이 얼마 남지 않았어요!")) {
+        } else if (fcmCategory.equals("인증 시간이 얼마 남지 않았어요!")) {
 
             val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
 
@@ -298,7 +280,7 @@ class HomeActivity : AppCompatActivity() {
 
             startActivity(intentForContentsHomeActivity)
 
-        } else if (intentToCommuinate?.getStringExtra("fcm_category").equals("목표 달성 성공 알림")) {
+        } else if (fcmCategory.equals("목표 달성 성공 알림")) {
             val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
 
             intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -307,7 +289,7 @@ class HomeActivity : AppCompatActivity() {
 
             startActivity(intentForContentsHomeActivity)
 
-        } else if (intentToCommuinate?.getStringExtra("fcm_category").equals("과반수의 반대로 인증에 실패하셨습니다")) {
+        } else if (fcmCategory.equals("과반수의 반대로 인증에 실패하셨습니다")) {
             val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
 
             intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -317,8 +299,35 @@ class HomeActivity : AppCompatActivity() {
             intentForContentsHomeActivity.putExtra("rejectReasonArray", intentToCommuinate?.getStringExtra("rejectReasonArray"))
 
             startActivity(intentForContentsHomeActivity)
+
+        } else if (fcmCategory.equals("마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.")) {
+
+            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+
+            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intentForContentsHomeActivity.putExtra("fcm_category", "마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.")
+            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+
+            startActivity(intentForContentsHomeActivity)
         }
     }
 
 }
+
+/**
+
+홈화면 정리
+
+1. 일반적인 로그인상황 (O) REQUEST_DEFAULT_CREATION
+
+2. FCM으로 들어가는 상황 (O) REQUEST_DEFAULT_CREATION
+
+3. 프로필 이미지 수정 후 or  프로필 이름 등 텍스트 파트 수정 후 업데이트 필요한 상황
+
+4. 컨텐츠에 새로 가입후 되돌아와서 업데이트 필요한 상황
+SearchPager에서 ContentHome에 갓다가 돌아오는 경우
+
+5. 참여 컨텐츠에 들어가서 인증 후 돌아오면 썸네일 업뎃이 필요
+
+ */
 

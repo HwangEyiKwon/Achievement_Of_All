@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import com.example.parkseunghyun.achievementofall.Fragments.*
 
-/*
+/**
     REFARCTORED
  */
 
@@ -24,23 +24,11 @@ class AppStartPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) 
 
         when (position) {
 
-            0 -> {
+            0 -> { return AppDescPagerFirst() }
 
-                return AppDescPagerFirst()
+            1 -> { return AppDescPagerSecond() }
 
-            }
-
-            1 -> {
-
-                return AppDescPagerSecond()
-
-            }
-
-            2 -> {
-
-                return AppDescPagerThird()
-
-            }
+            2 -> { return AppDescPagerThird() }
 
             else -> return null
         }

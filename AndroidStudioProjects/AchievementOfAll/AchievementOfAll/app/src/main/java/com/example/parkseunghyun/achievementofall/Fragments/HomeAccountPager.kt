@@ -5,6 +5,7 @@ import adapter.ThumbnailAdapter
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
@@ -20,32 +21,29 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Activities.ProfileEditActivity
+import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadingFlag
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
-import com.example.parkseunghyun.achievementofall.Interfaces.RecyclerViewClickListener
 import com.example.parkseunghyun.achievementofall.R
 import model.JoinedContentsModel
 import model.ThumbnailModel
 import org.json.JSONObject
 import java.util.*
 
-/*
+/**
     REFARCTORED
     TODO: Glide Placeholder
  */
 
 
-class HomeAccountPager : Fragment(), RecyclerViewClickListener {
+class HomeAccountPager : Fragment() {
 
-    // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
-    // 사용자의 참여 컨텐츠
     private var joinedContents = mutableListOf<String>()
 
-    // 사용자의 비디오 목록
     private var videoList = mutableListOf<JSONObject>()
     private var videoContentList = mutableListOf<String>()
 
@@ -62,13 +60,11 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     private var jwtToken: String ?= null
 
-    // 사용자 정보 (TextView)
     private var nickName: TextView ?=null
     private var email: TextView ?=null
     private var phoneNumber: TextView ?=null
     private var editProfileButton: ImageView ?= null
 
-    // 사용자 프로필 사진 (ImageView)
     private var userProfile: ImageView ?=null
 
 
@@ -98,8 +94,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     }
 
-    override fun recyclerViewListClicked(v: View, position: Int) {}
-
     private fun initViewComponents() {
 
         nickName = homeAccountView!!.findViewById(R.id.name)
@@ -108,7 +102,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
         editProfileButton = homeAccountView!!.findViewById(R.id.edit)
         userProfile = homeAccountView!!.findViewById(R.id.post_profile_image)
 
-        // 사용자 jwt-token을 통해 사용자 페이지 setting
         val activity = activity as HomeActivity
         jwtToken = activity.jwtToken.toString()
 
@@ -116,7 +109,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     }
 
-    // 사용자 페이지 정보 Setting 함수
     private fun setUserInfo(token: String) {
 
         val jsonObjectForSetUserInfo = JSONObject()
@@ -124,27 +116,36 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         VolleyHttpService.getUserInfo(activity!!, jsonObjectForSetUserInfo) { success ->
 
-            // 사용자 프로필 정보 갱신
             email!!.text = success.getString("email")
-            nickName!!.text = success.getString("name")
+            nickName!!.text = success.getString("name").replace("+", " ")
             phoneNumber!!.text = success.getString("phoneNumber")
 
-//            val glideRequestOptions = RequestOptions()
-//            glideRequestOptions.placeholder(GlideLoadinFlag.profileBitmap)
+            /** 이미지가 아직 내 Device 내에 있다면 그냥 거기서 불러옴. else - 서버에 요청해서 불러옴 */
+            if( ! loadUriForSelfCaching().equals("0") ) {
 
-            // 사용자 프로필 사진 갱신
-            Glide
-                    .with(this)
-                    .load("${ipAddress}/getUserImage/" + jwtToken)
-                    .apply(RequestOptions().skipMemoryCache(true))
-                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-                    .into(userProfile)
+                Glide
+                        .with(this)
+                        .load(loadUriForSelfCaching())
+                        .apply(RequestOptions().fitCenter())
+                        .apply(RequestOptions().centerCrop())
+                        .into(userProfile)
 
-//            GlideLoadinFlag.profileBitmap =  userProfile!!.drawable
-//            GlideLoadinFlag.setProfileFlag(GlideLoadinFlag.FLAG_NOT_UPDATED)
+            } else {
 
+                Glide
+                        .with(this)
+                        .load("${ipAddress}/getUserImage/" + jwtToken)
+                        .apply(RequestOptions().fitCenter())
+                        .apply(RequestOptions().centerCrop())
+                        .apply(RequestOptions().skipMemoryCache(true))
+                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                        .into(userProfile)
 
-            // 사용자 참여 컨텐츠 정보 갱신
+            }
+
+            GlideLoadingFlag.setProfileWithImageFlag(GlideLoadingFlag.FLAG_NOT_UPDATED)
+            GlideLoadingFlag.setProfileWithOutImageFlag(GlideLoadingFlag.FLAG_NOT_UPDATED)
+
             var contentList: JSONObject
 
             for(indexOfContentList in 0.. (success.getJSONArray("contentList").length() - 1)) {
@@ -170,7 +171,6 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
     }
 
-    // 사용자 참여 컨텐츠 View 생성 함수
     private fun generateJoinedContentsView() {
 
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -187,12 +187,11 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         }
 
-        joinedContentsAdapter = JoinedContentsAdapter(activity, joinedContentsModelArrayList!!, this)
+        joinedContentsAdapter = JoinedContentsAdapter(activity, joinedContentsModelArrayList!!)
         joinedContentsView!!.adapter = joinedContentsAdapter
 
     }
 
-    // 사용자 비디오 목록 View 생성 함수
     private fun generateVideoCollection() {
 
         val layoutManager: RecyclerView.LayoutManager
@@ -217,6 +216,17 @@ class HomeAccountPager : Fragment(), RecyclerViewClickListener {
 
         thumbnailAdapter = ThumbnailAdapter(activity, thumbnailModelList!!)
         thumbnailView!!.adapter = thumbnailAdapter
+
+    }
+
+
+
+    private fun loadUriForSelfCaching(): String {
+
+        val sharedRefForImageCaching = PreferenceManager.getDefaultSharedPreferences(context)
+        val imageUri = sharedRefForImageCaching.getString("imageUri","0")
+
+        return imageUri
 
     }
 
