@@ -23,23 +23,23 @@ class EventDecorator(private val color: Int, dates: Collection<CalendarDay>, con
 
         if (which == "startDate") {
 
-            drawable = context.resources.getDrawable(R.drawable.ic_icons_start)
+            drawable = context.resources.getDrawable(R.drawable.ic_start)
 
         } else if (which == "endDate"){
 
-            drawable = context.resources.getDrawable(R.drawable.ic_icons_end)
+            drawable = context.resources.getDrawable(R.drawable.ic_finish)
 
         } else if (which == "success") {
 
-            drawable = context.resources.getDrawable(R.drawable.ic_icons_check)
+            drawable = context.resources.getDrawable(R.drawable.ic_checked)
 
         } else if (which == "fail") {
 
-            drawable = context.resources.getDrawable(R.drawable.ic_icons_wrong)
+            drawable = context.resources.getDrawable(R.drawable.ic_cancel)
 
         } else if (which == "notYet") {
 
-            drawable = context.resources.getDrawable(R.drawable.ic_icons_notyet)
+            drawable = context.resources.getDrawable(R.drawable.ic_hourglass)
 
         }
 
