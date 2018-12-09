@@ -5,8 +5,8 @@
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
-mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -63,7 +63,7 @@ var Report = require('./server/models/report');
 require('./config/passport')(passport);
 
 // //db 초기화
-dbInit();
+//dbInit();
 // //db 삭제
 // dbDelete();
 
@@ -718,28 +718,6 @@ function dbInit(){
     }]
   });
   var user5 = new user({
-    name: "HEK",
-    email: "hwangeyikwon@gmail.com",
-    authority: "user",
-    // password : user.generateHash("123"),
-    phoneNumber : "01084222446",
-    nickName : "HandsomeMan",
-    imagePath: "HEK",
-    pushToken: "",
-    contentList:[{
-      contentId : 3,
-      videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
-      contentName: "NoSmoking",
-      joinState : 1,
-      authenticationDate : "2018-11-25",
-      isUploaded : 1,
-      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
-      money: 100000,
-      reward: 0,
-      rewardCheck: 0
-    }]
-  });
-  var user6 = new user({
     name: "manager",
     email: "manager@gmail.com",
     authority: "manager",
@@ -786,14 +764,6 @@ function dbInit(){
   });
   user5.password = user5.generateHash("123");
   user5.save(function(err, savedDocument) {
-    if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
-  });
-  user6.password = user6.generateHash("123");
-  user6.save(function(err, savedDocument) {
     if (err)
       return console.error(err);
     console.log(savedDocument);
