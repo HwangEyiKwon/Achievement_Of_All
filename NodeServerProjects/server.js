@@ -935,6 +935,34 @@ function dbInit(){
     console.log("DB initialization");
 
   });
+  content6.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content7.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content8.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content9.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
   ///--------------------------------
   ///--------------------------------
   ///앱정보 디비 초기화
