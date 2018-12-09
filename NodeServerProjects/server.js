@@ -5,8 +5,8 @@
 
 // mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
-mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -22,9 +22,8 @@ const appInfo = require('./server/routes/appInfo');
 const search = require('./server/routes/search');
 const aboutContent = require('./server/routes/aboutContent');
 const manager = require('./server/routes/manager');
-const report = require('./server/routes/report');
 const reward = require('./server/routes/reward');
-
+const report = require('./server/routes/report');
 
 
 var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
@@ -36,7 +35,7 @@ var titleAuthen = "인증";
 var titleSuccess = "성공";
 var titleVideoFail = "비디오실패";
 var titleWillSuccess = "성공예정";
-
+var titleNewVideo = "새영상";
 
 var schedule = require('node-schedule');
 var FCM = require('fcm-node');
@@ -58,13 +57,15 @@ db.on('connected', function() {
 var user = require('./server/models/user');
 var content = require('./server/models/content');
 var appInfoSchema = require('./server/models/app');
+var Report = require('./server/models/report');
+
 
 require('./config/passport')(passport);
 
 // //db 초기화
-// dbInit();
+//dbInit();
 // //db 삭제
-// dbDelete();
+//dbDelete();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
@@ -622,6 +623,17 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
         console.log(response);
       });
     }
+    else if(titles === titleNewVideo){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('새영상 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('새영상 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
   });
 }
 
@@ -717,28 +729,6 @@ function dbInit(){
     }]
   });
   var user5 = new user({
-    name: "HEK",
-    email: "hwangeyikwon@gmail.com",
-    authority: "user",
-    // password : user.generateHash("123"),
-    phoneNumber : "01084222446",
-    nickName : "HandsomeMan",
-    imagePath: "HEK",
-    pushToken: "",
-    contentList:[{
-      contentId : 3,
-      videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}],
-      contentName: "NoSmoking",
-      joinState : 1,
-      authenticationDate : "2018-11-25",
-      isUploaded : 1,
-      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 1}],
-      money: 100000,
-      reward: 0,
-      rewardCheck: 0
-    }]
-  });
-  var user6 = new user({
     name: "manager",
     email: "manager@gmail.com",
     authority: "manager",
@@ -791,14 +781,6 @@ function dbInit(){
     console.log("DB initialization");
 
   });
-  user6.password = user6.generateHash("123");
-  user6.save(function(err, savedDocument) {
-    if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
-  });
   //
   // var user7 = new user({
   //   name: "aaa",
@@ -840,21 +822,21 @@ function dbInit(){
   var content2 = new content({
     id: 1,
     name: "NoSmoking",
-    startDate: "01/01/2019",
+    startDate: "01/14/2019",
     endDate: "11/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n  니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
   })
   var content3 = new content({
     id: 2,
     name: "NoSmoking",
-    startDate: "01/08/2019",
+    startDate: "01/07/2019",
     endDate: "12/30/2019",
     isDone: 2,
     userList: [],
-    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
   })
   var content4 = new content({
@@ -874,6 +856,46 @@ function dbInit(){
     startDate: "12/09/2018",
     endDate: "12/11/2018",
     isDone: 0,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content6 = new content({
+    id: 5,
+    name: "NoSmoking",
+    startDate: "12/11/2018",
+    endDate: "12/13/2018",
+    isDone: 2,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content7 = new content({
+    id: 6,
+    name: "NoSmoking",
+    startDate: "12/17/2018",
+    endDate: "01/17/2019",
+    isDone: 2,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content8 = new content({
+    id: 7,
+    name: "NoSmoking",
+    startDate: "12/24/2018",
+    endDate: "01/24/2019",
+    isDone: 2,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
+    balance: 0
+  })
+  var content9 = new content({
+    id: 8,
+    name: "NoSmoking",
+    startDate: "12/31/2018",
+    endDate: "01/31/2019",
+    isDone: 2,
     userList: [],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
@@ -913,6 +935,34 @@ function dbInit(){
     console.log("DB initialization");
 
   });
+  content6.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content7.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content8.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content9.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
   ///--------------------------------
   ///--------------------------------
   ///앱정보 디비 초기화
@@ -941,6 +991,11 @@ function dbDelete(){
   content.remove(function (err, info) {
     console.log("DELETED");
   });
+
+  Report.remove(function (err, info) {
+    console.log("DELETED");
+  });
+
 }
 
 //Port 설정

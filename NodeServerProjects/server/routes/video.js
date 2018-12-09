@@ -24,8 +24,10 @@ router.post('/sendVideo', function(req, res, next){
   var contentName = req.headers.content_name;//건희가 보내는 거에서 header에 들어있는 내용 꺼내옴
   var filenamePath;
   var index;
+  var contentId;
 
   Content.findOne({name : contentName, "userList.email" : userEmail}, function(err, content){
+    contentId = content.id;
     var joinUserCount = content.userList.length;
     var form = new multiparty.Form();
     var year;
@@ -132,6 +134,36 @@ router.post('/sendVideo', function(req, res, next){
               if (err) console.log("save err : "+err);
               console.log("user DB saving in sendVideo");
             });
+          }
+        });
+	console.log("contentName: " + contentName + "contentId: " + contentId);
+        User.find({"contentList.contentName": contentName, "contentList.contentId": contentId}, function(err, userList){
+          for(var i = 0; i < Object.keys(userList).length; i++){
+            if(userList[i].email != userEmail){
+              var contentListCount = userList[i].contentList.length;
+              var contentListIndex;
+              for (var j = 0; j < contentListCount; j++) {
+                if (userList[i].contentList[j].contentName === contentName) {
+                  contentListIndex = j;
+                  break;
+	        }
+	      }
+              console.log("비디오 업로드 push message 문 전");
+              console.log("push token: " + userList[i].pushToken);
+              if(userList[i].pushToken != ""){
+                console.log("비디오 업로드 push message 문");
+                var emptyArray = new Array();
+                var todayDate = new Date();
+                var todayMonth = todayDate.getMonth() + 1;
+                var todayDay = todayDate.getDate();
+                var todayYear = todayDate.getFullYear();
+                var currentHour = todayDate.getHours();
+                var currentMinute = todayDate.getMinutes();
+                var titleNewVideo = "새영상";
+                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 2, 0);
+                fcmMessage.sendPushMessage2(userList[i], contentListIndex, sendTime, titleNewVideo, contentName, emptyArray, emptyArray);
+              }
+            }
           }
         });
 
