@@ -43,6 +43,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
          컨텐츠 성공 : Title - 성공, Body - 컨텐츠명
          인증 비디오 과반수 실패 : Title - 비디오실패, Body - 컨텐츠명
          성공 예정 : Title - 성공예정, Body - 컨텐츠명
+         새로운 인증영상 : Title - 새영상, Body - 컨텐츠명
 */
 
         fcmTitle = messageBody
@@ -58,6 +59,8 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             "비디오실패" -> { fcmBody = "과반수의 반대로 인증에 실패하셨습니다" }
 
             "성공예정" -> { fcmBody = "마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다." }
+
+            "새영상" -> { fcmBody = "컨텐츠에 새로운 인증영상이 올라왔습니다!"}
 
         }
 

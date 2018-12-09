@@ -125,9 +125,6 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var startDate: JSONObject ?= null
     private var endDate: JSONObject ?= null
 
-    private val REQUEST_VIDEO_CAPTURE = 300
-    private val READ_REQUEST_CODE = 200
-    private val WRITE_REQUEST_CODE = 400
     private var uri: Uri? = null
     private var pathToStoredVideo: String? = null
 
@@ -221,6 +218,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.CAMERA)) {
+                            goToVideoButton!!.isEnabled = false
                             startActivityForResult(videoCaptureIntent, RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD)
                             // 1) 모든 권한이 있다면 바로 카메라 실행
                         } else {
@@ -296,9 +294,10 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
 
         when(requestCode){
-            READ_REQUEST_CODE -> {
+            RequestCodeCollection.GRANT_REQUEST_READ -> {
                 if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.CAMERA)) {
+                        goToVideoButton!!.isEnabled = false
                         startActivityForResult(videoCaptureIntent, RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD)
                     } else {
                         EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_CAMERA, Manifest.permission.CAMERA)
@@ -308,16 +307,18 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 }
             }
 
-            WRITE_REQUEST_CODE -> {
+            RequestCodeCollection.GRANT_REQUEST_WRITE -> {
                 if (EasyPermissions.hasPermissions(mContext!!, android.Manifest.permission.CAMERA)) {
-                    startActivityForResult(videoCaptureIntent, RequestCodeCollection.GRANT_REQUEST_CAMERA)
+                    goToVideoButton!!.isEnabled = false
+                    startActivityForResult(videoCaptureIntent, RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD)
                 } else {
                     EasyPermissions.requestPermissions(this, getString(R.string.read_file), RequestCodeCollection.GRANT_REQUEST_CAMERA, Manifest.permission.CAMERA)
                 }
             }
 
-            REQUEST_VIDEO_CAPTURE -> {
-                startActivityForResult(videoCaptureIntent, RequestCodeCollection.GRANT_REQUEST_CAMERA)
+            RequestCodeCollection.GRANT_REQUEST_CAMERA -> {
+                goToVideoButton!!.isEnabled = false
+                startActivityForResult(videoCaptureIntent, RequestCodeCollection.REQUEST_RETURN_FROM_VIDEO_RECORD)
             }
         }
     }
@@ -387,6 +388,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                     Toast.makeText(mContext, "인증영상 업로드 완료", Toast.LENGTH_LONG).show()
 
                 }
+
+                goToVideoButton!!.isEnabled = true
 
                 getCalendarInfo(jwtToken!!,contentName!!)
 
@@ -603,7 +606,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             goToVideoButton!!.isEnabled = false //TODO 이거 false임
 //            goToVideoButton!!.isEnabled = true
 
-//            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
+            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey, null))
 
         }
     }
@@ -623,7 +626,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             remainingMinutesText!!.visibility = View.GONE
 
             contents_not_joined!!.visibility = View.VISIBLE
-//            goToVideoButton?.setTextColor(resources.getColor(R.color.icongrey, null))
+            goToVideoButton?.setTextColor(resources.getColor(R.color.icongrey, null))
 
             goToVideoButton!!.isEnabled = false
 

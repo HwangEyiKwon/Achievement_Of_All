@@ -26,8 +26,10 @@ class LoginActivity : AppCompatActivity() {
         initButtonListener()
 
         if(intent.getStringExtra("email") != null){
+
             val afterSignup = intent.getStringExtra("email")
             user_email_to_find_pw.setText(afterSignup)
+
         }
 
     }
@@ -86,6 +88,7 @@ class LoginActivity : AppCompatActivity() {
         jsonObject.put("password",password)
 
         VolleyHttpService.login(this, jsonObject) { success ->
+
             if (success.get("success") == true) {
 
                 val fcmService = FirebaseInstanceIDService()
@@ -105,7 +108,9 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(goToHome)
 
             } else {
+
                 Toast.makeText(this, "로그인 실패", Toast.LENGTH_LONG).show()
+
             }
         }
     }

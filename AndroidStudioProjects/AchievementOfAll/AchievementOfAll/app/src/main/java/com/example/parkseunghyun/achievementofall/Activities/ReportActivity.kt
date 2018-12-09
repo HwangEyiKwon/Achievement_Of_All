@@ -113,7 +113,7 @@ class ReportActivity : AppCompatActivity(){
 
                 VolleyHttpService.failReport(this, jsonObject) { success ->
                     if (success.get("success") == true) {
-                        Toast.makeText(this, "신고 완료", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "신고가 완료되었습니다.\n심사결과가 나올 때 까지\n실패가 보류됩니다.", Toast.LENGTH_LONG).show()
                         finish()
                     } else {
                         Toast.makeText(this, "서버 통신 실패", Toast.LENGTH_LONG).show()

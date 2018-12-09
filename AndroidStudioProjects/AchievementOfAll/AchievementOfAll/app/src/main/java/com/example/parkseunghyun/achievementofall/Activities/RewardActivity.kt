@@ -24,7 +24,7 @@ class RewardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_reward)
+        setContentView(R.layout.activity_content_success)
 
 
         currentMoney = findViewById(R.id.current_money)

@@ -18,6 +18,7 @@ object RequestCodeCollection {
     const val REQUEST_RETURN_FROM_CONTENT_REWARD = 8
     const val REQUEST_RETURN_FROM_CONTENT_REPORT = 9
     const val REQUEST_RETURN_FROM_VIDEO_RECORD = 10
+    const val REQUEST_RETURN_FROM_CONTENT_SUCCESS = 11
 
     var IS_FCM_FLAG = false
 

@@ -131,6 +131,16 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
                 contentsViewPager?.currentItem = 1
                 app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
 
+                val goToReport = Intent(this, ReportActivity::class.java)
+                goToReport.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                goToReport.putExtra("contentName", content)
+
+                startActivityForResult(goToReport, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_SUCCESS)
+
+            } else if( fcmCategory.equals("컨텐츠에 새로운 인증영상이 올라왔습니다!") ) {
+
+                Toast.makeText(this, "새로운 인증영상을 확인해주세요!", Toast.LENGTH_LONG).show()
+
             }
         }
 
@@ -196,7 +206,9 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
 
             })
 
-            if( tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_PENALTY || tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_REPORT) {
+            if( tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_PENALTY ||
+                    tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_REPORT ||
+                    tmpRequestCode == RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_SUCCESS ) {
 
                 contentsViewPager?.currentItem = 1
                 app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)

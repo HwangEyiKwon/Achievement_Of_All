@@ -281,6 +281,7 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intentForContentsHomeActivity)
 
         } else if (fcmCategory.equals("목표 달성 성공 알림")) {
+
             val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
 
             intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -290,6 +291,7 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intentForContentsHomeActivity)
 
         } else if (fcmCategory.equals("과반수의 반대로 인증에 실패하셨습니다")) {
+
             val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
 
             intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -309,6 +311,16 @@ class HomeActivity : AppCompatActivity() {
             intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
 
             startActivity(intentForContentsHomeActivity)
+        } else if (fcmCategory.equals("컨텐츠에 새로운 인증영상이 올라왔습니다!")) {
+
+            val intentForContentsHomeActivity = Intent(this, ContentsHomeActivity::class.java)
+
+            intentForContentsHomeActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intentForContentsHomeActivity.putExtra("fcm_category", "컨텐츠에 새로운 인증영상이 올라왔습니다!")
+            intentForContentsHomeActivity.putExtra("contentName", contentNameFromFCM)
+
+            startActivity(intentForContentsHomeActivity)
+
         }
     }
 
