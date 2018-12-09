@@ -9,10 +9,20 @@ router.get('/contentJoin/:contentName', function (req,res) {
   console.log("contentJoin Start");
   var contentName = req.params.contentName;
 
-  Content.find({name : contentName, isDone: 2}, function(err, contentList) {
+  var todayDate = new Date();
+  var todayMonth = todayDate.getMonth() + 1;
+  var todayDay = todayDate.getDate();
+  var todayYear = todayDate.getFullYear();
+
+  var today = new Date(todayYear, todayMonth-1, todayDay);
+
+ // Content.find({name : contentName, isDone: 2}, function(err, contentList) {
+  Content.find({ $or: [ { name: contentName, isDone: 2 }, {name: contentName, isDone: 0, startDate: today}]}, function(err,contentList){
+//   Content.find({name: contentName, isDone: 0, startDate: today}, function(err,contentList){
+    console.log("today : " +today);
+    console.log("contentLsit : "+contentList);
     var contentCount = Object.keys(contentList).length;
     var startDate = new Array();
-
     //var endDate = new Array();
     //var contentIdArray = new Array();
 
@@ -48,6 +58,11 @@ router.post('/contentJoinComplete',  function (req,res) {
     var day = req.body.day;
     var contentId;
 
+    var todayDate = new Date();
+    var todayMonth = todayDate.getMonth() + 1;
+    var todayDay = todayDate.getDate();
+    var todayYear = todayDate.getFullYear();
+
     for(var i = 0; i < Object.keys(contentList).length; i++){
       console.log(year +"-"+ month +"-"+ day + "and real Date " + contentList[i].startDate.getFullYear() + "-"+ contentList[i].startDate.getMonth() + "-" + contentList[i].startDate.getDate());
       if(contentList[i].startDate.getFullYear() == year && contentList[i].startDate.getMonth() + 1 == month && contentList[i].startDate.getDate() == day){
@@ -70,7 +85,16 @@ router.post('/contentJoinComplete',  function (req,res) {
           console.log("date: " + date);
 
           //user의 content List에 해당 content 정보들 추가
-          if(contentName === "NoSmoking"){
+          if(year == todayYear && month == todayMonth && day == todayDay){
+            User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
+                  authenticationDate: date, joinState: 1, money: 100000, reward: 0, rewardCheck: false}]}},function(err, doc){
+              if(err){
+                console.log("contentJoinComplete  User findOneAndUpdate err :"+err);
+              }
+              console.log("join user update done");
+            });
+          }
+          else if(contentName === "NoSmoking"){
             User.findOneAndUpdate({email: userEmail}, {$push:{contentList: [{contentId: contentId, contentName: contentName, isUploaded: "0",
                   authenticationDate: date, joinState: 0, money: 100000, reward: 0, rewardCheck: false}]}},function(err, doc){
               if(err){
@@ -164,7 +188,7 @@ router.get('/getAchievementRate/:jwtToken/:contentName',  function (req,res) {
   });
 });
 
-router.get('/getContentRule/:contentName/:startDay/:startMonth/:startYear',  function (req,res) {
+router.get('/getContentRule/:contentName/:startMonth/:startDay/:startYear',  function (req,res) {
   var contentName = req.params.contentName;
   var startYear = req.params.startYear;
   var startMonth = req.params.startMonth;

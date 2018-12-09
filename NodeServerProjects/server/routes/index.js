@@ -10,6 +10,7 @@ var fs = require("fs");
 var mkdirp = require('mkdirp'); // directory 만드는것
 var nodemailer = require('nodemailer');
 var multiparty = require('multiparty');
+var schedule = require('node-schedule');
 
 
 router.post('/jwtCheck', function(req, res){
@@ -97,6 +98,20 @@ router.post('/emailConfirm',function (req, res, next) {
   var name = req.body.name;
   var phoneNumber = req.body.phoneNumber;
 
+  var todayDate = new Date();
+  var deleteTime = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+5, 0);
+
+  passport.authenticate('signup', function (err, user, info) {
+    // console.log(user+"s");
+    console.log("signUPPPPPPPP");
+    if(err) console.log("signup err : "+err);
+    if(user) {
+      console.log("정상적 passport signup");
+    }
+    else console.log("회원가입 실패.");
+  })(req,res,next);
+
+
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -107,49 +122,66 @@ router.post('/emailConfirm',function (req, res, next) {
   let mailOptions = {
     from: 'ehddlrdk123@ajou.ac.kr',
     to: userEmail,
-    subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
+    subject: '안녕하세요, 모두의 달성입니다. 5분 안에 이메일 인증을 해주세요.',
     html: '<p>아래의 확인 버튼을 클릭하시면 회원가입이 완료됩니다 !</p>' +
-      " <form action=\"http://:54.180.32.212/signup\" method=\"post\"> " +
+      // " <form action=\"http://54.180.32.212/confirm\" method=\"get\"> " +
+      " <form action=\"http://192.168.0.16:3000/confirm\" method=\"get\"> " +
       "  <input type=\"hidden\" name=\"email\" value="+userEmail+" >" +
-      "  <input type=\"hidden\" name=\"password\" value="+password+" >" +
-      "  <input type=\"hidden\" name=\"name\" value="+name+" >" +
-      "  <input type=\"hidden\" name=\"phoneNumber\" value="+phoneNumber+" >" +
       "  <input type=\"submit\" value=\"확인\"> " +
       "</form>"
   };
-    transporter.sendMail(mailOptions, function(error, info, response){
-      if (error) {
-        console.log("유효하지 않은 Email 입니다. "+error);
-        res.send({success: invalidEmail});
-      }
-      else {
-        console.log('유효한 Email로  보냈습니다. : ' +userEmail);
-        res.send({success: validEmail});
-      }
-    });
+  transporter.sendMail(mailOptions, function(error, info, response){
+    if (error) {
+      console.log("유효하지 않은 Email 입니다. "+error);
+      res.send({success: invalidEmail});
+    }
+    else {
+      console.log('유효한 Email로  보냈습니다. : ' +userEmail);
+
+      var scheduler = schedule.scheduleJob(deleteTime, function(){
+        User.findOne({email : userEmail}, function(err, user){
+          if(user.emailAuthenticated == 0){
+            user.remove(function (err) {
+              if(err) console.log(err);
+              else {
+                console.log("Delete Success !!");
+              }
+            })
+          }
+        });
+      });
+
+      res.send({success: validEmail});
+    }
+  });
 })
 
-router.post('/signup', function (req, res, next) {
-  console.log("signup Start");
+router.get('/confirm',function (req,res) {
+  console.log("confirm Start!!");
+  var userEmail = req.query.email;
 
-  passport.authenticate('signup', function (err, user, info) {
-    // console.log(user+"s");
-    console.log("signUPPPPPPPP");
-    if(err) console.log("signup err : "+err);
-    if(user) {
-        // res.send({success: true});
-        var userEmail = req.body.email;
 
-        mkdirp('./server/user/' + userEmail + '/video', function (err) {
-          if (err) console.log("create dir user err : " + err);
-          else console.log("create dir ./user/" + userEmail);
-        }); //server폴더 아래 /user/useremail/video 폴더가 생김.
-
+  User.findOne({email : userEmail},function (err,user) {
+    if(err) console.log(err);
+    if(user != null){
+      user.emailAuthenticated = 1;
+      mkdirp('./server/user/' + userEmail + '/video', function (err) {
+        if (err) console.log("create dir user err : " + err);
+        else console.log("create dir ./user/" + userEmail);
+      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+      user.save(function (err) {
+        if(err) console.log(err);
+        else {
+          console.log("signUP Success !!");
+          res.send("회원가입에 성공하셨습니다!");
+        }
+      })
     }
-    else console.log("회원가입 실패.");
-    // else res.send({success: false});
-  })(req,res,next);
-});
+    else{
+      res.send("5분이 초과되었습니다.\n 다시 회원가입 절차를 진행해주세요!");
+    }
+  });
+})
 
 router.post('/userPasswordEdit', function(req,res){
   console.log("userPasswordEdit Start");
@@ -353,19 +385,6 @@ router.post('/editProfileWithImage', function(req,res){
         // console.log(' Reading total  ' + byteRead + '/' + byteExpected);
       });
       form.parse(req);
-
-      // user.name = userName;
-      // user.phoneNumber = phoneNumber;
-      // user.save(function (err) {
-      //   if(err) {
-      //     console.log(err);
-      //     res.send({success: false});
-      //   }else{
-      //     console.log("userInfoEdit Success ");
-      //     res.send({success: true});
-      //   }
-      // })
-      // res.send({success: true});
     }
   })
 });
@@ -426,7 +445,8 @@ router.get("/pwdSendMail/:email", function(req, res, next){
       to: email,
       subject: '안녕하세요, 모두의 달성입니다. 이메일 인증을 해주세요.',
       html: '<p>새로운 패스워드를 입력 후 아래의 전송 버튼을 클릭해주세요 !</p>' +
-      " <form action=\"http://54.180.32.212/pwdEmailAuthen\" method=\"post\"> " +
+      // " <form action=\"http://54.180.32.212/pwdEmailAuthen\" method=\"get\"> " +
+      " <form action=\"http://192.168.0.16:3000/pwdEmailAuthen\" method=\"get\"> " +
       "<label for=\"pwd\">PW</label>" +
       "  <input type=\"password\" name=\"pwd\" placeholder=\"패스워드 입력\"><br/><br/>" +
       "  <input type=\"hidden\" name=\"email\" value="+email+" >" +
@@ -456,11 +476,11 @@ router.get("/pwdSendMail/:email", function(req, res, next){
 
 })
 
-router.post("/pwdEmailAuthen", function(req, res, next){
+router.get("/pwdEmailAuthen", function(req, res, next){
   console.log("pwdEmailAuthen Start ");
-  // console.log(req.body.pwd);
-  var newPassword = req.body.pwd;
-  var userEmail = req.body.email;
+  console.log(req.query.pwd);
+  var newPassword = req.query.pwd;
+  var userEmail = req.query.email;
   User.findOne({email: userEmail}, function(err, user) {
     if (err) {
       console.log("pwdEmailAuthen err : "+err);
@@ -473,7 +493,7 @@ router.post("/pwdEmailAuthen", function(req, res, next){
       })
       }
   });
-
+  res.send("비밀번호 변경에 성공하셨습니다!!");
 });
 
 // -----------------------------------------------------

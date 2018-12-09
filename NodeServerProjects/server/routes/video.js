@@ -168,6 +168,7 @@ router.post('/checkVideo', function(req,res){
    console.log("check video jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck; // 내 이메일
   var contentId;
+  var authenDay;
 
   function uf(callback) {
     return new Promise(function (resolve,reject) {
@@ -182,6 +183,7 @@ router.post('/checkVideo', function(req,res){
             }
           }
           contentId = otherUser.contentList[contentListIndex].contentId;
+          authenDay = otherUser.contentList[contentListIndex].authenticationDate;
           console.log(contentId + "    " + contentName +"FFF"+otherEmail);
 
           resolve(otherUser);
@@ -223,6 +225,7 @@ router.post('/checkVideo', function(req,res){
           }
           authorizeUserCount = content.userList[userListIndex].newVideo.authorizePeople.length;
           console.log("authorizeUserCount count = " + authorizeUserCount);
+
           //2명일 때 체크
           if(authorizeUserCount === 2){
             for(var j = 0; j < contentListCount; j++){
@@ -243,6 +246,13 @@ router.post('/checkVideo', function(req,res){
               }
             }
 
+            var year = authenDay.substr(0,4);
+            var month = authenDay.substr(5,2);
+            var day = authenDay.substr(8,2);
+            var threeAfterAuthenDate = new Date(year, month-1, day);
+            threeAfterAuthenDate.setDate(threeAfterAuthenDate.getDate() + 3);
+            console.log("threeAfterauthenDate : "+threeAfterAuthenDate+"end date : "+content.endDate);
+
             voteRate = (successCount / authorizeUserCount) * 100;
             console.log("voteRate = " + voteRate);
             if(voteRate >= 50){
@@ -250,6 +260,33 @@ router.post('/checkVideo', function(req,res){
 
               otherUser.contentList[contentListIndex].videoPath[videoIndex].authen = 1;
               otherUser.contentList[contentListIndex].calendar[calendarIndex].authen = 1;
+
+              otherUser.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+              content.save(function(err, savedDocument) {
+                if (err)
+                  return console.error(err);
+              });
+
+              if(threeAfterAuthenDate >= content.endDate){
+                console.log("성공예정push message 문 전");
+                console.log("push token: " + otherUser.pushToken);
+                if(otherUser.pushToken != ""){
+                  console.log("성공예정push message 문");
+                  var emptyArray = new Array();
+                  var todayDate = new Date();
+                  var todayMonth = todayDate.getMonth() + 1;
+                  var todayDay = todayDate.getDate();
+                  var todayYear = todayDate.getFullYear();
+                  var currentHour = todayDate.getHours();
+                  var currentMinute = todayDate.getMinutes();
+                  var titleWillSuccess= "성공예정";
+                  var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+                  fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleWillSuccess, contentName, emptyArray, emptyArray);
+                }
+              }
             }
             else{
               content.userList[userListIndex].newVideo.authen = 0;
@@ -267,6 +304,7 @@ router.post('/checkVideo', function(req,res){
               });
 
               console.log("push message 문 전");
+              console.log("push token: " + otherUser.pushToken);
               if(otherUser.pushToken != ""){
                 console.log("push message 문");
                 var todayDate = new Date();

@@ -3,9 +3,9 @@
 
 
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
-//mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
@@ -35,6 +35,7 @@ var titleFail = "실패";
 var titleAuthen = "인증";
 var titleSuccess = "성공";
 var titleVideoFail = "비디오실패";
+var titleWillSuccess = "성공예정";
 
 
 var schedule = require('node-schedule');
@@ -225,9 +226,40 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
   var yesterday = todayYear+ "-" + todayMonth + "-" + (todayDay-1);
   var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
+  var midnightDate = new Date(todayYear,(todayMonth-1),todayDay);
+
+  content.find({"startDate" : midnightDate}, function(err, contentList){
+    for(var i = 0; i < Object.keys(contentList).length; i++){
+      var contentId = contentList[i].id;
+      var contentName = contentList[i].name;
+      contentList[i].isDone = 0;
+
+      contentList[i].save(function(err, savedDocument) {
+        if (err) console.log("save err : "+err);
+      });
+
+      user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList) {
+        var userListCount = Object.keys(userList).length;
+        for (var i = 0; i < userListCount; i++) {
+          var contentListCount = userList[i].contentList.length;
+          var contentListIndex;
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentId === contentId) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          userList[i].contentList[contentListIndex].joinState = 1;
+          userList[i].save(function (err, savedDocument) {
+            if (err) console.log("save err : " + err);
+          });
+        }
+      });
+    }
+  });
 
   /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
-  content.find({"endDate" : yesterdayDate}, function(err, contentList){
+  content.find({"endDate" : yesterdayDate, "isDone": 0}, function(err, contentList){
     console.log("contents done code in!!!!!");
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
@@ -248,7 +280,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           var contentListCount = userList[i].contentList.length;
           var contentListIndex;
           for (var j = 0; j < contentListCount; j++) {
-            if (userList[i].contentList[j].contentName === contentName) {
+            if (userList[i].contentList[j].contentId === contentId) {
               contentListIndex = j;
               break;
             }
@@ -362,7 +394,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   });
 
   /* 모든 유저에 대해 authentication Date가 오늘인지 체크해서 푸쉬메시지 전송 */
-  user.find({"contentList.authenticationDate" : today}, function(err, userList){
+  user.find({"contentList.authenticationDate" : today, "contentList.isUploaded": 0}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
       var joinContentCount = userList[i].contentList.length;
       var authenContentIndex;
@@ -537,7 +569,7 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
     };
   }
   else{
-    console.log("실패 변수 저장");
+    console.log("push data 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -576,6 +608,17 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
           return;
         }
         console.log('인증 실패 Push메시지가 발송되었습니다.1');
+        console.log(response);
+      });
+    }
+    else if(titles === titleWillSuccess){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('성공 예정 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('성공 예정 Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
@@ -628,7 +671,7 @@ function dbInit(){
     }]
   });
 
-   var user3 = new user({
+  var user3 = new user({
     name: "ChoGeonHee17",
     email: "cgh17@gmail.com",
     authority: "user",
@@ -642,16 +685,16 @@ function dbInit(){
       videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
       contentName: "NoSmoking",
       joinState : 1,
-      authenticationDate : "2018-11-24",
-      isUploaded : 0,
-      calendar: [{year: "2018", month: "11", day: "18", authen: 1}, {year: "2018", month: "11", day: "21", authen: 1}, {year: "2018", month: "11", day: "24", authen: 2}],
+      authenticationDate : "2018-12-08",
+      isUploaded : 1,
+      calendar: [{year: "2018", month: "12", day: "2", authen: 1}, {year: "2018", month: "12", day: "5", authen: 1}, {year: "2018", month: "12", day: "8", authen: 2}],
       money: 100000,
       reward: 0,
       rewardCheck: 0,
       penalty: 0
     }]
   });
-   var user4 = new user({
+  var user4 = new user({
     name: "JangDongIk17",
     email: "jdi17@gmail.com",
     authority: "user",
@@ -673,7 +716,7 @@ function dbInit(){
       rewardCheck: 0
     }]
   });
-   var user5 = new user({
+  var user5 = new user({
     name: "HEK",
     email: "hwangeyikwon@gmail.com",
     authority: "user",
@@ -694,8 +737,8 @@ function dbInit(){
       reward: 0,
       rewardCheck: 0
     }]
-   });
-   var user6 = new user({
+  });
+  var user6 = new user({
     name: "manager",
     email: "manager@gmail.com",
     authority: "manager",
@@ -705,7 +748,7 @@ function dbInit(){
     imagePath: "manager",
     pushToken: "",
     contentList:[]
-   });
+  });
 
   user1.password = user1.generateHash("123");
   user1.save(function(err, savedDocument) {
@@ -786,11 +829,11 @@ function dbInit(){
     id: 0,
     name: "NoSmoking",
     startDate: "11/01/2018",
-    endDate: "12/31/2018",
+    endDate: "12/10/2018",
     isDone: 0,
     userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
       {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
-      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0, checkReason: "싪패같아요"}]}, result: 2}],
+      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0, checkReason: "실패같아요"}]}, result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
@@ -821,8 +864,18 @@ function dbInit(){
     endDate: "12/14/2018",
     isDone: 0,
     userList: [{name: "JangDongIk17", email: "jdi17@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2},
-               {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
-    description: "금연 컨텐츠입니다. \n 19년9월1일부터 19년12월30일까지 진행됩니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+      {name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
+    balance: 0
+  })
+  var content5 = new content({
+    id: 4,
+    name: "NoSmoking",
+    startDate: "12/09/2018",
+    endDate: "12/11/2018",
+    isDone: 0,
+    userList: [],
+    description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
   })
   content1.save(function(err, savedDocument) {
@@ -847,6 +900,13 @@ function dbInit(){
 
   });
   content4.save(function(err, savedDocument) {
+    if (err)
+      return console.error(err);
+    console.log(savedDocument);
+    console.log("DB initialization");
+
+  });
+  content5.save(function(err, savedDocument) {
     if (err)
       return console.error(err);
     console.log(savedDocument);
