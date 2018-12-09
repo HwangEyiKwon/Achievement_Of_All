@@ -27,7 +27,7 @@ router.post('/sendVideo', function(req, res, next){
   var contentId;
 
   Content.findOne({name : contentName, "userList.email" : userEmail}, function(err, content){
-    contentId = content.contentId;
+    contentId = content.id;
     var joinUserCount = content.userList.length;
     var form = new multiparty.Form();
     var year;
@@ -136,10 +136,18 @@ router.post('/sendVideo', function(req, res, next){
             });
           }
         });
-
+	console.log("contentName: " + contentName + "contentId: " + contentId);
         User.find({"contentList.contentName": contentName, "contentList.contentId": contentId}, function(err, userList){
           for(var i = 0; i < Object.keys(userList).length; i++){
             if(userList[i].email != userEmail){
+              var contentListCount = userList[i].contentList.length;
+              var contentListIndex;
+              for (var j = 0; j < contentListCount; j++) {
+                if (userList[i].contentList[j].contentName === contentName) {
+                  contentListIndex = j;
+                  break;
+	        }
+	      }
               console.log("비디오 업로드 push message 문 전");
               console.log("push token: " + userList[i].pushToken);
               if(userList[i].pushToken != ""){
@@ -153,7 +161,7 @@ router.post('/sendVideo', function(req, res, next){
                 var currentMinute = todayDate.getMinutes();
                 var titleNewVideo = "새영상";
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 2, 0);
-                fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleNewVideo, contentName, emptyArray, emptyArray);
+                fcmMessage.sendPushMessage2(userList[i], contentListIndex, sendTime, titleNewVideo, contentName, emptyArray, emptyArray);
               }
             }
           }
