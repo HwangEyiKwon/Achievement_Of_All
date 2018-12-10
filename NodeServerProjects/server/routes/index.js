@@ -177,7 +177,7 @@ router.get('/confirm',function (req,res) {
         if(err) console.log(err);
         else {
           console.log("signUP Success !!");
-          res.send("회원가입에 성공하셨습니다!");
+          res.send("축하합니다~~ "+userEmail+"님 회원가입에 성공하셨습니다! 모두의 달성에서 로그인 진행해주세요.");
         }
       })
     }

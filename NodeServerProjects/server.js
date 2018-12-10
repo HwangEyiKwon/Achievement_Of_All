@@ -64,10 +64,10 @@ var Report = require('./server/models/report');
 
 require('./config/passport')(passport);
 
-// //db 초기화
-// dbInit();
 // //db 삭제
 // dbDelete();
+// //db 초기화
+// dbInit();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
@@ -716,15 +716,16 @@ function dbInit(){
     pushToken: "",
     contentList:[{
       contentId : 0,
-      videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 1}, {path: "2018-11-18", authen: 1}],
+      videoPath: [{path: "2018-12-01", authen: 1},{path: "2018-12-04", authen: 1}, {path: "2018-12-07", authen: 1}, {path: "2018-12-10", authen: 2}],
       contentName: "NoSmoking",
       joinState : 1,
-      authenticationDate : "2018-11-22",
+      authenticationDate : "2018-12-13",
       isUploaded : 0,
-      calendar: [{year: "2018", month: "11", day: "13", authen: 1}, {year: "2018", month: "11", day: "16", authen: 1}, {year: "2018", month: "11", day: "19", authen: 1}],
+      calendar: [{year: "2018", month: "12", day: "1", authen: 1}, {year: "2018", month: "12", day: "4", authen: 1}, {year: "2018", month: "12", day: "7", authen: 1}, {year: "2018", month: "12", day: "10", authen: 2}],
       money: 100000,
       reward: 0,
-      rewardCheck: 0
+      rewardCheck: 0,
+      penalty: 0
     }]
   });
   var user2 = new user({
@@ -738,15 +739,16 @@ function dbInit(){
     pushToken: "",
     contentList:[{
       contentId : 0,
-      videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
+      videoPath: [{path: "2018-12-01", authen: 1},{path: "2018-12-04", authen: 1}, {path: "2018-12-07", authen: 1}, {path: "2018-12-10", authen: 2}],
       contentName: "NoSmoking",
       joinState : 1,
-      authenticationDate : "2018-11-15",
-      isUploaded : 1,
-      calendar: [{year: "2018", month: "11", day: "7", authen: 1}, {year: "2018", month: "11", day: "10", authen: 1}, {year: "2018", month: "11", day: "13", authen: 1}],
+      authenticationDate : "2018-12-13",
+      isUploaded : 0,
+      calendar: [{year: "2018", month: "12", day: "1", authen: 1}, {year: "2018", month: "12", day: "4", authen: 1}, {year: "2018", month: "12", day: "7", authen: 1}, {year: "2018", month: "12", day: "10", authen: 2}],
       money: 100000,
       reward: 0,
-      rewardCheck: 0
+      rewardCheck: 0,
+      penalty: 0
     }]
   });
 
@@ -761,12 +763,12 @@ function dbInit(){
     pushToken: "",
     contentList:[{
       contentId : 0,
-      videoPath: [{path: "ns1", authen: 1},{path: "ns2", authen: 0}],
+      videoPath: [{path: "2018-12-01", authen: 1},{path: "2018-12-04", authen: 1}, {path: "2018-12-07", authen: 1}, {path: "2018-12-10", authen: 2}],
       contentName: "NoSmoking",
       joinState : 1,
-      authenticationDate : "2018-12-08",
-      isUploaded : 1,
-      calendar: [{year: "2018", month: "12", day: "2", authen: 1}, {year: "2018", month: "12", day: "5", authen: 1}, {year: "2018", month: "12", day: "8", authen: 2}],
+      authenticationDate : "2018-12-13",
+      isUploaded : 0,
+      calendar: [{year: "2018", month: "12", day: "1", authen: 1}, {year: "2018", month: "12", day: "4", authen: 1}, {year: "2018", month: "12", day: "7", authen: 1}, {year: "2018", month: "12", day: "10", authen: 2}],
       money: 100000,
       reward: 0,
       rewardCheck: 0,
@@ -888,12 +890,12 @@ function dbInit(){
   var content1 = new content({
     id: 0,
     name: "NoSmoking",
-    startDate: "11/01/2018",
-    endDate: "12/10/2018",
+    startDate: "12/01/2018",
+    endDate: "12/31/2018",
     isDone: 0,
-    userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "ns2", authen: 1, authorizePeople: []}, result: 2},
-      {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople:[]}, result: 2},
-      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "ns2", authen: 2, authorizePeople: [{email: "hek17@gmail.com", authenInfo: 0, checkReason: "실패같아요"}]}, result: 2}],
+    userList: [{name: "ParkSeungHyun17", email: "shp17@gmail.com", newVideo: {path: "2018-12-10", authen: 2, authorizePeople: []}, result: 2},
+      {name: "HwangEyiKWON17", email: "hek17@gmail.com", newVideo: {path: "2018-12-10", authen: 2, authorizePeople:[]}, result: 2},
+      {name: "ChoGeonHee17", email: "cgh17@gmail.com", newVideo: {path: "2018-12-10", authen: 2, authorizePeople: []}, result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2",
     balance: 0
   })
@@ -933,7 +935,7 @@ function dbInit(){
     name: "NoSmoking",
     startDate: "12/10/2018",
     endDate: "12/11/2018",
-    isDone: 2,
+    isDone: 1,
     userList: [{name: "manager", email: "manager@gmail.com", result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
@@ -943,7 +945,7 @@ function dbInit(){
     name: "NoSmoking",
     startDate: "12/11/2018",
     endDate: "12/13/2018",
-    isDone: 2,
+    isDone: 0,
     userList: [],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
