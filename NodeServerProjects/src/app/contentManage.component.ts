@@ -38,7 +38,7 @@ export class ContentManageComponent implements OnInit, OnDestroy {
     this.settings = {
       pager : {
         display : true,
-        perPage:10
+        perPage:3
       },
       actions: {
         edit: false

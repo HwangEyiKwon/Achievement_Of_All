@@ -161,7 +161,7 @@ router.post('/sendVideo', function(req, res, next){
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
                 var titleNewVideo = "새영상";
-                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute, todayDate.getSeconds()+5);
                 fcmMessage.sendPushMessage2(userList[i], contentListIndex, sendTime, titleNewVideo, contentName, emptyArray, emptyArray);
               }
             }
@@ -247,8 +247,8 @@ router.post('/checkVideo', function(req,res){
           var authorizeUserCount;
           var successCount = 0;
           var voteRate;
-          var videoIndex;
-          var calendarIndex;
+          var videoIndex = 0;
+          var calendarIndex = 0;
 
           for (var i = 0; i < userListCount; i++) {
             if (content.userList[i].email === otherEmail) {
@@ -267,8 +267,15 @@ router.post('/checkVideo', function(req,res){
                 break;
               }
             }
-            videoIndex = otherUser.contentList[contentListIndex].videoPath.length - 1;
-            calendarIndex = otherUser.contentList[contentListIndex].calendar.length - 1;
+
+            if(otherUser.contentList[contentListIndex].calendar.length != 0) {
+              calendarIndex = otherUser.contentList[contentListIndex].calendar.length - 1;
+            }
+            if(otherUser.contentList[contentListIndex].videoPath.length != 0) {
+              videoIndex = otherUser.contentList[contentListIndex].videoPath.length - 1;
+            }
+
+
             for (var i = 0; i < authorizeUserCount; i++) {
               if(content.userList[userListIndex].newVideo.authorizePeople[i].authenInfo == 1){
                 successCount++;
@@ -316,7 +323,7 @@ router.post('/checkVideo', function(req,res){
                   var currentHour = todayDate.getHours();
                   var currentMinute = todayDate.getMinutes();
                   var titleWillSuccess= "성공예정";
-                  var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+                  var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute, todayDate.getSeconds()+5);
                   fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleWillSuccess, contentName, emptyArray, emptyArray);
                 }
               }
@@ -347,7 +354,7 @@ router.post('/checkVideo', function(req,res){
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
                 var titleFailVideo = "비디오실패";
-                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute, todayDate.getSeconds()+5);
                 fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleFailVideo, contentName, failAuthenUserArray, checkReasonArray);
               }
             }

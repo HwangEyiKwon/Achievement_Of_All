@@ -65,9 +65,9 @@ var Report = require('./server/models/report');
 require('./config/passport')(passport);
 
 // //db 초기화
-//dbInit();
+// dbInit();
 // //db 삭제
-//dbDelete();
+// dbDelete();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
@@ -104,8 +104,7 @@ app.use('/', image);
 app.use('/', search);
 //aboutContent router
 app.use('/', aboutContent);
-//manager router
-app.use('/', manager);
+
 //report router
 app.use('/', report);
 //reward router
@@ -198,7 +197,7 @@ app.post('/sendToken', function(req, res) {
 });
 
 //날짜가 바뀔 때마다 푸쉬알림 전송 및 매일 수행될 기능들
-var scheduler = schedule.scheduleJob('00 * * *', function(){
+var scheduler = schedule.scheduleJob('00 00 * * *', function(){
   var todayDate = new Date();
   var todayYear = todayDate.getFullYear();
   var todayMonth = todayDate.getMonth() + 1;
@@ -283,7 +282,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           console.log("push token: " + userList[i].pushToken);
           if(userList[i].pushToken != "") {
             console.log("푸쉬메시지 성공 전송");
-            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
+            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds()+5);
             sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName);
           }
           else console.log("pushtoken is null");
@@ -312,13 +311,18 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       }
       var contentName = userList[i].contentList[authenContentIndex].contentName;
       var contentId = userList[i].contentList[authenContentIndex].contentId;
-      var calendarIndex = userList[i].contentList[authenContentIndex].calendar.length - 1;
+
+      if(userList[i].contentList[authenContentIndex].calendar.length != 0) {
+        var calendarIndex = userList[i].contentList[authenContentIndex].calendar.length - 1;
+      }else{
+        var calendarIndex = 0;
+      }
       var userMoney = userList[i].contentList[authenContentIndex].money;
 
       userList[i].contentList[authenContentIndex].penalty = userList[i].contentList[authenContentIndex].money;
       userList[i].contentList[authenContentIndex].money = 0;
       userList[i].contentList[authenContentIndex].joinState = 4;
-      userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
+      //userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
 
       userList[i].save(function(err, savedDocument) {
         if (err)
@@ -375,7 +379,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
       //푸쉬메시지 전송
       if(userList[i].pushToken != ""){
         console.log("실패 푸쉬메시지 전송");
-        var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+        var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() , todayDate.getSeconds()+5);
         sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName);
       }
     }
