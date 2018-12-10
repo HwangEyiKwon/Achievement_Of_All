@@ -269,7 +269,6 @@ class HomeAccountPager : Fragment() {
     }
 
 
-
     private fun loadUriForSelfCaching(): String {
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)

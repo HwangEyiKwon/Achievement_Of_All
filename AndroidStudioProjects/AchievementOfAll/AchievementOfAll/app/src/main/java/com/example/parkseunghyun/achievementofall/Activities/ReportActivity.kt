@@ -75,9 +75,10 @@ class ReportActivity : AppCompatActivity(){
         for(index in reportUserList.indices) {
 
             val idString = reportUserList.get(index).replace("\"", "").split("@")
+
             if( reportUserList.get(index).length < 4 ) {
 
-                reportView += idString[0].replaceRange(2, reportUserList.get(index).length - 1, "**") + "@" + idString[1]
+                reportView += idString[0].replaceRange(0, reportUserList.get(index).length - 1, "**") + "@" + idString[1]
 
             } else {
 

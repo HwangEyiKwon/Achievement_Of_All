@@ -582,6 +582,12 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     val diffUpdateThreadHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
 
+            if(diffOfDay!!.toInt() > 0){
+
+                goToVideoButton!!.isEnabled = false
+
+            }
+
             remainingDays!!.setText(diffOfDay.toString())
             remainingHours!!.setText(diffOfHour.toString())
             remainingMinutes!!.setText(diffOfMinute.toString())
