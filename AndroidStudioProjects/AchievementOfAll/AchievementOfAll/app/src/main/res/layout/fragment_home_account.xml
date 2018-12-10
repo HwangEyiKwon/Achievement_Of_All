@@ -51,6 +51,8 @@
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:layout_gravity="center"
+                            android:focusable="true"
+                            android:clickable="true"
                             android:layout_margin="4dp"
                             android:background="@drawable/circle"/>
 
@@ -135,13 +137,33 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/id_my_contents"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="97dp"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="horizontal" />
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/id_my_contents"
+                        android:layout_width="match_parent"
+                        android:layout_height="97dp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="horizontal" />
+
+                    <TextView
+                        android:id="@+id/if_no_contents_joined"
+                        android:textColor="@color/icongrey"
+                        android:layout_width="match_parent"
+                        android:layout_height="97dp"
+                        android:textAlignment="center"
+                        android:visibility="gone"
+                        android:lineSpacingMultiplier="1.2"
+                        android:fontFamily="@font/font5"
+                        android:textSize="13dp"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"/>
+
+                </FrameLayout>
+
+
 
             </LinearLayout>
 
@@ -173,15 +195,36 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/id_thumbnail"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="5dp"
-                    android:clipToPadding="false"
-                    android:nestedScrollingEnabled="false"
-                    android:paddingTop="2dp" />
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/id_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="5dp"
+                        android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/if_no_video"
+                        android:textColor="@color/icongrey"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_height="97dp"
+                        android:visibility="gone"
+                        android:textAlignment="center"
+                        android:lineSpacingMultiplier="1.2"
+                        android:fontFamily="@font/font5"
+                        android:textSize="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"/>
+
+                </FrameLayout>
+
 
             </LinearLayout>
 

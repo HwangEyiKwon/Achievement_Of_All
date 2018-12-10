@@ -9,6 +9,8 @@ import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.view.MotionEvent
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -227,6 +229,18 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
     private fun editProfileWithImage(pathToVideoFile: String) {
 
+        button_confirm_edit.isEnabled = false
+        button_confirm_edit!!.setTextColor(resources.getColor(R.color.icongrey))
+
+        button_image_select.isEnabled = false
+        button_image_select!!.setTextColor(resources.getColor(R.color.icongrey))
+
+        goPasswordEdit.isEnabled = false
+        goPasswordEdit!!.setTextColor(resources.getColor(R.color.icongrey))
+
+        edit_nickname.isEnabled = false
+        edit_phone_number.isEnabled = false
+
         val videoFile = File(pathToVideoFile)
         val videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile)
         val multipartVideoFile = MultipartBody.Part.createFormData("video", videoFile.name, videoBody)
@@ -270,6 +284,18 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
                 val result = response.body()
 
                 if (!TextUtils.isEmpty(result.success)) {
+
+                    button_confirm_edit.isEnabled = true
+                    button_confirm_edit!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+
+                    button_image_select.isEnabled = true
+                    button_image_select!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+
+                    goPasswordEdit.isEnabled = true
+                    goPasswordEdit!!.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+
+                    edit_nickname.isEnabled = true
+                    edit_phone_number.isEnabled = true
 
                     GlideLoadingFlag.setProfileWithImageFlag(GlideLoadingFlag.FLAG_UPDATED)
                     Toast.makeText(applicationContext, "프로필 수정 완료", Toast.LENGTH_SHORT).show()
@@ -347,6 +373,10 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
                 .putString("imageUri", imageUri)
                 .apply()
 
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
     }
 
 }

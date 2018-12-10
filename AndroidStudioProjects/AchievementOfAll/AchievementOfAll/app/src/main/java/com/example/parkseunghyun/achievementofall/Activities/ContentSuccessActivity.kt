@@ -2,6 +2,7 @@ package com.example.parkseunghyun.achievementofall.Activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
 import android.widget.Button
 import com.example.parkseunghyun.achievementofall.R
 
@@ -23,6 +24,10 @@ class ContentSuccessActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
     }
 
 }

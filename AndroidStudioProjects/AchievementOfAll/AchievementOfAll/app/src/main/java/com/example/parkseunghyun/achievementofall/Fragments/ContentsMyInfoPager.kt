@@ -189,12 +189,12 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         contents_not_joined = mView?.findViewById(R.id.contents_not_joined)
 
         fab = mView?.findViewById(R.id.fab)
-//        fab1 = mView?.findViewById(R.id.fab1)
-//        fab2 = mView?.findViewById(R.id.fab2)
+
         fabText = mView?.findViewById(R.id.fab_text)
 
-        fab_open = AnimationUtils.loadAnimation(mContext!!, R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(mContext!!, R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(mContext!!, R.anim.fab_open)
+        fab_close = AnimationUtils.loadAnimation(mContext!!, R.anim.fab_close)
+
 
         val contentHomeActivity = mContext!! as ContentsHomeActivity
         jwtToken = contentHomeActivity.loadJWTToken()
@@ -237,6 +237,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         fab?.setOnClickListener {
+            fab!!.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shaker))
             anim()
         }
 
@@ -561,14 +562,15 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             timer!!.schedule(tt, 0, 1000) // 초 단위로 업데이트 이루어짐
         }
 
+        calendar!!.addDecorators(EventDecorator(Color.RED, sDate, mContext!!, "startDate"))
+        calendar!!.addDecorators(EventDecorator(Color.RED, eDate, mContext!!, "endDate"))
 
         calendar!!.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected -> Log.e("DAY", "DAY:$date") })
         calendar!!.addDecorators(EventDecorator(Color.RED, successDates, mContext!! , "success"))
         calendar!!.addDecorators(EventDecorator(Color.RED, failDates, mContext!!, "fail"))
         calendar!!.addDecorators(EventDecorator(Color.RED, notYetDates, mContext!!, "notYet"))
 
-        calendar!!.addDecorators(EventDecorator(Color.RED, sDate, mContext!!, "startDate"))
-        calendar!!.addDecorators(EventDecorator(Color.RED, eDate, mContext!!, "endDate"))
+
     }
 
 
@@ -606,7 +608,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             goToVideoButton!!.isEnabled = false //TODO 이거 false임
 //            goToVideoButton!!.isEnabled = true
 
-            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey, null))
+//            goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey, null))
 
         }
     }
@@ -626,7 +628,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             remainingMinutesText!!.visibility = View.GONE
 
             contents_not_joined!!.visibility = View.VISIBLE
-            goToVideoButton?.setTextColor(resources.getColor(R.color.icongrey, null))
+//            goToVideoButton?.setTextColor(resources.getColor(R.color.icongrey, null))
 
             goToVideoButton!!.isEnabled = false
 

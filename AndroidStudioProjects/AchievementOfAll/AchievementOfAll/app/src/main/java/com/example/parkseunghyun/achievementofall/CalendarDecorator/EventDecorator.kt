@@ -25,7 +25,7 @@ class EventDecorator(private val color: Int, dates: Collection<CalendarDay>, con
 
             drawable = context.resources.getDrawable(R.drawable.ic_start)
 
-        } else if (which == "endDate"){
+        } else if (which == "endDate") {
 
             drawable = context.resources.getDrawable(R.drawable.ic_finish)
 

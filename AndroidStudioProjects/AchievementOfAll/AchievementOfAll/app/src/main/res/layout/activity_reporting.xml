@@ -89,10 +89,12 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"
+                android:lineSpacingMultiplier="1.2"
                 android:textSize="20sp"
                 android:scrollbars="vertical"
+                android:scrollbarThumbVertical="@color/modal_grey"
                 android:textColor="@color/colorPrimaryDark"
-                android:fontFamily="@font/font5"
+                android:fontFamily="@font/font4"
                 android:background="@drawable/round4"/>
 
         </LinearLayout>
@@ -106,11 +108,15 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="110dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:hint="신고 사유를 적어주세요."
-        android:fontFamily="@font/font5"
+        android:lineSpacingMultiplier="1.2"
+        android:scrollbarThumbVertical="@color/modal_grey"
+        android:fontFamily="@font/font4"
         android:textColorHint="@color/icongrey"
         android:background="@drawable/round4"
         android:scrollbars="vertical"/>

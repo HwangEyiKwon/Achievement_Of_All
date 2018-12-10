@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -21,11 +22,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.parkseunghyun.achievementofall.Activities.HomeActivity
 import com.example.parkseunghyun.achievementofall.Activities.ProfileEditActivity
+import com.example.parkseunghyun.achievementofall.Activities.ProfileViewActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadingFlag
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
+import kotlinx.android.synthetic.main.fragment_home_account.*
 import model.JoinedContentsModel
 import model.ThumbnailModel
 import org.json.JSONObject
@@ -65,6 +68,8 @@ class HomeAccountPager : Fragment() {
     private var editProfileButton: ImageView ?= null
 
     private var userProfile: ImageView ?=null
+    private var ifContentNotJoined:TextView? = null
+    private var ifNoVideo:TextView? = null
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -91,6 +96,27 @@ class HomeAccountPager : Fragment() {
 
         }
 
+        userProfile!!.setOnClickListener {
+
+            val goToProfileImageView = Intent(activity, ProfileViewActivity::class.java)
+            goToProfileImageView.putExtra("email", email!!.text)
+
+            startActivity(goToProfileImageView)
+
+        }
+
+        ifContentNotJoined!!.setOnClickListener {
+
+            if_no_contents_joined!!.startAnimation(AnimationUtils.loadAnimation(context, R.anim.scaling))
+
+        }
+
+        ifNoVideo!!.setOnClickListener {
+
+            if_no_video!!.startAnimation(AnimationUtils.loadAnimation(context, R.anim.scaling))
+
+        }
+
     }
 
     private fun initViewComponents() {
@@ -100,6 +126,8 @@ class HomeAccountPager : Fragment() {
         phoneNumber = homeAccountView!!.findViewById(R.id.phoneNumber)
         editProfileButton = homeAccountView!!.findViewById(R.id.edit)
         userProfile = homeAccountView!!.findViewById(R.id.post_profile_image)
+        ifContentNotJoined = homeAccountView!!.findViewById(R.id.if_no_contents_joined)
+        ifNoVideo = homeAccountView!!.findViewById(R.id.if_no_video)
 
         val activity = activity as HomeActivity
         jwtToken = activity.jwtToken.toString()
@@ -186,6 +214,17 @@ class HomeAccountPager : Fragment() {
 
         }
 
+        if(joinedContents.size == 0) {
+
+            if_no_contents_joined.visibility = View.VISIBLE
+            if_no_contents_joined.text = "하단의 찾기 기능을 통해\n다양한 컨텐츠를 찾아서\n참여 해보세요!"
+
+        } else {
+
+            if_no_contents_joined.visibility = View.GONE
+
+        }
+
         joinedContentsAdapter = JoinedContentsAdapter(activity, joinedContentsModelArrayList!!)
         joinedContentsView!!.adapter = joinedContentsAdapter
 
@@ -210,6 +249,17 @@ class HomeAccountPager : Fragment() {
             thumbnailModel.contentName = videoContentList[indexOfVideoList]
 
             thumbnailModelList!!.add(thumbnailModel)
+
+        }
+
+        if(videoList.size == 0) {
+
+            if_no_video.visibility = View.VISIBLE
+            if_no_video.text = "컨텐츠에 참여해 인증영상을 올려보세요!\n모달친구들과 서로의 계획실천을 확인해보아요!"
+
+        } else {
+
+            if_no_video.visibility = View.GONE
 
         }
 

@@ -3,6 +3,7 @@ package com.example.parkseunghyun.achievementofall.Activities
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
@@ -35,13 +36,14 @@ class PenaltyActivity : AppCompatActivity() {
 
         getCurrentMoney()
 
-
         currentMoney = findViewById(R.id.current_money)
         penaltyMoney = findViewById(R.id.final_penalty)
         finalMoney = findViewById(R.id.final_money)
 
         penaltyConfirmButton!!.setOnClickListener {
+
             finish()
+
         }
 
 
@@ -72,6 +74,10 @@ class PenaltyActivity : AppCompatActivity() {
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 
         return auto.getString("token", "")
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
     }
 
 }

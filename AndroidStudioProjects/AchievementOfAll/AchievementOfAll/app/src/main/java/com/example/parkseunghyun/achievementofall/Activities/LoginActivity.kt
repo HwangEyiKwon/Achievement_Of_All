@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
+import android.view.MotionEvent
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.FirebaseInstanceIDService
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
@@ -157,6 +158,10 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
     }
 }
 

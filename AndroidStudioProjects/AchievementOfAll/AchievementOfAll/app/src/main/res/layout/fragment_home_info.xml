@@ -54,9 +54,9 @@
 
                 <TextView
                     android:id="@+id/appInfo"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|right"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:fontFamily="@font/font5"
@@ -98,9 +98,9 @@
 
                 <TextView
                     android:id="@+id/noticeInfo"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|right"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginStart="20dp"
                     android:textAlignment="center"
                     android:layout_marginEnd="20dp"
@@ -142,9 +142,9 @@
 
                 <TextView
                     android:id="@+id/HelpInfo"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|right"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:fontFamily="@font/font5"
@@ -188,9 +188,9 @@
 
                 <TextView
                     android:id="@+id/giveUsfeedBack"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|right"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:text="피드백을 주실 분은\n010-9396-9408로\n문자주세요"
