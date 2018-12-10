@@ -7,8 +7,10 @@ import {NgForm} from '@angular/forms';
 import {HttpService} from './http-service';
 import {UserPageComponent} from './userPage.component';
 import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
-import { Http } from '@angular/http';
+import {Http, Headers, RequestOptions} from '@angular/http';
+
 import * as myGlobals from './global.service';
+
 
 @Component({
   selector: 'app-user-info',
@@ -18,6 +20,9 @@ import * as myGlobals from './global.service';
 export class UserInfoComponent implements OnInit {
 
   state: number; // 사용자 정보 제공 = 0, 수정 기능 = 1, 비밀번호 변경 = 2
+
+  imageURI: string;
+  imagePath = myGlobals.imagePath; // 이미지 경로
 
   email: string; // 사용자 이메일
   name: string; // 사용자 이름
@@ -36,15 +41,21 @@ export class UserInfoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.state =0;
 
+    console.log(">>>");
     // 부모 컴포넌트인 userPage.component에서 보낸 사용자 정보들을 불러오는 값
     // 컴포넌트 사이에서 데이터 교환은 여러 방식이 있는데 이는 그 중 하나의 방법임. (Data.service 참고)
     this.dataService.currentMessage.subscribe(userInfo => {
+
       this.email = JSON.parse(JSON.stringify(userInfo)).email;
       this.name = JSON.parse(JSON.stringify(userInfo)).name;
       this.authority = JSON.parse(JSON.stringify(userInfo)).authority;
       this.phoneNumber = JSON.parse(JSON.stringify(userInfo)).phoneNumber;
+      console.log(userInfo);
+      this.imageURI = this.imagePath + '/getManagerImage/' + this.email +'?'+ new Date().getTime();
+      console.log(this.imageURI);
+      this.state = 0;
+
     });
 
     //override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
@@ -58,9 +69,10 @@ export class UserInfoComponent implements OnInit {
   }
   // Image Upload
   // 이미지를 서버의 한 경로로 업로드하는 부분
-  upload() {
+  upload(name) {
+
     // Promise 기법 (구글 참고)
-    // Promise는 자바스크립트에서 많이 사용하는 기법으로
+    // Promise는 자바스크립트에서 많이 사용하는 기법으로mk
     // 여기에서는 간단히 비동기 함수의 문제를 해결하기 위해 사용하였다.
     // 하단의 실제 이미지 업로드하는 함수들은 코드를 가져다 사용하여 설명은 생략하겠다.
     return new Promise ((resolve, reject)=>{
@@ -70,15 +82,17 @@ export class UserInfoComponent implements OnInit {
       let fileCount: number = inputEl.files.length;
       //create a new fromdata instance
       let formData = new FormData();
+
       // console.log(inputEl.files);
       //check if the filecount is greater than zero, to be sure a file was selected.
       if (fileCount > 0) { // a file was selected
         //append the key name 'photo' with the first file in the element
         formData.append('photo', inputEl.files.item(0));
+        formData.append('name', name);
         //call the angular http method
         this.http
         //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-          .post('/photo', formData).subscribe(
+          .post('/photo', formData ).subscribe(
           //map the success function and alert the response
           (result) => {
             alert("이미지 업로드 완료.");
@@ -112,7 +126,7 @@ export class UserInfoComponent implements OnInit {
 
   // 수정 완료 버튼을 누를 경우
   saveEdit(form: NgForm){
-    this.upload().then( response =>{
+    this.upload(form.value.name).then( response => {
       //upload()를 우선 호출 후 upload 내부 모든 비동기 함수가 끝나면 이어서 아래 코드 진행
       var userImagePath = response;
 
@@ -126,6 +140,7 @@ export class UserInfoComponent implements OnInit {
             this.state = 0;
             // 수정이 완료되면 부모 컴포넌트를 다시 호출하여 수정된 사용자 정보를 가져오도록 함.
             this.parent.ngOnInit();
+            console.log("부모 컴포넨트 갱신?")
 
           }else{
             // 수정하려는 이메일이 중복 메일일 경우

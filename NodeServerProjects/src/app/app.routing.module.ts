@@ -7,10 +7,10 @@ import { RouterModule, Routes } from '@angular/router';
 // Component
 import { UserServiceComponent } from './userService.component';
 import { UserPageComponent } from './userPage.component';
-
 import { UserInfoComponent } from './userInfo.component';
 import { UserManageComponent } from './userManage.component';
 import { ContentManageComponent } from './contentManage.component';
+import { ReportManageComponent } from './reportManage.component';
 import { AboutComponent } from './about.component'; // User Page (About)
 
 const routes: Routes = [ // Route 지정
@@ -22,9 +22,10 @@ const routes: Routes = [ // Route 지정
       { path: '', redirectTo: 'userInfo', pathMatch: 'full'},
       { path: 'userInfo', component: UserInfoComponent}, // 사용자 정보
       { path: 'userManage', component: UserManageComponent}, // 사용자 관리
-      { path: 'contentManage', component: ContentManageComponent},// 컨텐츠 관리
+      { path: 'contentManage', component: ContentManageComponent}, // 컨텐츠 관리
+      { path: 'reportManage', component: ReportManageComponent}, // 신고 관리
       { path: 'about', component: AboutComponent} ]
-      // { path: 'contentManange', component: ContentManageComponent}] // 컨텐츠 관리
+
   },
   {path: '**', redirectTo: 'login'}
 ];

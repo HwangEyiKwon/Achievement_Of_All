@@ -586,8 +586,6 @@ router.get('/getManagerInfo', function(req, res) { // 유저 정보 (로그인 �
     });
   }
 });
-
-
 router.post('/managerInfoEdit', function(req, res) {
   if(req.session.userCheck == undefined) { // 사용자 세션 체크, 세션 없으면 오류페이지
     res.send({error:true});
@@ -623,6 +621,7 @@ router.post('/managerInfoEdit', function(req, res) {
                   name: req.body.name,
                   email: req.body.email,
                   phoneNumber: req.body.phoneNumber,
+                  imagePath: req.body.name
                   // userImage: req.body.userImagePath.replace('\\', '/')
                 }, function (err, userUpdate) {
                   if (err) throw err;
@@ -680,8 +679,8 @@ router.get('/authorityCheck', function(req, res) { // 사용자 권한 체크
 
       var authority = JSON.parse(JSON.stringify(user)).authority; // 접근한 사용자의 권한
 
-     if(authority == 'manager'){
-       res.send({error:false});
+      if(authority == 'manager'){
+        res.send({error:false});
       } else { // 위에서 정의되지 않은 페이지에 접근할 경우(URL 변경 등)
         res.send({error:true});
       }
@@ -690,6 +689,5 @@ router.get('/authorityCheck', function(req, res) { // 사용자 권한 체크
 });
 
 // -----------------------------------------------------
-
 
 module.exports = router;

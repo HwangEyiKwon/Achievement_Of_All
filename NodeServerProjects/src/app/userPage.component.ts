@@ -16,6 +16,7 @@ import * as myGlobals from './global.service'; // 글로벌 변수를 주입하�
 })
 export class UserPageComponent implements OnInit, OnDestroy {
 
+  imageURI: string;
   imagePath = myGlobals.imagePath; // 이미지 경로
   menuState: string = 'out';
 
@@ -45,7 +46,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     // 처음 로그인 페이지를 들어가면 세션 정보를 확인한다.
     // 만약 세션이 존재할 경우 로그인 진행 없이 사용자 페이지로 이동하고
     // 세션이 존재하지 않을 경우 로그인 페이지로 이동한다.
-
+    console.log("부모 갱신 와료우");
     this.myObserver_sess = this.httpService.sessionCheck().subscribe(result => {
       // 세션에 사용자 정보가 남아 있을 경우
       if( JSON.parse(JSON.stringify(result)).userSess !== undefined ){
@@ -53,15 +54,17 @@ export class UserPageComponent implements OnInit, OnDestroy {
         console.log('Session: ' + JSON.stringify(result));
         // HTTP 통신을 통해 현재 세션에 남은 사용자의 모든 정보를 불러온다.
 
-        this.myObserver = this.httpService.getUserInfo().subscribe(result => { // Session을 통해 정보 불러옴
+        this.myObserver = this.httpService.getUserInfo().subscribe(result2 => { // Session을 통해 정보 불러옴
 
-          console.log('find!!' + JSON.stringify(result));
+          console.log('find!!' + JSON.stringify(result2));
           // 서버/데이터베이스에서 가져온 사용자 정보를 모두 변수에 담는다.
-          var email = JSON.parse(JSON.stringify(result)).email;
-          var name = JSON.parse(JSON.stringify(result)).name;
-          var authority = JSON.parse(JSON.stringify(result)).authority;
-          var phoneNumber= JSON.parse(JSON.stringify(result)).phoneNumber;
+          var email = JSON.parse(JSON.stringify(result2)).email;
+          var name = JSON.parse(JSON.stringify(result2)).name;
+          var authority = JSON.parse(JSON.stringify(result2)).authority;
+          var phoneNumber= JSON.parse(JSON.stringify(result2)).phoneNumber;
 
+          this.imageURI = this.imagePath + '/getManagerImage/' + email +'?'+ new Date().getTime();
+          console.log(this.imageURI);
           // 변수들에 불러온 값들을 대입
           this.setupUserInfo(email, name , authority, phoneNumber );
           this.setupMenu();
@@ -82,7 +85,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   // 파라미터로 현재 사용자의 권한이 들어온다.
   // 그 권한에 따라 맞는 좌측 메뉴를 생성한다.
   setupMenu() {
-    this.menu = ['userInfo', 'userManage' , 'contentManage'];
+    this.menu = ['userInfo', 'userManage' , 'contentManage', 'reportManage'];
   }
 
   // setupUserInfo
@@ -97,6 +100,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   // updataUserInfo
   // Data.service를 통해 다른 자식 컴포넌트에 전달한 현재 사용자 정보를 넘긴다.  (자세한 내용은 Data.Service.ts 확인)
   updateUserInfo(value: Object){
+    console.log("update");
     this.dataService.updateData(value);
   }
 

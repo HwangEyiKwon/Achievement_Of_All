@@ -27,7 +27,7 @@ export class UserServiceComponent implements OnInit , OnDestroy {
     phoneNumber : '010-0000-0000',
     email : 'hgd123@gmail.com',
     password : '123123',
-    managerKey: '3Ke34Meg9ek'
+    managerKey: 'Secret Key'
   }
 
   constructor(

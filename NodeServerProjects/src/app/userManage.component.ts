@@ -1,6 +1,6 @@
 // userManage.component
-// 사용자 관리 페이지
-// (권한이 마스터인 사용자만 접근 가능)
+// 유저 관리 페이지
+// (권한이 manager인 사용자만 접근 가능)
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from './http-service';
@@ -23,10 +23,6 @@ export class UserManageComponent implements OnInit, OnDestroy {
     groupList = [];
     settings: any;
 
-    // 관리자 페이지는 npm에 등록된 ng2-smart-table 모듈을 사용했다.
-    // 이 부분에 대해선 구글 참고. (자료가 많지 않음)
-
-
     constructor(
         private httpService: HttpService,
         private parent: UserPageComponent,
@@ -34,7 +30,7 @@ export class UserManageComponent implements OnInit, OnDestroy {
         private dataService: DataService
     ) {}
 
-    setTable() { // Group들의 이름,사진 불러오기
+    setTable() {
 
 
           this.settings = {
@@ -108,7 +104,6 @@ export class UserManageComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        console.log("아니 왜안되???????????")
         // Authority Check
         // 관리자 페이지는 권한이 마스터인 사용자만 가능
         // HTTP 통신을 통해 관리자 체크를 해야함.
@@ -147,7 +142,6 @@ export class UserManageComponent implements OnInit, OnDestroy {
     updateTable(){
         return new Promise ((resolve,reject) => {
             this.usersInfo = [];
-          console.log("아니 왜안되?");
             this.httpService.getUsersInfo().subscribe(result => {
 
                 for ( const u of JSON.parse(JSON.stringify(result))) {
@@ -192,13 +186,17 @@ export class UserManageComponent implements OnInit, OnDestroy {
     onSaveConfirm(event) {
         if (window.confirm('정말로 저장하시겠습니까?')) {
 
+          event.newData.isAdd = false;
             // InputFile.component와 통신
-            this.subscription = this.dataService.notifyObservable$_parent.subscribe((res) => {
+            this.dataService.notifyOther(event.newData);
 
-                if (res.hasOwnProperty('option') && res.option === 'image') {
-                    event.newData.image = res.value;
-                    // 수정된 정보를 저장
-                    this.httpService.updateUserInfo(event.data, event.newData).subscribe(result =>{
+            this.subscription = this.dataService.notifyObservable$_parent.subscribe((res) => {
+                if(res.change == 1) {
+                  alert("이미지 업로드에 문제가 생겼습니다.");
+                }
+                else if (res.option === 'image') {
+
+                    this.httpService.updateUserInfo(event.data, event.newData, res.change).subscribe(result => {
                         if(JSON.parse(JSON.stringify(result)).success == true){
                             this.updateTable().then(response =>{
                                 alert("수정되었습니다");
@@ -211,10 +209,8 @@ export class UserManageComponent implements OnInit, OnDestroy {
                             });
                         }
                     });
-                };
+                }
             });
-            // InputFile.component와 통신
-            this.dataService.notifyOther({option: 'image', value: true});
         } else {
             event.confirm.reject();
         }
@@ -227,34 +223,37 @@ export class UserManageComponent implements OnInit, OnDestroy {
         }else{
             if (window.confirm('생성하시겠습니까?')) {
 
-                // InputFile.component와 통신
-                this.subscription = this.dataService.notifyObservable$_parent.subscribe((res) => {
-                    if (res.hasOwnProperty('option') && res.option === 'image') {
-                        event.newData.image = res.value;
-                        // 새로운 정보를 저장
-                        this.httpService.addUserInfo(event.newData).subscribe(result =>{
-                            if(JSON.parse(JSON.stringify(result)).success == true){
-                                this.updateTable().then(response =>{
-                                    alert("생성되었습니다");
-                                    event.confirm.resolve(event.newData);
-                                });
-                            }else{
-                                // 이메일 중복
-                                this.updateTable().then(response =>{
-                                    alert("Email 중복입니다.");
-                                    event.confirm.resolve(event.newData);
-                                });
-                            }
-                        });
-                    };
-                });
-                // InputFile.component와 통신
-                this.dataService.notifyOther({option: 'image', value: true, from: 'user'});
-            } else {
-                event.confirm.reject();
-            }
-        }
+              event.newData.isAdd = true;
+              this.dataService.notifyOther(event.newData);
 
+              this.subscription = this.dataService.notifyObservable$_parent.subscribe((res) => {
+                if(res.change == 1) {
+
+                  alert("이미지 업로드에 문제가 생겼습니다.");
+                }
+                else if (res.option === 'image') {
+
+                  this.httpService.addUserInfo(event.newData, res.change).subscribe(result => {
+                    if(JSON.parse(JSON.stringify(result)).success == true){
+                      this.updateTable().then(response =>{
+                        alert("생성되었습니다");
+                        event.confirm.resolve(event.newData);
+                      });
+                    }else{
+                      this.updateTable().then(response =>{
+                        alert("Email 중복입니다.");
+                        event.confirm.resolve(event.newData);
+                      });
+                    }
+                  });
+                }
+
+            })
+        } else {
+              event.confirm.reject();
+            }
+
+      }
     }
 
 }

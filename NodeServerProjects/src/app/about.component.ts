@@ -1,5 +1,6 @@
 // About.component
-// Desing-Plug 에 대한 설명이 있는 컴포넌트
+// 모두의 달성에 대한 설명이 있는 컴포넌트
+
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from './http-service';
 
@@ -19,8 +20,7 @@ export class AboutComponent implements OnInit {
     }
     ngOnInit() {
 
-      this.httpService.getAppInfo().subscribe(result=>{
-        console.log(result)
+      this.httpService.getAppInfo().subscribe(result => {
         this.appInfo = JSON.parse(JSON.stringify(result)).appInfo;
         this.noticeInfo = JSON.parse(JSON.stringify(result)).noticeInfo;
       });

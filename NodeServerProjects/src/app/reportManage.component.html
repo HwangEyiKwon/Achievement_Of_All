@@ -1,12 +1,11 @@
-<!--ContentManage Smart Table-->
+<!--UserManage Smart Table-->
 <div style="position: absolute; top:150px; left: 500px; ">
     <ng2-smart-table class ='smartTable'
                      [settings]="settings"
                      [source]="source"
                      (deleteConfirm)="onDeleteConfirm($event)"
                      (editConfirm)="onSaveConfirm($event)"
-                     (createConfirm)="onCreateConfirm($event)"
-                      (edit)="onEditClicked($event)">
+                     (createConfirm)="onCreateConfirm($event)">
     </ng2-smart-table>
 </div>
 

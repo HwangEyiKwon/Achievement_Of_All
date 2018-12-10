@@ -4,6 +4,7 @@ const router = express.Router();
 var User = require('../models/user');
 var jwt = require('jwt-simple'); // jwt token 사용
 var fs = require("fs");
+var mkdirp = require('mkdirp'); // directory 만드는것
 
 // 컨텐트 이미지파일 불러오기
 router.get('/getContentImage/:contentName', function(req, res){
@@ -74,61 +75,161 @@ var crypto = require('crypto'); // 파일명 암호화
 var mime=require('mime-types');
 
 //define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
+var Q = require("q");
 
-var storage = '';
+var upload = function (req, res, user) {
+  console.log("왜안되는거야?진짜로?");
+  var deferred = Q.defer();
+  console.log(user);
 
-var upload = multer({ storage: storage }).single('photo');
+  console.log(JSON.parse(JSON.stringify(user)).imagePath);
+  console.log(JSON.parse(JSON.stringify(user)).email);
+  console.log(req);
 
+  var storage = multer.diskStorage({
+    // 서버에 저장할 폴더
+
+    destination: function (req, file, cb) {
+      cb(null, "./server/user/"+JSON.parse(JSON.stringify(user)).email);
+    },
+
+    // 서버에 저장할 파일 명
+    filename: function (req, file, cb) {
+      crypto.pseudoRandomBytes(16, function(err, raw) {
+        console.log(req.body);
+        console.log("photophoto3");
+        cb(null, req.body.name + '.' + 'jpg');
+      });
+    }
+
+  });
+
+  var upload2 = multer({ storage: storage }).single('photo');
+
+  upload2(req, res, function (err) {
+    console.log("왜안되는거야?진짜로?2222");
+    if (err) {
+      console.log(err);
+      console.log("왜안되는거야?진짜로?333");
+      deferred.reject();
+    }
+    else {
+      console.log("왜안되는거야?진짜로?4444");
+      deferred.resolve(req.file.uploadedFile);
+    }
+  });
+  return deferred.promise;
+};
 router.post('/photo', function(req, res, next) {
-
+  console.log("PHOTO");
   User.findOne({ email : req.session.userCheck }, function(err, user) {
 
-    storage = multer.diskStorage({
-      destination: function(req, file, cb) {
-        cb(null, './server');
-      },
-      filename: function(req, file, cb) {
-        crypto.pseudoRandomBytes(16, function(err, raw) {
-          cb(null, user.name + '.' + 'jpg');
-        });
-      }
-    });
+    console.log("photophoto");
 
+    console.log("photophoto4");
     var path = '';
     console.log('파일이름바꾸기');
-    console.log(req.body);
+    // console.log(req);
 
-    upload(req, res, function(err) {
-
-      if (err) {
-        // An error occurred when uploading
-        console.log(err);
-        return res.status(422).send('an Error occured');
-      }
-      console.log(req.file);
-      console.log(req.cb);
-      console.log('no error');
-      fileName = req.file.filename;
-      console.log(fileName);
-      return res.send(fileName);
+    upload(req, res, user).then(function (file) {
+      // console.log('aaffaaff');
+      // console.log(file);
+      res.json(file);
+    }, function (err) {
+      res.send(500, err);
     });
+  });
+});
 
+var uploadOther = function (req, res, user) {
+  console.log("왜안되는거야?진짜로?");
+  console.log(req.params.email);
+  console.log(req.params.name);
+
+  var deferred = Q.defer();
+  console.log(user);
+
+  console.log(JSON.parse(JSON.stringify(user)).imagePath);
+  console.log(JSON.parse(JSON.stringify(user)).email);
+
+
+  var storage = multer.diskStorage({
+    // 서버에 저장할 폴더
+
+    destination: function (req, file, cb) {
+      cb(null, "./server/user/"+req.params.email);
+    },
+
+    // 서버에 저장할 파일 명
+    filename: function (req, file, cb) {
+      crypto.pseudoRandomBytes(16, function(err, raw) {
+        console.log("photophoto3");
+        cb(null, req.params.name + '.' + 'jpg');
+      });
+    }
+
+  });
+
+  var uploadOther2 = multer({ storage: storage }).single('photoOther');
+
+  uploadOther2(req, res, function (err) {
+    console.log("왜안되는거야?진짜로?2222");
+    if (err) {
+      console.log(err);
+      console.log("왜안되는거야?진짜로?333");
+      deferred.reject();
+    }
+    else {
+      console.log("왜안되는거야?진짜로?4444");
+      deferred.resolve(req.file.uploadedFile);
+    }
+  });
+  return deferred.promise;
+};
+router.post('/photoOther/:email/:name/:isAdd', function(req, res, next) {
+  console.log("PHOTOOTHER");
+  User.findOne({ email : req.session.userCheck }, function(err, user) {
+
+    console.log("photophoto");
+    console.log("photophoto4");
+    console.log('파일이름바꾸기');
+    console.log(req.params.isAdd);
+
+    if(req.params.isAdd === true){
+      console.log("왜 안만들어");
+      mkdirp('./server/user/'+req.params.email+'/video', function (err) {
+        if(err) console.log("create dir user err : "+err);
+        else console.log("create dir ./user/" +userEmail );
+      }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+    }
+
+
+    uploadOther(req, res, user).then(function (file) {
+      // console.log('aaffaaff');
+      // console.log(file);
+      res.json(file);
+    }, function (err) {
+      console.log(err);
+      res.send(500, err);
+    });
   });
 });
 
 router.get('/getManagerImage/:email', function(req, res){
+
   console.log("getUserImage Start");
   var email = req.params.email;
   console.log("email : "+ email);
 
   User.findOne({ email : email }, function(err, user) {
+    console.log("앙?" + JSON.stringify(user));
     if(err){
       console.log("getUserImage err : "+err);
       res.send({success: false});
     }
     else{
-      console.log("user.imagePath =" + user.imagePath);
-      if(user.imagePath == null ){
+      // console.log("user.imagePath =" + user.imagePath);
+      if(user.imagePath == null || user.imagePath == ""){
         var filename = './server/user/profile.png'; //기본 이미지
       }
       else{

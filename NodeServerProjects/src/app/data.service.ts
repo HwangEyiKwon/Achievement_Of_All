@@ -3,20 +3,44 @@
 // Data 공유 함수들을 모아놓은 서비스
 // 컴포넌트 사이의 Data 공유로 Data Binding, Observer을 통한 Data 공유 등이 있는데 여기서는 Observer를 통해 Data를 주고 받는 서비스를 구현했다
 // Dependency Injection 개념을 통해 Data공유가 필요한 컴포넌트에서 필요 함수를 주입가능하도록 함.
-// 개념 이해, 숙지 후 보는 것이 좋을 거 같음
 
-import { Injectable , Inject} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Subject } from 'rxjs/Subject';
-import * as io from 'socket.io-client';
-import {Observable} from 'rxjs/Rx';
-import * as myGlobals from './global.service';
 
 @Injectable()
 export class DataService {
 
+  private notify = new Subject<any>();
+  notifyObservable$ = this.notify.asObservable();
+
+  private notify_parent = new Subject<any>();
+  notifyObservable$_parent = this.notify_parent.asObservable();
 
   //------------------------------------------------------------------------
+
+  private notifyStd = new BehaviorSubject({});
+  notifyObservableStd$ = this.notifyStd.asObservable();
+
+  private notifyStd_parent = new BehaviorSubject({});
+  notifyObservableStd$_parent = this.notifyStd_parent.asObservable();
+  //------------------------------------------------------------------------
+
+  private notifyEd = new BehaviorSubject({});
+  notifyObservableEd$ = this.notifyEd.asObservable();
+
+  private notifyEd_parent = new BehaviorSubject({});
+  notifyObservableEd$_parent = this.notifyEd_parent.asObservable();
+
+  //------------------------------------------------------------------------
+  private notifyReport = new Subject<any>();
+  notifyObservableReport$ = this.notifyReport.asObservable();
+
+  private notifyReport_parent = new Subject<any>();
+  notifyObservableReport$_parent = this.notifyReport_parent.asObservable();
+
+  //------------------------------------------------------------------------
+
   // Device Info Component <-> selectGroup, selectDevice Component
   private dataObs = new BehaviorSubject({});
   currentMessage = this.dataObs.asObservable();
@@ -26,6 +50,7 @@ export class DataService {
 
   private dataObs_group = new BehaviorSubject({});
   currentMessage_group = this.dataObs_group.asObservable();
+
 
   updateData(data: Object) {
       this.dataObs.next(data);
@@ -42,12 +67,6 @@ export class DataService {
 
 
   //------------------------------------------------------------------------
-  // Manange Component <-> InputFile Component
-  private notify = new Subject<any>();
-  notifyObservable$ = this.notify.asObservable();
-
-  private notify_parent = new Subject<any>();
-  notifyObservable$_parent = this.notify_parent.asObservable();
 
   public notifyOther(data: any) {
       if (data) {
@@ -61,43 +80,39 @@ export class DataService {
   }
   //------------------------------------------------------------------------
 
-
-  //------------------------------------------------------------------------
-  // Socket 통신
-  // 디바이스 페이지에서 reload, plug, manual key 업데이틀 를 위한 소켓 통신이다
-
-  private url = myGlobals.serverPath; // 소캣 경로
-  private socket; // 소켓
-
-  sendMessage(message) {
-      this.socket.emit('add-message', message); // emit
-      console.log('send Message: ' + message);
+  public notifyOtherStd(data: any) {
+    if (data) {
+      this.notifyStd.next(data);
+    }
+  }
+  public notifyOtherStd_parent(data: any) {
+    if (data) {
+      console.log(data);
+      this.notifyStd_parent.next(data);
+    }
   }
 
-  getMessages() {
-      let observable = new Observable(observer => {
-          this.socket = io(this.url); // 소켓 생성
-          this.socket.on('message', (data) => { // 대기 중
-              console.log('get Message: ' + data);
-              observer.next(data);
-          });
-          return () => {
-              this.socket.disconnect();
-          };
-      })
-      return observable;
+  public notifyOtherEd(data: any) {
+    if (data) {
+      this.notifyEd.next(data);
+    }
+  }
+  public notifyOtherEd_parent(data: any) {
+    if (data) {
+      this.notifyEd_parent.next(data);
+    }
   }
   //------------------------------------------------------------------------
 
-
-  //------------------------------------------------------------------------
-  // Farm Chart Component
-  private dataObs_farm = new BehaviorSubject({});
-  currentMessage_farm = this.dataObs_farm.asObservable();
-  updateData_farm(data: Object){
-      this.dataObs_farm.next(data);
+  public notifyOtherReport(data: any) {
+    if (data) {
+      this.notifyReport.next(data);
+    }
   }
-  //------------------------------------------------------------------------
-
+  public notifyOtherReport_parent(data: any) {
+    if (data) {
+      this.notifyReport_parent.next(data);
+    }
+  }
 }
-
+  //------------------------------------------------------------------------

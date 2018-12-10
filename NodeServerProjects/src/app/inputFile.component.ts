@@ -57,42 +57,21 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
     stopEditing(event){
     }
     ngOnInit() {
-        this.subscription = this.dataService.notifyObservable$.subscribe((res) => {
-            if (res.hasOwnProperty('option') && res.option === 'image') {
-                // perform your other action from here
-                    // 사용자가 수정/생성 버튼을 누를 경우
-                    // 이미지 변화가 있을 경우
-                    if(this.changeState == true){
-                        // 이미지를 업로드한다.
+        this.subscription = this.dataService.notifyObservable$.subscribe((user) => {
 
-                        this.upload().then(response => {
-                            this.rightValueChange(response);
+          console.log("이미지 수정");
+          this.upload(JSON.parse(JSON.stringify(user)).email, JSON.parse(JSON.stringify(user)).name, JSON.parse(JSON.stringify(user)).isAdd).then(response => {
 
-                            // 부모 컴포넌트인 관리자 컴포넌트에 해당 이미지 파일이름을 전달한다.
-                            // 이는 관리자 컴포넌트에서 직접 데이터베이스에 저장 요청을 하는 http 함수가 있기 때문이다.
-                            this.dataService.notifyOther_parent({option: 'image', value: response});
+            this.rightValueChange(response);
+            // 부모 컴포넌트인 관리자 컴포넌트에 해당 이미지 파일이름을 전달한다.
+            // 이는 관리자 컴포넌트에서 직접 데이터베이스에 저장 요청을 하는 http 함수가 있기 때문이다.
+            this.dataService.notifyOther_parent({option: 'image', change: response});
 
-                            this.subscription.unsubscribe();
-                        })
+            this.subscription.unsubscribe();
 
-                    }else {
-                        // 정보를 생성했는데 이미지를 업로드 하지 않은 경우 Default 사진을 준다.
-                      var response = null;
+          });
 
-                      if(this.cell.newValue ==  ""){
-
-                        }else{
-                          response = this.cell.newValue;
-                        }
-
-
-                        // 부모 컴포넌트인 관리자 컴포넌트에 해당 이미지 파일이름을 전달한다.
-                        // 이는 관리자 컴포넌트에서 직접 데이터베이스에 저장 요청을 하는 http 함수가 있기 때문이다.
-                        this.dataService.notifyOther_parent({option: 'image', value: response});
-                        this.subscription.unsubscribe();
-                    }
-                };
-            });
+        });
         //override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
         this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
         //overide the onCompleteItem property of the uploader so we are
@@ -107,7 +86,7 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
 
     // 서버에 이미지를 업로드 하는 기능
     // HTTP 통신을 통해 파일을 전송한다.
-    upload() {
+    upload(email, name, isAdd) {
         // Promise 함수를 사용하여 우선 이미지 업로드가 완료되면 resolve()한다.
         return new Promise ((resolve, reject)=>{
             //locate the file element meant for the file upload.
@@ -116,29 +95,28 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
             let fileCount: number = inputEl.files.length;
             //create a new fromdata instance
             let formData = new FormData();
-            console.log(inputEl.files);
             //check if the filecount is greater than zero, to be sure a file was selected.
             if (fileCount > 0) { // a file was selected
                 //append the key name 'photo' with the first file in the element
-                formData.append('photo', inputEl.files.item(0));
+                formData.append('photoOther', inputEl.files.item(0));
+
                 //call the angular http method
                 this.http
                 //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-                    .post('/photo', formData).subscribe(
+                    .post('/photoOther/' + email + '/' + name +'/'+ isAdd, formData).subscribe(
                     //map the success function and alert the response
                     (result) => {
-                        console.log(JSON.parse(JSON.stringify(result))._body);
-                        resolve(JSON.parse(JSON.stringify(result))._body);
+                        resolve(0);
                     },
                     (error) => {
                         alert(error);
-                        console.log('error');
-                        resolve();
+                        resolve(1);
                     }
                 )
             }else{
-                resolve();
+              console.log("upload된 이미지 존재하지 않음");
+                resolve(2);
             }
-        })
+        });
     }
 }

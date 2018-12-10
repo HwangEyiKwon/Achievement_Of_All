@@ -31,13 +31,7 @@ export class HttpService {
           formData: formData
       });
   }
-  downloadFile(bt, id): Observable<Blob> {
-      // 파일 (엑셀) 다운로드 관련 함수
-      let options = new RequestOptions({responseType: ResponseContentType.Blob });
-      return this.http2.get( 'downloadCertification/' + bt + '/' + id, options)
-          .map(res => res.blob());
 
-  }
   // ------------------------------------------------------------------------
 
 
@@ -118,41 +112,22 @@ export class HttpService {
           email: userEmail,
       });
   }
-  updateUserInfo(userInfo: Object, userNewInfo: Object){
+  updateUserInfo(userInfo: Object, userNewInfo: Object, imageChange: Number){
       // 사용자 페이지 (사용자 관리) 사용자 정보 수정
       return this.http.post('/updateManagerInfo', {
-          userInfo, userNewInfo
+          userInfo, userNewInfo, imageChange
       });
   }
-  addUserInfo(userNewInfo: Object){
+  addUserInfo(userNewInfo: Object, imageChange: Number){
       // 사용자 페이지 (사용자 관리) 사용자 정보 추가
-      return this.http.post('/addUserInfo',{
-          userNewInfo
+      return this.http.post('/addManagerInfo',{
+          userNewInfo, imageChange
       });
   }
   // ------------------------------------------------------------------------
 
 
-  // ------------------------------------------------------------------------
-  // groupManage에서 사용되는 함수
-  deleteGroupInfo(groupName: string){
-      // 사용자 페이지(그룹 관리) 그룹 정보 삭제
-      return this.http.post('/deleteGroupInfo',{
-          groupName: groupName
-      });
-  }
-  updateGroupInfo(groupInfo: Object, groupNewInfo: Object){
-      // 사용자 페이지(그룹 관리) 그룹 정보 수정
-      return this.http.post('/updateGroupInfo',{
-          groupInfo, groupNewInfo
-      });
-  }
-  addGroupInfo(groupNewInfo: Object){
-      // 사용자 페이지(그룹 관리) 그룹 정보 추가
-      return this.http.post('/addGroupInfo',{
-          groupNewInfo
-      });
-  }
+  // -----------------------------------------------------------------------
   // ------------------------------------------------------------------------
 
 
@@ -164,32 +139,51 @@ export class HttpService {
       return this.http.get('/getContentsInfo');
   }
 
-
-
-
-
-
-
-
-  deleteDeviceInfo(topicName: string, deviceID: string, group: string){
+  deleteContentInfo(contentName: string, contentID: string){
       // 사용자 페이지 (디바이스 관리)  제거
-      return this.http.post('/deleteDeviceInfo',{
-          topicName: topicName,
-          deviceID: deviceID,
-          group: group
+      return this.http.post('/deleteContentInfo',{
+          name: contentName,
+          id: contentID
       });
   }
-  updateDeviceInfo(deviceInfo: Object, deviceNewInfo: Object){
-      // 사용자 페이지 (디바이스 관리) 수정
-      return this.http.post('/updateDeviceInfo',{
-          deviceInfo,deviceNewInfo
-      });
+
+  addContentInfo(contentNewInfo: Object){
+    // 사용자 페이지 (디바이스 관리) 추가
+    return this.http.post('/addContentInfo',{
+      contentNewInfo
+    });
   }
-  addDeviceInfo(deviceNewInfo: Object){
-      // 사용자 페이지 (디바이스 관리) 추가
-      return this.http.post('/addDeviceInfo',{
-          deviceNewInfo
-      });
+
+  getReportsInfo() {
+    // 사용자 페이지(디바이스 관리, 그룹 관리) 디바이스 정보 로드
+    return this.http.get('/getReportsInfo');
+  }
+
+  deleteReportInfo(contentName: string, contentID: string){
+    // 사용자 페이지 (디바이스 관리)  제거
+    return this.http.post('/deleteReportInfo',{
+      name: contentName,
+      id: contentID
+    });
+  }
+
+  addReportInfo(contentNewInfo: Object){
+    // 사용자 페이지 (디바이스 관리) 추가
+    return this.http.post('/addReportInfo',{
+      contentNewInfo
+    });
+  }
+
+
+  reportAccept(report: Object){
+    return this.http.post('/reportAccept',{
+      report
+    });
+  }
+  reportReject(report: Object){
+    return this.http.post('/reportReject',{
+      report
+    });
   }
   // ------------------------------------------------------------------------
 

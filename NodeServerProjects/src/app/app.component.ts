@@ -1,3 +1,6 @@
+// App.component
+// 모두의 달성 시작 컴포넌트
+
 import { Component } from '@angular/core';
 
 @Component({
