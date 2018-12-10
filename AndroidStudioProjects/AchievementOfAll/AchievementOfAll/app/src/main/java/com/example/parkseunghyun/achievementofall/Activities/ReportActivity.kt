@@ -12,6 +12,7 @@ import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpServi
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 import android.text.method.ScrollingMovementMethod
+import android.view.MotionEvent
 import java.lang.StringBuilder
 
 
@@ -74,7 +75,15 @@ class ReportActivity : AppCompatActivity(){
         for(index in reportUserList.indices) {
 
             val idString = reportUserList.get(index).replace("\"", "").split("@")
-            reportView += idString[0].replaceRange(2, 4, "***") + "@" + idString[1]
+            if( reportUserList.get(index).length < 4 ) {
+
+                reportView += idString[0].replaceRange(2, reportUserList.get(index).length - 1, "**") + "@" + idString[1]
+
+            } else {
+
+                reportView += idString[0].replaceRange(1, 3, "***") + "@" + idString[1]
+
+            }
             reportView += " 님 \n : "
             reportView += reportReasonList.get(index)
             reportView += "\n\n"
@@ -128,6 +137,10 @@ class ReportActivity : AppCompatActivity(){
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 
         return auto.getString("token", "")
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
     }
 
 }

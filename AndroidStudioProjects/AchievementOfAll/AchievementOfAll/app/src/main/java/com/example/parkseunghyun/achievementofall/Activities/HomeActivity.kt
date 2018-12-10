@@ -8,7 +8,9 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadingFlag
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
@@ -30,6 +32,8 @@ class HomeActivity : AppCompatActivity() {
     private var viewPagerForHomeTab:ViewPager? = null
 
     private var intentToCommuinate:Intent? = null
+    private var iconImageView: ImageView? = null
+    private var projectNameView: TextView? = null
 
     var jwtToken: String?= null
 
@@ -54,6 +58,8 @@ class HomeActivity : AppCompatActivity() {
     private fun initButtonListener() {
 
         val logoutButton = findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById<ImageView>(R.id.logoutButton)
+        iconImageView = findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById(R.id.icon_image)
+        projectNameView = findViewById<View>(R.id.id_toolbar_home).findViewById<View>(R.id.toolbar_layout).findViewById(R.id.toolbar_project_name)
 
         logoutButton.setOnClickListener {
 
@@ -61,6 +67,21 @@ class HomeActivity : AppCompatActivity() {
             finish()
 
         }
+
+        iconImageView!!.setOnClickListener {
+
+            iconImageView!!.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater))
+
+        }
+
+        projectNameView!!.setOnClickListener {
+
+            projectNameView!!.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+
+        }
+
+
+
 
     }
 
@@ -319,6 +340,28 @@ class HomeActivity : AppCompatActivity() {
             goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             goToContentsHome.putExtra("fcm_category", "컨텐츠에 새로운 인증영상이 올라왔습니다!")
             goToContentsHome.putExtra("contentName", contentNameFromFCM)
+
+            startActivity(goToContentsHome)
+
+        } else if (fcmCategory.equals("접수하신 신고가 거절되었습니다. 목표 달성에 실패하셨습니다.")) {
+
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
+
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "접수하신 신고가 거절되었습니다. 목표 달성에 실패하셨습니다.")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.putExtra("reason", intentToCommuinate?.getStringExtra("reason"))
+
+            startActivity(goToContentsHome)
+
+        } else if (fcmCategory.equals("접수하신 신고가 승인되었습니다. 다시 컨텐츠를 진행하실 수 있습니다!")) {
+
+            val goToContentsHome = Intent(this, ContentsHomeActivity::class.java)
+
+            goToContentsHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            goToContentsHome.putExtra("fcm_category", "접수하신 신고가 승인되었습니다. 다시 컨텐츠를 진행하실 수 있습니다!")
+            goToContentsHome.putExtra("contentName", contentNameFromFCM)
+            goToContentsHome.putExtra("reason", intentToCommuinate?.getStringExtra("reason"))
 
             startActivity(goToContentsHome)
 

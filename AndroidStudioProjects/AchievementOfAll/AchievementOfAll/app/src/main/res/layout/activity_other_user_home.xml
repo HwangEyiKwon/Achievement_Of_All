@@ -49,9 +49,12 @@
                     <!--Circle Image view library used-->
 
                     <FrameLayout
+                        android:id="@+id/other_user_profile_image_frame"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/circle"
+                        android:focusable="true"
+                        android:clickable="true"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp">
 
@@ -61,6 +64,8 @@
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:layout_margin="4dp"
+                            android:focusable="true"
+                            android:clickable="true"
                             android:background="@drawable/circle2" />
 
                     </FrameLayout>

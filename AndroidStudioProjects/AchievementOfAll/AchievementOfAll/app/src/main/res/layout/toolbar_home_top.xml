@@ -13,6 +13,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/icon_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
@@ -21,7 +22,7 @@
         <!--ic_flag를 ic_flag_black으로 바꾸면 흑백화 가능 -->
 
         <TextView
-            android:id="@+id/toolbar_frag"
+            android:id="@+id/toolbar_project_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

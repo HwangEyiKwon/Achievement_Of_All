@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Activities.PenaltyActivity
 import com.example.parkseunghyun.achievementofall.Activities.ReportActivity
+import com.example.parkseunghyun.achievementofall.Activities.ReportResultActivity
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
@@ -126,18 +127,38 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
 
             } else if( fcmCategory.equals("마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다.") ) {
 
-                contentsViewPager?.currentItem = 1
-                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
-
-                val goToReport = Intent(this, ReportActivity::class.java)
-                goToReport.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                goToReport.putExtra("contentName", content)
-
-                startActivityForResult(goToReport, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_SUCCESS)
+                Toast.makeText(this, "축하드립니다. 컨텐츠 종료일에 보상을 받으실 수 있습니다.", Toast.LENGTH_LONG).show()
 
             } else if( fcmCategory.equals("컨텐츠에 새로운 인증영상이 올라왔습니다!") ) {
 
                 Toast.makeText(this, "새로운 인증영상을 확인해주세요!", Toast.LENGTH_LONG).show()
+
+            } else if( fcmCategory.equals("접수하신 신고가 거절되었습니다. 목표 달성에 실패하셨습니다.") ) {
+
+                contentsViewPager?.currentItem = 1
+                app_desc_indicator.createDotPanel(3, R.drawable.indicator_dot_off, R.drawable.indicator_dot_on, 1)
+
+                val reason = intent.getStringExtra("reason")
+
+                val goToReportResult = Intent(this, ReportResultActivity::class.java)
+                goToReportResult.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                goToReportResult.putExtra("contentName", content)
+                goToReportResult.putExtra("reason", reason)
+                goToReportResult.putExtra("result", "fail")
+
+                startActivityForResult(goToReportResult, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_PENALTY)
+
+            } else if (fcmCategory.equals("접수하신 신고가 승인되었습니다. 다시 컨텐츠를 진행하실 수 있습니다!") ) {
+
+                val reason = intent.getStringExtra("reason")
+
+                val goToReportResult = Intent(this, ReportResultActivity::class.java)
+                goToReportResult.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                goToReportResult.putExtra("contentName", content)
+                goToReportResult.putExtra("reason", reason)
+                goToReportResult.putExtra("result", "success")
+
+                startActivity(goToReportResult)
 
             }
         }

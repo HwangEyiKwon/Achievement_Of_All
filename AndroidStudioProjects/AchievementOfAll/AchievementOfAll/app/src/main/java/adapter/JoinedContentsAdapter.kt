@@ -29,6 +29,7 @@ class JoinedContentsAdapter(private val context: Context, private val joinedCont
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_story, parent, false)
+
         return ViewHolder(view)
 
     }

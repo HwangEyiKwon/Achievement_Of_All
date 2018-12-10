@@ -29,13 +29,14 @@ class FirebaseMessagingService : FirebaseMessagingService() {
                 remoteMessage?.data?.get("title"),
                 remoteMessage?.data?.get("body"),
                 remoteMessage?.data?.get("user"),
-                remoteMessage?.data?.get("checkReason")
+                remoteMessage?.data?.get("checkReason"),
+                remoteMessage?.data?.get("reason")
 
         )
 
     }
 
-    private fun sendNotification(messageTitle: String?, messageBody: String?, rejectUserArray: String?, rejectReasonArray: String?) {
+    private fun sendNotification(messageTitle: String?, messageBody: String?, rejectUserArray: String?, rejectReasonArray: String?, reason: String?) {
 
 /**
          컨텐츠 실패 : Title - 실패, Body - 컨텐츠명
@@ -44,6 +45,8 @@ class FirebaseMessagingService : FirebaseMessagingService() {
          인증 비디오 과반수 실패 : Title - 비디오실패, Body - 컨텐츠명
          성공 예정 : Title - 성공예정, Body - 컨텐츠명
          새로운 인증영상 : Title - 새영상, Body - 컨텐츠명
+         신고 처리 완료(거절) : Title - 신고거절, Body - 컨텐츠명
+         신고 처리 완료(승인) : Title - 신고승인, Body - 컨텐츠명
 */
 
         fcmTitle = messageBody
@@ -60,7 +63,11 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
             "성공예정" -> { fcmBody = "마지막 인증까지 성공하셨습니다! 컨텐츠 종료일에 보상을 받으실 수 있습니다." }
 
-            "새영상" -> { fcmBody = "컨텐츠에 새로운 인증영상이 올라왔습니다!"}
+            "새영상" -> { fcmBody = "컨텐츠에 새로운 인증영상이 올라왔습니다!" }
+
+            "신고거절" -> { fcmBody = "접수하신 신고가 거절되었습니다. 목표 달성에 실패하셨습니다." }
+
+            "신고승인" -> { fcmBody = "접수하신 신고가 승인되었습니다. 다시 컨텐츠를 진행하실 수 있습니다!" }
 
         }
 
@@ -70,6 +77,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         intentToHome.putExtra("contentName", fcmTitle)
         intentToHome.putExtra("rejectUserArray", rejectUserArray)
         intentToHome.putExtra("rejectReasonArray", rejectReasonArray)
+        intentToHome.putExtra("reason", reason)
 
         val pendingIntent = PendingIntent.getActivity(this, 0 /* request code */, intentToHome, PendingIntent.FLAG_UPDATE_CURRENT)
 

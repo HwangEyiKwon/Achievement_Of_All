@@ -4,12 +4,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
+import android.text.InputType
 import android.text.method.ScrollingMovementMethod
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.*
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -23,6 +24,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import org.json.JSONObject
+import org.w3c.dom.Text
 
 class ExoplayerActivity : AppCompatActivity() {
     // 서버 ip 주소
@@ -32,15 +34,21 @@ class ExoplayerActivity : AppCompatActivity() {
     private var contentName: String?= null
     private var email: String?= null
 
+    private var fab_open: Animation? = null
+    private var fab_close: Animation? = null
+
     private var token: String?= null
     private var videoPath: String?= null
     private var isAuthen: Int?= null
 
     private var check: Int? = null
-    private var checkReasonBox: EditText ? = null
+    private var checkReasonBox: LinearLayout ? = null
+    private var checkReasonEditText: EditText? = null
     private var checkReason: String? = null
     private var time: Long = 0
     private var player:SimpleExoPlayer? = null
+
+    private var isFabOpen:Boolean = false
 
 
     override fun onDestroy() {
@@ -65,11 +73,15 @@ class ExoplayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_exoplayer)
 
+        fab_open = AnimationUtils.loadAnimation(applicationContext!!, R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(applicationContext!!, R.anim.fab_close);
+
+        checkReasonEditText = findViewById(R.id.checkReason)
 
         val successButton = findViewById(R.id.success) as ImageView
         val failButton = findViewById(R.id.fail) as ImageView
         val notYetButton = findViewById(R.id.notYet) as ImageView
-        checkReasonBox = findViewById(R.id.checkReason)
+        checkReasonBox = findViewById(R.id.checkReasonLayout)
 
         val authorizeButton = findViewById(R.id.authorize_button) as Button
         authorizeButton.isEnabled = false
@@ -86,17 +98,15 @@ class ExoplayerActivity : AppCompatActivity() {
 
             successButton.setOnClickListener {
 
-                successButton.layoutParams.height = 100
-                successButton.layoutParams.width = 100
+                successButton.setPadding(0, 0, 0, 0)
 
-                failButton.layoutParams.height = 50
-                failButton.layoutParams.width = 50
+                failButton.setPadding(50, 50, 50, 50)
 
                 successButton.requestLayout()
                 failButton.requestLayout()
 
                 checkReasonBox!!.visibility = View.GONE
-
+                checkReasonBox?.startAnimation(fab_close)
                 authorizeButton.isEnabled = true
 
                 check = 1
@@ -104,16 +114,18 @@ class ExoplayerActivity : AppCompatActivity() {
 
             failButton.setOnClickListener {
 
-                successButton.layoutParams.height = 50
-                successButton.layoutParams.width = 50
+                successButton.setPadding(50, 50, 50, 50)
 
-                failButton.layoutParams.height = 100
-                failButton.layoutParams.width = 100
+
+                failButton.setPadding(0, 0, 0, 0)
+
+
                 successButton.requestLayout()
                 failButton.requestLayout()
 
                 checkReasonBox!!.visibility = View.VISIBLE
-                checkReasonBox!!.setMovementMethod(ScrollingMovementMethod())
+                checkReasonBox?.startAnimation(fab_open)
+                checkReasonEditText!!.setMovementMethod(ScrollingMovementMethod())
 
                 Toast.makeText(this, "실패 사유를 적어주세요.", Toast.LENGTH_SHORT).show()
 
@@ -121,6 +133,7 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 check = 0
             }
+
         }else if(intent.getStringExtra("who")=="other"){
 
             authorizeButton.visibility = View.GONE
@@ -137,13 +150,46 @@ class ExoplayerActivity : AppCompatActivity() {
                 failButton.visibility = View.GONE
                 notYetButton.visibility = View.GONE
 
+                successButton.isEnabled = true
+                successButton.isClickable = true
+                successButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater2))
+
+                successButton.setOnClickListener {
+                    successButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+                    println("왜안되니?")
+                    anim("인증에 성공한 영상입니다.")
+                    Toast.makeText(this, "인증에 성공한 영상입니다.", Toast.LENGTH_SHORT).show()
+                }
+
             }else if(isAuthen == 0){ // 실패
                 successButton.visibility = View.GONE
                 notYetButton.visibility = View.GONE
 
+                failButton.isEnabled = true
+                failButton.isClickable = true
+                failButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater2))
+
+                failButton.setOnClickListener {
+                    failButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+                    println("왜안되니?")
+                    anim("인증에 실패한 영상입니다.")
+                    Toast.makeText(this, "인증에 실패한 영상입니다.", Toast.LENGTH_SHORT).show()
+                }
+
             }else{ // 대기
                 successButton.visibility = View.GONE
                 failButton.visibility = View.GONE
+
+                notYetButton.isEnabled = true
+                notYetButton.isClickable = true
+                notYetButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater2))
+
+                notYetButton.setOnClickListener {
+                    notYetButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+                    println("왜안되니?")
+                    anim("아직 인증받지 못한 영상입니다.")
+                    Toast.makeText(this, "아직 인증받지 못한 영상입니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -163,26 +209,60 @@ class ExoplayerActivity : AppCompatActivity() {
                 failButton.visibility = View.GONE
                 notYetButton.visibility = View.GONE
 
+                successButton.isEnabled = true
+                successButton.isClickable = true
+                successButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater2))
+
+                successButton.setOnClickListener {
+                    successButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+                    println("왜안되니?")
+                    anim("인증에 성공한 영상입니다.")
+                    Toast.makeText(this, "인증에 성공한 영상입니다.", Toast.LENGTH_SHORT).show()
+                }
+
             }else if(isAuthen == 0){ // 실패
                 successButton.visibility = View.GONE
                 notYetButton.visibility = View.GONE
 
+                failButton.isEnabled = true
+                failButton.isClickable = true
+                failButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater2))
+
+                failButton.setOnClickListener {
+                    failButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+                    println("왜안되니?")
+                    anim("인증에 실패한 영상입니다.")
+                    Toast.makeText(this, "인증에 실패한 영상입니다.", Toast.LENGTH_SHORT).show()
+                }
+
             }else{ // 대기
                 successButton.visibility = View.GONE
                 failButton.visibility = View.GONE
+
+                notYetButton.isEnabled = true
+                notYetButton.isClickable = true
+                notYetButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotater2))
+
+                notYetButton.setOnClickListener {
+                    notYetButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
+                    println("왜안되니?")
+                    anim("아직 인증받지 못한 영상입니다.")
+                    Toast.makeText(this, "아직 인증받지 못한 영상입니다.", Toast.LENGTH_SHORT).show()
+                }
             }
 
         }
         authorizeButton.setOnClickListener{
 
             if(check == 0){ // X 클릭 시
-                if (checkReasonBox!!.text.toString().replace(" ","").equals("")) {
+                if (checkReasonEditText!!.text.toString().replace(" ","").equals("")) {
                     Toast.makeText(this, "사유를 적어주셔야 합니다.", Toast.LENGTH_LONG).show()
                 }
                 else { // 사유까지 적고난 뒤
-                    checkReason = checkReasonBox!!.text.toString()
+                    checkReason = checkReasonEditText!!.text.toString()
                     checkVideo()
                     player!!.stop() // 이게 꺼도 소리나는걸 방지.
+                    Toast.makeText(this, "인증이 완료되었습니다.", Toast.LENGTH_LONG).show()
                     finish()
                 }
             }
@@ -190,12 +270,36 @@ class ExoplayerActivity : AppCompatActivity() {
                 checkReason = ""
                 checkVideo()
                 player!!.stop() // 이게 꺼도 소리나는걸 방지.
+                Toast.makeText(this, "인증이 완료되었습니다.", Toast.LENGTH_LONG).show()
                 finish()
             }
 
         }
 
     }
+
+    fun anim(alarm : String) {
+
+        if (isFabOpen) {
+
+            checkReasonBox!!.visibility = View.GONE
+            checkReasonBox?.startAnimation(fab_close)
+            isFabOpen = false
+
+        } else {
+
+            checkReasonBox!!.visibility = View.VISIBLE
+            checkReasonEditText?.setText(alarm)
+            checkReasonEditText?.isFocusable = false
+            checkReasonEditText?.isClickable = false
+            checkReasonEditText?.isEnabled = false
+
+            checkReasonBox?.startAnimation(fab_open)
+            isFabOpen = true
+
+        }
+    }
+
     private fun loadToken(): String{
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 

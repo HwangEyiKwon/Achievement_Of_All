@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -25,10 +26,12 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
 
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
+    private var videoFullName: TextView? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_thumbnail, parent, false)
+        videoFullName = view.findViewById(R.id.video_name)
         return ViewHolder(view)
 
     }
@@ -54,6 +57,13 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
 
             holder.videoName = videoPath
 
+            var videoDateAndName:String = holder.videoName.toString()
+            videoDateAndName += "\n"
+            videoDateAndName += contentName
+
+            videoFullName?.text = videoDateAndName
+
+
         } else if(who == "other"){
 
             val videoPath = thumbnailModels[position].videoPath!!.getString("path")
@@ -70,6 +80,12 @@ class ThumbnailAdapter(private val context: Context, private val thumbnailModels
                     .into(holder.thumbnailView)
 
             holder.videoName = videoPath
+
+            var videoDateAndName:String = holder.videoName.toString()
+            videoDateAndName += "\n"
+            videoDateAndName += contentName
+
+            videoFullName?.text = videoDateAndName
 
         }
 

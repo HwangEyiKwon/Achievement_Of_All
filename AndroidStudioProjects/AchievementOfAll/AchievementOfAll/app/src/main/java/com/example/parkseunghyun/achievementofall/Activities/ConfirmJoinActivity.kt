@@ -2,6 +2,7 @@ package com.example.parkseunghyun.achievementofall
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
 import android.widget.*
 import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadingFlag
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
@@ -92,6 +93,10 @@ class ConfirmJoinActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
     }
 
     private fun joinComplete(jsonObject: JSONObject) {
