@@ -239,7 +239,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
         if (err) console.log("save err : "+err);
       });
 
-      user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList) {
+      user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 0}, function(err, userList) {
         var userListCount = Object.keys(userList).length;
         for (var i = 0; i < userListCount; i++) {
           var contentListCount = userList[i].contentList.length;
@@ -853,9 +853,9 @@ function dbInit(){
   var content5 = new content({
     id: 4,
     name: "NoSmoking",
-    startDate: "12/09/2018",
+    startDate: "12/10/2018",
     endDate: "12/11/2018",
-    isDone: 0,
+    isDone: 2,
     userList: [],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
