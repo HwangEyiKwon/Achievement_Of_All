@@ -46,8 +46,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="참가 규칙 솰라솰라"
+        android:fontFamily="@font/font5"
+        android:lineSpacingMultiplier="1.2"
         android:autoLink="web"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@color/modal_grey"
         android:textAlignment="center" />
 
     <ImageView

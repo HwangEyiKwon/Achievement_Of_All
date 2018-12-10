@@ -97,9 +97,14 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val channel = NotificationChannel("notify_001", "FCM_CHANNEL", NotificationManager.IMPORTANCE_DEFAULT)
-        notificationManager.createNotificationChannel(channel)
-        notificationBuilder.setChannelId("notify_001")
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel("notify_001", "FCM_CHANNEL", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+            notificationBuilder.setChannelId("notify_001")
+            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+
+        }
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
 
     }
