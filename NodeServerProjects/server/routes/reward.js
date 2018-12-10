@@ -164,7 +164,7 @@ router.post('/getFailureCheck',  function (req,res) {
       var currentHour = todayDate.getHours();
       var currentMinute = todayDate.getMinutes();
       var titleFail = "실패";
-      var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
       var tempArray = new Array();
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
     }

@@ -229,6 +229,8 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
   var midnightDate = new Date(todayYear,(todayMonth-1),todayDay);
 
+  console.log("midnight Date = "+ midnightDate);
+
   content.find({"startDate" : midnightDate}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;

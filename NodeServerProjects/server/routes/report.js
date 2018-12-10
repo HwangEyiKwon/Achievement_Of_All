@@ -4,6 +4,8 @@ var User = require('../models/user');
 var Content = require('../models/content');
 var Report = require('../models/report');
 var jwt = require('jwt-simple'); // jwt token 사용
+var fcmMessage = require('../../server.js');
+var fs = require("fs");
 
 router.get('/reportUserList/:jwtToken/:contentName/:reportReason', function (req,res) {
   console.log("reportUserList Start!!!");
@@ -70,5 +72,178 @@ router.get('/reportUserList/:jwtToken/:contentName/:reportReason', function (req
     });
   });
 });
+
+router.get('/getReportVideo/:email/:contentName/:videoPath', function(req,res){
+  var userEmail = req.params.email;
+  var contentName = req.params.contentName;
+  var videoPath = req.params.videoPath;
+
+  var filename = "./server/user/"+userEmail+"/video/"+contentName+"/"+videoPath+".mp4"
+  var file = fs.createReadStream(filename, {flags: 'r'});
+  file.pipe(res);
+});
+
+router.post('/reportReject', function (req,res) {
+  console.log("reportReject start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  var reportUserEmail = req.body.email;
+  var contentId = req.body.contentId;
+  var contentName = req.body.contentName;
+
+  User.findOne({email: reportUserEmail}, function(err, user) {
+    var userMoney;
+    if (user.contentList.length != 0) {
+      var contentListCount = user.contentList.length;
+      var contentListIndex;
+      for (var i = 0; i < contentListCount; i++) {
+        if (user.contentList[i].contentId === contentId) {
+          contentListIndex = i;
+          break;
+        }
+      }
+      userMoney = user.contentList[contentListIndex].money;
+
+      user.contentList[contentListIndex].joinState = 4;
+      user.contentList[contentListIndex].penalty = userMoney;
+      user.contentList[contentListIndex].money = 0;
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+    }
+
+    Content.findOne({id: contentId}, function (err, content) {
+      var userListCount = content.userList.length;
+      var userListIndex;
+
+      for (var i = 0; i < userListCount; i++) {
+        if (content.userList[i].email === userEmail) {
+          userListIndex = i;
+          break;
+        }
+      }
+      content.userList[userListIndex].result = 0;
+      content.balance += userMoney;
+
+      content.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+
+      //reward 다른 사람들 올려주는 코드
+      User.find({
+        "contentList.contentId": contentId,
+        "contentList.joinState": 1
+      }, function (err, userList) {
+        var successUserNum = Object.keys(userList).length;
+        for (var i = 0; i < successUserNum; i++) {
+          if (userList[i].email === userEmail) {
+            successUserNum--;
+            break;
+          }
+        }
+
+        for (var i = 0; i < Object.keys(userList).length && userList[i].email !== userEmail; i++) {
+          var contentListIndex;
+          var contentListCount = userList[i].contentList.length;
+
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentId === contentId) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          userList[i].contentList[contentListIndex].reward = (content.balance / successUserNum) * 0.8;
+
+          userList[i].save(function (err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+      });
+    });
+
+    if(user.pushToken != ""){
+      console.log("신고 reject 푸쉬메시지 전송");
+      var todayDate = new Date();
+      var todayMonth = todayDate.getMonth() + 1;
+      var todayDay = todayDate.getDate();
+      var todayYear = todayDate.getFullYear();
+      var currentHour = todayDate.getHours();
+      var currentMinute = todayDate.getMinutes();
+      var titleReportReject = "신고거절";
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+      var tempArray = new Array();
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, tempArray);
+    }
+
+    res.send({success:true});
+  });
+});
+
+router.post('/reportAccept', function (req,res) {
+  console.log("reportAccept start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  var reportUserEmail = req.body.email;
+  var contentId = req.body.contentId;
+  var contentName = req.body.contentName;
+
+  User.findOne({email: reportUserEmail}, function(err, user) {
+    if (user.contentList.length != 0) {
+      var contentListCount = user.contentList.length;
+      var contentListIndex;
+      for (var i = 0; i < contentListCount; i++) {
+        if (user.contentList[i].contentId === contentId) {
+          contentListIndex = i;
+          break;
+        }
+      }
+
+      Content.findOne({name: contentName, id: contentId}, function(err, content){
+        var userListCount = content.userList.length;
+        var userListIndex;
+        var videoIndex;
+        var calendarIndex;
+
+        for (var i = 0; i < userListCount; i++) {
+          if (content.userList[i].email === reportUserEmail) {
+            userListIndex = i;
+            break;
+          }
+        }
+        videoIndex = user.contentList[contentListIndex].videoPath.length - 1;
+        calendarIndex = user.contentList[contentListIndex].calendar.length - 1;
+
+        content.userList[userListIndex].newVideo.authen = 1;
+
+        user.contentList[contentListIndex].videoPath[videoIndex].authen = 1;
+        user.contentList[contentListIndex].calendar[calendarIndex].authen = 1;
+
+        content.save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
+        user.save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
+      });
+    }
+
+    if(user.pushToken != ""){
+      console.log("신고 accept 푸쉬메시지 전송");
+      var todayDate = new Date();
+      var todayMonth = todayDate.getMonth() + 1;
+      var todayDay = todayDate.getDate();
+      var todayYear = todayDate.getFullYear();
+      var currentHour = todayDate.getHours();
+      var currentMinute = todayDate.getMinutes();
+      var titleReportAccept = "신고승인";
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+      var tempArray = new Array();
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, tempArray);
+    }
+    res.send({success:true});
+  });
+});
+
 // -----------------------------------------------------
 module.exports = router ;

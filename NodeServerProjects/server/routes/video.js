@@ -160,7 +160,7 @@ router.post('/sendVideo', function(req, res, next){
                 var currentHour = todayDate.getHours();
                 var currentMinute = todayDate.getMinutes();
                 var titleNewVideo = "새영상";
-                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 2, 0);
+                var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
                 fcmMessage.sendPushMessage2(userList[i], contentListIndex, sendTime, titleNewVideo, contentName, emptyArray, emptyArray);
               }
             }
