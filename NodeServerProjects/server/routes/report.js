@@ -32,6 +32,7 @@ router.get('/reportUserList/:jwtToken/:contentName/:reportReason', function (req
       }
     }
     var contentId = user.contentList[contentListIndex].contentId;
+    reportContentId = contentId;
     Content.findOne({id: contentId, name : contentName}, function(err, content) {
       var userListCount = content.userList.length;
       var userListIndex;
@@ -85,10 +86,11 @@ router.get('/getReportVideo/:email/:contentName/:videoPath', function(req,res){
 
 router.post('/reportReject', function (req,res) {
   console.log("reportReject start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  var reportUserEmail = req.body.email;
-  var contentId = req.body.contentId;
-  var contentName = req.body.contentName;
-  var rejectReason = req.body.rejectReason;
+  console.log(req.body);
+  var reportUserEmail = req.body.report.email;
+  var contentId = req.body.report.contentId;
+  var contentName = req.body.report.contentName;
+  var reason = req.body.report.reason;
 
   User.findOne({email: reportUserEmail}, function(err, user) {
     var userMoney;
@@ -117,7 +119,7 @@ router.post('/reportReject', function (req,res) {
       var userListIndex;
 
       for (var i = 0; i < userListCount; i++) {
-        if (content.userList[i].email === userEmail) {
+        if (content.userList[i].email === reportUserEmail) {
           userListIndex = i;
           break;
         }
@@ -137,13 +139,13 @@ router.post('/reportReject', function (req,res) {
       }, function (err, userList) {
         var successUserNum = Object.keys(userList).length;
         for (var i = 0; i < successUserNum; i++) {
-          if (userList[i].email === userEmail) {
+          if (userList[i].email === reportUserEmail) {
             successUserNum--;
             break;
           }
         }
 
-        for (var i = 0; i < Object.keys(userList).length && userList[i].email !== userEmail; i++) {
+        for (var i = 0; i < Object.keys(userList).length && userList[i].email !== reportUserEmail; i++) {
           var contentListIndex;
           var contentListCount = userList[i].contentList.length;
 
@@ -172,12 +174,20 @@ router.post('/reportReject', function (req,res) {
       var currentHour = todayDate.getHours();
       var currentMinute = todayDate.getMinutes();
       var titleReportReject = "신고거절";
-      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute, todayDate.getSeconds()+5);
       var reasonArray = new Array();
       var tempArray = new Array();
-      reasonArray.push(rejectReason);
+      reasonArray.push(reason);
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
     }
+
+    Report.findOne({contentId: contentId, contentName: contentName, userEmail: reportUserEmail}, function (err, report) {
+      report.complete = 1;
+      report.save(function (err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+    });
 
     res.send({success:true});
   });
@@ -185,10 +195,10 @@ router.post('/reportReject', function (req,res) {
 
 router.post('/reportAccept', function (req,res) {
   console.log("reportAccept start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  var reportUserEmail = req.body.email;
-  var contentId = req.body.contentId;
-  var contentName = req.body.contentName;
-  var rejectReason = req.body.rejectReason;
+  var reportUserEmail = req.body.report.email;
+  var contentId = req.body.report.contentId;
+  var contentName = req.body.report.contentName;
+  var reason = req.body.report.reason;
 
   User.findOne({email: reportUserEmail}, function(err, user) {
     if (user.contentList.length != 0) {
@@ -204,8 +214,8 @@ router.post('/reportAccept', function (req,res) {
       Content.findOne({name: contentName, id: contentId}, function(err, content){
         var userListCount = content.userList.length;
         var userListIndex;
-        var videoIndex;
-        var calendarIndex;
+        var videoIndex = 0;
+        var calendarIndex = 0;
 
         for (var i = 0; i < userListCount; i++) {
           if (content.userList[i].email === reportUserEmail) {
@@ -213,8 +223,13 @@ router.post('/reportAccept', function (req,res) {
             break;
           }
         }
-        videoIndex = user.contentList[contentListIndex].videoPath.length - 1;
-        calendarIndex = user.contentList[contentListIndex].calendar.length - 1;
+
+        if(user.contentList[contentListIndex].calendar.length != 0) {
+          calendarIndex = user.contentList[contentListIndex].calendar.length - 1;
+        }
+        if(user.contentList[contentListIndex].videoPath.length != 0) {
+          videoIndex = user.contentList[contentListIndex].videoPath.length - 1;
+        }
 
         content.userList[userListIndex].newVideo.authen = 1;
 
@@ -241,12 +256,26 @@ router.post('/reportAccept', function (req,res) {
       var currentHour = todayDate.getHours();
       var currentMinute = todayDate.getMinutes();
       var titleReportAccept = "신고승인";
-      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+      var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute , todayDate.getSeconds()+5);
       var reasonArray = new Array();
       var tempArray = new Array();
-      reasonArray.push(rejectReason);
-      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
+      reasonArray.push(reason);
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, reasonArray);
     }
+
+    Report.findOne({contentId: contentId, contentName: contentName, userEmail: reportUserEmail}, function (err, report) {
+      report.complete = 1;
+      report.save(function (err, savedDocument) {
+        if (err){
+          return console.error(err);
+        }
+        else{
+
+        }
+
+      });
+    });
+
     res.send({success:true});
   });
 });

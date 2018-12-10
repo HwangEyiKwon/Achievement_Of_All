@@ -195,14 +195,14 @@ router.post('/photoOther/:email/:name/:isAdd', function(req, res, next) {
     console.log('파일이름바꾸기');
     console.log(req.params.isAdd);
 
-    if(req.params.isAdd === true){
+    if(req.params.isAdd == "true"){
+
       console.log("왜 안만들어");
       mkdirp('./server/user/'+req.params.email+'/video', function (err) {
         if(err) console.log("create dir user err : "+err);
-        else console.log("create dir ./user/" +userEmail );
+        else console.log("create dir ./user/" + req.params.email );
       }); //server폴더 아래 /user/useremail/video 폴더가 생김.
     }
-
 
     uploadOther(req, res, user).then(function (file) {
       // console.log('aaffaaff');

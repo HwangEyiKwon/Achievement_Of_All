@@ -23,9 +23,9 @@ import * as myGlobals from './global.service';
         </div>
         
         <div *ngIf="clicked==true">
-          <div  *ngIf="completed==false">
-            <input type="radio" value=true  [(ngModel)]="isConfirm" > Accept
-            <input type="radio" value=false  [(ngModel)]="isConfirm"> Reject
+          <div *ngIf="completed==false">
+            <input type="radio" [value] = true  [(ngModel)]="isConfirm" > Accept
+            <input type="radio" [value] = false  [(ngModel)]="isConfirm"> Reject
             
             <div>
               <input #textbox type="text" name = "사유" [(ngModel)]="reason" required>
@@ -78,8 +78,8 @@ export class ReportVideoComponent implements ViewCell, OnInit {
       var videoPath = JSON.parse(JSON.stringify(this.rowData)).authenDay;
 
       // 날짜가 중요!! 이거 새로만들어야할듯
-      // this.videoSource = this.imagePath + '/getReportVideo/' + email + '/' + contentName + '/'+ videoPath + '?' + new Date().getTime();
-      this.videoSource = this.imagePath + '/getOthersVideo/' + 'shp17@gmail.com/NoSmoking';
+      this.videoSource = this.imagePath + '/getReportVideo/' + email + '/' + contentName + '/'+ videoPath + '?' + new Date().getTime();
+      // this.videoSource = this.imagePath + '/getOthersVideo/' + 'shp17@gmail.com/NoSmoking';
     }
     cancel(){
       this.clicked = false;
@@ -100,7 +100,7 @@ export class ReportVideoComponent implements ViewCell, OnInit {
           reason: this.reason
         };
 
-        if(this.isConfirm == true){
+        if(this.isConfirm === true){
 
           this.httpService.reportAccept(rp).subscribe(result => {
               if(JSON.parse(JSON.stringify(result)).success === true){

@@ -186,6 +186,10 @@ module.exports = function(passport) {
             newUser.phoneNumber = req.body.phoneNumber;;
             newUser.contentList = [];
 
+            if(req.body.imageChange == 0){
+              newUser.imagePath = req.body.name;
+            }
+
             newUser.save(function(err) {
               if (err) throw err;
 

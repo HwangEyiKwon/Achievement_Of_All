@@ -167,11 +167,21 @@ router.post('/addManagerInfo', function(req, res, next) {
   req.body = req.body.userNewInfo;
   req.body.imageChange = ch;
 
+  console.log("매니저가 유저 생");
+  console.log(req.body);
 
   passport.authenticate('add-newuser', function(err, user, info) {
     if (err) { return next(err); }
-    if (!user) { res.sned({success:false}); }
-    else { res.send({success:true}); }
+    if (!user) { res.send({success:false}); }
+    else {
+
+      if(ch == 2){
+        mkdirp('./server/user/'+req.body.email+'/video', function (err) {
+          if(err) console.log("create dir user err : "+err);
+          else console.log("create dir ./user/" + req.body.email );
+        }); //server폴더 아래 /user/useremail/video 폴더가 생김.
+      }
+      res.send({success:true}); }
   })(req, res, next);
 });
 router.get('/getContentsInfo', function(req, res) {
