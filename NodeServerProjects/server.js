@@ -3,10 +3,10 @@
 
 
 
-// mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+ mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -36,6 +36,8 @@ var titleSuccess = "성공";
 var titleVideoFail = "비디오실패";
 var titleWillSuccess = "성공예정";
 var titleNewVideo = "새영상";
+var titleReportReject = "신고거절";
+var titleReportAccept = "신고승인";
 
 var schedule = require('node-schedule');
 var FCM = require('fcm-node');
@@ -113,6 +115,7 @@ app.set('jwtTokenSecret', "afafaffffff");
 app.set('managerKey', "3Ke34Meg9ek");
 
 app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/simple-memo/index.html')); });
+
 //여기 아래
 const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 
@@ -135,24 +138,6 @@ user.findOneAndUpdate(
 //   }
 //   console.log(doc);
 // });
-
-// mkdirp('./server/user/sph2@gmail.com/video/NoSmoking', function (err) {
-//   if(err) console.log(err);
-//   else console.log("create dir");
-// }); //server폴더 아래 /user/useremail/video 폴더가 생김.
-
-// mkdirp('./server/contentImage/', function (err) {
-//   if(err) console.log(err);
-//   else console.log("create dir");
-// }); //server폴더 아래 /user/useremail/video 폴더가 생김.
-
-// var threeDaysAgo = new Date(Date.now());
-// for(var i =0;i < 100;i++) {
-//   // 2014-03-01 - 월은 0에서부터 시작된다.
-//    threeDaysAgo.setDate(threeDaysAgo.getDate() + 3); // 2014-02-26 => 3일전으로~
-//   // console.log("year : " + todayYear + "month : " + todayMonth + " day : " + todayDay);
-//   console.log("date : "+threeDaysAgo);
-// } 얘를 나중에 authen 0 에서 1 로 바꾸는 애한테 끼워넣으면서 date 업데이트 해주면 됨.
 
 app.post('/sendToken', function(req, res) {
   console.log("sendToken Start");
@@ -229,8 +214,7 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
   var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
   var midnightDate = new Date(todayYear,(todayMonth-1),todayDay);
 
-  console.log("midnight Date = "+ midnightDate);
-
+  //content 시작일에 유저들의 상태를 진행중으로 변경
   content.find({"startDate" : midnightDate}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
@@ -247,11 +231,12 @@ var scheduler = schedule.scheduleJob('00 * * *', function(){
           var contentListCount = userList[i].contentList.length;
           var contentListIndex;
           for (var j = 0; j < contentListCount; j++) {
-            if (userList[i].contentList[j].contentId === contentId) {
+            if (userList[i].contentList[j].contentName === contentName) {
               contentListIndex = j;
               break;
             }
           }
+          console.log(contentListIndex);
           userList[i].contentList[contentListIndex].joinState = 1;
           userList[i].save(function (err, savedDocument) {
             if (err) console.log("save err : " + err);
@@ -464,6 +449,43 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
   var yesterday = todayYear+ "-" + todayMonth + "-" + (todayDay-1);
   var yesterdayDate = new Date(todayYear,(todayMonth-1),(todayDay-1));
 
+  var midnightDate = new Date(todayYear,(todayMonth-1),todayDay);
+
+  console.log("midnight Date = "+ midnightDate);
+
+  content.find({"startDate" : midnightDate}, function(err, contentList){
+    for(var i = 0; i < Object.keys(contentList).length; i++){
+      console.log(contentList[i]);
+      var contentId = contentList[i].id;
+      var contentName = contentList[i].name;
+      contentList[i].isDone = 0;
+
+      contentList[i].save(function(err, savedDocument) {
+        if (err) console.log("save err : "+err);
+      });
+
+      user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 0}, function(err, userList) {
+        var userListCount = Object.keys(userList).length;
+        for (var i = 0; i < userListCount; i++) {
+          console.log(userList[i]);
+          var contentListCount = userList[i].contentList.length;
+          var contentListIndex;
+          for (var j = 0; j < contentListCount; j++) {
+            if (userList[i].contentList[j].contentName === contentName) {
+              contentListIndex = j;
+              break;
+            }
+          }
+          console.log(contentListIndex);
+          userList[i].contentList[contentListIndex].joinState = 1;
+          userList[i].save(function (err, savedDocument) {
+            if (err) console.log("save err : " + err);
+          });
+        }
+      });
+    }
+  });
+
   content.find({isDone: 0}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var totalDate = (contentList[i].endDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
@@ -547,7 +569,7 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
 }
 
 //외부 푸쉬메시지 펑션
-exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentName, authenUserArray, checkReasonArray)  {
+exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentName, authenUserArray, reasonArray)  {
   console.log(user.pushToken);
   console.log("외부 push");
   console.log('titles: ' + titles);
@@ -563,7 +585,24 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
         title: titles,
         body: contentName,
         user: authenUserArray,
-        checkReason: checkReasonArray
+        checkReason: reasonArray
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
+  else if(titles == titleReportReject || titles == titleReportAccept){
+    console.log("신고승인 또는 거절 변수 저장");
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+        reason: reasonArray
       },
       // 메시지 중요도
       priority: "high",
@@ -633,6 +672,28 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
           return;
         }
         console.log('새영상 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleReportAccept){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('신고승인 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('신고승인 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleReportReject){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('신고거절 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('신고거절 Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
@@ -739,7 +800,18 @@ function dbInit(){
     nickName : "manager",
     imagePath: "manager",
     pushToken: "",
-    contentList:[]
+    contentList:[{
+      contentId : 4,
+      videoPath: [],
+      contentName: "NoSmoking",
+      joinState : 0,
+      authenticationDate : "2018-12-10",
+      isUploaded : 0,
+      calendar: [],
+      money: 100000,
+      reward: 0,
+      rewardCheck: 0
+    }]
   });
 
   user1.password = user1.generateHash("123");
@@ -858,7 +930,7 @@ function dbInit(){
     startDate: "12/10/2018",
     endDate: "12/11/2018",
     isDone: 2,
-    userList: [],
+    userList: [{name: "manager", email: "manager@gmail.com", result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
     balance: 0
   })

@@ -146,11 +146,12 @@ router.post('/sendVideo', function(req, res, next){
                 if (userList[i].contentList[j].contentName === contentName) {
                   contentListIndex = j;
                   break;
-	        }
-	      }
+	              }
+              }
               console.log("비디오 업로드 push message 문 전");
               console.log("push token: " + userList[i].pushToken);
               if(userList[i].pushToken != ""){
+                console.log(userList[i].pushToken);
                 console.log("비디오 업로드 push message 문");
                 var emptyArray = new Array();
                 var todayDate = new Date();

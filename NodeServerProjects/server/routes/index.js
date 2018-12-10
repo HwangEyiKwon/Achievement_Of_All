@@ -65,8 +65,12 @@ router.post('/logout', function(req, res){
       console.log("logout err : "+err);
       res.send({success: false});
     }
-    user.pushToken = null;
+    user.pushToken = "";
     console.log('user token is ='+ user.pushToken + '!!');
+    user.save(function(err, savedDocument) {
+      if (err)
+        return console.error(err);
+    });
   });
   res.send({success: true});
 });

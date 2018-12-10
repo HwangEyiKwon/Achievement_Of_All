@@ -88,6 +88,7 @@ router.post('/reportReject', function (req,res) {
   var reportUserEmail = req.body.email;
   var contentId = req.body.contentId;
   var contentName = req.body.contentName;
+  var rejectReason = req.body.rejectReason;
 
   User.findOne({email: reportUserEmail}, function(err, user) {
     var userMoney;
@@ -95,7 +96,7 @@ router.post('/reportReject', function (req,res) {
       var contentListCount = user.contentList.length;
       var contentListIndex;
       for (var i = 0; i < contentListCount; i++) {
-        if (user.contentList[i].contentId === contentId) {
+        if (user.contentList[i].contentName === contentName) {
           contentListIndex = i;
           break;
         }
@@ -147,7 +148,7 @@ router.post('/reportReject', function (req,res) {
           var contentListCount = userList[i].contentList.length;
 
           for (var j = 0; j < contentListCount; j++) {
-            if (userList[i].contentList[j].contentId === contentId) {
+            if (userList[i].contentList[j].contentName === contentName) {
               contentListIndex = j;
               break;
             }
@@ -172,8 +173,10 @@ router.post('/reportReject', function (req,res) {
       var currentMinute = todayDate.getMinutes();
       var titleReportReject = "신고거절";
       var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+      var reasonArray = new Array();
       var tempArray = new Array();
-      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, tempArray);
+      reasonArray.push(rejectReason);
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
     }
 
     res.send({success:true});
@@ -185,13 +188,14 @@ router.post('/reportAccept', function (req,res) {
   var reportUserEmail = req.body.email;
   var contentId = req.body.contentId;
   var contentName = req.body.contentName;
+  var rejectReason = req.body.rejectReason;
 
   User.findOne({email: reportUserEmail}, function(err, user) {
     if (user.contentList.length != 0) {
       var contentListCount = user.contentList.length;
       var contentListIndex;
       for (var i = 0; i < contentListCount; i++) {
-        if (user.contentList[i].contentId === contentId) {
+        if (user.contentList[i].contentName === contentName) {
           contentListIndex = i;
           break;
         }
@@ -238,8 +242,10 @@ router.post('/reportAccept', function (req,res) {
       var currentMinute = todayDate.getMinutes();
       var titleReportAccept = "신고승인";
       var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute + 1, 0);
+      var reasonArray = new Array();
       var tempArray = new Array();
-      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, tempArray);
+      reasonArray.push(rejectReason);
+      fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
     }
     res.send({success:true});
   });
