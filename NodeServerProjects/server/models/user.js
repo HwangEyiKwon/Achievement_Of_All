@@ -28,7 +28,7 @@ const userSchema = new Schema({
     fcmVideoFailureFlag: Number, // 0: 문제x 1: fcm전송이 필요
     fcmReportAcceptFlag: Number, // 0: 문제x 1: fcm전송이 필요
     fcmReportRejectFlag: Number, // 0: 문제x 1: fcm전송이 필요
-    fcmMessageArray: [{failAuthenUserArray: Array, reasonArray: Array}]
+    fcmMessageArray: {failAuthenUserArray: Array, reasonArray: Array}
   }],
   pushToken: String,
   emailAuthenticated: Number, //0: 인증x 1: 인증

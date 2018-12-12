@@ -165,6 +165,10 @@ router.post('/reportReject', function (req,res) {
       });
     });
 
+    var reasonArray = new Array();
+    var tempArray = new Array();
+    reasonArray.push(reason);
+
     if(user.pushToken != ""){
       console.log("신고 reject 푸쉬메시지 전송");
       var todayDate = new Date();
@@ -175,15 +179,13 @@ router.post('/reportReject', function (req,res) {
       var currentMinute = todayDate.getMinutes();
       var titleReportReject = "신고거절";
       var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute, todayDate.getSeconds()+5);
-      var reasonArray = new Array();
-      var tempArray = new Array();
-      reasonArray.push(reason);
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
     }
     else{
       console.log("push message 디비 세팅, logout한 유저");
       user.contentList[contentListIndex].fcmReportRejectFlag = 1;
-      user.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: reasonArray});
+      user.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = tempArray;
+      user.contentList[contentListIndex].reasonArray = reasonArray;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
@@ -256,6 +258,10 @@ router.post('/reportAccept', function (req,res) {
       });
     }
 
+    var reasonArray = new Array();
+    var tempArray = new Array();
+    reasonArray.push(reason);
+
     if(user.pushToken != ""){
       console.log("신고 accept 푸쉬메시지 전송");
       var todayDate = new Date();
@@ -266,15 +272,14 @@ router.post('/reportAccept', function (req,res) {
       var currentMinute = todayDate.getMinutes();
       var titleReportAccept = "신고승인";
       var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute , todayDate.getSeconds()+5);
-      var reasonArray = new Array();
-      var tempArray = new Array();
-      reasonArray.push(reason);
+
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, reasonArray);
     }
     else{
       console.log("push message 디비 세팅, logout한 유저");
       user.contentList[contentListIndex].fcmReportAcceptFlag = 1;
-      user.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: reasonArray});
+      user.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = tempArray;
+      user.contentList[contentListIndex].reasonArray = reasonArray;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);

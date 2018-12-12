@@ -360,7 +360,8 @@ router.post('/checkVideo', function(req,res){
               else{
                 console.log("push message 디비 세팅, logout한 유저");
                 otherUser.contentList[contentListIndex].fcmVideoFailureFlag = 1;
-                otherUser.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: failAuthenUserArray, reasonArray: checkReasonArray});
+                otherUser.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = failAuthenUserArray;
+                otherUser.contentList[contentListIndex].fcmMessageArray.reasonArray = checkReasonArray;
                 otherUser.save(function(err, savedDocument) {
                   if (err)
                     return console.error(err);

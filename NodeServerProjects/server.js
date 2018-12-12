@@ -3,10 +3,10 @@
 
 
 
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+//mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -148,10 +148,68 @@ app.post('/sendToken', function(req, res) {
   var userEmail = req.body.email;
   var userToken = req.body.fcmToken;
   user.findOne({email: userEmail}, function (err, user) {
-    user.pushToken = userToken;
-    user.save(function (err) {
-      if (err) console.log(err);
-    });
+    if(user== undefined){
+      console.log("There are not user..");
+    }
+    else{
+      user.pushToken = userToken;
+      user.save(function (err) {
+        if (err) console.log(err);
+      });
+
+      console.log("login user new fcm code");
+      var joinContentCount = user.contentList.length;
+      var contentListIndex;
+      for(var i = 0; i < joinContentCount; i++){
+        var contentName = user.contentList[i].contentName;
+        var tempArray = new Array();
+        if(user.contentList[i].fcmFailureFlag == 1){
+          console.log("fcm failure send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          sendPushMessage(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
+          user.contentList[i].fcmFailureFlag = 0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+        if(user.contentList[i].fcmVideoFailureFlag == 1){
+          console.log("fcm video failure send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          sendPushMessage(user, contentListIndex, sendTime, titleVideoFail, contentName, user.contentList[i].fcmMessageArray.failAuthenUserArray, user.contentList[i].fcmMessageArray.reasonArray);
+          user.contentList[i].fcmVideoFailureFlag = 0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+        if(user.contentList[i].fcmReportAcceptFlag == 1){
+          console.log("fcm report accept send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          sendPushMessage(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, user.contentList[i].fcmMessageArray.reasonArray);
+          user.contentList[i].fcmReportAcceptFlag = 0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+        if(user.contentList[i].fcmReportRejectFlag == 1){
+          console.log("fcm report reject send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          sendPushMessage(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, user.contentList[i].fcmMessageArray.reasonArray);
+          user.contentList[i].fcmReportRejectFlag =0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+      }
+    }
+
   });
   //날짜 구하기
   var todayDate = new Date();
@@ -195,65 +253,6 @@ app.post('/sendToken', function(req, res) {
       }
     }
   });
-  user.findOne({ email: userEmail}, function(err, user) {
-    if(user== undefined){
-      console.log("There are not user..");
-    }
-    else{
-      console.log("login user new fcm code");
-      var joinContentCount = user.contentList.length;
-      var contentListIndex;
-      for(var i = 0; i < joinContentCount; i++){
-        var contentName = user.contentList[i].contentName;
-        var tempArray = new Array();
-        if(user.contentList[i].fcmFailureFlag == 1){
-          console.log("fcm failure send");
-          contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 3);
-          sendPushMessage(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
-          user.contentList[i].fcmFailureFlag = 0;
-          user.save(function(err, savedDocument) {
-            if (err)
-              return console.error(err);
-          });
-        }
-        if(user.contentList[i].fcmVideoFailureFlag == 1){
-          console.log("fcm video failure send");
-          contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 30);
-          sendPushMessage(user, contentListIndex, sendTime, titleVideoFail, contentName, user.contentList[i].fcmMessageArray[0].failAuthenUserArray, user.contentList[i].fcmMessageArray[0].reasonArray);
-          user.contentList[i].fcmVideoFailureFlag = 0;
-          user.save(function(err, savedDocument) {
-            if (err)
-              return console.error(err);
-          });
-        }
-        if(user.contentList[i].fcmReportAcceptFlag == 1){
-          console.log("fcm report accept send");
-          contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 30);
-          sendPushMessage(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, user.contentList[i].fcmMessageArray[0].reasonArray);
-          user.contentList[i].fcmReportAcceptFlag = 0;
-          user.save(function(err, savedDocument) {
-            if (err)
-              return console.error(err);
-          });
-        }
-        if(user.contentList[i].fcmReportRejectFlag == 1){
-          console.log("fcm report reject send");
-          contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 30);
-          sendPushMessage(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, user.contentList[i].fcmMessageArray[0].reasonArray);
-          user.contentList[i].fcmReportRejectFlag =0;
-          user.save(function(err, savedDocument) {
-            if (err)
-              return console.error(err);
-          });
-        }
-      }
-    }
-  });
-
 });
 
 //날짜가 바뀔 때마다 푸쉬알림 전송 및 매일 수행될 기능들
@@ -448,7 +447,8 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
         var tempArray = new Array();
         console.log("push message 디비 세팅, logout한 유저");
         userList[i].contentList[authenContentIndex].fcmFailureFlag = 1;
-        userList[i].contentList[authenContentIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: tempArray});
+        userList[i].contentList[authenContentIndex].fcmMessageArray.failAuthenUserArray = tempArray;
+        userList[i].contentList[authenContentIndex].reasonArray= tempArray;
         userList[i].save(function(err, savedDocument) {
           if (err)
             return console.error(err);

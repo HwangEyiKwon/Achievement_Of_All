@@ -172,7 +172,8 @@ router.post('/getFailureCheck',  function (req,res) {
       var tempArray = new Array();
       console.log("push message 디비 세팅, logout한 유저");
       user.contentList[contentListIndex].fcmFailureFlag = 1;
-      user.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: tempArray});
+      user.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = tempArray;
+      user.contentList[contentListIndex].fcmMessageArray.reasonArray = tempArray;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
