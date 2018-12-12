@@ -94,8 +94,10 @@ export class CalendarComponent extends DefaultEditor implements OnInit, OnDestro
 
     this.subscription = this.dataService.notifyObservableStd$.subscribe((user) => {
 
+      // 셀의 날짜 데이터를 받아온다.
       var std = {year: this.cell_y, month: this.cell_m, day: this.cell_d};
 
+      // 부모 컴포넌트에 정보를 넘긴다.
       this.dataService.notifyOtherStd_parent({option: 'startDate', date: std});
 
       if(this.subscription != null)

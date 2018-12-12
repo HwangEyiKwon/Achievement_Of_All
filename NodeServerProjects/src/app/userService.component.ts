@@ -1,3 +1,7 @@
+// UserService.component
+
+// 로그인 및 회원가입 관련 컴포넌트다.
+// 사용자 페이지의 큰틀을 구성하는 컴포넌트다.
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { NgForm } from '@angular/forms';
@@ -14,13 +18,13 @@ export class UserServiceComponent implements OnInit , OnDestroy {
 
   state = 0; // 로그인 = 0 , 회원가입 = 1, 비밀번호 찾기 = 2, 비밀번호 변경 = 3
 
-  username: string; // 사용자 이름
-  phoneNumber: string; // 전화번호
-  email: string; // 이메일
-  password: string; // 비밀번호
+  username: string;
+  phoneNumber: string;
+  email: string;
+  password: string;
   managerKey: string; // 관리자 키
 
-  myObserver = null; // 옵저버
+  myObserver = null;
 
   defaultUser = { // default (예시)
     username : '홍길동' ,
@@ -52,6 +56,7 @@ export class UserServiceComponent implements OnInit , OnDestroy {
     });
   }
 
+  // 회원가입 함수이다.
   onSubmit(form: NgForm) {
     // Sign Up
     // 회원가입 버튼을 누를 경우
@@ -88,12 +93,12 @@ export class UserServiceComponent implements OnInit , OnDestroy {
           }else{
             alert('서버 상태가 좋지 않습니다. 다시 시도해주세요.');
           }
-
         }
       });
     }
   }
 
+  // 로그인 함수이다.
   onLogin(form: NgForm) {
     // Login
     // 로그인 버튼을 누를 경우
@@ -128,6 +133,7 @@ export class UserServiceComponent implements OnInit , OnDestroy {
     }
   }
 
+  // 비밀번호 수정 함수다.
   onChangePassword(form: NgForm) {
     // Change Password
     // 비밀번호 변경을 위한 이메일 인증 버튼을 누를 경우
@@ -167,11 +173,8 @@ export class UserServiceComponent implements OnInit , OnDestroy {
     this.email = '';
     this.password = '';
   }
-  // NgOnDestroy
-  // 컴포넌트가 파괴될 때 작동하는 부분
+
   ngOnDestroy() {
-    // 위에서 HTTP 통신을 위한 Observer가 Subscribe 중이므로 Unsubscribe를 해준다.
-    // 사실 unsubscribe는 필요에 따라해주면된다.
     this.myObserver.unsubscribe();
   }
 }

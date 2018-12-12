@@ -1,7 +1,7 @@
 // Calendar.component
 
 // ContentManage.component의 자식 컴포넌트다.
-// 컨텐츠 생성 시 끝 날짜를 적을 수 있는 컴포넌트다.
+// 컨텐츠 생성 시 종료 날짜를 적을 수 있는 컴포넌트다.
 
 import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { DefaultEditor } from 'ng2-smart-table';
@@ -82,13 +82,6 @@ export class CalendarEndComponent extends DefaultEditor implements OnInit, OnDes
     super();
   }
 
-  // 이벤트 함수
-  // 업로드에 변화가 올경우 실행됨
-  //
-  // rightValueChange(value) {
-  //   this.cell.newValue = value;
-  // }
-
   changeValueY(event){
     this.cell_y = event;
   }
@@ -103,8 +96,10 @@ export class CalendarEndComponent extends DefaultEditor implements OnInit, OnDes
 
     this.subscription = this.dataService.notifyObservableEd$.subscribe((user) => {
 
+      // 셀의 날짜 데이터를 받아온다.
       var ed = {year: this.cell_y, month: this.cell_m, day: this.cell_d};
 
+      // 부모 컴포넌트에 정보를 넘긴다.
       this.dataService.notifyOtherEd_parent({option: 'endDate', date: ed});
 
       if(this.subscription != null)

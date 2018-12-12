@@ -7,7 +7,7 @@ import {NgForm} from '@angular/forms';
 import {HttpService} from './http-service';
 import {UserPageComponent} from './userPage.component';
 import {  FileUploader } from 'ng2-file-upload/ng2-file-upload';
-import {Http, Headers, RequestOptions} from '@angular/http';
+import {Http} from '@angular/http';
 
 import * as myGlobals from './global.service';
 
@@ -22,7 +22,7 @@ export class UserInfoComponent implements OnInit {
   state: number; // 사용자 정보 제공 = 0, 수정 기능 = 1, 비밀번호 변경 = 2
 
   imageURI: string;
-  imagePath = myGlobals.imagePath; // 이미지 경로
+  imagePath = myGlobals.serverPath; // 이미지 경로
 
   email: string; // 사용자 이메일
   name: string; // 사용자 이름
@@ -42,7 +42,6 @@ export class UserInfoComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log(">>>");
     // 부모 컴포넌트인 userPage.component에서 보낸 사용자 정보들을 불러오는 값
     // 컴포넌트 사이에서 데이터 교환은 여러 방식이 있는데 이는 그 중 하나의 방법임. (Data.service 참고)
     this.dataService.currentMessage.subscribe(userInfo => {
@@ -51,9 +50,8 @@ export class UserInfoComponent implements OnInit {
       this.name = JSON.parse(JSON.stringify(userInfo)).name;
       this.authority = JSON.parse(JSON.stringify(userInfo)).authority;
       this.phoneNumber = JSON.parse(JSON.stringify(userInfo)).phoneNumber;
-      console.log(userInfo);
+
       this.imageURI = this.imagePath + '/getManagerImage/' + this.email +'?'+ new Date().getTime();
-      console.log(this.imageURI);
       this.state = 0;
 
     });
@@ -67,8 +65,8 @@ export class UserInfoComponent implements OnInit {
     };
 
   }
-  // Image Upload
-  // 이미지를 서버의 한 경로로 업로드하는 부분
+  // Image Upload 하는 함수
+  // (이미지를 서버의 한 경로로 업로드하는 부분)
   upload(name) {
 
     // Promise 기법 (구글 참고)
@@ -110,27 +108,25 @@ export class UserInfoComponent implements OnInit {
       }
     })
   }
-  // 수정 페이지 버튼을 누를 경우
+  // 수정 버튼 함수
   openEdit(){
     this.state=1;
   }
-  // 취소 버튼을 누를 경우
+  // 취소 버튼 함수
   cancel(){
     this.state=0;
     this.ngOnInit();
   }
-  // 비밀번호 수정 페이지 버튼을 누를 경우
+  // 비밀번호 수정 버튼 함수
   openChangePassword(){
     this.state = 2;
   }
 
-  // 수정 완료 버튼을 누를 경우
+  // 수정 완료 버튼 함수
   saveEdit(form: NgForm){
     this.upload(form.value.name).then( response => {
       //upload()를 우선 호출 후 upload 내부 모든 비동기 함수가 끝나면 이어서 아래 코드 진행
       var userImagePath = response;
-
-      console.log("dafadsfasdf"+ userImagePath);
 
       // HTTP 통신으로 서버에 수정하려는 정보들을 전달 (성공시 데이터베이스에 적용)
       this.httpService.changeUserInfo(form.value.name, this.email, form.value.phoneNumber, userImagePath).subscribe(
@@ -140,8 +136,6 @@ export class UserInfoComponent implements OnInit {
             this.state = 0;
             // 수정이 완료되면 부모 컴포넌트를 다시 호출하여 수정된 사용자 정보를 가져오도록 함.
             this.parent.ngOnInit();
-            console.log("부모 컴포넨트 갱신?")
-
           }else{
             // 수정하려는 이메일이 중복 메일일 경우
             alert("존재하는 메일입니다.")
@@ -151,7 +145,7 @@ export class UserInfoComponent implements OnInit {
       );
     });
   }
-  // 비밀번호 수정 완료 버튼을 누를 경우
+  // 비밀번호 수정 함수
   changePassword(form: NgForm){
     if (window.confirm('비밀번호를 바꾸시겠습니까?')) {
       if(form.value.newPassword == form.value.newPasswordCheck){

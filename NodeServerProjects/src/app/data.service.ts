@@ -2,7 +2,7 @@
 
 // Data 공유 함수들을 모아놓은 서비스
 // 컴포넌트 사이의 Data 공유로 Data Binding, Observer을 통한 Data 공유 등이 있는데 여기서는 Observer를 통해 Data를 주고 받는 서비스를 구현했다
-// Dependency Injection 개념을 통해 Data공유가 필요한 컴포넌트에서 필요 함수를 주입가능하도록 함.
+// Dependency Injection 개념을 통해 Data 공유가 필요한 컴포넌트에서 필요 함수를 주입가능하도록 함.
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
@@ -11,13 +11,20 @@ import { Subject } from 'rxjs/Subject';
 @Injectable()
 export class DataService {
 
+
+  private dataObs = new BehaviorSubject({});
+  currentMessage = this.dataObs.asObservable();
+
+  //------------------------------------------------------------------------
+
+
   private notify = new Subject<any>();
   notifyObservable$ = this.notify.asObservable();
 
   private notify_parent = new Subject<any>();
   notifyObservable$_parent = this.notify_parent.asObservable();
-
   //------------------------------------------------------------------------
+
 
   private notifyStd = new BehaviorSubject({});
   notifyObservableStd$ = this.notifyStd.asObservable();
@@ -26,47 +33,30 @@ export class DataService {
   notifyObservableStd$_parent = this.notifyStd_parent.asObservable();
   //------------------------------------------------------------------------
 
+
   private notifyEd = new BehaviorSubject({});
   notifyObservableEd$ = this.notifyEd.asObservable();
 
   private notifyEd_parent = new BehaviorSubject({});
   notifyObservableEd$_parent = this.notifyEd_parent.asObservable();
-
   //------------------------------------------------------------------------
+
+
   private notifyReport = new Subject<any>();
   notifyObservableReport$ = this.notifyReport.asObservable();
 
   private notifyReport_parent = new Subject<any>();
   notifyObservableReport$_parent = this.notifyReport_parent.asObservable();
-
   //------------------------------------------------------------------------
 
-  // Device Info Component <-> selectGroup, selectDevice Component
-  private dataObs = new BehaviorSubject({});
-  currentMessage = this.dataObs.asObservable();
 
-  private dataObs_device = new BehaviorSubject({});
-  currentMessage_device = this.dataObs_device.asObservable();
-
-  private dataObs_group = new BehaviorSubject({});
-  currentMessage_group = this.dataObs_group.asObservable();
-
+  //------------------------------------------------------------------------
 
   updateData(data: Object) {
-      this.dataObs.next(data);
-  }
-  updateData_device(data: Object) {
-      console.log(JSON.stringify(data));
-      this.dataObs_device.next(data);
-      console.log(this.currentMessage_device);
-  }
-  updateData_group(data: Object) {
-      this.dataObs_group.next(data);
+    this.dataObs.next(data);
   }
   //------------------------------------------------------------------------
 
-
-  //------------------------------------------------------------------------
 
   public notifyOther(data: any) {
       if (data) {
@@ -114,5 +104,7 @@ export class DataService {
       this.notifyReport_parent.next(data);
     }
   }
-}
   //------------------------------------------------------------------------
+
+}
+

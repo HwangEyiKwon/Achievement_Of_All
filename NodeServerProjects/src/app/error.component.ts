@@ -1,9 +1,9 @@
-// error.component
+// Error.component
 
 // 접근 권한 제어를 위한 컴포넌트다.
 // 권한이 없는 사람이 접근할 경우 에러 페이지를 띄워 접근을 제어하고 메인페이지로 이동할 수 있도록 해준다.
 // 직접 url을 변경하여 접근할 경우
-// error 컴포는터는 html을 다로 만들지 않고 typescript 내부 template에 넣었다.(파일이 크지 않으므로)
+
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -14,11 +14,11 @@ import { Router } from '@angular/router';
         '<img src="../assets/attention.png" style ="width: 7%; height: 7%;">  <br><br> ' +
         '<p style="font-size: 150%; font-weight: bold;">요청하신 페이지에 대한 권한이 없습니다.</p> ' +
         '<br> <button (click)="goToMain()" style = "font-weight: bold;" >메인으로</button> ' +
-        '</div>'+
+        '</div>' +
         '</div>',
     styles: [''],
 })
-export class ErrorComponent implements OnInit,OnDestroy {
+export class ErrorComponent implements OnInit, OnDestroy {
 
     constructor(
         private router: Router
