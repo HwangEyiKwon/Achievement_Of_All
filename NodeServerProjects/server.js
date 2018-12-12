@@ -66,8 +66,8 @@ require('./config/passport')(passport);
 
 // //db 삭제
 // dbDelete();
-//db 초기화
-dbInit();
+// //db 초기화
+// dbInit();
 
 //???
 //접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
@@ -184,16 +184,76 @@ app.post('/sendToken', function(req, res) {
 
       if(user.contentList[authenContentIndex].isUploaded != 1) {
         console.log('2: if moon');
+        var tempArray = new Array();
 
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName);
-        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName);
-        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName);
+        sendPushMessage(user, authenContentIndex, sendTime1, titleAuthen, user.contentList[authenContentIndex].contentName, tempArray, tempArray);
+        sendPushMessage(user, authenContentIndex, sendTime2, titleAuthen, user.contentList[authenContentIndex].contentName, tempArray, tempArray);
+        sendPushMessage(user, authenContentIndex, sendTime3, titleAuthen, user.contentList[authenContentIndex].contentName, tempArray, tempArray);
       }
     }
   });
+  user.findOne({ email: userEmail}, function(err, user) {
+    if(user== undefined){
+      console.log("There are not user..");
+    }
+    else{
+      console.log("login user new fcm code");
+      var joinContentCount = user.contentList.length;
+      var contentListIndex;
+      for(var i = 0; i < joinContentCount; i++){
+        var contentName = user.contentList[i].contentName;
+        var tempArray = new Array();
+        if(user.contentList[i].fcmFailureFlag == 1){
+          console.log("fcm failure send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 3);
+          sendPushMessage(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
+          user.contentList[i].fcmFailureFlag = 0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+        if(user.contentList[i].fcmVideoFailureFlag == 1){
+          console.log("fcm video failure send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 30);
+          sendPushMessage(user, contentListIndex, sendTime, titleVideoFail, contentName, user.contentList[i].fcmMessageArray[0].failAuthenUserArray, user.contentList[i].fcmMessageArray[0].reasonArray);
+          user.contentList[i].fcmVideoFailureFlag = 0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+        if(user.contentList[i].fcmReportAcceptFlag == 1){
+          console.log("fcm report accept send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 30);
+          sendPushMessage(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, user.contentList[i].fcmMessageArray[0].reasonArray);
+          user.contentList[i].fcmReportAcceptFlag = 0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+        if(user.contentList[i].fcmReportRejectFlag == 1){
+          console.log("fcm report reject send");
+          contentListIndex = i;
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 30);
+          sendPushMessage(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, user.contentList[i].fcmMessageArray[0].reasonArray);
+          user.contentList[i].fcmReportRejectFlag =0;
+          user.save(function(err, savedDocument) {
+            if (err)
+              return console.error(err);
+          });
+        }
+      }
+    }
+  });
+
 });
 
 //날짜가 바뀔 때마다 푸쉬알림 전송 및 매일 수행될 기능들
@@ -282,8 +342,9 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
           console.log("push token: " + userList[i].pushToken);
           if(userList[i].pushToken != "") {
             console.log("푸쉬메시지 성공 전송");
-            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds()+5);
-            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName);
+            var tempArray = new Array();
+            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
+            sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName, tempArray, tempArray);
           }
           else console.log("pushtoken is null");
         }
@@ -379,8 +440,19 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
       //푸쉬메시지 전송
       if(userList[i].pushToken != ""){
         console.log("실패 푸쉬메시지 전송");
-        var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() , todayDate.getSeconds()+5);
-        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName);
+        var tempArray = new Array();
+        var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
+        sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName,tempArray, tempArray);
+      }
+      else{
+        var tempArray = new Array();
+        console.log("push message 디비 세팅, logout한 유저");
+        userList[i].contentList[authenContentIndex].fcmFailureFlag = 1;
+        userList[i].contentList[authenContentIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: tempArray});
+        userList[i].save(function(err, savedDocument) {
+          if (err)
+            return console.error(err);
+        });
       }
     }
   });
@@ -397,12 +469,13 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
         }
       }
       if(userList[i].pushToken != ""  && userList[i].contentList[authenContentIndex].isUploaded != 1) {
+        var tempArray = new Array();
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
         var sendTime2 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 14, 0, 0);
         var sendTime3 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 19, 0, 0);
-        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
-        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
-        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName);
+        sendPushMessage(userList[i], authenContentIndex, sendTime1, titleAuthen, userList[i].contentList[authenContentIndex].contentName, tempArray, tempArray);
+        sendPushMessage(userList[i], authenContentIndex, sendTime2, titleAuthen, userList[i].contentList[authenContentIndex].contentName, tempArray, tempArray);
+        sendPushMessage(userList[i], authenContentIndex, sendTime3, titleAuthen, userList[i].contentList[authenContentIndex].contentName, tempArray, tempArray);
       }
     }
   });
@@ -507,27 +580,64 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
   });
 });
 
-function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
+function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUserArray, reasonArray) {
   console.log("내부 push!!");
-  console.log('6');
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  var push_data = {
-    // 수신대상
-    to: client_token,
-    // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
-    data: {
-      title: titles,
-      body: contentName,
-    },
-    // 메시지 중요도
-    priority: "high",
-    // App 패키지 이름
-    restricted_package_name: "com.example.parkseunghyun.achievementofall",
-  };
+  console.log("client TOken: " + client_token);
+  if(titles === titleVideoFail){
+    console.log("비디오실패 변수 저장");
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+        user: authenUserArray,
+        checkReason: reasonArray
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
+  else if(titles == titleReportReject || titles == titleReportAccept){
+    console.log("신고승인 또는 거절 변수 저장");
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+        reason: reasonArray
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
+  else{
+    console.log("push data 변수 저장");
+    var push_data = {
+      // 수신대상
+      to: client_token,
+      // App이 실행중이지 않을 때 상태바 알림으로 등록할 내용
+      data: {
+        title: titles,
+        body: contentName,
+      },
+      // 메시지 중요도
+      priority: "high",
+      // App 패키지 이름
+      restricted_package_name: "com.example.parkseunghyun.achievementofall",
+    };
+  }
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
-    console.log('7');
     if(titles === titleAuthen){
       if(user.contentList[arrayIndex].isUploaded == 1 ) {
         console.log('before user authen : ' + user.contentList[0].isUploaded);
@@ -538,11 +648,11 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
         console.log('8');
         fcm.send(push_data, function(err, response) {
           if (err) {
-            console.error('Push메시지 발송에 실패했습니다.');
+            console.error('인증필요 Push메시지 발송에 실패했습니다.');
             console.error(err);
             return;
           }
-          console.log('Push메시지가 발송되었습니다.');
+          console.log('인증필요 Push메시지가 발송되었습니다.');
           console.log(response);
         });
       };
@@ -566,6 +676,61 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName) {
           return;
         }
         console.log('성공 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleVideoFail){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('인증 실패 Push메시지 발송에 실패했습니다.1');
+          console.error(err);
+          return;
+        }
+        console.log('인증 실패 Push메시지가 발송되었습니다.1');
+        console.log(response);
+      });
+    }
+    else if(titles === titleWillSuccess){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('성공 예정 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('성공 예정 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleNewVideo){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('새영상 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('새영상 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleReportAccept){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('신고승인 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('신고승인 Push메시지가 발송되었습니다.');
+        console.log(response);
+      });
+    }
+    else if(titles === titleReportReject){
+      fcm.send(push_data, function(err, response) {
+        if (err) {
+          console.error('신고거절 Push메시지 발송에 실패했습니다.');
+          console.error(err);
+          return;
+        }
+        console.log('신고거절 Push메시지가 발송되었습니다.');
         console.log(response);
       });
     }
@@ -725,7 +890,11 @@ function dbInit(){
       money: 100000,
       reward: 0,
       rewardCheck: 0,
-      penalty: 0
+      penalty: 0,
+      fcmFailure: 0,
+      fcmVideoFailureFlag : 0,
+      fcmReportAcceptFlag : 0,
+      fcmReportRejectFlag : 0
     }]
   });
   var user2 = new user({
@@ -748,7 +917,11 @@ function dbInit(){
       money: 100000,
       reward: 0,
       rewardCheck: 0,
-      penalty: 0
+      penalty: 0,
+      fcmFailure: 0,
+      fcmVideoFailureFlag : 0,
+      fcmReportAcceptFlag : 0,
+      fcmReportRejectFlag : 0
     }]
   });
 
@@ -772,7 +945,11 @@ function dbInit(){
       money: 100000,
       reward: 0,
       rewardCheck: 0,
-      penalty: 0
+      penalty: 0,
+      fcmFailure: 0,
+      fcmVideoFailureFlag : 0,
+      fcmReportAcceptFlag : 0,
+      fcmReportRejectFlag : 0
     }]
   });
   var user4 = new user({
@@ -795,7 +972,11 @@ function dbInit(){
       money: 100000,
       reward: 0,
       rewardCheck: 0,
-      penalty: 0
+      penalty: 0,
+      fcmFailure: 0,
+      fcmVideoFailureFlag : 0,
+      fcmReportAcceptFlag : 0,
+      fcmReportRejectFlag : 0
     }]
   });
   var user5 = new user({
@@ -817,7 +998,11 @@ function dbInit(){
       calendar: [],
       money: 100000,
       reward: 0,
-      rewardCheck: 0
+      rewardCheck: 0,
+      fcmFailure: 0,
+      fcmVideoFailureFlag : 0,
+      fcmReportAcceptFlag : 0,
+      fcmReportRejectFlag : 0
     }]
   });
 

@@ -180,6 +180,15 @@ router.post('/reportReject', function (req,res) {
       reasonArray.push(reason);
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
     }
+    else{
+      console.log("push message 디비 세팅, logout한 유저");
+      user.contentList[contentListIndex].fcmReportRejectFlag = 1;
+      user.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: reasonArray});
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+    }
 
     Report.findOne({contentId: contentId, contentName: contentName, userEmail: reportUserEmail}, function (err, report) {
       report.complete = 1;
@@ -261,6 +270,15 @@ router.post('/reportAccept', function (req,res) {
       var tempArray = new Array();
       reasonArray.push(reason);
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, reasonArray);
+    }
+    else{
+      console.log("push message 디비 세팅, logout한 유저");
+      user.contentList[contentListIndex].fcmReportAcceptFlag = 1;
+      user.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: reasonArray});
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
     }
 
     Report.findOne({contentId: contentId, contentName: contentName, userEmail: reportUserEmail}, function (err, report) {

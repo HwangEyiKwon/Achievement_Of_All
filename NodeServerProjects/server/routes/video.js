@@ -357,6 +357,15 @@ router.post('/checkVideo', function(req,res){
                 var sendTime = new Date(todayYear, todayMonth - 1, todayDay, currentHour, currentMinute, todayDate.getSeconds()+5);
                 fcmMessage.sendPushMessage2(otherUser, contentListIndex, sendTime, titleFailVideo, contentName, failAuthenUserArray, checkReasonArray);
               }
+              else{
+                console.log("push message 디비 세팅, logout한 유저");
+                otherUser.contentList[contentListIndex].fcmVideoFailureFlag = 1;
+                otherUser.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: failAuthenUserArray, reasonArray: checkReasonArray});
+                otherUser.save(function(err, savedDocument) {
+                  if (err)
+                    return console.error(err);
+                });
+              }
             }
           }
         });

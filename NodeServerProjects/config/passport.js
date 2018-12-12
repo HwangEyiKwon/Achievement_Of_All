@@ -66,6 +66,10 @@ module.exports = function(passport) {
           newUser.phoneNumber = req.body.phoneNumber;;
           newUser.contentList = [];
           newUser.emailAuthenticated = 0;
+          newUser.fcmFailure = 0;
+          newUser.fcmVideoFailureFlag = 0;
+          newUser.fcmReportAcceptFlag = 0;
+          newUser.fcmReportRejectFlag = 0;
           //newUser.password = password;
 
           newUser.save(function(err) {

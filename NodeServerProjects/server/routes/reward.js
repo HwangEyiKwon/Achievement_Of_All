@@ -168,6 +168,16 @@ router.post('/getFailureCheck',  function (req,res) {
       var tempArray = new Array();
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
     }
+    else{
+      var tempArray = new Array();
+      console.log("push message 디비 세팅, logout한 유저");
+      user.contentList[contentListIndex].fcmFailureFlag = 1;
+      user.contentList[contentListIndex].fcmMessageArray.push({failAuthenUserArray: tempArray, reasonArray: tempArray});
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
+    }
 
     res.send({success:true});
   });

@@ -24,6 +24,11 @@ const userSchema = new Schema({
     reward: Number, // 컨텐츠 별 이익을 본 금액
     rewardCheck: Boolean, // reward 수령 여부 0:x 1:o
     penalty: Number,
+    fcmFailureFlag: Number, // 0: 문제x 1: fcm전송이 필요
+    fcmVideoFailureFlag: Number, // 0: 문제x 1: fcm전송이 필요
+    fcmReportAcceptFlag: Number, // 0: 문제x 1: fcm전송이 필요
+    fcmReportRejectFlag: Number, // 0: 문제x 1: fcm전송이 필요
+    fcmMessageArray: [{failAuthenUserArray: Array, reasonArray: Array}]
   }],
   pushToken: String,
   emailAuthenticated: Number, //0: 인증x 1: 인증
