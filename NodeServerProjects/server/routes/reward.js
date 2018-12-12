@@ -79,6 +79,7 @@ router.post('/getFailureCheck',  function (req,res) {
 
   User.findOne({email: userEmail}, function(err, user) {
     var userMoney;
+    var userReward;
     if (user.contentList.length != 0) {
       var contentListCount = user.contentList.length;
       var contentListIndex;
@@ -90,12 +91,14 @@ router.post('/getFailureCheck',  function (req,res) {
       }
       contentId = user.contentList[contentListIndex].contentId;
       userMoney = user.contentList[contentListIndex].money;
+      userReward = user.contentList[contentListIndex].reward;
 
       console.log(userMoney);
 
       user.contentList[contentListIndex].joinState = 4;
       user.contentList[contentListIndex].penalty = userMoney;
       user.contentList[contentListIndex].money = 0;
+      user.contentList[contentListIndex].reward = 0;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
@@ -114,7 +117,7 @@ router.post('/getFailureCheck',  function (req,res) {
         }
       }
       content.userList[userListIndex].result = 0;
-      content.balance += userMoney;
+      content.balance += (userMoney + userReward);
 
       content.save(function(err, savedDocument) {
         if (err)

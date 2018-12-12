@@ -94,6 +94,7 @@ router.post('/reportReject', function (req,res) {
 
   User.findOne({email: reportUserEmail}, function(err, user) {
     var userMoney;
+    var userReward;
     if (user.contentList.length != 0) {
       var contentListCount = user.contentList.length;
       var contentListIndex;
@@ -104,10 +105,12 @@ router.post('/reportReject', function (req,res) {
         }
       }
       userMoney = user.contentList[contentListIndex].money;
+      userReward = user.contentList[contentListIndex].reward;
 
       user.contentList[contentListIndex].joinState = 4;
       user.contentList[contentListIndex].penalty = userMoney;
       user.contentList[contentListIndex].money = 0;
+      user.contentList[contentListIndex].reward = 0;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
@@ -125,7 +128,7 @@ router.post('/reportReject', function (req,res) {
         }
       }
       content.userList[userListIndex].result = 0;
-      content.balance += userMoney;
+      content.balance += (userMoney + userReward);
 
       content.save(function(err, savedDocument) {
         if (err)

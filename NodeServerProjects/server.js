@@ -3,10 +3,10 @@
 
 
 
-//mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -166,7 +166,7 @@ app.post('/sendToken', function(req, res) {
         if(user.contentList[i].fcmFailureFlag == 1){
           console.log("fcm failure send");
           contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
           user.contentList[i].fcmFailureFlag = 0;
           user.save(function(err, savedDocument) {
@@ -177,7 +177,7 @@ app.post('/sendToken', function(req, res) {
         if(user.contentList[i].fcmVideoFailureFlag == 1){
           console.log("fcm video failure send");
           contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleVideoFail, contentName, user.contentList[i].fcmMessageArray.failAuthenUserArray, user.contentList[i].fcmMessageArray.reasonArray);
           user.contentList[i].fcmVideoFailureFlag = 0;
           user.save(function(err, savedDocument) {
@@ -188,7 +188,7 @@ app.post('/sendToken', function(req, res) {
         if(user.contentList[i].fcmReportAcceptFlag == 1){
           console.log("fcm report accept send");
           contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, user.contentList[i].fcmMessageArray.reasonArray);
           user.contentList[i].fcmReportAcceptFlag = 0;
           user.save(function(err, savedDocument) {
@@ -199,7 +199,7 @@ app.post('/sendToken', function(req, res) {
         if(user.contentList[i].fcmReportRejectFlag == 1){
           console.log("fcm report reject send");
           contentListIndex = i;
-          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 10);
+          var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, user.contentList[i].fcmMessageArray.reasonArray);
           user.contentList[i].fcmReportRejectFlag =0;
           user.save(function(err, savedDocument) {
@@ -378,9 +378,11 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
         var calendarIndex = 0;
       }
       var userMoney = userList[i].contentList[authenContentIndex].money;
+      var userReward = userList[i].contentList[authenContentIndex].reward;
 
       userList[i].contentList[authenContentIndex].penalty = userList[i].contentList[authenContentIndex].money;
       userList[i].contentList[authenContentIndex].money = 0;
+      userList[i].contentList[authenContentIndex].reward = 0;
       userList[i].contentList[authenContentIndex].joinState = 4;
       //userList[i].contentList[authenContentIndex].calendar[calendarIndex].authen = 0;
 
@@ -400,7 +402,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
           }
         }
         content.userList[userListIndex].result = 0;
-        content.balance += userMoney;
+        content.balance += (userMoney + userReward);
 
         content.save(function(err, savedDocument) {
           if (err)
