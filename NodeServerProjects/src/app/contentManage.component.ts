@@ -1,4 +1,5 @@
 // ContentManage.component
+
 // 컨텐츠 관리 페이지
 // (권한이 manager인 사용자만 접근 가능)
 
@@ -18,9 +19,9 @@ import {CalendarEndComponent} from './calendar.end.component';
 })
 export class ContentManageComponent implements OnInit, OnDestroy {
 
-  subscription = null; // 옵저버
-  subscription_s = null; // 옵저버
-  subscription_e = null; // 옵저버
+  subscription = null;
+  subscription_s = null;
+  subscription_e = null;
   contentsInfo = [];
   source: LocalDataSource;
   groupList = [];
@@ -33,12 +34,13 @@ export class ContentManageComponent implements OnInit, OnDestroy {
     private dataService: DataService
   ) {}
 
+  // ng2-smart-table 달력을 세팅하는 함수이다.
   setTable() {
 
     this.settings = {
       pager : {
         display : true,
-        perPage:3
+        perPage: 3
       },
       actions: {
         edit: false
@@ -69,6 +71,8 @@ export class ContentManageComponent implements OnInit, OnDestroy {
           title: 'Name'
         },
 
+        // 시작날
+        // 자식 컴포넌트와 연동한다.
         startDate: {
           title: 'Start Date',
           width: '15%',
@@ -80,6 +84,8 @@ export class ContentManageComponent implements OnInit, OnDestroy {
           },
         },
 
+        // 종료날
+        // 자식 컴포넌트와 연동한다.
         endDate:{
           title: 'End Date',
           width: '15%',
@@ -111,11 +117,9 @@ export class ContentManageComponent implements OnInit, OnDestroy {
 
     };
   }
-  onEditClicked(event){
-  }
   ngOnInit() {
     // Authority Check
-    // 관리자 페이지는 권한이 마스터인 사용자만 가능
+    // 관리자 페이지는 권한이 manager인 사용자만 가능
     // HTTP 통신을 통해 관리자 체크를 해야함.
     this.httpService.authorityCheck().subscribe(result=>{
 
@@ -142,14 +146,13 @@ export class ContentManageComponent implements OnInit, OnDestroy {
       }
     })
   }
-  // NgOnDestroy
-  // 컴포넌트가 파괴될 때 작동하는 부분
+
   ngOnDestroy(){
-    // Observer unsubscribe
     if(this.subscription != null)
       this.subscription.unsubscribe();
   }
-  // Table Update
+
+  // ng2-smart-table을 업데이트하는 함수이다.
   updateTable(){
     return new Promise ((resolve,reject) => {
       this.contentsInfo = [];
@@ -170,23 +173,23 @@ export class ContentManageComponent implements OnInit, OnDestroy {
         this.source = new LocalDataSource(this.contentsInfo);
         if(this.subscription != null)
           this.subscription.unsubscribe();
+
         // 사용자 관리 페이지에서 정보를 수정하면 부모 컴퍼넌트인 userPage.component를 다시 호출
-        // 변경된 정보가 자기 자신 것일 경우 바로 메뉴바의 정보가 바뀔수 있도록
+        // 변경된 정보가 자기 자신 것일 경우 바로 메뉴바의 정보가 바뀔수 있도록 한다.
         this.parent.ngOnInit();
         resolve();
       });
     });
   }
-  // Delete Info
-  // 정보 삭제
+
+  // 정보 삭제하는 함수이다.
   onDeleteConfirm(event) {
     if (window.confirm('정말로 삭제하시겠습니까?')) {
       event.confirm.resolve();
 
       this.httpService.deleteContentInfo(event.data.name, event.data.id).subscribe(result =>{
-        // delete userInfo
         this.updateTable().then(response =>{
-          alert("삭제되었습니다.");
+          alert('삭제 되었습니다.');
         });
       });
     } else {
@@ -194,11 +197,10 @@ export class ContentManageComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Create Info
-  // 새로운 정보 저장
+  // 새로운 정보 저장하는 함수이다.
   onCreateConfirm(event) {
     if(event.newData.id == "" || event.newData.name == ""){
-      alert("Id 또는 이름을 입력해주세요");
+      alert("ID 또는 이름을 입력해주세요.");
     }else{
       if (window.confirm('생성하시겠습니까?')) {
 
@@ -225,35 +227,28 @@ export class ContentManageComponent implements OnInit, OnDestroy {
             }else{
               this.httpService.addContentInfo(event.newData).subscribe(result => {
 
-
                 if(JSON.parse(JSON.stringify(result)).success == 0){
                   this.updateTable().then(response =>{
-                    alert("생성되었습니다");
+                    alert("생성되었습니다.");
                     event.confirm.resolve(event.newData);
                   });
                 }else if(JSON.parse(JSON.stringify(result)).success == 1){
-                  // 이메일 중복
                   this.updateTable().then(response =>{
-                    alert("id 중복입니다.");
+                    alert("ID 중복입니다.");
                     event.confirm.resolve(event.newData);
                   });
                 }else{
-                  alert("error 입니다");
+                  alert("Error 입니다.");
                   event.confirm.resolve(event.newData);
                 }
-
                 this.subscription_s.unsubscribe();
                 this.subscription_e.unsubscribe();
 
               });
             }
-
-
           });
 
         });
-
-
       } else {
         event.confirm.reject();
       }

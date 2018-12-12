@@ -1,3 +1,4 @@
+// App.routing.module
 // 라우팅을 지정해주는 모듈
 
 // Module
@@ -5,13 +6,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 // Component
-import { UserServiceComponent } from './userService.component';
-import { UserPageComponent } from './userPage.component';
-import { UserInfoComponent } from './userInfo.component';
-import { UserManageComponent } from './userManage.component';
-import { ContentManageComponent } from './contentManage.component';
-import { ReportManageComponent } from './reportManage.component';
-import { AboutComponent } from './about.component'; // User Page (About)
+import { UserServiceComponent } from './userService.component'; // Login/SignUp
+import { UserPageComponent } from './userPage.component'; // User Page
+import { UserInfoComponent } from './userInfo.component'; // User Info
+import { UserManageComponent } from './userManage.component'; // User Manage
+import { ContentManageComponent } from './contentManage.component'; // Component Manage
+import { ReportManageComponent } from './reportManage.component'; // Report Manage
+import { AboutComponent } from './about.component'; // About
 
 const routes: Routes = [ // Route 지정
 
@@ -24,10 +25,10 @@ const routes: Routes = [ // Route 지정
       { path: 'userManage', component: UserManageComponent}, // 사용자 관리
       { path: 'contentManage', component: ContentManageComponent}, // 컨텐츠 관리
       { path: 'reportManage', component: ReportManageComponent}, // 신고 관리
-      { path: 'about', component: AboutComponent} ]
+      { path: 'about', component: AboutComponent} ] // 모두의달성 정보
 
   },
-  {path: '**', redirectTo: 'login'}
+  {path: '**', redirectTo: 'login'} // 그 외 URL 입력시 로그인 페이지
 ];
 
 @NgModule({

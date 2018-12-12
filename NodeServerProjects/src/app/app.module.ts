@@ -1,3 +1,5 @@
+// App.module
+
 // Module
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -13,21 +15,21 @@ import { HttpService } from './http-service'; // Http Service
 import { DataService } from './data.service'; // Data Service
 
 // Component
-import { AppComponent } from './app.component';
-import { AboutComponent } from './about.component'; // User Page (About)
-import { UserServiceComponent } from './userService.component';
-import { UserPageComponent } from './userPage.component';
-import { UserInfoComponent } from './userInfo.component';
-import { UserManageComponent } from './userManage.component';
-import { InputFileComponent } from './inputFile.component'; // for Image Upload
+import { AppComponent } from './app.component'; // Root Component
+import { UserServiceComponent } from './userService.component'; // Login/SignUp
+import { UserPageComponent } from './userPage.component'; // User Page
+import { UserInfoComponent } from './userInfo.component'; // User Info
+import { UserManageComponent } from './userManage.component'; // User Manage
+import { ContentManageComponent } from './contentManage.component'; // Component Manage
+import { ReportManageComponent } from './reportManage.component'; // Report Manage
+import { AboutComponent } from './about.component'; // About
 import { ErrorComponent } from './error.component'; // Error Page
 
 // Sub Component
-import {ContentManageComponent} from './contentManage.component';
-import {CalendarComponent} from './calendar.component';
-import {CalendarEndComponent} from './calendar.end.component';
-import {ReportManageComponent} from './reportManage.component';
-import {ReportVideoComponent} from './reportVideo.component';
+import { CalendarComponent } from './calendar.component'; // User Manage -> Start Date
+import { InputFileComponent } from './inputFile.component'; // User Manage -> Image Upload
+import { CalendarEndComponent } from './calendar.end.component'; // User Manage -> End Date
+import { ReportVideoComponent } from './reportVideo.component'; // Report Manage -> Video
 
 @NgModule({
   declarations: [

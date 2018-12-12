@@ -1,4 +1,4 @@
-// inputFile.component
+// InputFile.component
 
 // 모든 관리 페이지의 이미지 업로드를 위한 컴포넌트다.
 // 모든 관리 페이지의 관리 테이블은 ng2-smart-table 모듈을 사용하여 생성된다.
@@ -7,7 +7,6 @@
 // 이는 수정 버튼 또는 생성 버튼 때만 업로드 기능이 작동하도록 구현한 것이다.
 // 사용자는 이미지를 업로드하고 수정/생성 버튼을 누르면 이미지는 서버에 업로드된 후 이미지 이름을 사용자 정보에 저장한다.
 // 이 때 이미지 이름을 사용자 정보에 저장하기 위해 InputFile은 이미지 이름을 DataService를 통해 부모 컴포넌트인 관리자 컴포넌트에 전송한다.
-// 이 또한 매우 복잡한 로직이므로 직접 코드를 분석해보는 것을 추천한다.
 
 import {Component, OnInit, Input, Output, EventEmitter, ElementRef, OnDestroy} from '@angular/core';
 import { HttpService } from './http-service';
@@ -44,8 +43,6 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
     super();
     }
 
-    // 이벤트 함수
-    // 업로드에 변화가 올경우 실행됨
     public change(event) {
         let value = event.srcElement.value
         this.rightValueChange(value);
@@ -59,7 +56,6 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
     ngOnInit() {
         this.subscription = this.dataService.notifyObservable$.subscribe((user) => {
 
-          console.log("이미지 수정");
           this.upload(JSON.parse(JSON.stringify(user)).email, JSON.parse(JSON.stringify(user)).name, JSON.parse(JSON.stringify(user)).isAdd).then(response => {
 
             this.rightValueChange(response);
@@ -114,7 +110,6 @@ export class InputFileComponent extends DefaultEditor implements OnInit, OnDestr
                     }
                 )
             }else{
-              console.log("upload된 이미지 존재하지 않음");
                 resolve(2);
             }
         });
