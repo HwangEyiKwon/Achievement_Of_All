@@ -9,7 +9,6 @@ const passportConfig = require('../../config/passport');
 var mkdirp = require('mkdirp'); // directory 만드는것
 
 router.get('/getSearchUserData', function (req,res) {
-  console.log("getSearchUserData Start");
   User.find(function(err, userList){
     var searchData = new Array();
 
@@ -21,11 +20,9 @@ router.get('/getSearchUserData', function (req,res) {
 });
 
 router.get('/getSearchContentData', function (err, res ) {
-  console.log("getSearchContentData Start ");
   Content.collection.distinct("name", function(err, results){
     if(err)  console.log(err);
     else{
-      console.log("Content List : " +results);
       res.send({contents: results});
     }
   });
@@ -58,7 +55,6 @@ router.post('/deleteManagerInfo', function(req, res) {
       if (JSON.parse(JSON.stringify(user)).authority == 'manager') {
         User.remove({name: req.body.name, email: req.body.email}, function (err, result) {
           if (err) throw err;
-          console.log('delete success');
           res.send({});
         });
       } else { }
@@ -72,15 +68,9 @@ router.post('/updateManagerInfo', function(req, res) {
     User.findOne({email: req.session.userCheck}, function (err, user) {
       if (err) throw err;
 
-
-      console.log(req.body);
-
       if (JSON.parse(JSON.stringify(user)).authority == 'manager') {
 
         User.findOne({email: req.body.userInfo.email}, function (err, ur) {
-
-          console.log(ur);
-          console.log("vzcvzxcvzxcvzxcvzxcvzxcvz");
 
           if (ur.password == req.body.userNewInfo.password) {
 
@@ -96,8 +86,6 @@ router.post('/updateManagerInfo', function(req, res) {
                 },
                 function (err, userUpdate) {
                   if (err) throw err;
-                  console.log(userUpdate);
-                  console.log('update success with image change');
                   res.send({success:true});
                 });
 
@@ -112,13 +100,9 @@ router.post('/updateManagerInfo', function(req, res) {
                 },
                 function (err, userUpdate) {
                   if (err) throw err;
-                  console.log(userUpdate);
-                  console.log('update success without image change');
                   res.send({success:true});
                 });
-
             }
-
           } else {
 
             if(req.body.imageChange == 0){
@@ -133,8 +117,6 @@ router.post('/updateManagerInfo', function(req, res) {
                 },
                 function (err, userUpdate) {
                   if (err) throw err;
-                  console.log(userUpdate);
-                  console.log('update success with password  with image change');
                   res.send({success:true});
                 });
             }else{
@@ -149,15 +131,11 @@ router.post('/updateManagerInfo', function(req, res) {
                 },
                 function (err, userUpdate) {
                   if (err) throw err;
-                  console.log(userUpdate);
-                  console.log('update success with password  without image change');
                   res.send({success:true});
                 });
             }
-
           }
         })
-
       } else { }
     });
   }
@@ -166,9 +144,6 @@ router.post('/addManagerInfo', function(req, res, next) {
   var ch = req.body.imageChange;
   req.body = req.body.userNewInfo;
   req.body.imageChange = ch;
-
-  console.log("매니저가 유저 생");
-  console.log(req.body);
 
   passport.authenticate('add-newuser', function(err, user, info) {
     if (err) { return next(err); }
@@ -211,7 +186,6 @@ router.post('/deleteContentInfo', function(req, res) {
 
         Content.remove({name: req.body.name, id: req.body.id}, function (err, result) {
           if (err) throw err;
-          console.log('delete success');
           res.send({});
         });
       } else { }
@@ -220,18 +194,12 @@ router.post('/deleteContentInfo', function(req, res) {
 });
 router.post('/addContentInfo', function(req, res, next) {
   req.body = req.body.contentNewInfo;
-  console.log("SERVERSERVER");
-  console.log(req.body);
-  // new Date(req.body.startDate.month, todayDate.getMonth(), todayDate.getDate(), 0, 0, 0);
-
   var startDate = new Date(req.body.startDate.year, req.body.startDate.month, req.body.startDate.day, 0, 0, 0);
   var endDate = new Date(req.body.endDate.year,req.body.endDate.month, req.body.endDate.day, 0, 0, 0);
 
 
   Content.findOne({id: req.body.id}, function (err, content) {
-    if(err){
-
-    }
+    if(err){}
     if(content){
       res.send({success:1});
     }
@@ -250,21 +218,16 @@ router.post('/addContentInfo', function(req, res, next) {
       content.save(function(err, savedDocument) {
         if (err){
           res.send({success:2});
-
         }
-        console.log(savedDocument);
-        console.log("DB initialization");
         res.send({success:0});
       });
     }
   });
 });
 router.get('/getReportsInfo', function(req, res) {
-  console.log("getReportsInfo");
   if(req.session.userCheck == undefined) { // 사용자 세션 체크, 세션 없으면 오류페이지
     res.send({error:true});
   } else {
-    console.log("리포트리포트");
     User.findOne({email: req.session.userCheck}, function (err, user) {
       if (err) throw err;
 

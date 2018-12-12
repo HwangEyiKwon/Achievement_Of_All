@@ -1,12 +1,8 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
-
-
-
-mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
-
+//mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://localhost:27017');
+mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -21,14 +17,8 @@ const index = require('./server/routes/index');
 const appInfo = require('./server/routes/appInfo');
 const search = require('./server/routes/search');
 const aboutContent = require('./server/routes/aboutContent');
-const manager = require('./server/routes/manager');
 const reward = require('./server/routes/reward');
 const report = require('./server/routes/report');
-
-
-var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
-var mkdirp = require('mkdirp'); // directory 만드는것
-var fs = require("fs");
 
 var titleFail = "실패";
 var titleAuthen = "인증";
@@ -54,25 +44,17 @@ db.on('connected', function() {
   console.log("Connected successfully to server");
 });
 
-
-
 var user = require('./server/models/user');
 var content = require('./server/models/content');
 var appInfoSchema = require('./server/models/app');
 var Report = require('./server/models/report');
 
-
 require('./config/passport')(passport);
 
-// //db 삭제
+// db 삭제
 // dbDelete();
-// //db 초기화
+// // db 초기화
 // dbInit();
-
-//???
-//접근할땐 [0] console.log("data : " +user1.contentList[0].authenticationDate);
-//저장할땐 user1.contentList = {isUploaded : 1};
-
 
 // POST 데이터
 app.use(bodyParser.json());
@@ -104,7 +86,6 @@ app.use('/', image);
 app.use('/', search);
 //aboutContent router
 app.use('/', aboutContent);
-
 //report router
 app.use('/', report);
 //reward router
@@ -115,96 +96,69 @@ app.set('managerKey', "3Ke34Meg9ek");
 
 app.get('*', function (req, res) {   res.sendFile(path.join(__dirname, 'dist/simple-memo/index.html')); });
 
-//여기 아래
 const serverKey = 'AAAAKw66KHo:APA91bE1A1hr5P69HHdOWigZl5FQgYtUn0FzQ554EPrEcJMzG4LfMxieNPko8hKzAg4ImeScWEtYqHmspYb0dJZWKgpEuGJY98iKLFXKf02FhHW-0xUNi2he2LL3pbpSm0VjhsbJ5Y8l';
 
-/*
-//수정하는 db 코드, 참고용, 이걸 실제 코드에 넣어야 됨. 작동 됨
-user.findOneAndUpdate(
-{"email": "psh", "contentList.contentId" : "1"}, {$set: { "contentList.$.isUploaded" : "0", "contentList.$.authenticationDate": "2018-10-10"}},function(err, doc){
-  if(err){
-    console.log(err);
-  }
-
-  console.log(doc);
-});
-*/
-
-//어레이 추가하는 db 코드, 작동 됨.
-// user.findOneAndUpdate({email: "psh"}, {$push:{contentList: [{contentId: "2", isUploaded: "0", authenticationDate: "2018-10-15"}]}},function(err, doc){
-//   if(err){
-//     console.log(err);
-//   }
-//   console.log(doc);
-// });
-
 app.post('/sendToken', function(req, res) {
-  console.log("sendToken Start");
-  console.log(req.body.fcmToken);
-  console.log(req.body.email);
 
   res.send({success: true});
 
   var userEmail = req.body.email;
   var userToken = req.body.fcmToken;
   user.findOne({email: userEmail}, function (err, user) {
-    if(user== undefined){
-      console.log("There are not user..");
-    }
+    if(user== undefined){}
     else{
       user.pushToken = userToken;
       user.save(function (err) {
-        if (err) console.log(err);
+        if (err){}
       });
 
-      console.log("login user new fcm code");
       var joinContentCount = user.contentList.length;
       var contentListIndex;
       for(var i = 0; i < joinContentCount; i++){
         var contentName = user.contentList[i].contentName;
         var tempArray = new Array();
         if(user.contentList[i].fcmFailureFlag == 1){
-          console.log("fcm failure send");
           contentListIndex = i;
           var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleFail, contentName, tempArray, tempArray);
           user.contentList[i].fcmFailureFlag = 0;
           user.save(function(err, savedDocument) {
             if (err)
-              return console.error(err);
+              return;
           });
         }
         if(user.contentList[i].fcmVideoFailureFlag == 1){
-          console.log("fcm video failure send");
           contentListIndex = i;
           var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleVideoFail, contentName, user.contentList[i].fcmMessageArray.failAuthenUserArray, user.contentList[i].fcmMessageArray.reasonArray);
           user.contentList[i].fcmVideoFailureFlag = 0;
+          user.contentList[i].fcmMessageArray.failAuthenUserArray = [];
+          user.contentList[i].fcmMessageArray.reasonArray = [];
           user.save(function(err, savedDocument) {
             if (err)
-              return console.error(err);
+              return;
           });
         }
         if(user.contentList[i].fcmReportAcceptFlag == 1){
-          console.log("fcm report accept send");
           contentListIndex = i;
           var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, user.contentList[i].fcmMessageArray.reasonArray);
           user.contentList[i].fcmReportAcceptFlag = 0;
+          user.contentList[i].fcmMessageArray.reasonArray = [];
           user.save(function(err, savedDocument) {
             if (err)
-              return console.error(err);
+              return;
           });
         }
         if(user.contentList[i].fcmReportRejectFlag == 1){
-          console.log("fcm report reject send");
           contentListIndex = i;
           var sendTime = new Date(todayYear, todayMonth - 1, todayDay, todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds() + 2);
           sendPushMessage(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, user.contentList[i].fcmMessageArray.reasonArray);
           user.contentList[i].fcmReportRejectFlag =0;
+          user.contentList[i].fcmMessageArray.reasonArray = [];
           user.save(function(err, savedDocument) {
             if (err)
-              return console.error(err);
+              return;
           });
         }
       }
@@ -224,11 +178,9 @@ app.post('/sendToken', function(req, res) {
   var today = todayYear+ "-" + todayMonth + "-" + todayDay;
 
   user.findOne({ email: userEmail, "contentList.authenticationDate" : today }, function(err, user) {
-    console.log(user);
-    if(user== null){
-      console.log("User.contentList is null");
-    }else{
-      console.log(user.contentList);
+
+    if(user== null){}
+    else{
       var joinContentCount = user.contentList.length;
       var authenContentIndex;
       for(var i = 0; i < joinContentCount; i++){
@@ -237,11 +189,10 @@ app.post('/sendToken', function(req, res) {
           break;
         }
       }
-      console.log('1: today = ' + today + 'user Authenticated' + user.contentList[authenContentIndex].isUploaded + 'Date : ' + user.contentList[authenContentIndex].authenticationDate);
       //로그아웃 했다가 로그인 한 인증 필요 사용자에게 푸쉬 알림 전송
 
       if(user.contentList[authenContentIndex].isUploaded != 1) {
-        console.log('2: if moon');
+
         var tempArray = new Array();
 
         var sendTime1 = new Date(todayYear, todayMonth - 1, todayDate.getDate(), 9, 0, 0);
@@ -280,7 +231,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
       contentList[i].isDone = 0;
 
       contentList[i].save(function(err, savedDocument) {
-        if (err) console.log("save err : "+err);
+        if (err) {}
       });
 
       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 0}, function(err, userList) {
@@ -294,10 +245,10 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
               break;
             }
           }
-          console.log(contentListIndex);
+
           userList[i].contentList[contentListIndex].joinState = 1;
           userList[i].save(function (err, savedDocument) {
-            if (err) console.log("save err : " + err);
+            if (err) {}
           });
         }
       });
@@ -306,7 +257,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
 
   /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
   content.find({"endDate" : yesterdayDate, "isDone": 0}, function(err, contentList){
-    console.log("contents done code in!!!!!");
+console.log(contentList);
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var contentId = contentList[i].id;
       var contentName = contentList[i].name;
@@ -317,7 +268,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
       }
       contentList[i].isDone = 1;
       contentList[i].save(function(err, savedDocument) {
-        if (err) console.log("save err : "+err);
+        if (err) {}
       });
 
       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
@@ -326,26 +277,24 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
           var contentListCount = userList[i].contentList.length;
           var contentListIndex;
           for (var j = 0; j < contentListCount; j++) {
-            if (userList[i].contentList[j].contentId === contentId) {
+            if (userList[i].contentList[j].contentName === contentName) {
               contentListIndex = j;
               break;
             }
           }
           userList[i].contentList[contentListIndex].joinState = 2;
           userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
-          console.log("name: "+userList[i].name + "reward: "+userList[i].contentList[contentListIndex].reward);
+
           userList[i].save(function(err, savedDocument) {
-            if (err) console.log("save err : "+err);
+            if (err) {}
           });
-          //푸쉬메시지 전송
-          console.log("push token: " + userList[i].pushToken);
+          //성공 푸쉬메시지 전송
           if(userList[i].pushToken != "") {
-            console.log("푸쉬메시지 성공 전송");
             var tempArray = new Array();
-            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+1, 0);
+            var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds()+5);
             sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName, tempArray, tempArray);
           }
-          else console.log("pushtoken is null");
+          else {}
         }
       });
     }
@@ -354,7 +303,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
   /* 모든 유저에 대해 authentication Date가 지났는데 인증 안된사람 체크 후 실패 메시지 전송 */
   user.find({"contentList.authenticationDate" : yesterday, "contentList.isUploaded": 0, "contentList.joinState" : 1}, function(err, userList){
     for(var i = 0; i < Object.keys(userList).length; i++){
-      console.log("name: "+userList[i].name);
+
       var authenContentIndex;
       var contentListCount = userList[i].contentList.length;
 
@@ -380,7 +329,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
       var userMoney = userList[i].contentList[authenContentIndex].money;
       var userReward = userList[i].contentList[authenContentIndex].reward;
 
-      userList[i].contentList[authenContentIndex].penalty = userList[i].contentList[authenContentIndex].money;
+      userList[i].contentList[authenContentIndex].penalty = userMoney + userReward;
       userList[i].contentList[authenContentIndex].money = 0;
       userList[i].contentList[authenContentIndex].reward = 0;
       userList[i].contentList[authenContentIndex].joinState = 4;
@@ -388,11 +337,11 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
 
       userList[i].save(function(err, savedDocument) {
         if (err)
-          return console.error(err);
+          return;
       });
 
       content.findOne({name: contentName, id: contentId}, function(err, content){
-        console.log("content id: " + content.id);
+
         userListCount = content.userList.length;
 
         for (var m = 0; m < userListCount; m++) {
@@ -406,7 +355,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
 
         content.save(function(err, savedDocument) {
           if (err)
-            return console.error(err);
+            return;
         });
 
         user.find({"contentList.contentName" : contentName, "contentList.contentId" : contentId, "contentList.joinState" : 1}, function(err, userList2){
@@ -433,27 +382,27 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
 
             userList2[i].save(function(err, savedDocument) {
               if (err)
-                return console.error(err);
+                return;
             });
           }
         });
       });
       //푸쉬메시지 전송
       if(userList[i].pushToken != ""){
-        console.log("실패 푸쉬메시지 전송");
+
         var tempArray = new Array();
         var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes() + 1, 0);
         sendPushMessage(userList[i], authenContentIndex, sendTime, titleFail, contentName,tempArray, tempArray);
       }
       else{
         var tempArray = new Array();
-        console.log("push message 디비 세팅, logout한 유저");
+
         userList[i].contentList[authenContentIndex].fcmFailureFlag = 1;
         userList[i].contentList[authenContentIndex].fcmMessageArray.failAuthenUserArray = tempArray;
         userList[i].contentList[authenContentIndex].reasonArray= tempArray;
         userList[i].save(function(err, savedDocument) {
           if (err)
-            return console.error(err);
+            return;
         });
       }
     }
@@ -488,7 +437,7 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
       for(var j = 0; j < Object.keys(userList[i].contentList).length; j++){
         userlist[i].contentList[j].isUploaded = 0;
         user.save(function (err) {
-          if (err) console.log(err);
+          if (err) {}
         });
       }
     }
@@ -504,9 +453,9 @@ var scheduler = schedule.scheduleJob('00 00 * * *', function(){
       if(achievementRate >= 100) achievementRate = 100;
 
       contentList[i].achievementRate = achievementRate;
-      console.log("Achievement Rate =" + contentList[i].achievementRate);
+
       contentList[i].save(function (err) {
-        if (err) console.log(err);
+        if (err) {}
       });
     }
   });
@@ -530,23 +479,22 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
 
   var midnightDate = new Date(todayYear,(todayMonth-1),todayDay);
 
-  console.log("midnight Date = "+ midnightDate);
 
   content.find({"startDate" : midnightDate}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
-      console.log(contentList[i]);
+
       var contentId = contentList[i].id;
       var contentName = contentList[i].name;
       contentList[i].isDone = 0;
 
       contentList[i].save(function(err, savedDocument) {
-        if (err) console.log("save err : "+err);
+        if (err) {}
       });
 
       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 0}, function(err, userList) {
         var userListCount = Object.keys(userList).length;
         for (var i = 0; i < userListCount; i++) {
-          console.log(userList[i]);
+
           var contentListCount = userList[i].contentList.length;
           var contentListIndex;
           for (var j = 0; j < contentListCount; j++) {
@@ -555,15 +503,63 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
               break;
             }
           }
-          console.log(contentListIndex);
           userList[i].contentList[contentListIndex].joinState = 1;
           userList[i].save(function (err, savedDocument) {
-            if (err) console.log("save err : " + err);
+            if (err) {}
           });
         }
       });
     }
   });
+
+  /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
+//   content.find({"endDate" : yesterdayDate, "isDone": 0}, function(err, contentList){
+// console.log(contentList);
+//     for(var i = 0; i < Object.keys(contentList).length; i++){
+//       var contentId = contentList[i].id;
+//       var contentName = contentList[i].name;
+//       var userListCount = contentList[i].userList.length;
+//       var balance = contentList[i].balance;
+//       for(var j = 0; j < userListCount; j ++){
+//         if(contentList[i].userList[j].result == 2) contentList[i].userList[j].result = 1;
+//       }
+//       contentList[i].isDone = 1;
+//       contentList[i].save(function(err, savedDocument) {
+//         if (err) {}
+//       });
+//
+//       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
+//         console.log(userList);
+//         if(userList != null){
+//           var successUserNum = Object.keys(userList).length;
+//           for(var i = 0; i < successUserNum; i++){
+//             var contentListCount = userList[i].contentList.length;
+//             var contentListIndex;
+//             for (var j = 0; j < contentListCount; j++) {
+//               if (userList[i].contentList[j].contentName === contentName) {
+//                 contentListIndex = j;
+//                 break;
+//               }
+//             }
+//             userList[i].contentList[contentListIndex].joinState = 2;
+//             userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
+//
+//             userList[i].save(function(err, savedDocument) {
+//               if (err) {}
+//             });
+//             //푸쉬메시지 전송
+//
+//             if(userList[i].pushToken != "") {
+//               console.log("푸쉬 전송~~");
+//               var tempArray = new Array();
+//               var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds()+5);
+//               sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName, tempArray, tempArray);
+//             }
+//           }
+//         }
+//       });
+//     }
+//   });
 
   content.find({isDone: 0}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
@@ -574,21 +570,17 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
       if(achievementRate >= 100) achievementRate = 100;
 
       contentList[i].achievementRate = achievementRate;
-      console.log("Achievement Rate =" + contentList[i].achievementRate);
       contentList[i].save(function (err) {
-        if (err) console.log(err);
+        if (err) {}
       });
     }
   });
 });
 
 function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authenUserArray, reasonArray) {
-  console.log("내부 push!!");
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
-  console.log("client TOken: " + client_token);
   if(titles === titleVideoFail){
-    console.log("비디오실패 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -606,7 +598,6 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
     };
   }
   else if(titles == titleReportReject || titles == titleReportAccept){
-    console.log("신고승인 또는 거절 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -623,7 +614,6 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
     };
   }
   else{
-    console.log("push data 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -642,98 +632,63 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
   var scheduler = schedule.scheduleJob(sendTime, function(){
     if(titles === titleAuthen){
       if(user.contentList[arrayIndex].isUploaded == 1 ) {
-        console.log('before user authen : ' + user.contentList[0].isUploaded);
         user.contentList[arrayIndex].isUploaded = 0;
-        console.log('after user authen : ' + user.contentList[0].isUploaded);
       }
       else{
-        console.log('8');
         fcm.send(push_data, function(err, response) {
           if (err) {
-            console.error('인증필요 Push메시지 발송에 실패했습니다.');
-            console.error(err);
             return;
           }
-          console.log('인증필요 Push메시지가 발송되었습니다.');
-          console.log(response);
         });
       };
     }
     else if(titles === titleFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('실패 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('실패 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleSuccess){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('성공 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('성공 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleVideoFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('인증 실패 Push메시지 발송에 실패했습니다.1');
-          console.error(err);
           return;
         }
-        console.log('인증 실패 Push메시지가 발송되었습니다.1');
-        console.log(response);
       });
     }
     else if(titles === titleWillSuccess){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('성공 예정 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('성공 예정 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleNewVideo){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('새영상 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('새영상 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleReportAccept){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('신고승인 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('신고승인 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleReportReject){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('신고거절 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('신고거절 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
   });
@@ -741,13 +696,9 @@ function sendPushMessage(user, arrayIndex, sendTime, titles, contentName, authen
 
 //외부 푸쉬메시지 펑션
 exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentName, authenUserArray, reasonArray)  {
-  console.log(user.pushToken);
-  console.log("외부 push");
-  console.log('titles: ' + titles);
   var fcm = new FCM(serverKey);
   var client_token = user.pushToken;
   if(titles === titleVideoFail){
-    console.log("비디오실패 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -765,7 +716,6 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
     };
   }
   else if(titles == titleReportReject || titles == titleReportAccept){
-    console.log("신고승인 또는 거절 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -782,7 +732,6 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
     };
   }
   else{
-    console.log("push data 변수 저장");
     var push_data = {
       // 수신대상
       to: client_token,
@@ -799,73 +748,46 @@ exports.sendPushMessage2 = function(user, arrayIndex, sendTime, titles, contentN
   }
 
   var scheduler = schedule.scheduleJob(sendTime, function(){
-    console.log('7');
-    console.log(titles);
-    console.log(titleFail);
     if(titles === titleFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('실패 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('실패 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleVideoFail){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('인증 실패 Push메시지 발송에 실패했습니다.1');
-          console.error(err);
           return;
         }
-        console.log('인증 실패 Push메시지가 발송되었습니다.1');
-        console.log(response);
       });
     }
     else if(titles === titleWillSuccess){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('성공 예정 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('성공 예정 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleNewVideo){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('새영상 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('새영상 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleReportAccept){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('신고승인 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('신고승인 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
     else if(titles === titleReportReject){
       fcm.send(push_data, function(err, response) {
         if (err) {
-          console.error('신고거절 Push메시지 발송에 실패했습니다.');
-          console.error(err);
           return;
         }
-        console.log('신고거절 Push메시지가 발송되었습니다.');
-        console.log(response);
       });
     }
   });
@@ -991,15 +913,15 @@ function dbInit(){
     imagePath: "manager",
     pushToken: "",
     contentList:[{
-      contentId : 4,
+      contentId : 3,
       videoPath: [],
       contentName: "NoSmoking",
-      joinState : 0,
+      joinState : 1,
       authenticationDate : "2018-12-10",
-      isUploaded : 0,
+      isUploaded : 1,
       calendar: [],
       money: 100000,
-      reward: 0,
+      reward: 50000,
       rewardCheck: 0,
       fcmFailure: 0,
       fcmVideoFailureFlag : 0,
@@ -1011,64 +933,29 @@ function dbInit(){
   user1.password = user1.generateHash("123");
   user1.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
 
   user2.password = user2.generateHash("123");
   user2.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   user3.password = user3.generateHash("123");
   user3.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   user4.password = user4.generateHash("123");
   user4.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   user5.password = user5.generateHash("123");
   user5.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
-  //
-  // var user7 = new user({
-  //   name: "aaa",
-  //   email: "ehddlrdk@naver.com",
-  //   authority: "user",
-  //   // password : user.generateHash("123"),
-  //   phoneNumber : "01084840101",
-  //   nickName : "asd",
-  //   pushToken: "",
-  //   contentList:[]
-  // });
-  //
-  // user7.password = user7.generateHash("123");
-  // user7.save(function(err, savedDocument) {
-  //   if (err)
-  //     return console.error(err);
-  //   console.log(savedDocument);
-  //   console.log("DB initialization");
-  //
-  // });
 
   // --------------------------------
   //
@@ -1112,11 +999,11 @@ function dbInit(){
     id: 3,
     name: "NoSmoking",
     startDate: "01/01/2018",
-    endDate: "12/14/2019",
+    endDate: "12/12/2018",
     isDone: 0,
-    userList: [{name: "HEK", email: "hwangeyikwon@gmail.com", newVideo: {path: "ns2", authen: 1}, result: 2}],
+    userList: [{name: "manager", email: "manager@gmail.com", result: 2}],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n",
-    balance: 0
+    balance: 100000
   })
   var content5 = new content({
     id: 4,
@@ -1131,8 +1018,8 @@ function dbInit(){
   var content6 = new content({
     id: 5,
     name: "NoSmoking",
-    startDate: "12/11/2018",
-    endDate: "12/13/2018",
+    startDate: "12/13/2018",
+    endDate: "12/15/2018",
     isDone: 0,
     userList: [],
     description: "금연 컨텐츠입니다. \n 니코틴 측정기를 통해 영상을 인증해주세요. \n 인증된 영상은 타 사용자를 통해 인증됩니다. \n 해당 기간동안 모든 인증이 완료되면 보상을 받게되고, \n 한번이라도 실패하면 패널티를 받게됩니다. \n\n\n 니코틴 판매 사이트\n http://itempage3.auction.co.kr/DetailView.aspx?ItemNo=B582322485&frm3=V2 \n 이 곳에서 니코틴 검사기를 필히 구매하세요.",
@@ -1170,66 +1057,39 @@ function dbInit(){
   })
   content1.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content2.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content3.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content4.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content5.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content6.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content7.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content8.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   content9.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
   ///--------------------------------
   ///--------------------------------
@@ -1240,28 +1100,21 @@ function dbInit(){
   })
   appInfo_.save(function(err, savedDocument) {
     if (err)
-      return console.error(err);
-    console.log(savedDocument);
-    console.log("DB initialization");
-
+      return;
   });
 };
 
 function dbDelete(){
   appInfoSchema.remove(function (err, info) {
-    console.log("DELETED");
   });
 
   user.remove(function (err, info) {
-    console.log("DELETED");
   });
 
   content.remove(function (err, info) {
-    console.log("DELETED");
   });
 
   Report.remove(function (err, info) {
-    console.log("DELETED");
   });
 
 }

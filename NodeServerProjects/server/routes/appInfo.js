@@ -6,7 +6,6 @@ const App = require('../models/app');
 router.get('/getAppInfo', function (req,res) {
 
     App.findOne(function (err, info) {
-      console.log("AppInfo: " + info);
       res.send(info);
     })
   }

@@ -8,7 +8,6 @@ var fcmMessage = require('../../server.js');
 //유저가 참여중인 컨텐츠의 현재 money 및 reward를 보내준다.
 router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
   var contentListIndex = -1;
@@ -29,7 +28,6 @@ router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
           res.send({money: user.contentList[contentListIndex].money, reward: user.contentList[contentListIndex].reward, penalty: user.contentList[contentListIndex].penalty});
         }
       }
-      console.log("content list index: "+contentListIndex);
       if (contentListIndex == -1 && indexFlag != 1) {
         res.send({success: false});
       }
@@ -38,9 +36,7 @@ router.get('/getContentMoney/:jwtToken/:contentName',  function (req,res) {
 });
 
 router.post('/getRewardCheck',  function (req,res) {
-  console.log("getRewardCheck start");
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.body.contentName;
 
@@ -54,7 +50,6 @@ router.post('/getRewardCheck',  function (req,res) {
         break;
       }
     }
-    console.log("reward check = " + user.contentList[contentListIndex].rewardCheck);
     if(user.contentList[contentListIndex].rewardCheck === false){
       user.contentList[contentListIndex].money += user.contentList[contentListIndex].reward;
       user.contentList[contentListIndex].reward = 0;
@@ -70,9 +65,7 @@ router.post('/getRewardCheck',  function (req,res) {
 });
 
 router.post('/getFailureCheck',  function (req,res) {
-  console.log("getFailure check start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  // console.log("achievementRate jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.body.contentName;
   var contentId;
@@ -92,11 +85,8 @@ router.post('/getFailureCheck',  function (req,res) {
       contentId = user.contentList[contentListIndex].contentId;
       userMoney = user.contentList[contentListIndex].money;
       userReward = user.contentList[contentListIndex].reward;
-
-      console.log(userMoney);
-
       user.contentList[contentListIndex].joinState = 4;
-      user.contentList[contentListIndex].penalty = userMoney;
+      user.contentList[contentListIndex].penalty = userMoney + userReward;
       user.contentList[contentListIndex].money = 0;
       user.contentList[contentListIndex].reward = 0;
       user.save(function(err, savedDocument) {
@@ -159,7 +149,6 @@ router.post('/getFailureCheck',  function (req,res) {
     });
 
     if(user.pushToken != ""){
-      console.log("실패 푸쉬메시지 전송");
       var todayDate = new Date();
       var todayMonth = todayDate.getMonth() + 1;
       var todayDay = todayDate.getDate();
@@ -173,7 +162,6 @@ router.post('/getFailureCheck',  function (req,res) {
     }
     else{
       var tempArray = new Array();
-      console.log("push message 디비 세팅, logout한 유저");
       user.contentList[contentListIndex].fcmFailureFlag = 1;
       user.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = tempArray;
       user.contentList[contentListIndex].fcmMessageArray.reasonArray = tempArray;

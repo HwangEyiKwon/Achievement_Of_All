@@ -14,14 +14,10 @@ var schedule = require('node-schedule');
 
 
 router.post('/jwtCheck', function(req, res){
-  console.log("jwtCheck Start");
-  // console.log("jwtCheck jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  // console.log("jwtCheck jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
 
   User.findOne({ email : email }, function(err, user) {
-    // console.log(user);
     if(err){
       console.log("jwtCheck err : "+err);
       res.send({success: false});
@@ -31,13 +27,10 @@ router.post('/jwtCheck', function(req, res){
 
 });
 router.post('/login', function(req,res,next){
-  console.log("login Start");
   passport.authenticate('login', function (err, user, info) {
 
     if(err) console.log("login err : "+err);
     if(user){
-      // var expires = moment().add('days', 7).valueOf();
-
       // jwt 토큰 생성
       var token = jwt.encode({
         userCheck: req.body.email,
@@ -53,48 +46,41 @@ router.post('/login', function(req,res,next){
 });
 
 router.post('/logout', function(req, res){
-  console.log("logout Start");
-  // console.log("logout jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token,req.app.get("jwtTokenSecret"));
-  // console.log("logout jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
 
   User.findOne({ email : email }, function(err, user) {
-    // console.log(user);
-    if(err){
-      console.log("logout err : "+err);
-      res.send({success: false});
+    if(user != null){
+      if(err){
+        console.log("logout err : "+err);
+        res.send({success: false});
+      }
+      user.pushToken = "";
+      user.save(function(err, savedDocument) {
+        if (err)
+          return console.error(err);
+      });
     }
-    user.pushToken = "";
-    console.log('user token is ='+ user.pushToken + '!!');
-    user.save(function(err, savedDocument) {
-      if (err)
-        return console.error(err);
-    });
   });
   res.send({success: true});
 });
 
 router.post('/emailAuthentication',function (req, res, next) {
-  console.log("emailAuthentication Start ");
   var validEmail = 0;
   var duplicatedEmail = 2;
   var authenEmail = req.body.email;
 
   User.findOne({email : authenEmail},function (err, user) {
     if (user){
-      console.log("이미 존재하는 Email 입니다 " + authenEmail);
       res.send({success: duplicatedEmail});
     }
     else{
-          console.log('유효한 Email 입니다.: ');
-          res.send({success: validEmail});
+      res.send({success: validEmail});
     }
   });
 })
 
 router.post('/emailConfirm',function (req, res, next) {
-  console.log("emailConfirm Start");
   var validEmail = 0;
   var invalidEmail = 1;
   var userEmail = req.body.email;
@@ -106,13 +92,9 @@ router.post('/emailConfirm',function (req, res, next) {
   var deleteTime = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes()+5, 0);
 
   passport.authenticate('signup', function (err, user, info) {
-    // console.log(user+"s");
-    console.log("signUPPPPPPPP");
     if(err) console.log("signup err : "+err);
-    if(user) {
-      console.log("정상적 passport signup");
-    }
-    else console.log("회원가입 실패.");
+    if(user) {}
+    else {}
   })(req,res,next);
 
 
@@ -136,20 +118,15 @@ router.post('/emailConfirm',function (req, res, next) {
   };
   transporter.sendMail(mailOptions, function(error, info, response){
     if (error) {
-      console.log("유효하지 않은 Email 입니다. "+error);
       res.send({success: invalidEmail});
     }
     else {
-      console.log('유효한 Email로  보냈습니다. : ' +userEmail);
-
       var scheduler = schedule.scheduleJob(deleteTime, function(){
         User.findOne({email : userEmail}, function(err, user){
           if(user.emailAuthenticated == 0){
             user.remove(function (err) {
               if(err) console.log(err);
-              else {
-                console.log("Delete Success !!");
-              }
+              else {}
             })
           }
         });
@@ -161,10 +138,7 @@ router.post('/emailConfirm',function (req, res, next) {
 })
 
 router.get('/confirm',function (req,res) {
-  console.log("confirm Start!!");
   var userEmail = req.query.email;
-
-
   User.findOne({email : userEmail},function (err,user) {
     if(err) console.log(err);
     if(user != null){
@@ -176,7 +150,6 @@ router.get('/confirm',function (req,res) {
       user.save(function (err) {
         if(err) console.log(err);
         else {
-          console.log("signUP Success !!");
           res.send("축하합니다~~ "+userEmail+"님 회원가입에 성공하셨습니다! 모두의 달성에서 로그인 진행해주세요.");
         }
       })
@@ -188,8 +161,6 @@ router.get('/confirm',function (req,res) {
 })
 
 router.post('/userPasswordEdit', function(req,res){
-  console.log("userPasswordEdit Start");
-
   var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
   var originPassword = req.body.passwordCurrent;
@@ -198,12 +169,10 @@ router.post('/userPasswordEdit', function(req,res){
   User.findOne({email: userEmail}, function(err, user) {
     if (err) {
       res.send({success: 2});
-      console.log("userInfoEdit err")
+      console.log("userInfoEdit err : "+err)
     } else {
-      console.log("user pwd hash: "+ user.password);
       if(! user.validPassword(originPassword)){
         res.send({success: 0});
-        console.log("origin password is not correct")
       }
       else{
         user.password = user.generateHash(changePassword);
@@ -222,24 +191,16 @@ router.post('/userPasswordEdit', function(req,res){
 });
 
 router.post('/editProfileWithoutImage', function(req,res){
-  console.log("editProfileWithoutImage Start");
-
   var decoded = jwt.decode(req.body.jwt_token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
   var phoneNumber = req.body.phone_number;
   var userName = decodeURIComponent(req.body.name);
 
-  console.log("editwithout EMAIL " + userEmail);
-  console.log("editwithout phoneNumber " + phoneNumber);
-  console.log("editwithout name " + userName);
-
   User.findOne({email: userEmail}, function(err, user){
     var contentListCount = user.contentList.length;
     var contentName ;
     var contentId;
-    if(contentListCount == 0){
-      console.log("editProfileWithoutImage Nocontent")
-    }
+    if(contentListCount == 0){}
     else {
       for (var i = 0; i < contentListCount; i++) {
         contentName = user.contentList[i].contentName;
@@ -256,16 +217,14 @@ router.post('/editProfileWithoutImage', function(req,res){
               if(err){
                 console.log("err");
               }
-              else{
-                console.log("editProfileWithoutImage content Save");
-              }
+              else{}
             })
           });
         }
       }
     if(err){
       res.send({success: false});
-      console.log("editProfileWithoutImage err")
+      console.log("editProfileWithoutImage err : "+err)
     }else{
 
       if(user.imagePath == null)
@@ -278,7 +237,6 @@ router.post('/editProfileWithoutImage', function(req,res){
             console.log(err);
             res.send({success: false});
           } else {
-            console.log("NO Profile Image editProfileWithoutImage Success ");
             res.send({success: true});
           }
         });
@@ -286,7 +244,7 @@ router.post('/editProfileWithoutImage', function(req,res){
       else {
         fs.rename('./server/user/' + user.email + '/' + user.imagePath + '.jpg', './server/user/' + user.email + '/' + userName + '.jpg', function (err) {
           if (err) console.log('ERROR: ' + err);
-          else console.log("image 이름 변경 ㅅ성공");
+          else {}
         });
 
         user.name = userName;
@@ -298,7 +256,6 @@ router.post('/editProfileWithoutImage', function(req,res){
             console.log(err);
             res.send({success: false});
           } else {
-            console.log("editProfileWithoutImage Success ");
             res.send({success: true});
           }
         });
@@ -309,24 +266,17 @@ router.post('/editProfileWithoutImage', function(req,res){
 });
 
 router.post('/editProfileWithImage', function(req,res){
-  console.log("userInfoEdit Start");
 
   var decoded = jwt.decode(req.headers.jwt_token, req.app.get("jwtTokenSecret"));
   var userEmail = decoded.userCheck;
   var phoneNumber = req.headers.phone_number;
   var userName = decodeURIComponent(req.headers.name);
 
-  console.log("edit EMAIL" + userEmail);
-  console.log("edit phoneNumber" + phoneNumber);
-  console.log("edit name" + userName);
-
   User.findOne({email: userEmail}, function(err, user){
     var contentListCount = user.contentList.length;
     var contentName ;
     var contentId;
-    if(contentListCount == 0){
-      console.log("userInfoEdit Nocontent")
-    }
+    if(contentListCount == 0){}
     else{
       for (var i = 0; i < contentListCount; i++) {
         contentName = user.contentList[i].contentName;
@@ -343,37 +293,30 @@ router.post('/editProfileWithImage', function(req,res){
             if(err){
               console.log("err");
             }
-            else{
-              console.log("userInfoEdit content Save");
-            }
+            else{}
           })
         });
       }
     }
     if(err){
       res.send({success: false});
-      console.log("userInfoEdit err")
     }else{
       var form = new multiparty.Form();
       form.on('field', function (name, value) {
-        console.log('normal field / name = ' + name + ' , value = ' + value);
       });
       form.on('part', function (part) {
         var filename;
         var size;
         if (part.filename) {
-          // filename = part.filename;
           filename = userName + '.jpg';
           size = part.byteCount;
         } else {
           part.resume();
         }
-        console.log("Write Streaming file :" + filename);
         var writeStream = fs.createWriteStream('./server/user/' + userEmail + '/' + filename);
         writeStream.filename = filename;
         part.pipe(writeStream);
         part.on('data', function (chunk) {
-          // console.log(filename + ' read ' + chunk.length + 'bytes');
         });
         part.on('end', function () {
           console.log(filename + ' Part read complete');
@@ -386,7 +329,6 @@ router.post('/editProfileWithImage', function(req,res){
           res.send({success: false});
         }
         else {
-          console.log("Edit Image success");
           user.imagePath = userName;
           user.name = userName;
           user.phoneNumber = phoneNumber;
@@ -395,8 +337,6 @@ router.post('/editProfileWithImage', function(req,res){
               console.log(err);
               res.send({success: false});
             } else {
-              console.log("ImagePath modi Success ");
-              console.log("userInfoEdit Success ");
               res.send({success: true});
             }
           });
@@ -404,7 +344,6 @@ router.post('/editProfileWithImage', function(req,res){
       });
       // track progress
       form.on('progress', function (byteRead, byteExpected) {
-        // console.log(' Reading total  ' + byteRead + '/' + byteExpected);
       });
       form.parse(req);
     }
@@ -413,44 +352,30 @@ router.post('/editProfileWithImage', function(req,res){
 
 
 router.post('/getUserInfo', function (req,res) {
-  console.log("getUserInfo Start");
-  // console.log("get User Info: "+JSON.stringify(req.body));
-  // console.log("받은 jwt토큰 "+ req.body.token);
   var decoded = jwt.decode(req.body.token, req.app.get("jwtTokenSecret"));
-  // console.log("받은 jwt토큰 디코딩 "+ decoded.userCheck);
   var email = decoded.userCheck;
-  // console.log(email);
+
   User.findOne({email: email}, function(err, info){
     if(err) console.log("getUserInfo err : "+err);
-    if(info == null) {
-      console.log("사용자 아님");
-    }
+    if(info == null) {}
     else {
-      console.log("사용자 찾음");
       res.send(info);
     }
   })
 });
 
 router.post('/getOtherUserInfo', function (req,res) {
-  console.log("getOtherUserInfo Start");
-  // console.log("get User Info: "+JSON.stringify(req.body));
   var email = req.body.email;
-  // console.log(email);
   User.findOne({email: email}, function(err, info){
     if(err) console.log("getUserInfo err : "+err);
-    if(info == null) {
-      console.log("사용자 아님");
-    }
+    if(info == null) {}
     else {
-      console.log("사용자 찾음");
       res.send(info);
     }
   })
 });
 
 router.get("/pwdSendMail/:email", function(req, res, next){
-  console.log("pwdSendMail Start");
   let email = req.params.email;
 
   User.findOne({email: email}, function(err, user) {
@@ -481,26 +406,20 @@ router.get("/pwdSendMail/:email", function(req, res, next){
     if(user){
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-          console.log(error);
+          console.log("sendMaiil err : "+error);
           res.send({success: false,  why:1});
         }
         else {
-          console.log('Email sent: ' + info.response);
           res.send({success: true});
         }
       });
     }else{
-      console.log("사용자 정보 없습니다");
       res.send({success: false, why:0});
     }
   })
-  // let email = "hwangeyikwon@gmail.com";
-
 })
 
 router.get("/pwdEmailAuthen", function(req, res, next){
-  console.log("pwdEmailAuthen Start ");
-  console.log(req.query.pwd);
   var newPassword = req.query.pwd;
   var userEmail = req.query.email;
   User.findOne({email: userEmail}, function(err, user) {
@@ -511,7 +430,7 @@ router.get("/pwdEmailAuthen", function(req, res, next){
       user.password = user.generateHash(newPassword);
       user.save(function (err) {
         if (err) {console.log(err);}
-        else console.log("newPassword Change");
+        else {}
       })
       }
   });
@@ -542,10 +461,7 @@ router.post('/managerlogin', function(req, res, next) {
 });
 
 router.post('/managerSignUp', function (req, res, next) {
-  console.log("signup Start");
   passport.authenticate('signup-manager', function (err, user, info) {
-    // console.log(user+"s");
-    console.log("signUPPPPPPPP");
     if(err) console.log("signup err : "+err);
 
     if(user == 0){
@@ -575,11 +491,9 @@ router.get('/sessionCheck', function(req, res) { // 세션체크
 });
 
 router.get('/getManagerInfo', function(req, res) { // 유저 정보 (로그인 시)
-  console.log("?")
   if(req.session.userCheck == undefined) { // 사용자 세션 체크, 세션 없으면 오류페이지
     res.send({error:true});
   } else {
-    console.log("???")
     User.findOne({email: req.session.userCheck}, {password: 0}, function (err, user) { // 웹 페이지 좌측에 나타나는 사용자 정보를 불러오는
       if (err) throw err;
       res.send(user);
@@ -603,7 +517,6 @@ router.post('/managerInfoEdit', function(req, res) {
 
           if (!user) {
             if (req.body.imagePath == undefined) {
-              console.log("11");
               User.findOneAndUpdate({email: req.session.userCheck},
                 {
                   name: req.body.name,
@@ -611,11 +524,9 @@ router.post('/managerInfoEdit', function(req, res) {
                   phoneNumber: req.body.phoneNumber
                 }, function (err, userUpdate) {
                   if (err) throw err;
-                  console.log('update success');
                   res.send({success: true});
                 });
             } else {
-              console.log("22");
               User.findOneAndUpdate({email: req.session.userCheck},
                 {
                   name: req.body.name,
@@ -625,7 +536,6 @@ router.post('/managerInfoEdit', function(req, res) {
                   // userImage: req.body.userImagePath.replace('\\', '/')
                 }, function (err, userUpdate) {
                   if (err) throw err;
-                  console.log('update success with image');
                   res.send({success: true});
                 });
             }
@@ -638,17 +548,14 @@ router.post('/managerInfoEdit', function(req, res) {
   }
 });
 router.post('/managerPasswordEdit', function(req,res){
-  console.log("userPasswordEdit Start");
 
   User.findOne({email: req.session.userCheck}, function(err, user) {
     if (err) {
       res.send({success: 2});
-      console.log("userInfoEdit err")
+      console.log("userInfoEdit err : "+err)
     } else {
-      console.log("user pwd hash: "+ user.password);
       if(! user.validPassword(req.body.currentPassword)){
         res.send({success: 0});
-        console.log("origin password is not correct")
       }
       else{
         user.password = user.generateHash(req.body.newPassword);
@@ -662,7 +569,6 @@ router.post('/managerPasswordEdit', function(req,res){
           }
         })
       }
-      // res.send({success: true});
     }
   });
 });

@@ -8,9 +8,7 @@ var fcmMessage = require('../../server.js');
 var fs = require("fs");
 
 router.get('/reportUserList/:jwtToken/:contentName/:reportReason', function (req,res) {
-  console.log("reportUserList Start!!!");
   var decoded = jwt.decode(req.params.jwtToken,req.app.get("jwtTokenSecret"));
-  // console.log("isParticipated jwt토큰 디코딩 "+ decoded.userCheck);
   var userEmail = decoded.userCheck;
   var contentName = req.params.contentName;
   var reportContentId;
@@ -65,8 +63,6 @@ router.get('/reportUserList/:jwtToken/:contentName/:reportReason', function (req
         if (err)
           return console.error(err);
         else{
-          console.log(savedDocument);
-          console.log("report save");
           res.send({success:true});
         }
       });
@@ -85,8 +81,6 @@ router.get('/getReportVideo/:email/:contentName/:videoPath', function(req,res){
 });
 
 router.post('/reportReject', function (req,res) {
-  console.log("reportReject start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  console.log(req.body);
   var reportUserEmail = req.body.report.email;
   var contentId = req.body.report.contentId;
   var contentName = req.body.report.contentName;
@@ -108,7 +102,7 @@ router.post('/reportReject', function (req,res) {
       userReward = user.contentList[contentListIndex].reward;
 
       user.contentList[contentListIndex].joinState = 4;
-      user.contentList[contentListIndex].penalty = userMoney;
+      user.contentList[contentListIndex].penalty = userMoney + userReward;
       user.contentList[contentListIndex].money = 0;
       user.contentList[contentListIndex].reward = 0;
       user.save(function(err, savedDocument) {
@@ -173,7 +167,6 @@ router.post('/reportReject', function (req,res) {
     reasonArray.push(reason);
 
     if(user.pushToken != ""){
-      console.log("신고 reject 푸쉬메시지 전송");
       var todayDate = new Date();
       var todayMonth = todayDate.getMonth() + 1;
       var todayDay = todayDate.getDate();
@@ -185,13 +178,12 @@ router.post('/reportReject', function (req,res) {
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportReject, contentName, tempArray, reasonArray);
     }
     else{
-      console.log("push message 디비 세팅, logout한 유저");
       user.contentList[contentListIndex].fcmReportRejectFlag = 1;
       user.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = tempArray;
-      user.contentList[contentListIndex].reasonArray = reasonArray;
+      user.contentList[contentListIndex].fcmMessageArray.reasonArray = reasonArray;
       user.save(function(err, savedDocument) {
         if (err)
-          return console.error(err);
+          return ;
       });
     }
 
@@ -199,7 +191,7 @@ router.post('/reportReject', function (req,res) {
       report.complete = 1;
       report.save(function (err, savedDocument) {
         if (err)
-          return console.error(err);
+          return ;
       });
     });
 
@@ -208,7 +200,6 @@ router.post('/reportReject', function (req,res) {
 });
 
 router.post('/reportAccept', function (req,res) {
-  console.log("reportAccept start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
   var reportUserEmail = req.body.report.email;
   var contentId = req.body.report.contentId;
   var contentName = req.body.report.contentName;
@@ -252,11 +243,11 @@ router.post('/reportAccept', function (req,res) {
 
         content.save(function(err, savedDocument) {
           if (err)
-            return console.error(err);
+            return;
         });
         user.save(function(err, savedDocument) {
           if (err)
-            return console.error(err);
+            return;
         });
       });
     }
@@ -266,7 +257,6 @@ router.post('/reportAccept', function (req,res) {
     reasonArray.push(reason);
 
     if(user.pushToken != ""){
-      console.log("신고 accept 푸쉬메시지 전송");
       var todayDate = new Date();
       var todayMonth = todayDate.getMonth() + 1;
       var todayDay = todayDate.getDate();
@@ -279,10 +269,9 @@ router.post('/reportAccept', function (req,res) {
       fcmMessage.sendPushMessage2(user, contentListIndex, sendTime, titleReportAccept, contentName, tempArray, reasonArray);
     }
     else{
-      console.log("push message 디비 세팅, logout한 유저");
       user.contentList[contentListIndex].fcmReportAcceptFlag = 1;
       user.contentList[contentListIndex].fcmMessageArray.failAuthenUserArray = tempArray;
-      user.contentList[contentListIndex].reasonArray = reasonArray;
+      user.contentList[contentListIndex].fcmMessageArray.reasonArray = reasonArray;
       user.save(function(err, savedDocument) {
         if (err)
           return console.error(err);
