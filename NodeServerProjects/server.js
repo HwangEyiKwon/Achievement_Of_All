@@ -512,55 +512,6 @@ var scheduler = schedule.scheduleJob('00 * * * * *', function(){
     }
   });
 
-  /* 모든 컨텐츠에 대해 endDate체크하여 성공한 사람들 디비 수정하고 푸쉬메시지 보내기 */
-//   content.find({"endDate" : yesterdayDate, "isDone": 0}, function(err, contentList){
-// console.log(contentList);
-//     for(var i = 0; i < Object.keys(contentList).length; i++){
-//       var contentId = contentList[i].id;
-//       var contentName = contentList[i].name;
-//       var userListCount = contentList[i].userList.length;
-//       var balance = contentList[i].balance;
-//       for(var j = 0; j < userListCount; j ++){
-//         if(contentList[i].userList[j].result == 2) contentList[i].userList[j].result = 1;
-//       }
-//       contentList[i].isDone = 1;
-//       contentList[i].save(function(err, savedDocument) {
-//         if (err) {}
-//       });
-//
-//       user.find({"contentList.contentId" : contentId, "contentList.contentName": contentName, "contentList.joinState" : 1}, function(err, userList){
-//         console.log(userList);
-//         if(userList != null){
-//           var successUserNum = Object.keys(userList).length;
-//           for(var i = 0; i < successUserNum; i++){
-//             var contentListCount = userList[i].contentList.length;
-//             var contentListIndex;
-//             for (var j = 0; j < contentListCount; j++) {
-//               if (userList[i].contentList[j].contentName === contentName) {
-//                 contentListIndex = j;
-//                 break;
-//               }
-//             }
-//             userList[i].contentList[contentListIndex].joinState = 2;
-//             userList[i].contentList[contentListIndex].reward = (balance / successUserNum) * 0.8;
-//
-//             userList[i].save(function(err, savedDocument) {
-//               if (err) {}
-//             });
-//             //푸쉬메시지 전송
-//
-//             if(userList[i].pushToken != "") {
-//               console.log("푸쉬 전송~~");
-//               var tempArray = new Array();
-//               var sendTime = new Date(todayYear, todayMonth - 1, todayDate.getDate(), todayDate.getHours(), todayDate.getMinutes(), todayDate.getSeconds()+5);
-//               sendPushMessage(userList[i], contentListIndex, sendTime, titleSuccess, userList[i].contentList[contentListIndex].contentName, tempArray, tempArray);
-//             }
-//           }
-//         }
-//       });
-//     }
-//   });
-
   content.find({isDone: 0}, function(err, contentList){
     for(var i = 0; i < Object.keys(contentList).length; i++){
       var totalDate = (contentList[i].endDate.getTime() - contentList[i].startDate.getTime()) / ( 24*60*60*1000);
