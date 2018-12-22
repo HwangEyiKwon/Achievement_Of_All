@@ -1,8 +1,8 @@
 ﻿var mongoose = require('mongoose');
 //mongoose.connect('mongodb://nyangpun:capd@localhost/admin',{dbName: 'capd'});
-//mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
+mongoose.connect('mongodb://nyangnyangpunch:capd@localhost/admin',{dbName: 'capd'});
 //mongoose.connect('mongodb://capd:1234@localhost/admin',{dbName: 'capd'});
-mongoose.connect('mongodb://localhost:27017');
+//mongoose.connect('mongodb://localhost:27017');
 
 const express = require('express');
 const path = require('path');
@@ -52,9 +52,9 @@ var Report = require('./server/models/report');
 require('./config/passport')(passport);
 
 // db 삭제
-// dbDelete();
+ dbDelete();
 // // db 초기화
-// dbInit();
+ dbInit();
 
 // POST 데이터
 app.use(bodyParser.json());
