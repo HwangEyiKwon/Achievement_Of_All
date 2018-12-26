@@ -1,3 +1,8 @@
-# Capstone_Team4
-Team4_NyangNyangPunch's project "모두의 달성"
-test EK
+# Capstone Design
+Team4 NyangNyangPunch's project "모두의 달성"
+
+[Contirubutor]
+Server: 
+HwangEyiKwon https://github.com/HwangEyiKwon
+JangDongIk https://github.com/ehddlrdk
+ChoGeonHee https://github.com/geonheec
