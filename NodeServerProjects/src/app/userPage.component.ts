@@ -2,7 +2,7 @@
 
 // 사용자 페이지
 // 사용자 페이지의 큰틀을 구성하는 컴포넌트다.
-// 좌측의 메뉴 버튼에 따라 여러 자식 컴포넌트를 불러온다. (app.routing.module 참고)
+// 좌측의 메뉴 버튼에 따라 여러 자식 컴포넌트를 불러온다.
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpService} from './http-service';
@@ -83,8 +83,6 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   // setupMenu 함수
-  // 파라미터로 현재 사용자의 권한이 들어온다.
-  // 그 권한에 따라 맞는 좌측 메뉴를 생성한다.
   setupMenu() {
     this.menu = ['userInfo', 'userManage' , 'contentManage', 'reportManage'];
   }

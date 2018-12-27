@@ -1,7 +1,5 @@
 // UserService.component
-
 // 로그인 및 회원가입 관련 컴포넌트다.
-// 사용자 페이지의 큰틀을 구성하는 컴포넌트다.
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { NgForm } from '@angular/forms';
@@ -42,10 +40,9 @@ export class UserServiceComponent implements OnInit , OnDestroy {
   ngOnInit() {
 
     // Session Check
-
     // 처음 로그인 페이지를 들어가면 세션 정보를 확인한다.
     // 만약 세션이 존재할 경우 로그인 진행 없이 사용자 페이지로 이동하고
-    // 세션이 존재하지 않을 경우 로그인 페이지로 이동한다
+    // 세션이 존재하지 않을 경우 로그인 페이지로 이동한다.
 
     this.myObserver = this.httpService.sessionCheck().subscribe(result => { // HTTP 통신을 통해 서버에게 세션 확인을 요구한다.
       // 세션에 사용자 정보가 남아 있을 경우

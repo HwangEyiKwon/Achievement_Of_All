@@ -1,7 +1,5 @@
 // ContentManage.component
-
 // 컨텐츠 관리 페이지
-// (권한이 manager인 사용자만 접근 가능)
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from './http-service';
@@ -118,9 +116,10 @@ export class ContentManageComponent implements OnInit, OnDestroy {
     };
   }
   ngOnInit() {
+
     // Authority Check
     // 관리자 페이지는 권한이 manager인 사용자만 가능
-    // HTTP 통신을 통해 관리자 체크를 해야함.
+    // HTTP 통신을 통해 관리자 체크를 해야한다.
     this.httpService.authorityCheck().subscribe(result=>{
 
       // 접근 권한이 없을 경우 에러페이지로 이동
@@ -129,7 +128,7 @@ export class ContentManageComponent implements OnInit, OnDestroy {
       }else {
 
         // Session Check
-        // 세션 체크 후에 세션이 저장되어 있지 않으면 로그인 페이지로 이동
+        // 세션 체크 후에 세션이 저장되어 있지 않으면 로그인 페이지로 이동한다.
         this.httpService.sessionCheck().subscribe(result => {
           if(JSON.parse(JSON.stringify(result)).userSess !== undefined ){
             console.log("Session: " + JSON.stringify(result));
@@ -174,8 +173,7 @@ export class ContentManageComponent implements OnInit, OnDestroy {
         if(this.subscription != null)
           this.subscription.unsubscribe();
 
-        // 사용자 관리 페이지에서 정보를 수정하면 부모 컴퍼넌트인 userPage.component를 다시 호출
-        // 변경된 정보가 자기 자신 것일 경우 바로 메뉴바의 정보가 바뀔수 있도록 한다.
+        // 컨텐츠 관리 페이지에서 정보를 수정하면 부모 컴퍼넌트인 userPage.component를 다시 호출
         this.parent.ngOnInit();
         resolve();
       });

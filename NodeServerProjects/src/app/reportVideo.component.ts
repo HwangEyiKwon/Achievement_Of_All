@@ -54,7 +54,7 @@ export class ReportVideoComponent implements ViewCell, OnInit {
     reason: String;
 
     videoSource: String;
-    videoPath = myGlobals.serverPath; // 이미지 경로
+    videoPath = myGlobals.serverPath;
 
     constructor(
         private httpService: HttpService

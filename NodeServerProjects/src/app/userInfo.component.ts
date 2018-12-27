@@ -30,7 +30,7 @@ export class UserInfoComponent implements OnInit {
   phoneNumber: string; // 사용자 전화번호
 
   // 사용자 정보 페이지에는 사용자 정보를 수정하는 기능이 있다
-  // 그 중 사용자가 이미지를 수정하면 이미지를 서버에 업로드할 수 있도록 해주는 부분이다
+  // 그 중 사용자가 이미지를 수정하면 이미지를 서버에 업로드할 수 있도록 해주는 부분이다.
   public uploader: FileUploader = new FileUploader({url: '/photo', itemAlias: 'photo',allowedMimeType: ['image/png', 'image/gif', 'video/mp4', 'image/jpeg'] });
 
   constructor(
@@ -43,7 +43,6 @@ export class UserInfoComponent implements OnInit {
   ngOnInit() {
 
     // 부모 컴포넌트인 userPage.component에서 보낸 사용자 정보들을 불러오는 값
-    // 컴포넌트 사이에서 데이터 교환은 여러 방식이 있는데 이는 그 중 하나의 방법임. (Data.service 참고)
     this.dataService.currentMessage.subscribe(userInfo => {
 
       this.email = JSON.parse(JSON.stringify(userInfo)).email;
@@ -65,14 +64,11 @@ export class UserInfoComponent implements OnInit {
     };
 
   }
+
   // Image Upload 하는 함수
   // (이미지를 서버의 한 경로로 업로드하는 부분)
   upload(name) {
 
-    // Promise 기법 (구글 참고)
-    // Promise는 자바스크립트에서 많이 사용하는 기법으로mk
-    // 여기에서는 간단히 비동기 함수의 문제를 해결하기 위해 사용하였다.
-    // 하단의 실제 이미지 업로드하는 함수들은 코드를 가져다 사용하여 설명은 생략하겠다.
     return new Promise ((resolve, reject)=>{
       //locate the file element meant for the file upload.
       let inputEl: HTMLInputElement = this.el.nativeElement.querySelector('#photo');
@@ -86,11 +82,10 @@ export class UserInfoComponent implements OnInit {
       if (fileCount > 0) { // a file was selected
         //append the key name 'photo' with the first file in the element
         formData.append('photo', inputEl.files.item(0));
-        formData.append('name', name);
         //call the angular http method
         this.http
         //post the form data to the url defined above and map the response. Then subscribe //to initiate the post. if you don't subscribe, angular wont post.
-          .post('/photo', formData ).subscribe(
+          .post('/photo/' + name, formData ).subscribe(
           //map the success function and alert the response
           (result) => {
             alert("이미지 업로드 완료.");

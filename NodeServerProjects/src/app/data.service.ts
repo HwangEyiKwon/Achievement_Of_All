@@ -1,7 +1,6 @@
 // Data Service
-
 // Data 공유 함수들을 모아놓은 서비스
-// 컴포넌트 사이의 Data 공유로 Data Binding, Observer을 통한 Data 공유 등이 있는데 여기서는 Observer를 통해 Data를 주고 받는 서비스를 구현했다
+// 컴포넌트 사이의 Data 공유로 Data Binding, Observer을 통한 Data 공유 등이 있는데 여기서는 Observer를 통해 Data를 주고 받는 서비스를 구현했다.
 // Dependency Injection 개념을 통해 Data 공유가 필요한 컴포넌트에서 필요 함수를 주입가능하도록 함.
 
 import { Injectable } from '@angular/core';
@@ -81,6 +80,7 @@ export class DataService {
       this.notifyStd_parent.next(data);
     }
   }
+  //------------------------------------------------------------------------
 
   public notifyOtherEd(data: any) {
     if (data) {

@@ -1,5 +1,4 @@
 // Calendar.component
-
 // ContentManage.component의 자식 컴포넌트다.
 // 컨텐츠 생성 시 종료 날짜를 적을 수 있는 컴포넌트다.
 

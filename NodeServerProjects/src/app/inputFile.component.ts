@@ -1,6 +1,6 @@
 // InputFile.component
 
-// 모든 관리 페이지의 이미지 업로드를 위한 컴포넌트다.
+// 사용자 관리의 이미지 업로드를 위한 컴포넌트다.
 // 모든 관리 페이지의 관리 테이블은 ng2-smart-table 모듈을 사용하여 생성된다.
 // 하지만 해당 모듈에서는 이미지 업로드 기능을 제공하지 않아 직접 기능을 구현하였다.
 // 관리 페이지의 테이블 setting을 보면 editor 부분에 inputFile을 렌더링 하는 것을 볼 수 있다.
@@ -23,7 +23,7 @@ import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 })
 export class InputFileComponent extends DefaultEditor implements OnInit, OnDestroy {
 
-    @Input() cell: Cell; // 해당 셀 (하난)
+    @Input() cell: Cell;
     @Input() inputClass: string;
 
     @Output() onStopEditing = new EventEmitter<any>();

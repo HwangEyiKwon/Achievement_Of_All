@@ -1,4 +1,5 @@
 // App.module
+// App에 필요한 모든 모듈 설정
 
 // Module
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,15 +21,14 @@ import { UserServiceComponent } from './userService.component'; // Login/SignUp
 import { UserPageComponent } from './userPage.component'; // User Page
 import { UserInfoComponent } from './userInfo.component'; // User Info
 import { UserManageComponent } from './userManage.component'; // User Manage
-import { ContentManageComponent } from './contentManage.component'; // Component Manage
+import { ContentManageComponent } from './contentManage.component'; // Content Manage
 import { ReportManageComponent } from './reportManage.component'; // Report Manage
 import { AboutComponent } from './about.component'; // About
-import { ErrorComponent } from './error.component'; // Error Page
 
 // Sub Component
-import { CalendarComponent } from './calendar.component'; // User Manage -> Start Date
 import { InputFileComponent } from './inputFile.component'; // User Manage -> Image Upload
-import { CalendarEndComponent } from './calendar.end.component'; // User Manage -> End Date
+import { CalendarComponent } from './calendar.component'; // Content Manage -> Start Date
+import { CalendarEndComponent } from './calendar.end.component'; // Content Manage -> End Date
 import { ReportVideoComponent } from './reportVideo.component'; // Report Manage -> Video
 
 @NgModule({
@@ -40,7 +40,6 @@ import { ReportVideoComponent } from './reportVideo.component'; // Report Manage
     UserManageComponent,
     ContentManageComponent,
     ReportManageComponent,
-    ErrorComponent,
     InputFileComponent,
     CalendarComponent,
     CalendarEndComponent,

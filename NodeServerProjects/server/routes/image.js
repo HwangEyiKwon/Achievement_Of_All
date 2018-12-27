@@ -79,7 +79,7 @@ var upload = function (req, res, user) {
     // 서버에 저장할 파일 명
     filename: function (req, file, cb) {
       crypto.pseudoRandomBytes(16, function(err, raw) {
-        cb(null, req.body.name + '.' + 'jpg');
+        cb(null, req.params.name + '.' + 'jpg');
       });
     }
 
@@ -97,7 +97,7 @@ var upload = function (req, res, user) {
   });
   return deferred.promise;
 };
-router.post('/photo', function(req, res, next) {
+router.post('/photo/:name', function(req, res, next) {
   User.findOne({ email : req.session.userCheck }, function(err, user) {
 
     var path = '';

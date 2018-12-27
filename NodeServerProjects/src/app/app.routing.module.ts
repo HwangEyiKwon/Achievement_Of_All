@@ -10,7 +10,7 @@ import { UserServiceComponent } from './userService.component'; // Login/SignUp
 import { UserPageComponent } from './userPage.component'; // User Page
 import { UserInfoComponent } from './userInfo.component'; // User Info
 import { UserManageComponent } from './userManage.component'; // User Manage
-import { ContentManageComponent } from './contentManage.component'; // Component Manage
+import { ContentManageComponent } from './contentManage.component'; // Content Manage
 import { ReportManageComponent } from './reportManage.component'; // Report Manage
 import { AboutComponent } from './about.component'; // About
 
@@ -25,7 +25,7 @@ const routes: Routes = [ // Route 지정
       { path: 'userManage', component: UserManageComponent}, // 사용자 관리
       { path: 'contentManage', component: ContentManageComponent}, // 컨텐츠 관리
       { path: 'reportManage', component: ReportManageComponent}, // 신고 관리
-      { path: 'about', component: AboutComponent} ] // 모두의달성 정보
+      { path: 'about', component: AboutComponent} ] // 모두의 달성 정보
 
   },
   {path: '**', redirectTo: 'login'} // 그 외 URL 입력시 로그인 페이지
