@@ -5,12 +5,16 @@ import android.text.style.ForegroundColorSpan
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import java.util.Calendar
+import java.util.*
 
 /**
  *  REFACTORED
  */
 
+
+// SundayDecorator
+// 달력에 보여줄 이미지를 설정합니다.
+// 일요일 날짜를 표시합니다.
 class SundayDecorator : DayViewDecorator {
 
     private val calendar = Calendar.getInstance()

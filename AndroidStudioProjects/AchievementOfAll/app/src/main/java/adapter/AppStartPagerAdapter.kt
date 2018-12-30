@@ -4,12 +4,16 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
-import com.example.parkseunghyun.achievementofall.Fragments.*
+import com.example.parkseunghyun.achievementofall.Fragments.AppDescPagerFirst
+import com.example.parkseunghyun.achievementofall.Fragments.AppDescPagerSecond
+import com.example.parkseunghyun.achievementofall.Fragments.AppDescPagerThird
 
 /**
     REFARCTORED
  */
 
+// AppStartPagerAdapter
+// 앱 메인 화면에서 앱 설명란에 필요한 어댑터입니다.
 class AppStartPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     private var mNumOfTabs: Int = 0

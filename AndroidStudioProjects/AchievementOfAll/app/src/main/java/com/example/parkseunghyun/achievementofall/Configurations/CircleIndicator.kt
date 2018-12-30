@@ -10,6 +10,10 @@ import android.widget.LinearLayout
     REFACTORED
  */
 
+
+// CircleIndicator
+// 하단 3개의 동그라미를 설정합니다.
+// 화면을 좌우로 슬라이드할때 필요합니다.
 class CircleIndicator: LinearLayout {
 
     private var mContext: Context? = null

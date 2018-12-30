@@ -11,6 +11,8 @@ import com.example.parkseunghyun.achievementofall.Fragments.HomeSearchPager
     REFACTORED
  */
 
+// HomePagerAdapter
+// 홈 화면에서 필요한 어댑터입니다.
 class HomePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     private var mNumOfTabs: Int = 0

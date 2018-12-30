@@ -4,8 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
-import android.text.Editable
-import android.text.InputType
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.view.animation.Animation
@@ -24,10 +22,11 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import org.json.JSONObject
-import org.w3c.dom.Text
 
+// ExoplayerActivity
+// 동영상 재생 화면
 class ExoplayerActivity : AppCompatActivity() {
-    // 서버 ip 주소
+
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
@@ -51,12 +50,15 @@ class ExoplayerActivity : AppCompatActivity() {
     private var isFabOpen:Boolean = false
 
 
+    // onDestroy
+    // 화면이 종료될 경우
     override fun onDestroy() {
         finish()
         super.onDestroy()
-        println("DESTROY")
     }
 
+    // onBackPressed (override)
+    // 뒤로가기 버튼을 짧은 시간 내 두번 누르면 영상이 종료됩니다.
     override fun onBackPressed() {
         if(System.currentTimeMillis() - time >= 2000){
             time = System.currentTimeMillis()
@@ -76,6 +78,7 @@ class ExoplayerActivity : AppCompatActivity() {
         fab_open = AnimationUtils.loadAnimation(applicationContext!!, R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(applicationContext!!, R.anim.fab_close);
 
+        // 사유
         checkReasonEditText = findViewById(R.id.checkReason)
 
         val successButton = findViewById(R.id.success) as ImageView
@@ -86,6 +89,7 @@ class ExoplayerActivity : AppCompatActivity() {
         val authorizeButton = findViewById(R.id.authorize_button) as Button
         authorizeButton.isEnabled = false
 
+        // 타 사용자 영상 인증
         if(intent.getStringExtra("who")=="others"){
             contentName = intent.getStringExtra("contentName")
             email = intent.getStringExtra("email")
@@ -93,7 +97,6 @@ class ExoplayerActivity : AppCompatActivity() {
             token = loadToken()
             initializePlayer("other", uri)
 
-            println("상대방" + email + token)
             notYetButton.visibility = View.GONE
 
             successButton.setOnClickListener {
@@ -134,7 +137,9 @@ class ExoplayerActivity : AppCompatActivity() {
                 check = 0
             }
 
-        }else if(intent.getStringExtra("who")=="other"){
+        }
+        // 타 사용자 영상 열람
+        else if(intent.getStringExtra("who")=="other"){
 
             authorizeButton.visibility = View.GONE
 
@@ -156,7 +161,6 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 successButton.setOnClickListener {
                     successButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
-                    println("왜안되니?")
                     anim("인증에 성공한 영상입니다.")
                     Toast.makeText(this, "인증에 성공한 영상입니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -171,7 +175,6 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 failButton.setOnClickListener {
                     failButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
-                    println("왜안되니?")
                     anim("인증에 실패한 영상입니다.")
                     Toast.makeText(this, "인증에 실패한 영상입니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -186,13 +189,12 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 notYetButton.setOnClickListener {
                     notYetButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
-                    println("왜안되니?")
                     anim("아직 인증받지 못한 영상입니다.")
                     Toast.makeText(this, "아직 인증받지 못한 영상입니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
+        // 본인 영상 열람
         else if(intent.getStringExtra("who")=="me"){
 
             authorizeButton.visibility = View.GONE
@@ -215,7 +217,6 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 successButton.setOnClickListener {
                     successButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
-                    println("왜안되니?")
                     anim("인증에 성공한 영상입니다.")
                     Toast.makeText(this, "인증에 성공한 영상입니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -230,7 +231,6 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 failButton.setOnClickListener {
                     failButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
-                    println("왜안되니?")
                     anim("인증에 실패한 영상입니다.")
                     Toast.makeText(this, "인증에 실패한 영상입니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -245,20 +245,20 @@ class ExoplayerActivity : AppCompatActivity() {
 
                 notYetButton.setOnClickListener {
                     notYetButton.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.shaker))
-                    println("왜안되니?")
                     anim("아직 인증받지 못한 영상입니다.")
                     Toast.makeText(this, "아직 인증받지 못한 영상입니다.", Toast.LENGTH_SHORT).show()
                 }
             }
 
         }
+        // 인증 버튼을 누를 경우
         authorizeButton.setOnClickListener{
 
-            if(check == 0){ // X 클릭 시
+            if(check == 0){ // 실패의 경우
                 if (checkReasonEditText!!.text.toString().replace(" ","").equals("")) {
                     Toast.makeText(this, "사유를 적어주셔야 합니다.", Toast.LENGTH_LONG).show()
                 }
-                else { // 사유까지 적고난 뒤
+                else { // 사유
                     checkReason = checkReasonEditText!!.text.toString()
                     checkVideo()
                     player!!.stop() // 이게 꺼도 소리나는걸 방지.
@@ -266,10 +266,10 @@ class ExoplayerActivity : AppCompatActivity() {
                     finish()
                 }
             }
-            else if (check == 1){ // O 클릭 시
+            else if (check == 1){ // 성공의 경우
                 checkReason = ""
                 checkVideo()
-                player!!.stop() // 이게 꺼도 소리나는걸 방지.
+                player!!.stop() // 영상 종료시 소리 오류 해결
                 Toast.makeText(this, "인증이 완료되었습니다.", Toast.LENGTH_LONG).show()
                 finish()
             }
@@ -277,7 +277,7 @@ class ExoplayerActivity : AppCompatActivity() {
         }
 
     }
-
+    // 애니메이션
     fun anim(alarm : String) {
 
         if (isFabOpen) {
@@ -300,6 +300,8 @@ class ExoplayerActivity : AppCompatActivity() {
         }
     }
 
+    // loadToken
+    // JWT 토큰을 SharedPreference에서 불러옵니다.
     private fun loadToken(): String{
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -307,7 +309,7 @@ class ExoplayerActivity : AppCompatActivity() {
     }
 
 
-
+    // Exoplayer 설정
     fun initializePlayer(mo: String, uri: String){
 
         // Create a default TrackSelector
@@ -339,10 +341,10 @@ class ExoplayerActivity : AppCompatActivity() {
         player!!.prepare(videoSource);
 
     }
+
+    // checkVideo
+    // 실제 영상 인증 과정
     private fun checkVideo(){
-
-
-
 
         val jsonObject = JSONObject()
 
@@ -352,7 +354,6 @@ class ExoplayerActivity : AppCompatActivity() {
         jsonObject.put("token",token)
         jsonObject.put("email",email)
 
-        println("첵첵")
         VolleyHttpService.checkVideo(this, jsonObject) { success ->
             println(success)
         }

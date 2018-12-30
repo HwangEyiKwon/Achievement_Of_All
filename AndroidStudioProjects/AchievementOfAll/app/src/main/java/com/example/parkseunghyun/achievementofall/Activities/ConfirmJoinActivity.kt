@@ -3,7 +3,9 @@ package com.example.parkseunghyun.achievementofall
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
-import android.widget.*
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.TextView
 import com.example.parkseunghyun.achievementofall.Configurations.GlideLoadingFlag
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import org.json.JSONObject
@@ -12,6 +14,8 @@ import org.json.JSONObject
     REFACTORED
  */
 
+// ConfirmJoinActivity
+// 컨텐츠 참여에 필요한 화면
 class ConfirmJoinActivity : AppCompatActivity() {
 
     private var pickedDateTextView: TextView? = null
@@ -38,6 +42,7 @@ class ConfirmJoinActivity : AppCompatActivity() {
 
         confirmJoinButton!!.isEnabled = false
 
+        // 참가 동의란을 누를 경우
         agreeCheckBox!!.setOnClickListener {
 
             if ( agreeCheckBox!!.isChecked ) {
@@ -64,6 +69,7 @@ class ConfirmJoinActivity : AppCompatActivity() {
         jsonObjectForGetRule.put("startMonth", selectedDayOfMonth.toString())
         jsonObjectForGetRule.put("startDay",selectedYear.toString())
 
+        // 컨텐츠 참가에 숙지해야할 규칙을 받아옵니다.
         VolleyHttpService.getContentRule(this, jsonObjectForGetRule) { success ->
 
             if (success.get("success") == true) {
@@ -99,6 +105,8 @@ class ConfirmJoinActivity : AppCompatActivity() {
         return false
     }
 
+    // joinComplete
+    // 참가 완료할 경우
     private fun joinComplete(jsonObject: JSONObject) {
 
         VolleyHttpService.contentJoinComplete(this, jsonObject){ success ->

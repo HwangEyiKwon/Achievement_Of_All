@@ -5,14 +5,15 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import com.example.parkseunghyun.achievementofall.Fragments.ContentsMyInfoPager
-import com.example.parkseunghyun.achievementofall.Fragments.ContentsProgressPager
 import com.example.parkseunghyun.achievementofall.Fragments.ContentsNoticePager
+import com.example.parkseunghyun.achievementofall.Fragments.ContentsProgressPager
 
 /**
     REFACTORED
  */
 
-
+// ContentsPagerAdapter
+// 컨텐츠 페이지에서 필요한 어댑터입니다.
 class ContentsPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     internal var mNumOfTabs: Int = 0

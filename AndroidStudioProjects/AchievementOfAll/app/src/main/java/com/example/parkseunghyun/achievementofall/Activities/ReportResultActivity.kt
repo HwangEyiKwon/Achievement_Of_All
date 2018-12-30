@@ -11,6 +11,9 @@ import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeColl
 import com.example.parkseunghyun.achievementofall.R
 
 
+// ReportResultActivity
+// 신고 결과 화면
+// 관리자가 처리한 신고 결과를 보여줍니다.
 class ReportResultActivity : AppCompatActivity(){
 
     var ownIntent: Intent?=null
@@ -44,6 +47,7 @@ class ReportResultActivity : AppCompatActivity(){
         resultView2!!.setMovementMethod(ScrollingMovementMethod())
         reasonView!!.setMovementMethod(ScrollingMovementMethod())
 
+        // 결과에 따라 다른 화면을 보여줍니다.
         when (result) {
 
             "success" -> {
@@ -66,6 +70,7 @@ class ReportResultActivity : AppCompatActivity(){
 
         }
 
+        // 승인할 경우
         confirmButton!!.setOnClickListener {
 
             if(result.equals("success")) {
@@ -85,6 +90,8 @@ class ReportResultActivity : AppCompatActivity(){
 
     }
 
+    // onActivityResult
+    // 호출됬던 Acitivty가 끝나면 작동합니다.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         super.onActivityResult(requestCode, resultCode, data)

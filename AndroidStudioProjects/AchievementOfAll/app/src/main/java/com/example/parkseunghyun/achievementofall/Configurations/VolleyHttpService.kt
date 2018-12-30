@@ -12,17 +12,19 @@ import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 
 
+// VolleyHttpService
+// 안드로이드와 서버와의 통신에 필요한 서비스
 object VolleyHttpService{
 
     // 서버 ip 주소
     private var globalVariables: GlobalVariables?= GlobalVariables()
     private var ipAddress: String = globalVariables!!.ipAddress
 
+    // sendToken
     // 사용자 fcm-token
     fun sendToken(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
         var sendTokenRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/sendToken", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response.getString("success").toBoolean())
 
         }, Response.ErrorListener { error ->
@@ -33,11 +35,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(sendTokenRequest)
     }
 
+    // login
     // 사용자 로그인
     fun login(context: Context, jsonObject: JSONObject,success: (JSONObject) -> Unit){
 
         val loginRequest = object : JsonObjectRequest(Request.Method.POST, "$ipAddress/login", jsonObject, Response.Listener{ response ->
-            println("수신 성공: $response")
             success(response)
 
         }, Response.ErrorListener {error ->
@@ -68,11 +70,12 @@ object VolleyHttpService{
 
         Volley.newRequestQueue(context).add(loginRequest)
     }
+
+    // logout
     // 사용자 로그아웃
     fun logout(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
         var logoutRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/logout", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response.getString("success").toBoolean())
 
         }, Response.ErrorListener { error ->
@@ -88,11 +91,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(logoutRequest)
     }
 
+    // edit
     // 사용자 정보 수정
     fun edit(context: Context, jsonObject: JSONObject, success: (Boolean)->Unit){
 
         var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/editProfileWithImage", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response.getString("success").toBoolean())
 
         }, Response.ErrorListener { error ->
@@ -105,10 +108,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(editRequest)
     }
 
+    // editPassword
+    // 사용자 비밀번호 수정
     fun editPassword(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var editPasswordRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/userPasswordEdit", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -120,11 +124,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(editPasswordRequest)
     }
 
+    // emailConfirm
     // 사용자 회원가입
     fun emailConfirm(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var signupRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/emailConfirm", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -134,11 +138,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(signupRequest)
     }
 
+    // getUserInfo
     // 사용자 정보 받아오기
     fun getUserInfo(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var userInfoRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getUserInfo", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -148,11 +152,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(userInfoRequest)
     }
 
+    // getOtherUserInfo
     // 사용자 정보 받아오기
     fun getOtherUserInfo(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var otherInfoRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getOtherUserInfo", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -162,11 +166,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(otherInfoRequest)
     }
 
-    // 찾기 정보 받아오기
+    // getSearchContentData
+    // 찾기 정보 받아오기 (컨텐츠)
     fun getSearchContentData(context: Context, success: (JSONObject)->Unit){
 
         var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getSearchContentData",null, Response.Listener{ response ->
-            println("서버 수신 getSearchData: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -175,10 +179,12 @@ object VolleyHttpService{
         }
         Volley.newRequestQueue(context).add(searchDataRequest)
     }
+
+    // getSearchUserData
+    // 찾기 정보 받아오기 (사용자)
     fun getSearchUserData(context: Context, success: (JSONObject)->Unit){
 
         var searchDataRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getSearchUserData",null, Response.Listener{ response ->
-            println("서버 수신 getSearchData: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -188,12 +194,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(searchDataRequest)
     }
 
-
+    // getAppInfo
     // 앱 정보 받아오기
     fun getAppInfo(context: Context, success: (JSONObject)->Unit){
 
         var appInfoRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getAppInfo",null, Response.Listener{ response ->
-            println("서버 수신 getInfoInfo: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -203,6 +208,7 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(appInfoRequest)
     }
 
+    // getCalendarInfo
     // 달력 정보 받아오기
     fun getCalendarInfo(context: Context, jsonObject: JSONObject, success: (JSONArray)->Unit){
 
@@ -211,8 +217,6 @@ object VolleyHttpService{
                 "contentName")
         println(token+contentName)
         var calendarInfoRequest = object : JsonArrayRequest(Request.Method.GET,"$ipAddress/getCalendarInfo/$token/$contentName",null, Response.Listener{ response ->
-            println("서버 수신 getCalendar: $response")
-
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -222,6 +226,7 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(calendarInfoRequest)
     }
 
+    // getAchievementRate
     // 컨텐츠 달성율 받아오기
     fun getAchievementRate(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
@@ -231,7 +236,6 @@ object VolleyHttpService{
                 "contentName")
 
         var acheivementRateRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getAchievementRate/$token/$contentName",null, Response.Listener{ response ->
-            println("서버 수신 getInfoInfo: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -241,6 +245,7 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(acheivementRateRequest)
     }
 
+    // getParticipatedInfo
     // 사용자 참가 유무 정보
     fun getParticipatedInfo(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
@@ -248,7 +253,6 @@ object VolleyHttpService{
         var contentName = jsonObject.getString("contentName")
 
         var participatedInfoRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/isParticipated/$token/$contentName",null, Response.Listener{ response ->
-            println("서버 수신 getparti: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -258,6 +262,7 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(participatedInfoRequest)
     }
 
+    // getOthers
     // 인증 필요한 타 사용자 리스트 불러오기
     fun getOthers(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
@@ -265,7 +270,6 @@ object VolleyHttpService{
         var contentName = jsonObject.getString("contentName")
 
         var othersInfoRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getOthers/$token/$contentName",null, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -275,12 +279,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(othersInfoRequest)
     }
 
+    // contentJoin
     // 컨텐츠 참가하기 -> 가능한 참가 시작일 받아오기
     fun contentJoin(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
         var contentName = jsonObject.getString("contentName")
-        println("컨텐츠 조인")
         var contentJoinRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/contentJoin/$contentName",null, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -291,12 +294,11 @@ object VolleyHttpService{
 
     }
 
+    // contentJoinComplete
     // 컨텐츠 참가 완료
     fun contentJoinComplete(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
-        println("컨텐츠 조인 완료")
         var contentJoinCompleteRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/contentJoinComplete",jsonObject, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -306,13 +308,11 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(contentJoinCompleteRequest)
     }
 
+    // checkVideo
     // 영상 인증
     fun checkVideo(context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
-        println("컨텐츠 영상 인증")
-
         var checkVideoRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/checkVideo",jsonObject, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -322,13 +322,12 @@ object VolleyHttpService{
         Volley.newRequestQueue(context).add(checkVideoRequest)
     }
 
-    // 비밀번호 찾
+    // sendEmail
+    // 이메일 전송
     fun sendMail (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
         var email = jsonObject.getString("email")
 
-        println("컨텐츠 조인")
         var sendMailRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/pwdSendMail/$email",null, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -339,7 +338,8 @@ object VolleyHttpService{
 
     }
 
-    //
+    // getContentMoney
+    // 현재 보유 금액 받아오기
     fun getContentMoney (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var token = jsonObject.getString("token")
@@ -347,7 +347,6 @@ object VolleyHttpService{
 
 
         var contentMoneyRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getContentMoney/$token/$contentName",null, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -358,11 +357,12 @@ object VolleyHttpService{
 
     }
 
+    // rewardCheck
+    // 보상 확인
     fun rewardCheck (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
 
         var rewardCheckRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getRewardCheck",jsonObject, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -374,20 +374,23 @@ object VolleyHttpService{
     }
 
 
+    // editProfileWithoutImage
+    // 이미지 수정없이 프로필 수정
     fun editProfileWithoutImage (context: Context, jsonObject: JSONObject,success: (JSONObject) -> Unit){
 
         var editRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/editProfileWithoutImage",jsonObject, Response.Listener{ response ->
-            println("서버 수신 editProfileWithoutImage: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
-            println("수신 에러 editProfileWithoutImage: $error")
+            println("수신 에러: $error")
         }){
         }
         Volley.newRequestQueue(context).add(editRequest)
     }
 
 
+    // getContentRule
+    // 컨텐츠 참가 시 규칙 받아오기
     fun getContentRule (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var contentName = jsonObject.getString("contentName")
@@ -396,7 +399,6 @@ object VolleyHttpService{
         var startDay = jsonObject.getString("startDay")
 
         var getContentRuleRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/getContentRule/$contentName/$startYear/$startMonth/$startDay",null, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -407,6 +409,8 @@ object VolleyHttpService{
 
     }
 
+    // failReport
+    // 실패 신고
     fun failReport (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var token = jsonObject.getString("token")
@@ -414,7 +418,6 @@ object VolleyHttpService{
         var reportReason = jsonObject.getString("reportReason")
 
         var failReportRequest = object : JsonObjectRequest(Request.Method.GET,"$ipAddress/reportUserList/$token/$contentName/$reportReason",jsonObject, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -425,10 +428,11 @@ object VolleyHttpService{
 
     }
 
+    // failAccept
+    // 실패 승인
     fun failAccept (context: Context,jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var failAcceptRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/getFailureCheck",jsonObject, Response.Listener{ response ->
-            println("서버 수신 others: $response")
             success(response)
 
         }, Response.ErrorListener { error ->
@@ -439,10 +443,11 @@ object VolleyHttpService{
 
     }
 
+    // emailAuthentication
+    // 이메일 인증
     fun emailAuthentication(context: Context, jsonObject: JSONObject, success: (JSONObject)->Unit){
 
         var emailAuthenticationRequest = object : JsonObjectRequest(Request.Method.POST,"$ipAddress/emailAuthentication", jsonObject, Response.Listener{ response ->
-            println("서버 수신: $response")
             success(response)
 
         }, Response.ErrorListener { error ->

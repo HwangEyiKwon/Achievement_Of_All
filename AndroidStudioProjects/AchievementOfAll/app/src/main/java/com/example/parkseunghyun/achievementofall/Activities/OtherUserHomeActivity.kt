@@ -26,6 +26,8 @@ import java.util.*
     REFACTORED
  */
 
+// OtherUserHomeActivity
+// 타 사용자 홈 화면
 class OtherUserHomeActivity : AppCompatActivity() {
 
     private var globalVariables: GlobalVariables?= GlobalVariables()
@@ -53,15 +55,19 @@ class OtherUserHomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_user_home)
 
+        // 초기화
         initViewComponents()
 
     }
 
+    // initViewComponent
+    // 메인 페이지의 view에 있는 각 요소들을 초기화합니다.
     private fun initViewComponents() {
 
         otherUserNameView = findViewById(R.id.other_user_name)
         otherUserProfile = findViewById(R.id.other_user_profile_image)
 
+        // intent를 통해 타 사용자 정보를 받아옵니다.
         if (intent.getStringExtra("email") != null) {
 
             otherUserEmail = intent.getStringExtra("email")
@@ -70,8 +76,10 @@ class OtherUserHomeActivity : AppCompatActivity() {
 
         }
 
+        // 받아온 정보를 통해 타 사용자 정보를 보여줍니다.
         setOtherUserInfo(otherUserEmail!!)
 
+        // 타 사용자의 프로필 이미지를 클릭할 경
         otherUserProfile!!.setOnClickListener {
 
             val goToProfileImageView = Intent(this, ProfileViewActivity::class.java)
@@ -82,6 +90,9 @@ class OtherUserHomeActivity : AppCompatActivity() {
 
     }
 
+
+    // setOtherUserInfo
+    // 타 사용자의 정보를 설정합니다.
     private fun setOtherUserInfo(email: String) {
 
         val jsonObjectForOtherUserInfo = JSONObject()
@@ -101,6 +112,7 @@ class OtherUserHomeActivity : AppCompatActivity() {
             var contentList: JSONObject
             var contentName: String
 
+            // 타 사용자가 참가 중인 컨텐츠 리스트
             for(indexOfContentList in 0.. (success.getJSONArray("contentList").length() - 1)) {
 
                 contentList = success.getJSONArray("contentList")[indexOfContentList] as JSONObject
@@ -108,6 +120,7 @@ class OtherUserHomeActivity : AppCompatActivity() {
 
                 joinedContents.add(contentName)
 
+                // 비디오 리스트
                 for(indexOfVideoList in 0..(contentList.getJSONArray("videoPath").length() - 1)){
 
                     videoList.add(contentList.getJSONArray("videoPath").getJSONObject(indexOfVideoList))
@@ -117,12 +130,15 @@ class OtherUserHomeActivity : AppCompatActivity() {
 
             }
 
+            // 스토리 및 비디오 생성
             generateJoinedContentsView()
             generateVideoCollection()
         }
 
     }
 
+    // generateJoinedContentsView
+    // 타 사용자가 참가 중인 컨텐츠 리스트를 통해 상단에 스토리를 생성합니다.
     private fun generateJoinedContentsView() {
 
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -145,6 +161,8 @@ class OtherUserHomeActivity : AppCompatActivity() {
 
     }
 
+    // generateVideoCollection
+    // 타 사용자의 비디오 리스트를 통해 비디오를 생성합니다.
     private fun generateVideoCollection() {
 
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(this, 3)

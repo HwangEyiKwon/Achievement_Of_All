@@ -21,6 +21,9 @@ import org.json.JSONObject
     REFARCTORED
  */
 
+// HomeSearchPager
+// 홈 화면의 두번째 페이지
+// 찾기 페이지
 class HomeSearchPager : Fragment() {
 
     private var homeSearchView: View? = null
@@ -37,6 +40,7 @@ class HomeSearchPager : Fragment() {
 
         homeSearchView = inflater!!.inflate(R.layout.fragment_home_search, container, false)
 
+        // 초기화
         initViewComponents()
 
         generateTabLayout()
@@ -46,6 +50,8 @@ class HomeSearchPager : Fragment() {
         return homeSearchView
     }
 
+    // initViewComponent
+    // 메인 페이지의 view에 있는 각 요소들을 초기화합니다.
     private fun initViewComponents() {
 
         editSearch = homeSearchView!!.findViewById(R.id.edittext_search);
@@ -68,7 +74,8 @@ class HomeSearchPager : Fragment() {
 
     }
 
-
+    // search
+    // 찾기 기능
     fun search(charText: String) {
 
         searchedList!!.clear()
@@ -95,6 +102,8 @@ class HomeSearchPager : Fragment() {
 
     }
 
+    // settingContentList
+    // 컨텐츠 리스트를 설정합니다.
     private fun settingContentList() {
 
         searchedList!!.clear()
@@ -120,6 +129,8 @@ class HomeSearchPager : Fragment() {
 
     }
 
+    // settingUserList
+    // 사용자 리스트를 설정합니다.
     private fun settingUserList() {
 
         searchedList!!.clear()
@@ -145,6 +156,8 @@ class HomeSearchPager : Fragment() {
 
     }
 
+    // generateTabLayout
+    // TabLayout을 생성합니다.
     private fun generateTabLayout() {
 
         selectSearchingTab = homeSearchView!!.findViewById(R.id.id_search_tab)

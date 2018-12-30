@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.text.method.ScrollingMovementMethod
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -11,13 +13,10 @@ import android.widget.Toast
 import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpService
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
-import android.text.method.ScrollingMovementMethod
-import android.view.MotionEvent
-import java.lang.StringBuilder
 
-
+// ReportActivity
+// 신고 화면
 class ReportActivity : AppCompatActivity(){
-
 
     var ownIntent: Intent?=null
     var rejectTextView: TextView?=null
@@ -53,8 +52,6 @@ class ReportActivity : AppCompatActivity(){
 
         failedContentTextView!!.text = contentName.toString()
 
-        println("TESTINBLACK ----- In REPORT " + rejectUserArray!!)
-        println("TESTINBLACK ----- In REPORT " + rejectReasonArray!!)
 
         reportUserSplit = rejectUserArray.replace("[","")
         reportUserSplit = reportUserSplit!!.replace("]", "")
@@ -66,12 +63,8 @@ class ReportActivity : AppCompatActivity(){
         var reportUserList = reportUserSplit!!.split(",")
         var reportReasonList = reportReasonSplit!!.split(",")
 
-        println("TESTINBLACK ----- SPLIT " + reportUserSplit!!)
-        println("TESTINBLACK ----- SPLIT " + reportReasonSplit!!)
 
-        println("TESTINBLACK ----- LIST " + reportUserList.size + "----" + reportUserList)
-        println("TESTINBLACK ----- LIST " + reportReasonList.size+ "----" + reportReasonList)
-
+        // 실패 사유와 인증 사용자들을 보여줍니다.
         for(index in reportUserList.indices) {
 
             val idString = reportUserList.get(index).replace("\"", "").split("@")
@@ -94,6 +87,7 @@ class ReportActivity : AppCompatActivity(){
         rejectTextView!!.setMovementMethod(ScrollingMovementMethod())
         rejectTextView!!.text = reportView
 
+        // 실패 승인 버튼을 누를 경우
         acceptButton!!.setOnClickListener {
 
             val jsonObject = JSONObject()
@@ -111,6 +105,7 @@ class ReportActivity : AppCompatActivity(){
             }
         }
 
+        // 신고 버튼을 누를 경우
         reportButton!!.setOnClickListener{
             if (reportReason!!.text.toString().replace(" ","").equals("")) {
                 Toast.makeText(this, "신고 사유를 적어주셔야 합니다.", Toast.LENGTH_LONG).show()
@@ -134,6 +129,8 @@ class ReportActivity : AppCompatActivity(){
         }
     }
 
+    // loadToken
+    // JWT 토큰을 SharedPreference에서 불러옵니다.
     private fun loadToken(): String{
         var auto = PreferenceManager.getDefaultSharedPreferences(this)
 

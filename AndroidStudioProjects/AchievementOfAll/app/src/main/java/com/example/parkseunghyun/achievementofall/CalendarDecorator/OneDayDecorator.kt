@@ -10,6 +10,9 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade
  *  REFACTORED
  */
 
+// OneDayDecorator
+// 달력에 보여줄 이미지를 설정합니다.
+// 오늘 날짜를 표시합니다.
 class OneDayDecorator : DayViewDecorator {
 
     private var date: CalendarDay? = null

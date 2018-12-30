@@ -24,12 +24,12 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.CalendarDecorator.EventDecorator
 import com.example.parkseunghyun.achievementofall.CalendarDecorator.OneDayDecorator
 import com.example.parkseunghyun.achievementofall.CalendarDecorator.SaturdayDecorator
 import com.example.parkseunghyun.achievementofall.CalendarDecorator.SundayDecorator
 import com.example.parkseunghyun.achievementofall.Configurations.*
+import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Interfaces.VideoUploadInterface
 import com.example.parkseunghyun.achievementofall.R
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -112,6 +112,8 @@ import java.util.*
     남은 시간 알고리즘
  */
 
+// ContentsMyInfoPager
+// 컨텐츠 페이지 중 첫번째 Fragment
 class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     private var mContext: Context? = null
     private var mView: View? = null
@@ -207,9 +209,10 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         contentsName?.setText(contentName)
 
 
-        println("캘랜더 페이지에서!!!!"+jwtToken+contentName)
+        // 달력 정보 갱신
         getCalendarInfo(jwtToken!!,contentName!!)
 
+        // 인증하기 버튼을 눌렀을 경우
         goToVideoButton = mView?.findViewById(R.id.go_to_video_button)
         goToVideoButton?.setOnClickListener{
             videoCaptureIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
@@ -242,6 +245,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
 
+        // 참가 상태에 따라 인증 여부를 설정합니다.
         if(joinState != 1){
             goToVideoButton!!.isEnabled = false
             goToVideoButton!!.setTextColor(resources.getColor(R.color.icongrey))
@@ -253,6 +257,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         return mView
     }
 
+    // anim
+    // 애니메이션 관련 함수입니다.
     fun anim() {
 
         if (isFabOpen) {
@@ -266,8 +272,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
 
-
-
+    // onActivityResult
+    // 호출됬던 Acitivty가 끝나면 작동합니다.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (resultCode == Activity.RESULT_OK ) {
@@ -329,7 +335,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
     }
 
 
-
+    // getCalendarInfo
+    // 필요한 달력 정보를 받아옵니다.
     private fun getCalendarInfo(token: String, contentName: String){
 
         val jsonObject = JSONObject()
@@ -344,6 +351,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     }
 
+    // uploadVideoToServer
+    // 비디오를 서버에 업로드합니다.
     private fun uploadVideoToServer(pathToVideoFile: String) {
 
         val videoFile = File(pathToVideoFile)
@@ -423,7 +432,8 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-
+    // settingCalendar
+    // 받아온 달력 정보를 통해 달력을 설정합니다.
     private fun settingCalendar(jsonArray: JSONArray){
 
         calendar = mView?.findViewById(R.id.calendarView)
@@ -459,7 +469,6 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         val loopCount = jsonArray.length() - 1
 
-        println("데이터 주냐?"+ loopCount)
 
         if(loopCount == -1){
             nextYear = startDate!!.getInt("year")
@@ -476,24 +485,15 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
             var day = CalendarDay.from(y!!, m!!, d!!)
 
             if( i == loopCount ) {
-                println("i는 무엇인가"+ i)
                 // y, m, d + 3일 + 자정
-                println("TESTINGING----" + y + "년" + ( m!! + 1 ) + "월" + ( d!! + 3 ) + "일")
-
-
-
                 nextYear = y
                 nextMonth = m // 0~11
                 nextDay = d!! + 3
             }
 
-
-            println(jsonArray.getJSONObject(i))
             if(jsonArray.getJSONObject(i).getInt("authen")==1){// success
-                println("SUCCESS")
                 successDates.add(day)
             }else if(jsonArray.getJSONObject(i).getInt("authen")==0){ // fail
-                println("FAIL")
                 failDates.add(day)
             }else{ // not yet
                 notYetDates.add(day)
@@ -501,6 +501,7 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
         }
 
+        // 인증 시간을 위해 타이머를 설정합니다.
         tt = object : TimerTask() {
             override fun run() {
 
@@ -514,25 +515,19 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                 var diffInSecondUnit = (calendarNext.timeInMillis - calendarCurrent.timeInMillis) / (1000) // 차이 with 초 단위
                 var diffInMinuteUnit = diffInSecondUnit / 60
 
-                println("TESTING 남은 시간은 ---- " + diffInMinuteUnit + "분::::")
-                println("TESTTTTT 다음 인증 월 " + calendarNext.get(Calendar.MONTH) + " "+calendarCurrent.get(Calendar.MONTH))
-
 //                        diffOfDay = ((diffInMinuteUnit / (60 * 60 * 24)) / 24) // 일 계산
 //                        diffOfHour = ((diffInMinuteUnit / (60 * 60 * 24))  % 24)   // 시간 계산
 //                        diffOfMinute = ((diffInMinuteUnit / 60) % 60)  // 분 계산
 
-                println("TESTBLACK: 조인 스테이트 " + joinState)
-                if(joinState == 3){
+                if(joinState == 3){ // 미 참가중
                     val notJoinedUpdateMsg = notJoinedThreadHandler.obtainMessage()
                     notJoinedThreadHandler.sendMessage(notJoinedUpdateMsg)
-                    println("TESTBLACK: 미참가중")
                 }
-                // 다음인증일이 EndDate를 넘었다면? (마지막 인증까지 완료가 된거야)
+                // 다음 인증 일이 EndDate를 넘었을 경우 (마지막 인증까지 완료된 상태)
                 else if(calendarNext.get(Calendar.YEAR)!! >= endDate!!.getInt("year") && calendarNext.get(Calendar.MONTH) >= (endDate!!.getInt("month") -1) && calendarNext.get(Calendar.DAY_OF_MONTH) > endDate!!.getInt("day")){
 
                     val doneUpdateMsg = doneUpdateThreadHandler.obtainMessage()
                     doneUpdateThreadHandler.sendMessage(doneUpdateMsg)
-                    println("TESTBLACK: 마지막 인증까지 완료")
 
                 }
                 else{
@@ -544,13 +539,6 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
                     diffUpdateThreadHandler.sendMessage(diffUpdateMsg)
 
                 }
-
-                println("TESTING 현재 시간은: "+ calendarCurrent.get(Calendar.DAY_OF_MONTH) + "일" + calendarCurrent.get(Calendar.HOUR_OF_DAY) + "분" + calendarCurrent.get(Calendar.MINUTE) + "분")
-                println("TESTING 다음 인증은 언제 직전까지?: "+ calendarNext.get(Calendar.DAY_OF_MONTH) + "일" + calendarNext.get(Calendar.HOUR_OF_DAY) + "분" + calendarNext.get(Calendar.MINUTE) + "분")
-                println("TESTING 남은 시간은 ---- " + diffInSecondUnit + "초::::" + diffOfDay + "일" + diffOfHour +"시간" + diffOfMinute + "분")
-                println("TESTING 컨텐츠 종료일 ---- " + endDate!!.getInt("year") + "년:::" + (endDate!!.getInt("month")) + "월" + endDate!!.getInt("day") +"일")
-
-
 
             }
         }
@@ -573,7 +561,9 @@ class ContentsMyInfoPager : Fragment(), EasyPermissions.PermissionCallbacks {
 
     }
 
-
+    // onDestory
+    // 화면이 종료될 경우
+    // 타이머와 함께 파괴
     override fun onDestroy() {
         timer?.cancel()
         super.onDestroy()

@@ -6,6 +6,8 @@ import android.view.MotionEvent
 import android.widget.Button
 import com.example.parkseunghyun.achievementofall.R
 
+// ContentSuccessActivity
+// 컨텐츠 목표에 달성하여 보상을 받는 화면
 class ContentSuccessActivity : AppCompatActivity() {
 
     var jwtToken: String ?= null

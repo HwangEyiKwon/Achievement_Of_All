@@ -11,6 +11,9 @@ import com.example.parkseunghyun.achievementofall.R
 
 // TODO 여기를 공지가 아니라 규칙으로 걍 바꿔야될듯.
 
+// ContentsNoticePager
+// 컨텐츠 페이지 중 세번째 Fragment
+// 공지사항 화면
 class ContentsNoticePager : Fragment() {
 
 
@@ -26,7 +29,6 @@ class ContentsNoticePager : Fragment() {
 
         contentsName = view_?.findViewById(R.id.id_contents_name_3)
         contentsName?.setText(contentName)
-
 
         return view_
 

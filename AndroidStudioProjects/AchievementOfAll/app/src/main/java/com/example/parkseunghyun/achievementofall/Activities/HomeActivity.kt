@@ -316,6 +316,7 @@ class HomeActivity : AppCompatActivity() {
             RequestCodeCollection.IS_FCM_FLAG = false
 
         }
+
         /** 아래는 전부 FCM통해 들어오는 상황 */
         else if (fcmCategory.equals("목표 달성 실패 알림")) {
 

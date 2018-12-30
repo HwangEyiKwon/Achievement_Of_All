@@ -22,6 +22,8 @@ import model.StoriesModel
     REFACTORED
  */
 
+// StoriesAdapter
+// 타인 인증 영상 리스트 (스토리)에 관련된 어댑터입니다.
 class StoriesAdapter(private val context: Context, private val storiesModels: List<StoriesModel>) : RecyclerView.Adapter<StoriesAdapter.ViewHolder>() {
 
     private var globalVariables: GlobalVariables?= GlobalVariables()

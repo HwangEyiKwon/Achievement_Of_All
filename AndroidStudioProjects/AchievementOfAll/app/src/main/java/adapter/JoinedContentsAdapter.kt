@@ -11,9 +11,9 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.Configurations.GlobalVariables
 import com.example.parkseunghyun.achievementofall.Configurations.RequestCodeCollection
+import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -21,6 +21,8 @@ import de.hdodenhof.circleimageview.CircleImageView
     REFARCTORED
  */
 
+// JoinedContentsAdapter
+// 참여 중인 컨텐츠 리스트 (스토리)에 관련된 어댑터입니다.
 class JoinedContentsAdapter(private val context: Context, private val joinedContentsModels: List<model.JoinedContentsModel>) : RecyclerView.Adapter<JoinedContentsAdapter.ViewHolder>() {
 
     private var globalVariables: GlobalVariables?= GlobalVariables()

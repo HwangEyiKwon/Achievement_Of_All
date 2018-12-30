@@ -15,6 +15,8 @@ import org.json.JSONObject
     REFACTORED.
  */
 
+// PasswordEditActivity
+// 프로필 수정(비밀번호 수정) 화면
 class PasswordEditActivity : AppCompatActivity() {
 
     private var jwtToken: String?= null
@@ -34,8 +36,11 @@ class PasswordEditActivity : AppCompatActivity() {
 
     }
 
+    // initButtonListener
+    // 버튼이 눌렸을 때 작동합니다.
     private fun initButtonListener() {
 
+        // 수정 버튼을 누를 경우
         button_edit_pw.setOnClickListener {
 
             jwtToken = loadJwtToken()
@@ -51,6 +56,7 @@ class PasswordEditActivity : AppCompatActivity() {
             }
         }
 
+        // 사용자 정보 수정 버튼을 누를 경우
         button_go_Info_edit.setOnClickListener {
 
             startActivity<ProfileEditActivity>(
@@ -65,6 +71,8 @@ class PasswordEditActivity : AppCompatActivity() {
         }
     }
 
+    // editPasswordRequest
+    // 비밀번호 수정을 요청합니다.
     private fun editPasswordRequest(){
 
         val pwCurrent = current_pw.text.toString()
@@ -105,6 +113,9 @@ class PasswordEditActivity : AppCompatActivity() {
 
        }
     }
+
+    // loadJWTToken
+    // SharedPreference에서 JWT 토큰을 가져옵니다.
     private fun loadJwtToken(): String{
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)

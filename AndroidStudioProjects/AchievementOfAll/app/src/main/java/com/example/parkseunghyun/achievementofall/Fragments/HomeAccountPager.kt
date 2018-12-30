@@ -39,6 +39,10 @@ import java.util.*
     TODO: Glide Placeholder
  */
 
+
+// HomeAccountPager
+// 홈 화면의 첫번째 페이지
+// 내 정보 화면
 class HomeAccountPager : Fragment() {
 
     private var globalVariables: GlobalVariables?= GlobalVariables()
@@ -83,8 +87,11 @@ class HomeAccountPager : Fragment() {
         return homeAccountView
     }
 
+    // initButtonListener
+    // 버튼이 눌렸을 때 작동합니다.
     private fun initButtonListener() {
 
+        // 프로필 수정 버튼을 누를 경우
         editProfileButton!!.setOnClickListener {
 
             val intentForEditPage = Intent(activity, ProfileEditActivity::class.java)
@@ -96,6 +103,7 @@ class HomeAccountPager : Fragment() {
 
         }
 
+        // 프로필 이미지를 누를 경우
         userProfile!!.setOnClickListener {
 
             val goToProfileImageView = Intent(activity, ProfileViewActivity::class.java)
@@ -105,12 +113,13 @@ class HomeAccountPager : Fragment() {
 
         }
 
+        // 참가 중인 컨텐츠가 없을 경우
         ifContentNotJoined!!.setOnClickListener {
 
             if_no_contents_joined!!.startAnimation(AnimationUtils.loadAnimation(context, R.anim.scaling))
 
         }
-
+        // 비디오가 없을 경우
         ifNoVideo!!.setOnClickListener {
 
             if_no_video!!.startAnimation(AnimationUtils.loadAnimation(context, R.anim.scaling))
@@ -119,6 +128,8 @@ class HomeAccountPager : Fragment() {
 
     }
 
+    // initViewComponent
+    // 메인 페이지의 view에 있는 각 요소들을 초기화합니다.
     private fun initViewComponents() {
 
         nickName = homeAccountView!!.findViewById(R.id.name)
@@ -136,6 +147,8 @@ class HomeAccountPager : Fragment() {
 
     }
 
+    // setUserInfo
+    // 사용자 정보를 설정합니다.
     private fun setUserInfo(token: String) {
 
         val jsonObjectForSetUserInfo = JSONObject()
@@ -198,6 +211,8 @@ class HomeAccountPager : Fragment() {
 
     }
 
+    // generateJoinedContentsView
+    // 사용자가 참가 중인 컨텐츠 리스트를 통해 상단에 스토리를 생성합니다.
     private fun generateJoinedContentsView() {
 
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -230,6 +245,8 @@ class HomeAccountPager : Fragment() {
 
     }
 
+    // generateVideoCollection
+    // 사용자의 비디오 리스트를 통해 비디오를 생성합니다.
     private fun generateVideoCollection() {
 
         val layoutManager: RecyclerView.LayoutManager

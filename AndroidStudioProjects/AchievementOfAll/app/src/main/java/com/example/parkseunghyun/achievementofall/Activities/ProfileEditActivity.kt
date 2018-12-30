@@ -89,11 +89,11 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
             } else {
 
-                if (pathToStoredImage == null) {
+                if (pathToStoredImage == null) { // 이미지 수정이 없을 경우
 
                     editProfileWithoutImage()
 
-                } else {
+                } else { // 이미지 수정이 있을 경우
 
                     editProfileWithImage(pathToStoredImage!!)
 
@@ -105,7 +105,7 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
         // 이미지 수정 버튼을 누를 경우
         button_image_select.setOnClickListener {
 
-            // 갤러리 접근
+            // 갤러리 접근 권한 확인
             if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
 
                 startActivityForResult(readImageIntent, RequestCodeCollection.REQUEST_RETURN_FROM_PROFILE_IMAGE_SELECTION)
@@ -209,6 +209,9 @@ class ProfileEditActivity : AppCompatActivity(), EasyPermissions.PermissionCallb
 
     }
 
+    // onActivityResult
+    // 호출됬던 Acitivty가 끝나면 작동합니다.
+    // 갤러리에 접근 후 이미지 선택 유무에 따라 작동합니다.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if ( resultCode == -1 ) {

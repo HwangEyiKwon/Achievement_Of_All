@@ -16,6 +16,8 @@ import com.google.firebase.messaging.RemoteMessage
     REFACTORED
  */
 
+// FirebaseMessagingService
+// Firebase에 필요합니다.
 class FirebaseMessagingService : FirebaseMessagingService() {
 
     var fcmTitle: String? = null
@@ -51,6 +53,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
 
         fcmTitle = messageBody
 
+        // 받은 FCM 메세지에 따라 FCM Body를 설정합니다.
         when( messageTitle ) {
 
             "실패" -> { fcmBody = "목표 달성 실패 알림" }

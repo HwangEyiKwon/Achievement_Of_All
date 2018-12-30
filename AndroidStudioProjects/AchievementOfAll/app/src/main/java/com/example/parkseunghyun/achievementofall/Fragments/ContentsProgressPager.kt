@@ -22,6 +22,9 @@ import org.json.JSONObject
     REFACTORED
  */
 
+// ContentsProgressPager
+// 컨텐츠 페이지 중 두번째 Fragment
+// 진행률 화면
 class ContentsProgressPager : Fragment() {
 
     private var contentProgressView: View? = null
@@ -57,9 +60,11 @@ class ContentsProgressPager : Fragment() {
         returnMoneyView = contentProgressView?.findViewById(R.id.money)
         rewardButton = contentProgressView?.findViewById(R.id.button_to_reward)
 
+        // 달성률과 현재 보유 금액을 받아옵니다.
         getAchievementRate()
         getCurrentMoney()
 
+        // 보상 받기 버튼을 누를 경우
         rewardButton!!.setOnClickListener {
 
             rewardCheck ()
@@ -70,7 +75,8 @@ class ContentsProgressPager : Fragment() {
 
     }
 
-
+    // rewardCheck
+    // 보상을 받습니다.
     fun rewardCheck (){
 
         val jsonObjectForReward = JSONObject()
@@ -90,7 +96,7 @@ class ContentsProgressPager : Fragment() {
                 val contextToActivity = context as Activity
                 contextToActivity.startActivityForResult(goToReward, RequestCodeCollection.REQUEST_RETURN_FROM_CONTENT_REWARD)
 
-            } else {
+            } else { // 보상을 이미 받은 경우
 
                 Toast.makeText(this.context,"이미 보상을 받으셨습니다.", Toast.LENGTH_SHORT).show()
 
@@ -99,6 +105,8 @@ class ContentsProgressPager : Fragment() {
         }
     }
 
+    // getCurrentMoney
+    // 현재 보유 금액을 받아옵니다.
     private fun getCurrentMoney(){
 
         val jsonObjectToGetMoney = JSONObject()
@@ -124,6 +132,8 @@ class ContentsProgressPager : Fragment() {
         }
     }
 
+    // getAchivementRate
+    // 목표 진행률을 받아옵니다.
     private fun getAchievementRate(){
 
         val jsonObject = JSONObject()

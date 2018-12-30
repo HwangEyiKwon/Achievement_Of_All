@@ -42,6 +42,7 @@ class PenaltyActivity : AppCompatActivity() {
         penaltyMoney = findViewById(R.id.final_penalty)
         finalMoney = findViewById(R.id.final_money)
 
+        // 확인 버튼을 통해 패널티 화면을 종료합니다.
         penaltyConfirmButton!!.setOnClickListener {
 
             finish()
@@ -52,6 +53,8 @@ class PenaltyActivity : AppCompatActivity() {
 
     }
 
+    // getCurrentMoney
+    // 현재 보유 중인 돈을 불러옵니다.
     private fun getCurrentMoney(){
 
         val jsonObject = JSONObject()

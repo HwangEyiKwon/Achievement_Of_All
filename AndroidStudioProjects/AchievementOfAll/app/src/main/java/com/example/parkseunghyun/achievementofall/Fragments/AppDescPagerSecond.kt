@@ -11,6 +11,8 @@ import com.example.parkseunghyun.achievementofall.R
     REFACTORED
  */
 
+// AppDescPagerSecond
+// 앱 설명 페이지의 Fragment
 class AppDescPagerSecond : Fragment() {
 
     private var appSecondDescView: View? = null

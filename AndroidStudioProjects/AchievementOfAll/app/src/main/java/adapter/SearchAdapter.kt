@@ -13,12 +13,13 @@ import com.example.parkseunghyun.achievementofall.ContentsHomeActivity
 import com.example.parkseunghyun.achievementofall.OtherUserHomeActivity
 import com.example.parkseunghyun.achievementofall.R
 import org.jetbrains.anko.startActivity
-import org.json.JSONObject
 
 /**
     REFARCTORED
  */
 
+// SearchAdapter
+// 찾기 페이지에서 필요한 어댑터입니다.
 class SearchAdapter(private val list: List<String>, private val emailList: List<String>?, private val context: Context, private  val categoryToSearch: String) : BaseAdapter() {
 
     private var inflate: LayoutInflater? = null

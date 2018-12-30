@@ -9,6 +9,7 @@ import com.example.parkseunghyun.achievementofall.R
 
 // RewardActivity
 // 보상 화면
+// 달성에 성공하여 추후 받게될 보상을 보여줍니다.
 class RewardActivity : AppCompatActivity() {
 
     var jwtToken: String ?= null

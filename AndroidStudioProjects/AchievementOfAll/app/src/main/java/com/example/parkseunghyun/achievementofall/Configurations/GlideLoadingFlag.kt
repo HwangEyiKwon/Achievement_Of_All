@@ -2,16 +2,15 @@ package com.example.parkseunghyun.achievementofall.Configurations
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.preference.PreferenceManager
-import java.net.URI
 
 /**
     REFACTORED
     TODO: 마지막에 필요없는 플래그는 제거
  */
 
+// GlideLoadingFlag
+// 이미지/영상에 사용된 Glide Flag를 모아놨습니다.
 object GlideLoadingFlag {
-
 
     private var FLAG_IS_THUMBNAIL_UPDATED = false
     private var FLAG_IS_CONTENT_LIST_UPDATED = false

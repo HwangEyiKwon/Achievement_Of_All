@@ -9,6 +9,8 @@ import org.json.JSONObject
     REFACTORED
  */
 
+// FirebaseInstanceIDService
+// Firebase에 필요합니다.
 class FirebaseInstanceIDService : FirebaseInstanceIdService() {
 
     var jsonObjectForRefreshFCM : JSONObject ? = null

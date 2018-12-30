@@ -5,6 +5,8 @@ package com.example.parkseunghyun.achievementofall.Configurations
     TODO: 오류생기는거 없는지 체크
  */
 
+// RequestCodeCollection
+// RequestCode를 모아놓았습니다.
 object RequestCodeCollection {
 
     const val REQUEST_DEFAULT_CREATION = 0

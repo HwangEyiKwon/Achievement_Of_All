@@ -30,6 +30,8 @@ import kotlin.collections.ArrayList
     TODO: 다른 Pager들과의 상호작용이 제대로 되나 다시 볼 필요 있음.
  */
 
+// ContentsHomeActivity
+// 컨텐츠 페이지 화면
 class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
     private var storyArrayList=  mutableListOf<StoriesModel>()
@@ -71,14 +73,18 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
         content = intent.getStringExtra("contentName")
         textContentName!!.text = content
 
+        // 초기화
         initViewComponents()
 
+        // 컨텐츠 참가 버튼을 누를 경우
         contentJoinButton?.setOnClickListener {
 
             goToJoinConfirm()
 
         }
 
+        // FCM 여부에 따라 작동
+        // FCM (실패, 성공, 신고 등등 여부에 따라 다른 작동을 합니다.)
         /** 위에까지가 View 생성, 여기서부터 FCM인지 체크해서 남은 동작 처리.*/
         if( RequestCodeCollection.IS_FCM_FLAG == false ) {
 
@@ -165,6 +171,8 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
 
     }
 
+    // initViewComponent
+    // 페이지의 view에 있는 각 요소들을 초기화합니다.
     private fun initViewComponents(){
 
         val jsonObjectForGetUserInfo = JSONObject()
@@ -177,6 +185,7 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
             startDate = success.getJSONObject("startDate")
             endDate = success.getJSONObject("endDate")
 
+            // 기간 설정
             val durationView =
                     "${startDate!!.getInt("year")}/${startDate!!.getInt("month")}/${startDate!!.getInt("day")} \n~ ${endDate!!.getInt("year")}/${endDate!!.getInt("month")}/${endDate!!.getInt("day")}"
 
@@ -184,6 +193,7 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
             contentJoinButton!!.isEnabled = false
             contentDuration!!.text = durationView
 
+            // 참가 상태 설정
             when(joinState){
 
                 0 -> { textJoinState?.text = "참가중 (시작전)" }
@@ -243,6 +253,9 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
         }
     }
 
+    // onDateSet
+    // 컨텐츠 참가 버튼을 누른 후
+    // 날짜 선택
     /** 참여하기 클릭 후 일자 선택 시 작동 .*/
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
 
@@ -257,20 +270,26 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
         goToConfirmingPage.putExtra("contentName", content!!)
         goToConfirmingPage.putExtra("token", loadJWTToken())
 
+        // 날짜 선택 후 컨텐츠 참여에 필요한 새로운 액티비티를 띄웁니다.
         startActivityForResult(goToConfirmingPage, RequestCodeCollection.REQUEST_RETURN_FRON_CONFIRM_JOIN)
 
     }
 
+    // onActivityResult
+    // 호출됬던 Acitivty가 끝나면 작동합니다.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         super.onActivityResult(requestCode, resultCode, data)
 
         tmpRequestCode = requestCode
 
+        // 초기화
         initViewComponents()
 
     }
 
+    // goToJoinConfirm
+    // 컨텐츠 참가 버튼을 누를 경우 작동합니다.
     private fun goToJoinConfirm(){
 
         val jsonObject = JSONObject()
@@ -294,6 +313,8 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
         }
     }
 
+    // availableDaySetting
+    // 참여 가능 날짜 설정
     private fun availableDaySetting(datePickerDialog: DatePickerDialog, startDates: JSONObject) {
 
         val dates = startDates.getJSONArray("startDate")
@@ -320,6 +341,8 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
 
     }
 
+    // getStories
+    // 타 사용자의 인증 영상 스토리를 받아옵니다.
     private fun getStories(){
 
         val jsonObject = JSONObject()
@@ -354,6 +377,8 @@ class ContentsHomeActivity : AppCompatActivity(), DatePickerDialog.OnDateSetList
         }
     }
 
+    // loadJwtToken
+    // JWT 토큰을 SharedPreference에서 불러옵니다.
     fun loadJWTToken(): String{
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)

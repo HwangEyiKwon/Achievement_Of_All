@@ -1,19 +1,20 @@
 package com.example.parkseunghyun.achievementofall.CalendarDecorator
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
-
 import com.example.parkseunghyun.achievementofall.R
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import java.util.HashSet
+import java.util.*
 
 /**
  *  REFACTORED
  */
 
+// EventDecorator
+// 달력에 보여줄 이미지를 설정합니다.
+// 성공, 실패, 대기 영상에 대해 이미지를 설정합니다.
 class EventDecorator(private val color: Int, dates: Collection<CalendarDay>, context: Context, which: String) : DayViewDecorator {
 
     private var drawable: Drawable? = null

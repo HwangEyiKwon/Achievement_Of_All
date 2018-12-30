@@ -12,6 +12,9 @@ import com.example.parkseunghyun.achievementofall.Configurations.VolleyHttpServi
 import com.example.parkseunghyun.achievementofall.R
 import org.json.JSONObject
 
+// ProfileViewActivity
+// 프로필 이미지 화면
+// 이미지를 누를 경우 프로필 이미지를 확대해서 보여줍니다.
 class ProfileViewActivity : AppCompatActivity() {
 
     private var globalVariables: GlobalVariables?= GlobalVariables()
@@ -24,7 +27,6 @@ class ProfileViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_image_view)
-
 
         userProfileBig = findViewById(R.id.profile_image_big)
         goOutButton = findViewById(R.id.button_finish)

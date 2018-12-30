@@ -1,6 +1,5 @@
 package com.example.parkseunghyun.achievementofall.Fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.NestedScrollView
@@ -15,6 +14,9 @@ import com.example.parkseunghyun.achievementofall.R
     REFARCTORED
  */
 
+// HomeAppInfoPager
+// 홈 화면의 세번째 페이지
+// 앱 정보 및 공지사항
 class HomeAppInfoPager : Fragment() {
 
     private var homeAppInfoView: View? = null
@@ -33,6 +35,8 @@ class HomeAppInfoPager : Fragment() {
         return homeAppInfoView
     }
 
+    // initViewComponent
+    // 페이지의 view에 있는 각 요소들을 초기화합니다.
     private fun initViewComponents() {
 
         appInfo = homeAppInfoView!!.findViewById(R.id.appInfo)
@@ -43,6 +47,8 @@ class HomeAppInfoPager : Fragment() {
 
     }
 
+    // setAppInfo
+    // 앱 정보를 설정합니다.
     private fun setAppInfo() {
 
         VolleyHttpService.getAppInfo(activity){ success ->
